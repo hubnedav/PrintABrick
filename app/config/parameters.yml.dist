@@ -17,3 +17,6 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # Brickset API key obtainable at http://brickset.com/tools/webservices/requestkey
+    brickset_apikey:   ~

@@ -2,3 +2,6 @@ services:
     client.brickset:
         class: AppBundle\Client\Brickset\Brickset
         arguments: ['%brickset_apikey%']
+    client.rebrickable:
+        class: AppBundle\Client\Rebrickable\Rebrickable
+        arguments: ['%rebrickable_apikey%']

@@ -20,3 +20,6 @@ parameters:
 
     # Brickset API key obtainable at http://brickset.com/tools/webservices/requestkey
     brickset_apikey:   ~
+
+    # Rebrickable API key obtainable at http://rebrickable.com/api/
+    rebrickable_apikey:   ~

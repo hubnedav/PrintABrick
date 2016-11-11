@@ -5,3 +5,6 @@ services:
     client.rebrickable:
         class: AppBundle\Client\Rebrickable\Rebrickable
         arguments: ['%rebrickable_apikey%']
+    service.collection:
+        class: AppBundle\Service\CollectionService
+        arguments: ['@client.brickset','@client.rebrickable']

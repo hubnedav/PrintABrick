@@ -5,239 +5,214 @@ namespace AppBundle\Client\Brickset\Entity;
 class Set
 {
     /**
-     * @var int $setID
+     * @var int
      */
     protected $setID = null;
 
     /**
-     * @var string $number
+     * @var string
      */
     protected $number = null;
 
     /**
-     * @var int $numberVariant
+     * @var int
      */
     protected $numberVariant = null;
 
     /**
-     * @var string $name
+     * @var string
      */
     protected $name = null;
 
     /**
-     * @var string $year
+     * @var string
      */
     protected $year = null;
 
     /**
-     * @var string $theme
+     * @var string
      */
     protected $theme = null;
 
     /**
-     * @var string $themeGroup
+     * @var string
      */
     protected $themeGroup = null;
 
     /**
-     * @var string $subtheme
+     * @var string
      */
     protected $subtheme = null;
 
     /**
-     * @var string $pieces
+     * @var string
      */
     protected $pieces = null;
 
     /**
-     * @var string $minifigs
+     * @var string
      */
     protected $minifigs = null;
 
     /**
-     * @var boolean $image
+     * @var bool
      */
     protected $image = null;
 
     /**
-     * @var string $imageFilename
+     * @var string
      */
     protected $imageFilename = null;
 
     /**
-     * @var string $thumbnailURL
+     * @var string
      */
     protected $thumbnailURL = null;
 
     /**
-     * @var string $largeThumbnailURL
+     * @var string
      */
     protected $largeThumbnailURL = null;
 
     /**
-     * @var string $imageURL
+     * @var string
      */
     protected $imageURL = null;
 
     /**
-     * @var string $bricksetURL
+     * @var string
      */
     protected $bricksetURL = null;
 
     /**
-     * @var boolean $released
+     * @var bool
      */
     protected $released = null;
 
     /**
-     * @var boolean $owned
+     * @var bool
      */
     protected $owned = null;
 
     /**
-     * @var boolean $wanted
+     * @var bool
      */
     protected $wanted = null;
 
     /**
-     * @var int $qtyOwned
+     * @var int
      */
     protected $qtyOwned = null;
 
     /**
-     * @var string $userNotes
+     * @var string
      */
     protected $userNotes = null;
 
     /**
-     * @var int $ACMDataCount
+     * @var int
      */
     protected $ACMDataCount = null;
 
     /**
-     * @var int $ownedByTotal
+     * @var int
      */
     protected $ownedByTotal = null;
 
     /**
-     * @var int $wantedByTotal
+     * @var int
      */
     protected $wantedByTotal = null;
 
     /**
-     * @var string $UKRetailPrice
+     * @var string
      */
     protected $UKRetailPrice = null;
 
     /**
-     * @var string $USRetailPrice
-     */
-    protected $USRetailPrice = null;
-
-    /**
-     * @var string $CARetailPrice
-     */
-    protected $CARetailPrice = null;
-
-    /**
-     * @var string $EURetailPrice
-     */
-    protected $EURetailPrice = null;
-
-    /**
-     * @var string $USDateAddedToSAH
-     */
-    protected $USDateAddedToSAH = null;
-
-    /**
-     * @var string $USDateRemovedFromSAH
-     */
-    protected $USDateRemovedFromSAH = null;
-
-    /**
-     * @var float $rating
+     * @var float
      */
     protected $rating = null;
 
     /**
-     * @var int $reviewCount
+     * @var int
      */
     protected $reviewCount = null;
 
     /**
-     * @var string $packagingType
+     * @var string
      */
     protected $packagingType = null;
 
     /**
-     * @var string $availability
+     * @var string
      */
     protected $availability = null;
 
     /**
-     * @var int $instructionsCount
+     * @var int
      */
     protected $instructionsCount = null;
 
     /**
-     * @var int $additionalImageCount
+     * @var int
      */
     protected $additionalImageCount = null;
 
     /**
-     * @var string $EAN
+     * @var string
      */
     protected $EAN = null;
 
     /**
-     * @var string $UPC
+     * @var string
      */
     protected $UPC = null;
 
     /**
-     * @var string $description
+     * @var string
      */
     protected $description = null;
 
     /**
-     * @var \DateTime $lastUpdated
+     * @var \DateTime
      */
     protected $lastUpdated = null;
 
     /**
-     * @param int $setID
-     * @param int $numberVariant
-     * @param boolean $image
-     * @param boolean $released
-     * @param boolean $owned
-     * @param boolean $wanted
-     * @param int $qtyOwned
-     * @param int $ACMDataCount
-     * @param int $ownedByTotal
-     * @param int $wantedByTotal
-     * @param float $rating
-     * @param int $reviewCount
-     * @param int $instructionsCount
-     * @param int $additionalImageCount
+     * @param int       $setID
+     * @param int       $numberVariant
+     * @param bool      $image
+     * @param bool      $released
+     * @param bool      $owned
+     * @param bool      $wanted
+     * @param int       $qtyOwned
+     * @param int       $ACMDataCount
+     * @param int       $ownedByTotal
+     * @param int       $wantedByTotal
+     * @param float     $rating
+     * @param int       $reviewCount
+     * @param int       $instructionsCount
+     * @param int       $additionalImageCount
      * @param \DateTime $lastUpdated
      */
     public function __construct($setID, $numberVariant, $image, $released, $owned, $wanted, $qtyOwned, $ACMDataCount, $ownedByTotal, $wantedByTotal, $rating, $reviewCount, $instructionsCount, $additionalImageCount, \DateTime $lastUpdated)
     {
-      $this->setID = $setID;
-      $this->numberVariant = $numberVariant;
-      $this->image = $image;
-      $this->released = $released;
-      $this->owned = $owned;
-      $this->wanted = $wanted;
-      $this->qtyOwned = $qtyOwned;
-      $this->ACMDataCount = $ACMDataCount;
-      $this->ownedByTotal = $ownedByTotal;
-      $this->wantedByTotal = $wantedByTotal;
-      $this->rating = $rating;
-      $this->reviewCount = $reviewCount;
-      $this->instructionsCount = $instructionsCount;
-      $this->additionalImageCount = $additionalImageCount;
-      $this->lastUpdated = $lastUpdated->format(\DateTime::ATOM);
+        $this->setID = $setID;
+        $this->numberVariant = $numberVariant;
+        $this->image = $image;
+        $this->released = $released;
+        $this->owned = $owned;
+        $this->wanted = $wanted;
+        $this->qtyOwned = $qtyOwned;
+        $this->ACMDataCount = $ACMDataCount;
+        $this->ownedByTotal = $ownedByTotal;
+        $this->wantedByTotal = $wantedByTotal;
+        $this->rating = $rating;
+        $this->reviewCount = $reviewCount;
+        $this->instructionsCount = $instructionsCount;
+        $this->additionalImageCount = $additionalImageCount;
+        $this->lastUpdated = $lastUpdated->format(\DateTime::ATOM);
     }
 
     /**
@@ -245,17 +220,19 @@ class Set
      */
     public function getSetID()
     {
-      return $this->setID;
+        return $this->setID;
     }
 
     /**
      * @param int $setID
+     *
      * @return Set
      */
     public function setSetID($setID)
     {
-      $this->setID = $setID;
-      return $this;
+        $this->setID = $setID;
+
+        return $this;
     }
 
     /**
@@ -263,17 +240,19 @@ class Set
      */
     public function getNumber()
     {
-      return $this->number;
+        return $this->number;
     }
 
     /**
      * @param string $number
+     *
      * @return Set
      */
     public function setNumber($number)
     {
-      $this->number = $number;
-      return $this;
+        $this->number = $number;
+
+        return $this;
     }
 
     /**
@@ -281,17 +260,19 @@ class Set
      */
     public function getNumberVariant()
     {
-      return $this->numberVariant;
+        return $this->numberVariant;
     }
 
     /**
      * @param int $numberVariant
+     *
      * @return Set
      */
     public function setNumberVariant($numberVariant)
     {
-      $this->numberVariant = $numberVariant;
-      return $this;
+        $this->numberVariant = $numberVariant;
+
+        return $this;
     }
 
     /**
@@ -299,17 +280,19 @@ class Set
      */
     public function getName()
     {
-      return $this->name;
+        return $this->name;
     }
 
     /**
      * @param string $name
+     *
      * @return Set
      */
     public function setName($name)
     {
-      $this->name = $name;
-      return $this;
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -317,17 +300,19 @@ class Set
      */
     public function getYear()
     {
-      return $this->year;
+        return $this->year;
     }
 
     /**
      * @param string $year
+     *
      * @return Set
      */
     public function setYear($year)
     {
-      $this->year = $year;
-      return $this;
+        $this->year = $year;
+
+        return $this;
     }
 
     /**
@@ -335,17 +320,19 @@ class Set
      */
     public function getTheme()
     {
-      return $this->theme;
+        return $this->theme;
     }
 
     /**
      * @param string $theme
+     *
      * @return Set
      */
     public function setTheme($theme)
     {
-      $this->theme = $theme;
-      return $this;
+        $this->theme = $theme;
+
+        return $this;
     }
 
     /**
@@ -353,17 +340,19 @@ class Set
      */
     public function getThemeGroup()
     {
-      return $this->themeGroup;
+        return $this->themeGroup;
     }
 
     /**
      * @param string $themeGroup
+     *
      * @return Set
      */
     public function setThemeGroup($themeGroup)
     {
-      $this->themeGroup = $themeGroup;
-      return $this;
+        $this->themeGroup = $themeGroup;
+
+        return $this;
     }
 
     /**
@@ -371,17 +360,19 @@ class Set
      */
     public function getSubtheme()
     {
-      return $this->subtheme;
+        return $this->subtheme;
     }
 
     /**
      * @param string $subtheme
+     *
      * @return Set
      */
     public function setSubtheme($subtheme)
     {
-      $this->subtheme = $subtheme;
-      return $this;
+        $this->subtheme = $subtheme;
+
+        return $this;
     }
 
     /**
@@ -389,17 +380,19 @@ class Set
      */
     public function getPieces()
     {
-      return $this->pieces;
+        return $this->pieces;
     }
 
     /**
      * @param string $pieces
+     *
      * @return Set
      */
     public function setPieces($pieces)
     {
-      $this->pieces = $pieces;
-      return $this;
+        $this->pieces = $pieces;
+
+        return $this;
     }
 
     /**
@@ -407,35 +400,39 @@ class Set
      */
     public function getMinifigs()
     {
-      return $this->minifigs;
+        return $this->minifigs;
     }
 
     /**
      * @param string $minifigs
+     *
      * @return Set
      */
     public function setMinifigs($minifigs)
     {
-      $this->minifigs = $minifigs;
-      return $this;
+        $this->minifigs = $minifigs;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getImage()
     {
-      return $this->image;
+        return $this->image;
     }
 
     /**
-     * @param boolean $image
+     * @param bool $image
+     *
      * @return Set
      */
     public function setImage($image)
     {
-      $this->image = $image;
-      return $this;
+        $this->image = $image;
+
+        return $this;
     }
 
     /**
@@ -443,17 +440,19 @@ class Set
      */
     public function getImageFilename()
     {
-      return $this->imageFilename;
+        return $this->imageFilename;
     }
 
     /**
      * @param string $imageFilename
+     *
      * @return Set
      */
     public function setImageFilename($imageFilename)
     {
-      $this->imageFilename = $imageFilename;
-      return $this;
+        $this->imageFilename = $imageFilename;
+
+        return $this;
     }
 
     /**
@@ -461,17 +460,19 @@ class Set
      */
     public function getThumbnailURL()
     {
-      return $this->thumbnailURL;
+        return $this->thumbnailURL;
     }
 
     /**
      * @param string $thumbnailURL
+     *
      * @return Set
      */
     public function setThumbnailURL($thumbnailURL)
     {
-      $this->thumbnailURL = $thumbnailURL;
-      return $this;
+        $this->thumbnailURL = $thumbnailURL;
+
+        return $this;
     }
 
     /**
@@ -479,17 +480,19 @@ class Set
      */
     public function getLargeThumbnailURL()
     {
-      return $this->largeThumbnailURL;
+        return $this->largeThumbnailURL;
     }
 
     /**
      * @param string $largeThumbnailURL
+     *
      * @return Set
      */
     public function setLargeThumbnailURL($largeThumbnailURL)
     {
-      $this->largeThumbnailURL = $largeThumbnailURL;
-      return $this;
+        $this->largeThumbnailURL = $largeThumbnailURL;
+
+        return $this;
     }
 
     /**
@@ -497,17 +500,19 @@ class Set
      */
     public function getImageURL()
     {
-      return $this->imageURL;
+        return $this->imageURL;
     }
 
     /**
      * @param string $imageURL
+     *
      * @return Set
      */
     public function setImageURL($imageURL)
     {
-      $this->imageURL = $imageURL;
-      return $this;
+        $this->imageURL = $imageURL;
+
+        return $this;
     }
 
     /**
@@ -515,71 +520,79 @@ class Set
      */
     public function getBricksetURL()
     {
-      return $this->bricksetURL;
+        return $this->bricksetURL;
     }
 
     /**
      * @param string $bricksetURL
+     *
      * @return Set
      */
     public function setBricksetURL($bricksetURL)
     {
-      $this->bricksetURL = $bricksetURL;
-      return $this;
+        $this->bricksetURL = $bricksetURL;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getReleased()
     {
-      return $this->released;
+        return $this->released;
     }
 
     /**
-     * @param boolean $released
+     * @param bool $released
+     *
      * @return Set
      */
     public function setReleased($released)
     {
-      $this->released = $released;
-      return $this;
+        $this->released = $released;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getOwned()
     {
-      return $this->owned;
+        return $this->owned;
     }
 
     /**
-     * @param boolean $owned
+     * @param bool $owned
+     *
      * @return Set
      */
     public function setOwned($owned)
     {
-      $this->owned = $owned;
-      return $this;
+        $this->owned = $owned;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getWanted()
     {
-      return $this->wanted;
+        return $this->wanted;
     }
 
     /**
-     * @param boolean $wanted
+     * @param bool $wanted
+     *
      * @return Set
      */
     public function setWanted($wanted)
     {
-      $this->wanted = $wanted;
-      return $this;
+        $this->wanted = $wanted;
+
+        return $this;
     }
 
     /**
@@ -587,17 +600,19 @@ class Set
      */
     public function getQtyOwned()
     {
-      return $this->qtyOwned;
+        return $this->qtyOwned;
     }
 
     /**
      * @param int $qtyOwned
+     *
      * @return Set
      */
     public function setQtyOwned($qtyOwned)
     {
-      $this->qtyOwned = $qtyOwned;
-      return $this;
+        $this->qtyOwned = $qtyOwned;
+
+        return $this;
     }
 
     /**
@@ -605,17 +620,19 @@ class Set
      */
     public function getUserNotes()
     {
-      return $this->userNotes;
+        return $this->userNotes;
     }
 
     /**
      * @param string $userNotes
+     *
      * @return Set
      */
     public function setUserNotes($userNotes)
     {
-      $this->userNotes = $userNotes;
-      return $this;
+        $this->userNotes = $userNotes;
+
+        return $this;
     }
 
     /**
@@ -623,17 +640,19 @@ class Set
      */
     public function getACMDataCount()
     {
-      return $this->ACMDataCount;
+        return $this->ACMDataCount;
     }
 
     /**
      * @param int $ACMDataCount
+     *
      * @return Set
      */
     public function setACMDataCount($ACMDataCount)
     {
-      $this->ACMDataCount = $ACMDataCount;
-      return $this;
+        $this->ACMDataCount = $ACMDataCount;
+
+        return $this;
     }
 
     /**
@@ -641,17 +660,19 @@ class Set
      */
     public function getOwnedByTotal()
     {
-      return $this->ownedByTotal;
+        return $this->ownedByTotal;
     }
 
     /**
      * @param int $ownedByTotal
+     *
      * @return Set
      */
     public function setOwnedByTotal($ownedByTotal)
     {
-      $this->ownedByTotal = $ownedByTotal;
-      return $this;
+        $this->ownedByTotal = $ownedByTotal;
+
+        return $this;
     }
 
     /**
@@ -659,125 +680,19 @@ class Set
      */
     public function getWantedByTotal()
     {
-      return $this->wantedByTotal;
+        return $this->wantedByTotal;
     }
 
     /**
      * @param int $wantedByTotal
+     *
      * @return Set
      */
     public function setWantedByTotal($wantedByTotal)
     {
-      $this->wantedByTotal = $wantedByTotal;
-      return $this;
-    }
+        $this->wantedByTotal = $wantedByTotal;
 
-    /**
-     * @return string
-     */
-    public function getUKRetailPrice()
-    {
-      return $this->UKRetailPrice;
-    }
-
-    /**
-     * @param string $UKRetailPrice
-     * @return Set
-     */
-    public function setUKRetailPrice($UKRetailPrice)
-    {
-      $this->UKRetailPrice = $UKRetailPrice;
-      return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUSRetailPrice()
-    {
-      return $this->USRetailPrice;
-    }
-
-    /**
-     * @param string $USRetailPrice
-     * @return Set
-     */
-    public function setUSRetailPrice($USRetailPrice)
-    {
-      $this->USRetailPrice = $USRetailPrice;
-      return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCARetailPrice()
-    {
-      return $this->CARetailPrice;
-    }
-
-    /**
-     * @param string $CARetailPrice
-     * @return Set
-     */
-    public function setCARetailPrice($CARetailPrice)
-    {
-      $this->CARetailPrice = $CARetailPrice;
-      return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEURetailPrice()
-    {
-      return $this->EURetailPrice;
-    }
-
-    /**
-     * @param string $EURetailPrice
-     * @return Set
-     */
-    public function setEURetailPrice($EURetailPrice)
-    {
-      $this->EURetailPrice = $EURetailPrice;
-      return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUSDateAddedToSAH()
-    {
-      return $this->USDateAddedToSAH;
-    }
-
-    /**
-     * @param string $USDateAddedToSAH
-     * @return Set
-     */
-    public function setUSDateAddedToSAH($USDateAddedToSAH)
-    {
-      $this->USDateAddedToSAH = $USDateAddedToSAH;
-      return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUSDateRemovedFromSAH()
-    {
-      return $this->USDateRemovedFromSAH;
-    }
-
-    /**
-     * @param string $USDateRemovedFromSAH
-     * @return Set
-     */
-    public function setUSDateRemovedFromSAH($USDateRemovedFromSAH)
-    {
-      $this->USDateRemovedFromSAH = $USDateRemovedFromSAH;
-      return $this;
+        return $this;
     }
 
     /**
@@ -785,17 +700,19 @@ class Set
      */
     public function getRating()
     {
-      return $this->rating;
+        return $this->rating;
     }
 
     /**
      * @param float $rating
+     *
      * @return Set
      */
     public function setRating($rating)
     {
-      $this->rating = $rating;
-      return $this;
+        $this->rating = $rating;
+
+        return $this;
     }
 
     /**
@@ -803,17 +720,19 @@ class Set
      */
     public function getReviewCount()
     {
-      return $this->reviewCount;
+        return $this->reviewCount;
     }
 
     /**
      * @param int $reviewCount
+     *
      * @return Set
      */
     public function setReviewCount($reviewCount)
     {
-      $this->reviewCount = $reviewCount;
-      return $this;
+        $this->reviewCount = $reviewCount;
+
+        return $this;
     }
 
     /**
@@ -821,17 +740,19 @@ class Set
      */
     public function getPackagingType()
     {
-      return $this->packagingType;
+        return $this->packagingType;
     }
 
     /**
      * @param string $packagingType
+     *
      * @return Set
      */
     public function setPackagingType($packagingType)
     {
-      $this->packagingType = $packagingType;
-      return $this;
+        $this->packagingType = $packagingType;
+
+        return $this;
     }
 
     /**
@@ -839,17 +760,19 @@ class Set
      */
     public function getAvailability()
     {
-      return $this->availability;
+        return $this->availability;
     }
 
     /**
      * @param string $availability
+     *
      * @return Set
      */
     public function setAvailability($availability)
     {
-      $this->availability = $availability;
-      return $this;
+        $this->availability = $availability;
+
+        return $this;
     }
 
     /**
@@ -857,17 +780,19 @@ class Set
      */
     public function getInstructionsCount()
     {
-      return $this->instructionsCount;
+        return $this->instructionsCount;
     }
 
     /**
      * @param int $instructionsCount
+     *
      * @return Set
      */
     public function setInstructionsCount($instructionsCount)
     {
-      $this->instructionsCount = $instructionsCount;
-      return $this;
+        $this->instructionsCount = $instructionsCount;
+
+        return $this;
     }
 
     /**
@@ -875,17 +800,19 @@ class Set
      */
     public function getAdditionalImageCount()
     {
-      return $this->additionalImageCount;
+        return $this->additionalImageCount;
     }
 
     /**
      * @param int $additionalImageCount
+     *
      * @return Set
      */
     public function setAdditionalImageCount($additionalImageCount)
     {
-      $this->additionalImageCount = $additionalImageCount;
-      return $this;
+        $this->additionalImageCount = $additionalImageCount;
+
+        return $this;
     }
 
     /**
@@ -893,17 +820,19 @@ class Set
      */
     public function getEAN()
     {
-      return $this->EAN;
+        return $this->EAN;
     }
 
     /**
      * @param string $EAN
+     *
      * @return Set
      */
     public function setEAN($EAN)
     {
-      $this->EAN = $EAN;
-      return $this;
+        $this->EAN = $EAN;
+
+        return $this;
     }
 
     /**
@@ -911,17 +840,19 @@ class Set
      */
     public function getUPC()
     {
-      return $this->UPC;
+        return $this->UPC;
     }
 
     /**
      * @param string $UPC
+     *
      * @return Set
      */
     public function setUPC($UPC)
     {
-      $this->UPC = $UPC;
-      return $this;
+        $this->UPC = $UPC;
+
+        return $this;
     }
 
     /**
@@ -929,17 +860,19 @@ class Set
      */
     public function getDescription()
     {
-      return $this->description;
+        return $this->description;
     }
 
     /**
      * @param string $description
+     *
      * @return Set
      */
     public function setDescription($description)
     {
-      $this->description = $description;
-      return $this;
+        $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -947,25 +880,26 @@ class Set
      */
     public function getLastUpdated()
     {
-      if ($this->lastUpdated == null) {
-        return null;
-      } else {
-        try {
-          return new \DateTime($this->lastUpdated);
-        } catch (\Exception $e) {
-          return null;
+        if ($this->lastUpdated == null) {
+            return null;
+        } else {
+            try {
+                return new \DateTime($this->lastUpdated);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
-      }
     }
 
     /**
      * @param \DateTime $lastUpdated
+     *
      * @return Set
      */
     public function setLastUpdated(\DateTime $lastUpdated)
     {
-      $this->lastUpdated = $lastUpdated->format(\DateTime::ATOM);
-      return $this;
-    }
+        $this->lastUpdated = $lastUpdated->format(\DateTime::ATOM);
 
+        return $this;
+    }
 }

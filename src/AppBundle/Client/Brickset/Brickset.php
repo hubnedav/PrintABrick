@@ -6,12 +6,15 @@ use AppBundle\Client\Brickset\Entity\AdditionalImage;
 use AppBundle\Client\Brickset\Entity\Instructions;
 use AppBundle\Client\Brickset\Entity\Review;
 use AppBundle\Client\Brickset\Entity\Set;
+use AppBundle\Client\Brickset\Entity\Subtheme;
+use AppBundle\Client\Brickset\Entity\Theme;
+use AppBundle\Client\Brickset\Entity\Year;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
 class Brickset extends \SoapClient
 {
-	const WSDL = 'http://brickset.com/api/v2.asmx?WSDL';
+    const WSDL = 'http://brickset.com/api/v2.asmx?WSDL';
 
     private $apiKey = '';
     private $userHash = '';
@@ -24,6 +27,9 @@ class Brickset extends \SoapClient
         'additionalImages' => AdditionalImage::class,
         'instructions' => Instructions::class,
         'reviews' => Review::class,
+        'themes' => Theme::class,
+        'subthemes' => Subtheme::class,
+        'years' => Year::class,
     );
 
     /**
@@ -54,46 +60,43 @@ class Brickset extends \SoapClient
         $this->apiKey = $apiKey;
     }
 
-    /**
-     * @param $query
-     * @param $theme
-     * @param $subtheme
-     * @param $setNumber
-     * @param $year
-     * @param $owned
-     * @param $wanted
-     * @param $orderBy
-     * @param $pageSize
-     * @param $pageNumber
-     * @param $userName
-     *
-     * @return Set[]
-     */
-    public function getSets($query, $theme, $subtheme, $setNumber, $year, $owned, $wanted, $orderBy, $pageSize, $pageNumber, $userName)
+    private function call($method, $parameters)
     {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-            'userHash' => $this->userHash,
-            'query' => $query,
-            'theme' => $theme,
-            'subtheme' => $subtheme,
-            'setNumber' => $setNumber,
-            'year' => $year,
-            'owned' => $owned,
-            'wanted' => $wanted,
-            'orderBy' => $orderBy,
-            'pageSize' => $pageSize,
-            'pageNumber' => $pageNumber,
-            'userName' => $userName,
-        ];
+        $parameters['apiKey'] = $this->apiKey;
 
         try {
-            return $this->__soapCall('getSets', [$parameters])->getSetsResult->sets;
-        } catch (ContextErrorException $e) {
-            return [];
+            return $this->__soapCall($method, [$parameters]);
         } catch (\SoapFault $e) {
             //TODO
             throw new LogicException($e->getCode().' - '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Retrieve a list of sets.
+     *
+     * @param array $parameters
+     *
+     * @return Set[]
+     */
+    public function getSets($parameters)
+    {
+        $parameters['userHash'] = $this->userHash;
+
+        // Add blank required parameters to api call in order to recieve response
+        $required_keys = ['query', 'theme', 'subtheme', 'setNumber', 'year', 'owned', 'wanted', 'orderBy', 'pageSize', 'pageNumber', 'userName'];
+        foreach ($required_keys as $key) {
+            if (!array_key_exists($key, $parameters)) {
+                $parameters[$key] = '';
+            }
+        }
+
+        try {
+            $response = $this->call('getSets', $parameters)->getSetsResult->sets;
+
+            return is_array($response) ? $response : [$response];
+        } catch (ContextErrorException $e) {
+            return [];
         }
     }
 
@@ -104,139 +107,180 @@ class Brickset extends \SoapClient
      */
     public function getSet($SetID)
     {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-            'userHash' => $this->userHash,
-            'SetID' => $SetID,
-        ];
+        $parameters = ['userHash' => $this->userHash, 'SetID' => $SetID];
 
         try {
-            return $this->__soapCall('getSet', [$parameters])->getSetResult->sets[0];
+            return $this->call('getSet', $parameters)->getSetResult->sets;
         } catch (ContextErrorException $e) {
             return null;
-        } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
         }
     }
 
     /**
+     * Get a list of sets that have changed in the last {minutesAgo} minutes.
+     *
      * @param int $minutesAgo
      *
      * @return Set[]
      */
     public function getRecentlyUpdatedSets($minutesAgo)
     {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-            'minutesAgo' => $minutesAgo,
-        ];
+        $parameters = ['minutesAgo' => $minutesAgo];
 
         try {
-            return $this->__soapCall('getRecentlyUpdatedSets', [$parameters])->getRecentlyUpdatedSetsResult->sets;
+            $response = $this->call('getRecentlyUpdatedSets', $parameters)->getRecentlyUpdatedSetsResult->sets;
+
+            return is_array($response) ? $response : [$response];
         } catch (ContextErrorException $e) {
             return [];
-        } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
         }
     }
 
     /**
-     * @param $setID
+     * Get a list of URLs of additional set images for the specified set.
+     *
+     * @param int $setID Brickset unique id of set
      *
      * @return AdditionalImage[]
      */
     public function getAdditionalImages($setID)
     {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-            'setID' => $setID,
-        ];
+        $parameters = ['setID' => $setID];
 
         try {
-            return $this->__soapCall('getAdditionalImages', [$parameters])->getAdditionalImagesResult->additionalImages;
+            $response = $this->call('getAdditionalImages', $parameters)->getAdditionalImagesResult->additionalImages;
+
+            return is_array($response) ? $response : [$response];
         } catch (ContextErrorException $e) {
             return [];
-        } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
-        }
-    }
-
-    public function getReviews($setID)
-    {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-            'setID' => $setID,
-        ];
-
-        try {
-            return $this->__soapCall('getReviews', [$parameters])->getReviewsResult->reviews;
-        } catch (ContextErrorException $e) {
-            return [];
-        } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
-        }
-    }
-
-    public function getInstructions($setID)
-    {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-            'setID' => $setID,
-        ];
-
-        try {
-            return $this->__soapCall('getInstructions', [$parameters])->getInstructionsResult->instructions;
-        } catch (ContextErrorException $e) {
-            return [];
-        } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
-        }
-    }
-
-    public function login($username, $password)
-    {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-            'username' => $username,
-            'password' => $password,
-        ];
-
-        try {
-            $response = $this->__soapCall('login', [$parameters])->loginResult;
-            if ($response == 'INVALIDKEY') {
-                return false;
-            } elseif (strpos($response, 'ERROR:') === 0) {
-                return false;
-            } else {
-                $this->userHash = $response;
-
-                return true;
-            }
-        } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
         }
     }
 
     /**
-     * @return mixed
+     * Get the reviews for the specified set.
+     *
+     * @param int $setID Brickset unique id of set
+     *
+     * @return Review[]
+     */
+    public function getReviews($setID)
+    {
+        $parameters = ['setID' => $setID];
+
+        try {
+            $response = $this->call('getReviews', $parameters)->getReviewsResult->reviews;
+
+            return is_array($response) ? $response : [$response];
+        } catch (ContextErrorException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get a list of instructions for the specified set.
+     *
+     * @param int $setID Brickset unique id of set
+     *
+     * @return Instructions[]
+     */
+    public function getInstructions($setID)
+    {
+        $parameters = ['setID' => $setID];
+
+        try {
+            $response = $this->call('getInstructions', $parameters)->getInstructionsResult->instructions;
+
+            return is_array($response) ? $response : [$response];
+        } catch (ContextErrorException $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get a list of themes, with the total number of sets in each.
+     *
+     * @return Theme[]
+     */
+    public function getThemes()
+    {
+        try {
+            return $this->call('getThemes', [])->getThemesResult->themes;
+        } catch (ContextErrorException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get a list of subthemes for a given theme, with the total number of sets in each.
+     *
+     * @param string $theme Name of theme
+     *
+     * @return Subtheme[]
+     */
+    public function getSubthemes($theme)
+    {
+        $parameters = ['theme' => $theme];
+
+        try {
+            $response = $this->call('getSubthemes', $parameters)->getSubthemesResult->subthemes;
+
+            return is_array($response) ? $response : [$response];
+        } catch (ContextErrorException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get a list of years for a given theme, with the total number of sets in each.
+     *
+     * @param string $theme Name of theme
+     *
+     * @return Year[]
+     */
+    public function getYears($theme)
+    {
+        $parameters = ['theme' => $theme];
+
+        try {
+            $response = $this->call('getYears', $parameters)->getYearsResult->years;
+
+            return is_array($response) ? $response : [$response];
+        } catch (ContextErrorException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Log in as a user and retrieve a token that can be used in subsequent API calls.
+     *
+     * @param string $username
+     * @param string $password
+     *
+     * @return bool True if successful
+     */
+    public function login($username, $password)
+    {
+        $parameters = ['username' => $username, 'password' => $password];
+
+        $response = $this->call('login', $parameters)->loginResult;
+        if ($response == 'INVALIDKEY') {
+            return false;
+        } elseif (strpos($response, 'ERROR:') === 0) {
+            return false;
+        } else {
+            $this->userHash = $response;
+
+            return true;
+        }
+    }
+
+    /**
+     * Check if an API key is valid.
+     *
+     * @return bool
      */
     public function checkKey()
     {
-        $parameters = [
-            'apiKey' => $this->apiKey,
-        ];
-
-        try {
-            return ($this->__soapCall('checkKey', [$parameters])->checkKeyResult) == 'OK' ? true : false;
-        } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
-        }
+        return ($this->call('checkKey', [])->checkKeyResult) == 'OK' ? true : false;
     }
 }

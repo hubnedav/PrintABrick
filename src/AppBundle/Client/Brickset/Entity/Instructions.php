@@ -5,19 +5,17 @@ namespace AppBundle\Client\Brickset\Entity;
 class Instructions
 {
     /**
-     * @var string $URL
+     * @var string
      */
     protected $URL = null;
 
     /**
-     * @var string $description
+     * @var string
      */
     protected $description = null;
 
-
     public function __construct()
     {
-    
     }
 
     /**
@@ -25,17 +23,19 @@ class Instructions
      */
     public function getURL()
     {
-      return $this->URL;
+        return $this->URL;
     }
 
     /**
      * @param string $URL
+     *
      * @return Instructions
      */
     public function setURL($URL)
     {
-      $this->URL = $URL;
-      return $this;
+        $this->URL = $URL;
+
+        return $this;
     }
 
     /**
@@ -43,17 +43,18 @@ class Instructions
      */
     public function getDescription()
     {
-      return $this->description;
+        return $this->description;
     }
 
     /**
      * @param string $description
+     *
      * @return Instructions
      */
     public function setDescription($description)
     {
-      $this->description = $description;
-      return $this;
-    }
+        $this->description = $description;
 
+        return $this;
+    }
 }

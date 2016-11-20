@@ -4,75 +4,74 @@ namespace AppBundle\Client\Brickset\Entity;
 
 class Review
 {
-
     /**
-     * @var string $author
+     * @var string
      */
     protected $author = null;
 
     /**
-     * @var \DateTime $datePosted
+     * @var \DateTime
      */
     protected $datePosted = null;
 
     /**
-     * @var int $overallRating
+     * @var int
      */
     protected $overallRating = null;
 
     /**
-     * @var int $parts
+     * @var int
      */
     protected $parts = null;
 
     /**
-     * @var int $buildingExperience
+     * @var int
      */
     protected $buildingExperience = null;
 
     /**
-     * @var int $playability
+     * @var int
      */
     protected $playability = null;
 
     /**
-     * @var int $valueForMoney
+     * @var int
      */
     protected $valueForMoney = null;
 
     /**
-     * @var string $title
+     * @var string
      */
     protected $title = null;
 
     /**
-     * @var string $review
+     * @var string
      */
     protected $review = null;
 
     /**
-     * @var boolean $HTML
+     * @var bool
      */
     protected $HTML = null;
 
     /**
      * @param \DateTime $datePosted
-     * @param int $overallRating
-     * @param int $parts
-     * @param int $buildingExperience
-     * @param int $playability
-     * @param int $valueForMoney
-     * @param boolean $HTML
+     * @param int       $overallRating
+     * @param int       $parts
+     * @param int       $buildingExperience
+     * @param int       $playability
+     * @param int       $valueForMoney
+     * @param bool      $HTML
      */
     public function __construct(\DateTime $datePosted, $overallRating, $parts, $buildingExperience, $playability, $valueForMoney, $HTML)
     {
-      $this->datePosted = $datePosted->format(\DateTime::ATOM);
-      $this->overallRating = $overallRating;
-      $this->parts = $parts;
-      $this->buildingExperience = $buildingExperience;
-      $this->playability = $playability;
-      $this->valueForMoney = $valueForMoney;
-      $this->HTML = $HTML;
+        $this->datePosted = $datePosted->format(\DateTime::ATOM);
+        $this->overallRating = $overallRating;
+        $this->parts = $parts;
+        $this->buildingExperience = $buildingExperience;
+        $this->playability = $playability;
+        $this->valueForMoney = $valueForMoney;
+        $this->HTML = $HTML;
     }
 
     /**
@@ -80,17 +79,19 @@ class Review
      */
     public function getAuthor()
     {
-      return $this->author;
+        return $this->author;
     }
 
     /**
      * @param string $author
+     *
      * @return Review
      */
     public function setAuthor($author)
     {
-      $this->author = $author;
-      return $this;
+        $this->author = $author;
+
+        return $this;
     }
 
     /**
@@ -98,25 +99,27 @@ class Review
      */
     public function getDatePosted()
     {
-      if ($this->datePosted == null) {
-        return null;
-      } else {
-        try {
-          return new \DateTime($this->datePosted);
-        } catch (\Exception $e) {
-          return null;
+        if ($this->datePosted == null) {
+            return null;
+        } else {
+            try {
+                return new \DateTime($this->datePosted);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
-      }
     }
 
     /**
      * @param \DateTime $datePosted
+     *
      * @return Review
      */
     public function setDatePosted(\DateTime $datePosted)
     {
-      $this->datePosted = $datePosted->format(\DateTime::ATOM);
-      return $this;
+        $this->datePosted = $datePosted->format(\DateTime::ATOM);
+
+        return $this;
     }
 
     /**
@@ -124,17 +127,19 @@ class Review
      */
     public function getOverallRating()
     {
-      return $this->overallRating;
+        return $this->overallRating;
     }
 
     /**
      * @param int $overallRating
+     *
      * @return Review
      */
     public function setOverallRating($overallRating)
     {
-      $this->overallRating = $overallRating;
-      return $this;
+        $this->overallRating = $overallRating;
+
+        return $this;
     }
 
     /**
@@ -142,17 +147,19 @@ class Review
      */
     public function getParts()
     {
-      return $this->parts;
+        return $this->parts;
     }
 
     /**
      * @param int $parts
+     *
      * @return Review
      */
     public function setParts($parts)
     {
-      $this->parts = $parts;
-      return $this;
+        $this->parts = $parts;
+
+        return $this;
     }
 
     /**
@@ -160,17 +167,19 @@ class Review
      */
     public function getBuildingExperience()
     {
-      return $this->buildingExperience;
+        return $this->buildingExperience;
     }
 
     /**
      * @param int $buildingExperience
+     *
      * @return Review
      */
     public function setBuildingExperience($buildingExperience)
     {
-      $this->buildingExperience = $buildingExperience;
-      return $this;
+        $this->buildingExperience = $buildingExperience;
+
+        return $this;
     }
 
     /**
@@ -178,17 +187,19 @@ class Review
      */
     public function getPlayability()
     {
-      return $this->playability;
+        return $this->playability;
     }
 
     /**
      * @param int $playability
+     *
      * @return Review
      */
     public function setPlayability($playability)
     {
-      $this->playability = $playability;
-      return $this;
+        $this->playability = $playability;
+
+        return $this;
     }
 
     /**
@@ -196,17 +207,19 @@ class Review
      */
     public function getValueForMoney()
     {
-      return $this->valueForMoney;
+        return $this->valueForMoney;
     }
 
     /**
      * @param int $valueForMoney
+     *
      * @return Review
      */
     public function setValueForMoney($valueForMoney)
     {
-      $this->valueForMoney = $valueForMoney;
-      return $this;
+        $this->valueForMoney = $valueForMoney;
+
+        return $this;
     }
 
     /**
@@ -214,17 +227,19 @@ class Review
      */
     public function getTitle()
     {
-      return $this->title;
+        return $this->title;
     }
 
     /**
      * @param string $title
+     *
      * @return Review
      */
     public function setTitle($title)
     {
-      $this->title = $title;
-      return $this;
+        $this->title = $title;
+
+        return $this;
     }
 
     /**
@@ -232,35 +247,38 @@ class Review
      */
     public function getReview()
     {
-      return $this->review;
+        return $this->review;
     }
 
     /**
      * @param string $review
+     *
      * @return Review
      */
     public function setReview($review)
     {
-      $this->review = $review;
-      return $this;
+        $this->review = $review;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getHTML()
     {
-      return $this->HTML;
+        return $this->HTML;
     }
 
     /**
-     * @param boolean $HTML
+     * @param bool $HTML
+     *
      * @return Review
      */
     public function setHTML($HTML)
     {
-      $this->HTML = $HTML;
-      return $this;
-    }
+        $this->HTML = $HTML;
 
+        return $this;
+    }
 }

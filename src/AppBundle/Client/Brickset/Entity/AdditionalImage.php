@@ -4,26 +4,23 @@ namespace AppBundle\Client\Brickset\Entity;
 
 class AdditionalImage
 {
-
     /**
-     * @var string $thumbnailURL
+     * @var string
      */
     protected $thumbnailURL = null;
 
     /**
-     * @var string $largeThumbnailURL
+     * @var string
      */
     protected $largeThumbnailURL = null;
 
     /**
-     * @var string $imageURL
+     * @var string
      */
     protected $imageURL = null;
 
-    
     public function __construct()
     {
-    
     }
 
     /**
@@ -31,17 +28,19 @@ class AdditionalImage
      */
     public function getThumbnailURL()
     {
-      return $this->thumbnailURL;
+        return $this->thumbnailURL;
     }
 
     /**
      * @param string $thumbnailURL
+     *
      * @return AdditionalImage
      */
     public function setThumbnailURL($thumbnailURL)
     {
-      $this->thumbnailURL = $thumbnailURL;
-      return $this;
+        $this->thumbnailURL = $thumbnailURL;
+
+        return $this;
     }
 
     /**
@@ -49,17 +48,19 @@ class AdditionalImage
      */
     public function getLargeThumbnailURL()
     {
-      return $this->largeThumbnailURL;
+        return $this->largeThumbnailURL;
     }
 
     /**
      * @param string $largeThumbnailURL
+     *
      * @return AdditionalImage
      */
     public function setLargeThumbnailURL($largeThumbnailURL)
     {
-      $this->largeThumbnailURL = $largeThumbnailURL;
-      return $this;
+        $this->largeThumbnailURL = $largeThumbnailURL;
+
+        return $this;
     }
 
     /**
@@ -67,17 +68,18 @@ class AdditionalImage
      */
     public function getImageURL()
     {
-      return $this->imageURL;
+        return $this->imageURL;
     }
 
     /**
      * @param string $imageURL
+     *
      * @return AdditionalImage
      */
     public function setImageURL($imageURL)
     {
-      $this->imageURL = $imageURL;
-      return $this;
-    }
+        $this->imageURL = $imageURL;
 
+        return $this;
+    }
 }

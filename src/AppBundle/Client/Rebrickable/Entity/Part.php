@@ -3,160 +3,242 @@
  * Created by PhpStorm.
  * User: hubnedav
  * Date: 11/11/16
- * Time: 12:45 AM
+ * Time: 12:45 AM.
  */
 
 namespace AppBundle\Client\Rebrickable\Entity;
 
-
 class Part
 {
-	protected $id;
-	protected $name;
-	protected $category;
-	protected $typeId;
-	protected $colors;
-	protected $external_part_ids;
-	protected $part_url;
-	protected $part_img_url;
+    /**
+     * Part ID.
+     *
+     * @var int
+     */
+    private $id;
+    /**
+     * Quantity of part in set returned from getSetParts.
+     *
+     * @var int
+     */
+    private $qty;
+    /**
+     * Part Name.
+     *
+     * @var string
+     */
+    private $name;
+    /**
+     * Year the part first appeared in sets.
+     *
+     * @var int
+     */
+    private $year1;
+    /**
+     * Year the part was last seen in sets.
+     *
+     * @var int
+     */
+    private $year2;
+    /**
+     * Part category/type description.
+     *
+     * @var string
+     */
+    private $category;
 
-	public function __construct($part_id, $part_name, $category, $part_type_id, $colors, $external_part_ids, $part_url, $part_img_url)
-	{
-		$this->id           = $part_id;
-		$this->name              = $part_name;
-		$this->category          = $category;
-		$this->typeId      = $part_type_id;
-		$this->colors            = $colors;
-		$this->external_part_ids = $external_part_ids;
-		$this->part_url          = $part_url;
-		$this->part_img_url      = $part_img_url;
-	}
+    private $typeId;
 
-	/**
-	 * @return mixed
-	 */
-	public function getId()
-	{
-		return $this->id;
-	}
+    /**
+     * Array of colors the part appears in.
+     *
+     * @var array
+     */
+    private $colors;
 
-	/**
-	 * @param mixed $id
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-	}
+    private $colorId;
 
-	/**
-	 * @return mixed
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
+    /**
+     * Array of related Part IDs used by external systems.
+     *
+     * @var array
+     */
+    private $external_part_ids;
+    /**
+     * Rebrickable URL to the Part Details page.
+     *
+     * @var string
+     */
+    private $part_url;
+    /**
+     * Rebrickable URL of the main part image (tries to use most common color).
+     *
+     * @var string
+     */
+    private $part_img_url;
 
-	/**
-	 * @param mixed $name
-	 */
-	public function setName($name)
-	{
-		$this->name = $name;
-	}
 
-	/**
-	 * @return mixed
-	 */
-	public function getCategory()
-	{
-		return $this->category;
-	}
+    public function __construct()
+    {
+    }
 
-	/**
-	 * @param mixed $category
-	 */
-	public function setCategory($category)
-	{
-		$this->category = $category;
-	}
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getTypeId()
-	{
-		return $this->typeId;
-	}
+    /**
+     * @param $part_id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
-	/**
-	 * @param mixed $typeId
-	 */
-	public function setTypeId($typeId)
-	{
-		$this->typeId = $typeId;
-	}
+    /**
+     * @return int
+     */
+    public function getQty()
+    {
+        return $this->qty;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getColors()
-	{
-		return $this->colors;
-	}
+    /**
+     * @param $qty
+     */
+    public function setQty($qty)
+    {
+        $this->qty = $qty;
+    }
 
-	/**
-	 * @param mixed $colors
-	 */
-	public function setColors($colors)
-	{
-		$this->colors = $colors;
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getExternalPartIds()
-	{
-		return $this->external_part_ids;
-	}
+    /**
+     * @param mixed $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @param mixed $external_part_ids
-	 */
-	public function setExternalPartIds($external_part_ids)
-	{
-		$this->external_part_ids = $external_part_ids;
-	}
+    /**
+     * @return mixed
+     */
+    public function getYear1()
+    {
+        return $this->year1;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getPartUrl()
-	{
-		return $this->part_url;
-	}
+    /**
+     * @param mixed $year1
+     */
+    public function setYear1($year1)
+    {
+        $this->year1 = $year1;
+    }
 
-	/**
-	 * @param mixed $part_url
-	 */
-	public function setPartUrl($part_url)
-	{
-		$this->part_url = $part_url;
-	}
+    /**
+     * @return mixed
+     */
+    public function getYear2()
+    {
+        return $this->year2;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getPartImgUrl()
-	{
-		return $this->part_img_url;
-	}
+    /**
+     * @param mixed $year2
+     */
+    public function setYear2($year2)
+    {
+        $this->year2 = $year2;
+    }
 
-	/**
-	 * @param mixed $part_img_url
-	 */
-	public function setPartImgUrl($part_img_url)
-	{
-		$this->part_img_url = $part_img_url;
-	}
+    /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param mixed $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getColors()
+    {
+        return $this->colors;
+    }
+
+    /**
+     * @param mixed $colors
+     */
+    public function setColors($colors)
+    {
+        $this->colors = $colors;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExternalPartIds()
+    {
+        return $this->external_part_ids;
+    }
+
+    /**
+     * @param mixed $external_part_ids
+     */
+    public function setExternalPartIds($external_part_ids)
+    {
+        $this->external_part_ids = $external_part_ids;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPartUrl()
+    {
+        return $this->part_url;
+    }
+
+    /**
+     * @param mixed $part_url
+     */
+    public function setPartUrl($part_url)
+    {
+        $this->part_url = $part_url;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPartImgUrl()
+    {
+        return $this->part_img_url;
+    }
+
+    /**
+     * @param $part_img_url
+     */
+    public function setPartImgUrl($part_img_url)
+    {
+        $this->part_img_url = $part_img_url;
+    }
 }

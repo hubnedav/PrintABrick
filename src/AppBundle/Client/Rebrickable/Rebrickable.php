@@ -74,7 +74,7 @@ class Rebrickable
     {
         $encoders = array(new JsonEncoder());
         $nameConverter = new PartPropertyNameConverter();
-        $normalizers = array(new ObjectNormalizer(null,$nameConverter), new ArrayDenormalizer());
+        $normalizers = array(new ObjectNormalizer(null, $nameConverter), new ArrayDenormalizer());
         $serializer = new Serializer($normalizers, $encoders);
 
         return $serializer;
@@ -126,7 +126,7 @@ class Rebrickable
     }
 
     /**
-     * Get associative array of colors used by all parts where key == rb_color_id
+     * Get associative array of colors used by all parts where key == rb_color_id.
      *
      * @return Color[]|null
      */
@@ -147,7 +147,7 @@ class Rebrickable
     }
 
     /**
-     * Get associative array of themes used by all parts where key == part_type_id
+     * Get associative array of themes used by all parts where key == part_type_id.
      *
      * @return string[]
      */

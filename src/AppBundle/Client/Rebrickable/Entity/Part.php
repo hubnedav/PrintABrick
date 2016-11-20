@@ -47,6 +47,11 @@ class Part
      */
     private $category;
 
+    /**
+     * Part category/type id matching getPartTypes method values.
+     *
+     * @var int
+     */
     private $typeId;
 
     /**
@@ -56,6 +61,11 @@ class Part
      */
     private $colors;
 
+    /**
+     * Part color id matching getColors method values.
+     *
+     * @var
+     */
     private $colorId;
 
     /**
@@ -76,7 +86,6 @@ class Part
      * @var string
      */
     private $part_img_url;
-
 
     public function __construct()
     {

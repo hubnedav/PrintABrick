@@ -3,61 +3,70 @@
  * Created by PhpStorm.
  * User: hubnedav
  * Date: 11/18/16
- * Time: 1:45 AM
+ * Time: 1:45 AM.
  */
 
 namespace AppBundle\Client\Rebrickable\Entity;
 
-
 class Color
 {
     /**
-     * Internal Rebrickable color ID used
+     * Internal Rebrickable color ID used.
+     *
      * @var int
      */
     protected $rb_color_id;
     /**
-     * Array of mapped LDraw colors
+     * Array of mapped LDraw colors.
+     *
      * @var array
      */
     protected $ldraw_color_id;
     /**
-     * Array of mapped BrickLink colors
+     * Array of mapped BrickLink colors.
+     *
      * @var array
      */
     protected $bricklink_color_id;
     /**
-     * Array of mapped BrickOwl colors
+     * Array of mapped BrickOwl colors.
+     *
      * @var array
      */
     protected $brickowl_color_id;
     /**
-     * Color name
+     * Color name.
+     *
      * @var string
      */
     protected $color_name;
     /**
      * Number of parts the color appears in.
+     *
      * @var int
      */
     protected $num_parts;
     /**
      * Number of sets the color appears in.
+     *
      * @var int
      */
     protected $num_sets;
     /**
      * First year it was used.
+     *
      * @var int
      */
     protected $year1;
     /**
      * Last year it was used.
+     *
      * @var int
      */
     protected $year2;
     /**
-     * Hex codes for the RGB value of this color: RRGGBB
+     * Hex codes for the RGB value of this color: RRGGBB.
+     *
      * @var string
      */
     protected $rgb;
@@ -228,6 +237,4 @@ class Color
     {
         $this->rgb = $rgb;
     }
-
-
 }

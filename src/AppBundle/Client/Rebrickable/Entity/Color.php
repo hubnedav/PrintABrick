@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hubnedav
- * Date: 11/18/16
- * Time: 1:45 AM.
- */
 
 namespace AppBundle\Client\Rebrickable\Entity;
 

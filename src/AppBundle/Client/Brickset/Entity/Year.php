@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: hubnedav
- * Date: 11/20/16
- * Time: 11:17 PM.
- */
 
 namespace AppBundle\Client\Brickset\Entity;
 

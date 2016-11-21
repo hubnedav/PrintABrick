@@ -1,12 +1,20 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: hubnedav
- * Date: 11/21/16
- * Time: 4:20 PM
- */
+namespace AppBundle\Menu;
+
+use Knp\Menu\FactoryInterface;
+
 class Builder
 {
 
+    public function mainMenu(FactoryInterface $factory, array $options)
+    {
+        $menu = $factory->createItem('root');
+
+        $menu->addChild('Home', [
+            'route' => 'homepage'
+        ]);
+
+        return $menu;
+    }
 }

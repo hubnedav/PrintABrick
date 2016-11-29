@@ -74,7 +74,8 @@ class Rebrickable
     {
         $encoders = array(new JsonEncoder());
         $nameConverter = new PartPropertyNameConverter();
-        $normalizers = array(new ObjectNormalizer(null, $nameConverter), new ArrayDenormalizer());
+        $objectNormalizer = new ObjectNormalizer(null, $nameConverter);
+        $normalizers = array($objectNormalizer, new ArrayDenormalizer());
         $serializer = new Serializer($normalizers, $encoders);
 
         return $serializer;
@@ -100,7 +101,23 @@ class Rebrickable
         $serializer = $this->getSerializer();
         $partsSTD = json_decode($data, true)[0]['parts'];
 
-        return $data ? $serializer->denormalize($partsSTD, Part::class.'[]', self::FORMAT) : null;
+        if ($data) {
+            $parts = $serializer->denormalize($partsSTD, Part::class.'[]', self::FORMAT);
+            foreach ($parts as $key => &$part) {
+                $part->setCategory($this->getPartTypes()[$partsSTD[$key]['part_type_id']]);
+                $part->setColors([
+                    0 => [
+                        'color_name' => $partsSTD[$key]['color_name'],
+                        'rb_color_id' => $partsSTD[$key]['rb_color_id'],
+                        'ldraw_color_id' => $partsSTD[$key]['ldraw_color_id'],
+                    ],
+                ]);
+            }
+
+            return $data;
+        }
+
+        return null;
     }
 
     /**

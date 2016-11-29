@@ -23,6 +23,12 @@ class Part
      */
     private $name;
     /**
+     * Part type 1 = normal part, 2 = spare part.
+     *
+     * @var int
+     */
+    private $type;
+    /**
      * Year the part first appeared in sets.
      *
      * @var int
@@ -40,28 +46,12 @@ class Part
      * @var string
      */
     private $category;
-
-    /**
-     * Part category/type id matching getPartTypes method values.
-     *
-     * @var int
-     */
-    private $typeId;
-
     /**
      * Array of colors the part appears in.
      *
      * @var array
      */
     private $colors;
-
-    /**
-     * Part color id matching getColors method values.
-     *
-     * @var
-     */
-    private $colorId;
-
     /**
      * Array of related Part IDs used by external systems.
      *
@@ -104,6 +94,22 @@ class Part
     /**
      * @return int
      */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param int $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return int
+     */
     public function getQty()
     {
         return $this->qty;
@@ -132,7 +138,6 @@ class Part
     {
         $this->name = $name;
     }
-
     /**
      * @return mixed
      */
@@ -180,7 +185,6 @@ class Part
     {
         $this->category = $category;
     }
-
     /**
      * @return mixed
      */
@@ -196,7 +200,6 @@ class Part
     {
         $this->colors = $colors;
     }
-
     /**
      * @return mixed
      */

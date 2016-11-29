@@ -6,13 +6,16 @@ use Knp\Menu\FactoryInterface;
 
 class Builder
 {
-
     public function mainMenu(FactoryInterface $factory, array $options)
     {
         $menu = $factory->createItem('root');
 
         $menu->addChild('Home', [
-            'route' => 'homepage'
+            'route' => 'homepage',
+        ]);
+
+        $menu->addChild('Sets', [
+            'route' => 'sets_browse',
         ]);
 
         return $menu;

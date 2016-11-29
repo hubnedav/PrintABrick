@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.theme) }}
+        {{ form_row(form.subtheme) }}
+        {{ form_row(form.years) }}
+    {{ form_end(form) }}
+
+    <ul>
+    {% for set in sets %}
+        <li><a href="{{ url('set_detail', {'id': set.setID, 'name' : set.name }) }}">{{ set.LegoSetID }} - {{ set.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var $theme = $('#filter_set_theme');
+        $theme.change(function() {
+            var $form = $(this).closest('form');
+            var data = {};
+            data[$theme.attr('name')] = $theme.val();
+            $.ajax({
+                url : $form.attr('action'),
+                type: $form.attr('method'),
+                data : data,
+                success: function(html) {
+                    $('#filter_set_subtheme').replaceWith(
+                            $(html).find('#filter_set_subtheme')
+                    );
+                    $('#filter_set_years').replaceWith(
+                            $(html).find('#filter_set_years')
+                    );
+                }
+            });
+        });
+    </script>
+{% endblock %}

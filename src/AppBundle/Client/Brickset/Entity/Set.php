@@ -125,11 +125,6 @@ class Set
     protected $wantedByTotal = null;
 
     /**
-     * @var string
-     */
-    protected $UKRetailPrice = null;
-
-    /**
      * @var float
      */
     protected $rating = null;
@@ -180,39 +175,10 @@ class Set
     protected $lastUpdated = null;
 
     /**
-     * @param int       $setID
-     * @param int       $numberVariant
-     * @param bool      $image
-     * @param bool      $released
-     * @param bool      $owned
-     * @param bool      $wanted
-     * @param int       $qtyOwned
-     * @param int       $ACMDataCount
-     * @param int       $ownedByTotal
-     * @param int       $wantedByTotal
-     * @param float     $rating
-     * @param int       $reviewCount
-     * @param int       $instructionsCount
-     * @param int       $additionalImageCount
-     * @param \DateTime $lastUpdated
+     * Set constructor.
      */
-    public function __construct($setID, $numberVariant, $image, $released, $owned, $wanted, $qtyOwned, $ACMDataCount, $ownedByTotal, $wantedByTotal, $rating, $reviewCount, $instructionsCount, $additionalImageCount, \DateTime $lastUpdated)
+    public function __construct()
     {
-        $this->setID = $setID;
-        $this->numberVariant = $numberVariant;
-        $this->image = $image;
-        $this->released = $released;
-        $this->owned = $owned;
-        $this->wanted = $wanted;
-        $this->qtyOwned = $qtyOwned;
-        $this->ACMDataCount = $ACMDataCount;
-        $this->ownedByTotal = $ownedByTotal;
-        $this->wantedByTotal = $wantedByTotal;
-        $this->rating = $rating;
-        $this->reviewCount = $reviewCount;
-        $this->instructionsCount = $instructionsCount;
-        $this->additionalImageCount = $additionalImageCount;
-        $this->lastUpdated = $lastUpdated->format(\DateTime::ATOM);
     }
 
     /**
@@ -901,5 +867,10 @@ class Set
         $this->lastUpdated = $lastUpdated->format(\DateTime::ATOM);
 
         return $this;
+    }
+
+    public function getLegoSetID()
+    {
+        return $this->number.'-'.$this->numberVariant;
     }
 }

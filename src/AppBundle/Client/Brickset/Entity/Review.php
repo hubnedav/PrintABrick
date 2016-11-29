@@ -55,23 +55,10 @@ class Review
     protected $HTML = null;
 
     /**
-     * @param \DateTime $datePosted
-     * @param int       $overallRating
-     * @param int       $parts
-     * @param int       $buildingExperience
-     * @param int       $playability
-     * @param int       $valueForMoney
-     * @param bool      $HTML
+     * Review constructor.
      */
-    public function __construct(\DateTime $datePosted, $overallRating, $parts, $buildingExperience, $playability, $valueForMoney, $HTML)
+    function __construct()
     {
-        $this->datePosted = $datePosted->format(\DateTime::ATOM);
-        $this->overallRating = $overallRating;
-        $this->parts = $parts;
-        $this->buildingExperience = $buildingExperience;
-        $this->playability = $playability;
-        $this->valueForMoney = $valueForMoney;
-        $this->HTML = $HTML;
     }
 
     /**

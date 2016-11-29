@@ -10,16 +10,9 @@ class Year
 
     /**
      * Year constructor.
-     *
-     * @param $theme
-     * @param $year
-     * @param $setCount
      */
-    public function __construct($theme, $year, $setCount)
+    public function __construct()
     {
-        $this->theme = $theme;
-        $this->year = $year;
-        $this->setCount = $setCount;
     }
 
     /**

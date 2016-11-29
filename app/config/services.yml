@@ -5,6 +5,11 @@ services:
     client.rebrickable:
         class: AppBundle\Client\Rebrickable\Rebrickable
         arguments: ['%rebrickable_apikey%']
-    service.collection:
+    app.collection_service:
         class: AppBundle\Service\CollectionService
         arguments: ['@client.brickset','@client.rebrickable']
+    app.form.filter_set:
+        class: AppBundle\Form\FilterSetType
+        arguments: ['@app.collection_service']
+        tags:
+            - { name: form.type }

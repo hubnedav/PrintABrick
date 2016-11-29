@@ -82,6 +82,9 @@ class Brickset extends \SoapClient
     public function getSets($parameters)
     {
         $parameters['userHash'] = $this->userHash;
+        if (!array_key_exists('pageSize', $parameters)) {
+            $parameters['pageSize'] = 1000;
+        }
 
         // Add blank required parameters to api call in order to recieve response
         $required_keys = ['query', 'theme', 'subtheme', 'setNumber', 'year', 'owned', 'wanted', 'orderBy', 'pageSize', 'pageNumber', 'userName'];

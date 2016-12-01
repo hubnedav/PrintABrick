@@ -15,3 +15,6 @@
 /vendor/
 /web/bundles/
 .idea/
+/node_modules/
+/app/Resources/assets/semantic/
+/web/resources/

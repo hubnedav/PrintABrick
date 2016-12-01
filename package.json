@@ -1,0 +1,29 @@
+{
+  "name": "printabrick",
+  "version": "1.0.0",
+  "description": "Website for printable building kits",
+  "main": "web/app.php",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-load-plugins": "^1.4.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-watch": "^4.3.11",
+    "jquery": "^3.1.1",
+    "semantic-ui": "^2.2.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hubnedav/PrintABrick.git"
+  },
+  "author": "David Hübner",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/hubnedav/PrintABrick/issues"
+  },
+  "homepage": "https://github.com/hubnedav/PrintABrick#readme"
+}

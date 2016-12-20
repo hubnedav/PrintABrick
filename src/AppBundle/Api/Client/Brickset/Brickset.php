@@ -1,14 +1,14 @@
 <?php
 
-namespace AppBundle\Client\Brickset;
+namespace AppBundle\Api\Client\Brickset;
 
-use AppBundle\Client\Brickset\Entity\AdditionalImage;
-use AppBundle\Client\Brickset\Entity\Instructions;
-use AppBundle\Client\Brickset\Entity\Review;
-use AppBundle\Client\Brickset\Entity\Set;
-use AppBundle\Client\Brickset\Entity\Subtheme;
-use AppBundle\Client\Brickset\Entity\Theme;
-use AppBundle\Client\Brickset\Entity\Year;
+use AppBundle\Api\Client\Brickset\Entity\AdditionalImage;
+use AppBundle\Api\Client\Brickset\Entity\Instructions;
+use AppBundle\Api\Client\Brickset\Entity\Review;
+use AppBundle\Api\Client\Brickset\Entity\Set;
+use AppBundle\Api\Client\Brickset\Entity\Subtheme;
+use AppBundle\Api\Client\Brickset\Entity\Theme;
+use AppBundle\Api\Client\Brickset\Entity\Year;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
@@ -17,6 +17,7 @@ class Brickset extends \SoapClient
     const WSDL = 'http://brickset.com/api/v2.asmx?WSDL';
 
     private $apiKey = '';
+
     private $userHash = '';
 
     /**
@@ -60,15 +61,18 @@ class Brickset extends \SoapClient
         $this->apiKey = $apiKey;
     }
 
-    private function call($method, $parameters)
+    public function call($method, $parameters)
     {
         $parameters['apiKey'] = $this->apiKey;
 
         try {
-            return $this->__soapCall($method, [$parameters]);
+            return $this->__soapCall($method, [$parameters])->{$method.'Result'};
         } catch (\SoapFault $e) {
             //TODO
             throw new LogicException($e->getCode().' - '.$e->getMessage());
+        } catch (ContextErrorException $e) {
+            //TODO empty resposne
+            throw new LogicException($method.' - '.$e->getMessage());
         }
     }
 
@@ -94,13 +98,9 @@ class Brickset extends \SoapClient
             }
         }
 
-        try {
-            $response = $this->call('getSets', $parameters)->getSetsResult->sets;
+        $response = $this->call('getSets', $parameters)->sets;
 
-            return is_array($response) ? $response : [$response];
-        } catch (ContextErrorException $e) {
-            return [];
-        }
+        return is_array($response) ? $response : [$response];
     }
 
     /**
@@ -112,11 +112,7 @@ class Brickset extends \SoapClient
     {
         $parameters = ['userHash' => $this->userHash, 'SetID' => $SetID];
 
-        try {
-            return $this->call('getSet', $parameters)->getSetResult->sets;
-        } catch (ContextErrorException $e) {
-            return null;
-        }
+        return $this->call('getSet', $parameters)->sets;
     }
 
     /**
@@ -130,13 +126,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['minutesAgo' => $minutesAgo];
 
-        try {
-            $response = $this->call('getRecentlyUpdatedSets', $parameters)->getRecentlyUpdatedSetsResult->sets;
+        $response = $this->call('getRecentlyUpdatedSets', $parameters)->sets;
 
-            return is_array($response) ? $response : [$response];
-        } catch (ContextErrorException $e) {
-            return [];
-        }
+        return is_array($response) ? $response : [$response];
     }
 
     /**
@@ -150,13 +142,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['setID' => $setID];
 
-        try {
-            $response = $this->call('getAdditionalImages', $parameters)->getAdditionalImagesResult->additionalImages;
+        $response = $this->call('getAdditionalImages', $parameters)->additionalImages;
 
-            return is_array($response) ? $response : [$response];
-        } catch (ContextErrorException $e) {
-            return [];
-        }
+        return is_array($response) ? $response : [$response];
     }
 
     /**
@@ -170,13 +158,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['setID' => $setID];
 
-        try {
-            $response = $this->call('getReviews', $parameters)->getReviewsResult->reviews;
+        $response = $this->call('getReviews', $parameters)->reviews;
 
-            return is_array($response) ? $response : [$response];
-        } catch (ContextErrorException $e) {
-            return [];
-        }
+        return is_array($response) ? $response : [$response];
     }
 
     /**
@@ -190,13 +174,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['setID' => $setID];
 
-        try {
-            $response = $this->call('getInstructions', $parameters)->getInstructionsResult->instructions;
+        $response = $this->call('getInstructions', $parameters)->instructions;
 
-            return is_array($response) ? $response : [$response];
-        } catch (ContextErrorException $e) {
-            return null;
-        }
+        return is_array($response) ? $response : [$response];
     }
 
     /**
@@ -206,11 +186,7 @@ class Brickset extends \SoapClient
      */
     public function getThemes()
     {
-        try {
-            return $this->call('getThemes', [])->getThemesResult->themes;
-        } catch (ContextErrorException $e) {
-            return [];
-        }
+        return $this->call('getThemes', [])->themes;
     }
 
     /**
@@ -224,13 +200,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['theme' => $theme];
 
-        try {
-            $response = $this->call('getSubthemes', $parameters)->getSubthemesResult->subthemes;
+        $response = $this->call('getSubthemes', $parameters)->subthemes;
 
-            return is_array($response) ? $response : [$response];
-        } catch (ContextErrorException $e) {
-            return [];
-        }
+        return is_array($response) ? $response : [$response];
     }
 
     /**
@@ -244,13 +216,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['theme' => $theme];
 
-        try {
-            $response = $this->call('getYears', $parameters)->getYearsResult->years;
+        $response = $this->call('getYears', $parameters)->years;
 
-            return is_array($response) ? $response : [$response];
-        } catch (ContextErrorException $e) {
-            return [];
-        }
+        return is_array($response) ? $response : [$response];
     }
 
     /**
@@ -265,7 +233,7 @@ class Brickset extends \SoapClient
     {
         $parameters = ['username' => $username, 'password' => $password];
 
-        $response = $this->call('login', $parameters)->loginResult;
+        $response = $this->call('login', $parameters);
         if ($response == 'INVALIDKEY') {
             return false;
         } elseif (strpos($response, 'ERROR:') === 0) {
@@ -284,6 +252,6 @@ class Brickset extends \SoapClient
      */
     public function checkKey()
     {
-        return ($this->call('checkKey', [])->checkKeyResult) == 'OK' ? true : false;
+        return ($this->call('checkKey', [])) == 'OK' ? true : false;
     }
 }

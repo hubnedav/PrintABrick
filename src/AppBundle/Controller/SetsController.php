@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/sets")
+ * @Route("/brickset/sets")
  */
 class SetsController extends Controller
 {
@@ -43,12 +43,13 @@ class SetsController extends Controller
      */
     public function detailAction(Request $request, $id, $name = null)
     {
-        $collectionService = $this->get('app.collection_service');
+        $set = $this->get('manager.brickset')->getSetById($id);;
 
-        $set = $collectionService->getSetById($id);
+        $parts = $this->get('app.collection_service')->getSet($set->getNumber().'-'.$set->getNumberVariant())->getParts();
 
         return $this->render('sets/detail.html.twig', [
             'set' => $set,
+            'parts' => $parts,
         ]);
     }
 }

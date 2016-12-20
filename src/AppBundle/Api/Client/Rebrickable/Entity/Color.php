@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Client\Rebrickable\Entity;
+namespace AppBundle\Api\Client\Rebrickable\Entity;
 
 class Color
 {

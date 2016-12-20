@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Client\Brickset\Entity;
+namespace AppBundle\Api\Client\Brickset\Entity;
 
 class AdditionalImage
 {

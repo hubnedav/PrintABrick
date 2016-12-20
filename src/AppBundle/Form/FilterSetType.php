@@ -2,10 +2,10 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Client\Brickset\Entity\Subtheme;
-use AppBundle\Client\Brickset\Entity\Theme;
-use AppBundle\Client\Brickset\Entity\Year;
-use AppBundle\Service\CollectionService;
+use AppBundle\Api\Client\Brickset\Entity\Subtheme;
+use AppBundle\Api\Client\Brickset\Entity\Theme;
+use AppBundle\Api\Client\Brickset\Entity\Year;
+use AppBundle\Api\Manager\BricksetManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -16,18 +16,18 @@ use Symfony\Component\Form\FormEvents;
 
 class FilterSetType extends AbstractType
 {
-    private $collectionService;
+    private $bricksetManager;
 
-    public function __construct(CollectionService $collectionService)
+    public function __construct(BricksetManager $bricksetManager)
     {
-        $this->collectionService = $collectionService;
+        $this->bricksetManager = $bricksetManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add("theme", ChoiceType::class, [
-                'choices' => $this->collectionService->getThemes(),
+                'choices' => $this->bricksetManager->getThemes(),
                 'choice_label' => function(Theme $theme = null) {
                     return $theme ? $theme->getTheme().' ('.$theme->getSetCount().')' : '';
                 },
@@ -37,8 +37,8 @@ class FilterSetType extends AbstractType
             ]);
 
         $formModifier = function (Form $form, Theme $theme = null) {
-            $subthemes = null === $theme ? [] : $this->collectionService->getSubthemesByTheme($theme);
-            $years = null === $theme ? [] : $this->collectionService->getYearsByTheme($theme);
+            $subthemes = null === $theme ? [] : $this->bricksetManager->getSubthemesByTheme($theme);
+            $years = null === $theme ? [] : $this->bricksetManager->getYearsByTheme($theme);
 
             $form->add("subtheme", ChoiceType::class, [
                 'choices' => $subthemes,
@@ -63,7 +63,7 @@ class FilterSetType extends AbstractType
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) use ($formModifier) {
                 $data = $event->getData();
-                $theme = $data === null ? null : $this->collectionService->getThemes()[$data['theme']];
+                $theme = $data === null ? null : $this->bricksetManager->getThemes()[$data['theme']];
                 $formModifier($event->getForm(), $theme);
             }
         );

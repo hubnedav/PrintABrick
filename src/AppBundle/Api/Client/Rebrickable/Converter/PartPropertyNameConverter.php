@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Client\Rebrickable\Converter;
+namespace AppBundle\Api\Client\Rebrickable\Converter;
 
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 

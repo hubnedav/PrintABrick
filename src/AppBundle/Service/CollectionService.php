@@ -2,60 +2,38 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Client\Brickset\Brickset;
-use AppBundle\Client\Rebrickable\Rebrickable;
+use AppBundle\Api\Client\Rebrickable\Rebrickable;
+use AppBundle\Api\Manager\BricksetManager;
+use Doctrine\ORM\EntityManager;
 
 class CollectionService
 {
     /**
-     * @var Brickset client
+     * @var BricksetManager
      */
-    protected $bricksetClient;
+    protected $bricksetManager;
 
     /**
      * @var Rebrickable client
      */
-    protected $rebrickableClient;
+    protected $rebrickableManager;
+
+    /**
+     * @var EntityManager
+     */
+    private $em;
 
     /**
      * CollectionService constructor.
      *
-     * @param $bricksetClient
-     * @param $rebrickableClient
+     * @param $em
+     * @param $bricksetManager
+     * @param $rebrickableManager
      */
-    public function __construct($bricksetClient, $rebrickableClient)
+    public function __construct($em, $bricksetManager, $rebrickableManager)
     {
-        $this->bricksetClient = $bricksetClient;
-        $this->rebrickableClient = $rebrickableClient;
-    }
-
-    public function getThemes()
-    {
-        return $this->bricksetClient->getThemes();
-    }
-
-    public function getSubthemesByTheme($theme)
-    {
-        return $this->bricksetClient->getSubthemes($theme);
-    }
-
-    public function getYearsByTheme($theme)
-    {
-        return $this->bricksetClient->getYears($theme);
-    }
-
-    public function getSetById($id)
-    {
-        return $this->bricksetClient->getSet($id);
-    }
-
-    public function getSetParts($setNumber)
-    {
-        return $this->rebrickableClient->getSetParts($setNumber);
-    }
-
-    public function getPartById($id)
-    {
-        return $this->rebrickableClient->getPart($id);
+        $this->em = $em;
+        $this->bricksetManager = $bricksetManager;
+        $this->rebrickableManager = $rebrickableManager;
     }
 }

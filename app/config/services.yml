@@ -1,15 +1,26 @@
 services:
     client.brickset:
-        class: AppBundle\Client\Brickset\Brickset
+        class: AppBundle\Api\Client\Brickset\Brickset
         arguments: ['%brickset_apikey%']
     client.rebrickable:
-        class: AppBundle\Client\Rebrickable\Rebrickable
+        class: AppBundle\Api\Client\Rebrickable\Rebrickable
         arguments: ['%rebrickable_apikey%']
+
+    manager.brickset:
+        class: AppBundle\Api\Manager\BricksetManager
+        arguments: ['@client.brickset']
+    manager.rebrickable:
+          class: AppBundle\Api\Manager\RebrickableManager
+          arguments: ['@client.rebrickable']
+
     app.collection_service:
         class: AppBundle\Service\CollectionService
-        arguments: ['@client.brickset','@client.rebrickable']
+        arguments: ['@doctrine.orm.entity_manager', '@manager.brickset','@manager.rebrickable']
+    app.model_loader_service:
+        class: AppBundle\Service\ModelLoaderService
+        arguments: ['@doctrine.orm.entity_manager','%kernel.root_dir%/../var/data/LDrawLibrary']
     app.form.filter_set:
         class: AppBundle\Form\FilterSetType
-        arguments: ['@app.collection_service']
+        arguments: ['@manager.brickset']
         tags:
             - { name: form.type }

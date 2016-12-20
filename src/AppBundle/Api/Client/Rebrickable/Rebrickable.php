@@ -1,11 +1,11 @@
 <?php
 
-namespace AppBundle\Client\Rebrickable;
+namespace AppBundle\Api\Client\Rebrickable;
 
-use AppBundle\Client\Rebrickable\Entity\Color;
-use AppBundle\Client\Rebrickable\Entity\Part;
-use AppBundle\Client\Rebrickable\Entity\Set;
-use AppBundle\Client\Rebrickable\Converter\PartPropertyNameConverter;
+use AppBundle\Api\Client\Rebrickable\Entity\Color;
+use AppBundle\Api\Client\Rebrickable\Entity\Part;
+use AppBundle\Api\Client\Rebrickable\Entity\Set;
+use AppBundle\Api\Client\Rebrickable\Converter\PartPropertyNameConverter;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;

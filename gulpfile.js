@@ -21,6 +21,7 @@ gulp.task('js', function() {
     return gulp.src([
         'node_modules/jquery/dist/jquery.js',
         'app/Resources/assets/semantic/dist/semantic.js',
+        'node_modules//three/build/three.js'
     ])
         .pipe(plugins.concat('main.js'))
         .pipe(gulp.dest('web/resources/js'));

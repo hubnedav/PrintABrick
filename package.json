@@ -10,7 +10,8 @@
     "gulp-sass": "^2.3.2",
     "gulp-watch": "^4.3.11",
     "jquery": "^3.1.1",
-    "semantic-ui": "^2.2.6"
+    "semantic-ui": "^2.2.6",
+    "three": "^0.82.1"
   },
   "devDependencies": {},
   "scripts": {

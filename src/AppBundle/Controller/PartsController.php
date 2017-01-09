@@ -15,10 +15,12 @@ class PartsController extends Controller
      */
     public function detailAction($id)
     {
-        $part = $this->get('manager.rebrickable')->getPartById($id);
+        $rebrickable_part = $this->get('manager.rebrickable')->getPart($id);
+        $part = $this->get('app.collection_service')->getPart($id);
 
         return $this->render('parts/detail.html.twig', [
             'part' => $part,
+            'reb_part' => $rebrickable_part,
         ]);
     }
-}   
+}

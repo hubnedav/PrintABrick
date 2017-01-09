@@ -16,5 +16,5 @@
 /web/bundles/
 .idea/
 /node_modules/
-/app/Resources/assets/semantic/
+/app/Resources/assets/semantic/dist
 /web/resources/

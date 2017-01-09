@@ -17,11 +17,33 @@ gulp.task('css', function() {
         .pipe(gulp.dest('web/resources/css'));
 });
 
+gulp.task('three', function() {
+    gulp.src([
+        'node_modules/three/build/three.js',
+        'node_modules/three/examples/js/libs/stats.min.js',
+        'node_modules/three/examples/js/loaders/STLLoader.js',
+        'node_modules/three/examples/js/controls/TrackballControls.js',
+    ])
+        .pipe(plugins.concat('three.js'))
+        .pipe(gulp.dest('web/resources/js'));
+
+    gulp.src([
+        'node_modules/three/examples/js/libs/stats.min.js',
+    ])
+        .pipe(plugins.concat('stats.js'))
+        .pipe(gulp.dest('web/resources/js'));
+
+    gulp.src([
+        'app/Resources/assets/javascripts/ModelViewer.js',
+    ])
+        .pipe(plugins.concat('ModelViewer.js'))
+        .pipe(gulp.dest('web/resources/js'));
+});
+
 gulp.task('js', function() {
     return gulp.src([
         'node_modules/jquery/dist/jquery.js',
         'app/Resources/assets/semantic/dist/semantic.js',
-        'node_modules//three/build/three.js'
     ])
         .pipe(plugins.concat('main.js'))
         .pipe(gulp.dest('web/resources/js'));

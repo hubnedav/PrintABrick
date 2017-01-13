@@ -1,109 +1,86 @@
-$(document).ready(function () {
-    var container;
-    var camera, cameraTarget, scene, renderer, controls;
-    var stats;
+ModelViewer = function(containerId) {
+    var container = document.getElementById(containerId);
+    var camera, scene, cameraTarget, renderer, controls, object;
 
-    init();
-    animate();
-});
-
-function init() {
-    container = document.getElementById('model');
-
-    modelView = $('#model');
-
-    camera = new THREE.PerspectiveCamera(45, modelView.innerWidth() / modelView.innerHeight(), 0.1, 2000);
-    camera.position.set(4, 1.5, 4);
-    camera.lookAt(new THREE.Vector3(0, -0.7, 0));
-
-    scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x72645b, 2, 15);
+    if (document.defaultView && document.defaultView.getComputedStyle) {
+        var width  = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('width'));
+        var height = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('height'));
+    } else {
+        var width  = parseFloat(container.currentStyle.width);
+        var height = parseFloat(container.currentStyle.height);
+    }
 
 
-    var loader = new THREE.STLLoader();
-    loader.load('./resources/30000.stl', function (geometry) {
-        var material = new THREE.MeshPhongMaterial({color: 0xaaaaaa, shininess:200,  specular: 0x333333, shading: THREE.FlatShading});
-        var mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(0, 0, 0);
-        mesh.rotation.set(Math.PI, 0, 0);
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        scene.add(mesh);
-    });
+    this.init = function() {
+        camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
+        camera.position.set(-2, 2, 0.8);
+        camera.lookAt(new THREE.Vector3(0, 3, 0));
+
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.1);
 
 
-    // Lights
+        var grid = new THREE.GridHelper( 30, 70 );
+        grid.position.set(30/70,-0.5,30/70);
+        scene.add( grid );
 
-    light = new THREE.DirectionalLight( 0xffffff );
-    light.position.set( 1, 1, 1 );
-    scene.add( light );
+        var loader = new THREE.STLLoader();
+        loader.load('./resources/3005.stl', function (geometry) {
+            var material = new THREE.MeshPhongMaterial({color: 0xaaaaaa, shininess:200,  specular: 0x333333, shading: THREE.FlatShading});
 
-    light = new THREE.DirectionalLight( 0x002288 );
-    light.position.set( -1, -1, -1 );
-    scene.add( light );
-
-
-    scene.add( new THREE.AmbientLight( 0xf0f0f0 ));
-    scene.background = new THREE.Color( 0x000000 );
-
-    // renderer
-    renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor( scene.fog.color );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( modelView.innerWidth(), modelView.innerHeight() );
-    renderer.gammaInput = true;
-    renderer.gammaOutput = true;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.renderReverseSided = false;
-
-    container.appendChild(renderer.domElement);
-
-    // Stats
-
-    stats = new Stats();
-    container.appendChild( stats.dom );
-
-    window.addEventListener('resize', onWindowResize, false);
-}
-
-function addShadowedLight(x, y, z, color, intensity) {
-    var directionalLight = new THREE.DirectionalLight(color, intensity);
-    directionalLight.position.set(x, y, z);
-    scene.add(directionalLight);
-    directionalLight.castShadow = true;
-    var d = 1;
-    directionalLight.shadow.camera.left = -d;
-    directionalLight.shadow.camera.right = d;
-    directionalLight.shadow.camera.top = d;
-    directionalLight.shadow.camera.bottom = -d;
-    directionalLight.shadow.camera.near = 1;
-    directionalLight.shadow.camera.far = 4;
-    directionalLight.shadow.mapSize.width = 1024;
-    directionalLight.shadow.mapSize.height = 1024;
-    directionalLight.shadow.bias = -0.005;
-}
-
-function onWindowResize() {
-
-    // camera.aspect = window.innerWidth / window.innerHeight;
-    // camera.updateProjectionMatrix();
-    // renderer.setSize(window.innerWidth, window.innerHeight);
-
-}
-
-function animate() {
-
-    requestAnimationFrame(animate);
-
-    stats.update();
-
-    render();
-
-}
-
-function render() {
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(0, 0.5, 0);
+            mesh.rotation.set(Math.PI, 0, 0);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            scene.add(mesh);
+        });
 
 
-    renderer.render(scene, camera);
+        // Lights
 
-}
+        light = new THREE.DirectionalLight( 0xffffff );
+        light.position.set( 1, 1, 1 );
+        scene.add( light );
+
+        light = new THREE.DirectionalLight( 0x002288 );
+        light.position.set( -1, -1, -1 );
+        scene.add( light );
+
+
+        scene.add( new THREE.AmbientLight( 0xf0f0f0 ));
+        scene.background = new THREE.Color( 0x000000 );
+
+        // renderer
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor( scene.fog.color );
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( width, height );
+        renderer.gammaInput = true;
+        renderer.gammaOutput = true;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.renderReverseSided = false;
+
+        container.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls( camera, renderer.domElement );
+        controls.addEventListener( 'change', this.render ); // add this only if there is no animation loop (requestAnimationFrame)
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.enableZoom = true;
+
+    };
+
+    this.animate = function() {
+
+        // requestAnimationFrame(this.animate);
+
+        // controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+
+        this.render();
+    };
+
+    this.render = function() {
+        renderer.render(scene, camera);
+    };
+};

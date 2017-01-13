@@ -22,15 +22,14 @@ gulp.task('three', function() {
         'node_modules/three/build/three.js',
         'node_modules/three/examples/js/libs/stats.min.js',
         'node_modules/three/examples/js/loaders/STLLoader.js',
-        'node_modules/three/examples/js/controls/TrackballControls.js',
     ])
         .pipe(plugins.concat('three.js'))
         .pipe(gulp.dest('web/resources/js'));
 
     gulp.src([
-        'node_modules/three/examples/js/libs/stats.min.js',
+        'node_modules/three/examples/js/controls/OrbitControls.js',
     ])
-        .pipe(plugins.concat('stats.js'))
+        .pipe(plugins.concat('OrbitControls.js'))
         .pipe(gulp.dest('web/resources/js'));
 
     gulp.src([

@@ -157,6 +157,8 @@ class ModelLoaderService
         $sets = tempnam(sys_get_temp_dir(), 'printabrick.');
         file_put_contents($sets, fopen('compress.zlib://http://rebrickable.com/files/sets.csv.gz', 'r'));
 
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
+
         if (($handle = fopen($sets, 'r')) !== false) {
             $header = fgetcsv($handle, 500, ',');
 
@@ -215,6 +217,8 @@ class ModelLoaderService
         file_put_contents($pieces, fopen('compress.zlib://http://rebrickable.com/files/pieces.csv.gz', 'r'));
 
         $categoryRepository = $this->em->getRepository('AppBundle:Category');
+
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         if (($handle = fopen($pieces, 'r')) !== false) {
 

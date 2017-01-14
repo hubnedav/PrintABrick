@@ -20,6 +20,9 @@ services:
     loader.rebrickable:
         class: AppBundle\Service\RebrickableLoader
         arguments: ['@doctrine.orm.entity_manager', '@manager.rebrickable']
+    loader.ldraw:
+        class: AppBundle\Service\LDrawLoader
+        arguments: ['@doctrine.orm.entity_manager', '%kernel.root_dir%/../bin/ldview', '%kernel.root_dir%/../var/data/ldraw']
   
     app.form.filter_set:
         class: AppBundle\Form\FilterSetType

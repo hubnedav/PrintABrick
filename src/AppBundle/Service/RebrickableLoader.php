@@ -6,21 +6,14 @@ use AppBundle\Api\Manager\RebrickableManager;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Color;
 use AppBundle\Entity\Keyword;
-use AppBundle\Entity\Model;
 use AppBundle\Entity\BuildingKit;
 use AppBundle\Entity\Part;
 use AppBundle\Entity\Part_BuildingKit;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
-
-class ModelLoaderService
+class RebrickableLoader
 {
-    private $STLlib;
-
     /**
      * @var EntityManager
      */
@@ -34,64 +27,11 @@ class ModelLoaderService
     /**
      * ModelLoaderService constructor.
      */
-    public function __construct($em, $STLlib, $rebrickableManager)
+    public function __construct($em, $rebrickableManager)
     {
-        $this->STLlib = $STLlib;
         $this->em = $em;
         $this->rebrickableManager = $rebrickableManager;
     }
-
-    // LDraw
-
-    public function loadModels($LDrawLibrary)
-    {
-        $finder = new Finder();
-        $files = $finder->files()->name('*.dat')->depth('== 0')->in(getcwd().'/'.$LDrawLibrary.'/parts');
-
-        foreach ($files as $file) {
-            $this->loadModelHeader($file);
-        }
-    }
-
-    private function loadModelHeader(SplFileInfo $fileInfo)
-    {
-        $handle = fopen($fileInfo->getRealPath(), 'r');
-        if ($handle) {
-            $firstLine = fgets($handle);
-            $description = trim(substr($firstLine, 2));
-            $model = new Model();
-            $model->setFile($fileInfo->getFilename());
-            $p['category'] = explode(' ', trim($description))[0];
-
-            //TODO handle ~Moved to
-
-            while (!feof($handle)) {
-                $line = trim(fgets($handle));
-                if ($line && ($line[0] == '1')) {
-                    break;
-                } elseif ($line && ($line[0] == '0' && strpos($line, '!CATEGORY '))) {
-                    $p['category'] = trim(explode('!CATEGORY ', $line)[1]);
-                } elseif ($line && ($line[0] == '0' && strpos($line, '!KEYWORDS '))) {
-                    $keywords = explode(',', explode('!KEYWORDS ', $line)[1]);
-                    foreach ($keywords as $k) {
-                        $p['keywords'][] = trim($k);
-                    }
-                } elseif ($line && ($line[0] == '0' && strpos($line, 'Name: '))) {
-                    $model->setNumber(trim(explode('.dat', explode('Name: ', $line)[1])[0]));
-                } elseif ($line && ($line[0] == '0' && strpos($line, 'Author: '))) {
-                    $model->setAuthor(explode('Author: ', $line)[1]);
-                }
-            }
-
-            $this->em->persist($model);
-            $this->em->flush();
-        } else {
-            throw new LogicException('loadHeader error'); //TODO
-        }
-        fclose($handle);
-    }
-
-    // Rebrickable
 
     public function loadPartBuildingKits($output)
     {

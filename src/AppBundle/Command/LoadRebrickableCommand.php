@@ -11,7 +11,7 @@ class LoadRebrickableCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('app:loadRebrickable')
+            ->setName('app:load:rebrickable')
             ->setDescription('Loads Rebrickable csv data')
             ->setHelp('This command allows you to..')
         ;
@@ -19,16 +19,16 @@ class LoadRebrickableCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $modelLoader = $this->getContainer()->get('app.model_loader_service');
+        $rebrickableLoader = $this->getContainer()->get('loader.rebrickable');
 
         try {
-            $modelLoader->loadColors();
+            $rebrickableLoader->loadColors();
 
-            $modelLoader->loadParts($output);
+            $rebrickableLoader->loadParts($output);
 
-            $modelLoader->loadBuildingKits($output);
+            $rebrickableLoader->loadBuildingKits($output);
 
-            $modelLoader->loadPartBuildingKits($output);
+            $rebrickableLoader->loadPartBuildingKits($output);
         } catch (\Exception $e) {
             printf($e->getMessage());
         }

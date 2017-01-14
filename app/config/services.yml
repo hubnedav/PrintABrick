@@ -16,9 +16,10 @@ services:
     app.collection_service:
         class: AppBundle\Service\CollectionService
         arguments: ['@doctrine.orm.entity_manager', '@manager.brickset','@manager.rebrickable']
-    app.model_loader_service:
-        class: AppBundle\Service\ModelLoaderService
-        arguments: ['@doctrine.orm.entity_manager','%kernel.root_dir%/../var/data/LDrawLibrary', '@manager.rebrickable']
+
+    loader.rebrickable:
+        class: AppBundle\Service\RebrickableLoader
+        arguments: ['@doctrine.orm.entity_manager', '@manager.rebrickable']
   
     app.form.filter_set:
         class: AppBundle\Form\FilterSetType

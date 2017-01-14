@@ -45,7 +45,7 @@ class SetsController extends Controller
     {
         $set = $this->get('manager.brickset')->getSetById($id);;
 
-        $parts = $this->get('app.collection_service')->getSet($set->getNumber().'-'.$set->getNumberVariant())->getParts();
+        $parts = $this->get('sevice.collection')->getSet($set->getNumber().'-'.$set->getNumberVariant())->getParts();
 
         return $this->render('sets/detail.html.twig', [
             'set' => $set,

@@ -13,7 +13,7 @@ services:
           class: AppBundle\Api\Manager\RebrickableManager
           arguments: ['@client.rebrickable']
 
-    app.collection_service:
+    sevice.collection:
         class: AppBundle\Service\CollectionService
         arguments: ['@doctrine.orm.entity_manager', '@manager.brickset','@manager.rebrickable']
 

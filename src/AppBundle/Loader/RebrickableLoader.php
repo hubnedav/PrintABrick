@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Service;
+namespace AppBundle\Loader;
 
 use AppBundle\Api\Manager\RebrickableManager;
 use AppBundle\Entity\Category;
@@ -12,13 +12,8 @@ use AppBundle\Entity\Part_BuildingKit;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-class RebrickableLoader
+class RebrickableLoader extends Loader
 {
-    /**
-     * @var EntityManager
-     */
-    private $em;
-
     /**
      * @var RebrickableManager
      */
@@ -29,11 +24,14 @@ class RebrickableLoader
      */
     public function __construct($em, $rebrickableManager)
     {
+        /**
+         * @var $em EntityManager
+         * */
         $this->em = $em;
         $this->rebrickableManager = $rebrickableManager;
     }
 
-    public function loadPartBuildingKits($output)
+    public function loadPartBuildingKits()
     {
         $partRepository = $this->em->getRepository('AppBundle:Part');
         $buldingKitRepository = $this->em->getRepository('AppBundle:BuildingKit');
@@ -48,7 +46,7 @@ class RebrickableLoader
             $header = fgetcsv($handle, 200, ',');
 
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($output, intval(exec("wc -l '$setPieces'")));
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$setPieces'")));
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();
@@ -90,7 +88,7 @@ class RebrickableLoader
         unlink($setPieces);
     }
 
-    public function loadBuildingKits($output)
+    public function loadBuildingKits()
     {
         $keywordRepository = $this->em->getRepository('AppBundle:Keyword');
 
@@ -103,7 +101,7 @@ class RebrickableLoader
             $header = fgetcsv($handle, 500, ',');
 
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($output, intval(exec("wc -l '$sets'")));
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$sets'")));
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();
@@ -151,7 +149,7 @@ class RebrickableLoader
         unlink($sets);
     }
 
-    public function loadParts($output)
+    public function loadParts()
     {
         $pieces = tempnam(sys_get_temp_dir(), 'printabrick.');
         file_put_contents($pieces, fopen('compress.zlib://http://rebrickable.com/files/pieces.csv.gz', 'r'));
@@ -163,7 +161,7 @@ class RebrickableLoader
         if (($handle = fopen($pieces, 'r')) !== false) {
 
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($output, intval(exec("wc -l '$pieces'")));
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$pieces'")));
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();

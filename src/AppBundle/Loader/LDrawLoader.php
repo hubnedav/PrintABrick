@@ -1,37 +1,38 @@
 <?php
 
-namespace AppBundle\Service;
+namespace AppBundle\Loader;
 
 use AppBundle\Entity\Model;
 use Doctrine\ORM\EntityManager;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Adapter\NullAdapter;
+use League\Flysystem\FileExistsException;
+use League\Flysystem\FileNotFoundException;
+use League\Flysystem\Filesystem;
+use Oneup\FlysystemBundle\OneupFlysystemBundle;
 use Symfony\Component\Asset\Exception\LogicException;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ProcessBuilder;
 
-class LDrawLoader
+class LDrawLoader extends Loader
 {
-    /**
-     * @var EntityManager
-     */
-    private $em;
-
     /**
      * @var string LDView binary file path
      */
     private $ldview;
 
     /**
-     * @var string LDraw library root path
+     * @var $ldraw Filesystem
      */
     private $ldraw;
 
     /**
-     * @var string
+     * @var \League\Flysystem\Filesystem
      */
     private $dataPath;
-
 
     public function __construct($em, $ldview, $dataPath)
     {
@@ -40,17 +41,26 @@ class LDrawLoader
         $this->dataPath = $dataPath;
     }
 
-    // LDraw
     public function loadModels($LDrawLibrary)
     {
+        $adapter = new Local(getcwd().DIRECTORY_SEPARATOR.$LDrawLibrary);
+        $this->ldraw = new Filesystem($adapter);
+//        $files = $this->ldraw->get('parts')->getContents();
+
         $finder = new Finder();
-        $files = $finder->files()->name('*.dat')->depth('== 0')->in(getcwd().DIRECTORY_SEPARATOR.$LDrawLibrary.'/parts');
+        $files = $finder->files()->name('*.dat')->depth('== 0')->in(getcwd().DIRECTORY_SEPARATOR.$LDrawLibrary.DIRECTORY_SEPARATOR.'parts');
 
-        $this->ldraw = getcwd().DIRECTORY_SEPARATOR.$LDrawLibrary;
-
+        $progressBar = new ProgressBar($this->output, $files->count());
+        $progressBar->setFormat('very_verbose');
+        $progressBar->setMessage('Loading LDraw library models');
+        $progressBar->setFormat('%message:6s% %current%/%max% [%bar%]%percent:3s%% (%elapsed:6s%/%estimated:-6s%)');
+        $progressBar->start();
         foreach ($files as $file) {
             $this->loadModelHeader($file);
+            $this->createStlFile($file);
+            $progressBar->advance();
         }
+        $progressBar->finish();
     }
 
     private function loadModelHeader(SplFileInfo $fileInfo)
@@ -82,34 +92,33 @@ class LDrawLoader
                     $model->setAuthor(explode('Author: ', $line)[1]);
                 }
             }
-
-            $builder = new ProcessBuilder();
-            $process = $builder
-                ->setPrefix($this->ldview)
-                ->setArguments([
-                    $fileInfo->getRealPath(),
-                    '-ExportFiles=1',
-                    '-LDrawDir='.$this->ldraw,
-                    '-ExportSuffix=.stl',
-                    '-ExportsDir='.$this->dataPath,
-                ])
-                ->getProcess();
-
-
-            $process->run();
-
-
-            if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            } else {
-                var_dump($process->getOutput());
-            }
-
 //            $this->em->persist($model);
 //            $this->em->flush();
         } else {
             throw new LogicException('loadHeader error'); //TODO
         }
         fclose($handle);
+    }
+
+    private function createStlFile(SplFileInfo $file)
+    {
+        $builder = new ProcessBuilder();
+        $process = $builder
+            ->setPrefix($this->ldview)
+            ->setArguments([
+//                $this->ldraw->getAdapter()->getPathPrefix().$file['path'],
+                $file->getRealPath(),
+                '-ExportFiles=1',
+                '-LDrawDir='.$this->ldraw->getAdapter()->getPathPrefix(),
+                '-ExportSuffix=.stl',
+                '-ExportsDir='.$this->dataPath->getAdapter()->getPathPrefix(),
+            ])
+            ->getProcess();
+
+        $process->run();
+
+        if (!$process->isSuccessful() || !$this->dataPath->has(str_replace('.dat','.stl',$file->getFilename()))) {
+            throw new ProcessFailedException($process); //TODO
+        }
     }
 }

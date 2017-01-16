@@ -22,6 +22,10 @@ class LoadLDrawCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->getContainer()->get('loader.ldraw')->loadModels($input->getArgument('ldraw'));
+        $ldrawLoader = $this->getContainer()->get('loader.ldraw');
+
+        $ldrawLoader->setOutput($output);
+
+        $ldrawLoader->loadModels($input->getArgument('ldraw'));
     }
 }

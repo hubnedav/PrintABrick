@@ -21,14 +21,16 @@ class LoadRebrickableCommand extends ContainerAwareCommand
     {
         $rebrickableLoader = $this->getContainer()->get('loader.rebrickable');
 
+        $rebrickableLoader->setOutput($output);
+
         try {
             $rebrickableLoader->loadColors();
 
-            $rebrickableLoader->loadParts($output);
+            $rebrickableLoader->loadParts();
 
-            $rebrickableLoader->loadBuildingKits($output);
+            $rebrickableLoader->loadBuildingKits();
 
-            $rebrickableLoader->loadPartBuildingKits($output);
+            $rebrickableLoader->loadPartBuildingKits();
         } catch (\Exception $e) {
             printf($e->getMessage());
         }

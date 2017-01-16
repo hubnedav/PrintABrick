@@ -23,7 +23,8 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
         "guzzlehttp/guzzle": "^6.2",
-        "knplabs/knp-menu-bundle": "^2.0"
+        "knplabs/knp-menu-bundle": "^2.0",
+        "oneup/flysystem-bundle": "^1.7"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

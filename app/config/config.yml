@@ -76,3 +76,12 @@ knp_menu:
     templating: false
     # the renderer to use, list is also available by default
     default_renderer: twig
+
+oneup_flysystem:
+    adapters:
+        ldraw_adapter:
+            local:
+                directory: "%kernel.root_dir%/../var/data/ldraw"
+    filesystems:
+        ldraw:
+            adapter: ldraw_adapter

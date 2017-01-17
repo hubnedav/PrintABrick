@@ -3,10 +3,10 @@
 namespace AppBundle\Loader;
 
 use AppBundle\Api\Manager\RebrickableManager;
+use AppBundle\Entity\BuildingKit;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Color;
 use AppBundle\Entity\Keyword;
-use AppBundle\Entity\BuildingKit;
 use AppBundle\Entity\Part;
 use AppBundle\Entity\Part_BuildingKit;
 use Doctrine\ORM\EntityManager;
@@ -24,7 +24,7 @@ class RebrickableLoader extends Loader
      */
     public function __construct($em, $rebrickableManager)
     {
-        /**
+        /*
          * @var $em EntityManager
          * */
         $this->em = $em;
@@ -159,7 +159,6 @@ class RebrickableLoader extends Loader
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         if (($handle = fopen($pieces, 'r')) !== false) {
-
             // create a new progress bar (50 units)
             $progress = new ProgressBar($this->output, intval(exec("wc -l '$pieces'")));
             $progress->setFormat('very_verbose');

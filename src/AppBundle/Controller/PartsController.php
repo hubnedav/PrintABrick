@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * @Route("rebrickable/parts")
@@ -21,4 +21,4 @@ class PartsController extends Controller
             'part' => $part,
         ]);
     }
-}   
+}

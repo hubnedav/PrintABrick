@@ -23,7 +23,7 @@ class Brickset extends \SoapClient
     /**
      * @var array The defined classes
      */
-    private static $classmap = array(
+    private static $classmap = [
         'sets' => Set::class,
         'additionalImages' => AdditionalImage::class,
         'instructions' => Instructions::class,
@@ -31,14 +31,14 @@ class Brickset extends \SoapClient
         'themes' => Theme::class,
         'subthemes' => Subtheme::class,
         'years' => Year::class,
-    );
+    ];
 
     /**
      * @param string $apikey  Brickset API key
      * @param array  $options A array of config values
      * @param string $wsdl    The wsdl file to use
      */
-    public function __construct($apikey, $wsdl = null, array $options = array())
+    public function __construct($apikey, $wsdl = null, array $options = [])
     {
         $this->apiKey = $apikey;
 
@@ -238,11 +238,10 @@ class Brickset extends \SoapClient
             return false;
         } elseif (strpos($response, 'ERROR:') === 0) {
             return false;
-        } else {
-            $this->userHash = $response;
-
-            return true;
         }
+        $this->userHash = $response;
+
+        return true;
     }
 
     /**

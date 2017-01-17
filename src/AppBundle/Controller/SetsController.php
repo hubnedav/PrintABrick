@@ -43,7 +43,7 @@ class SetsController extends Controller
      */
     public function detailAction(Request $request, $id, $name = null)
     {
-        $set = $this->get('manager.brickset')->getSetById($id);;
+        $set = $this->get('manager.brickset')->getSetById($id);
 
         $parts = $this->get('sevice.collection')->getSet($set->getNumber().'-'.$set->getNumberVariant())->getParts();
 

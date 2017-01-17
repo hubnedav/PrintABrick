@@ -5,10 +5,9 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Form\CallbackTransformer;
 
 /**
- * Category
+ * Category.
  *
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
@@ -54,9 +53,8 @@ class Category
         $this->parts = new ArrayCollection();
     }
 
-
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -66,7 +64,7 @@ class Category
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -80,7 +78,7 @@ class Category
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -90,7 +88,7 @@ class Category
     }
 
     /**
-     * Get models
+     * Get models.
      *
      * @return ArrayCollection
      */
@@ -124,7 +122,7 @@ class Category
     }
 
     /**
-     * Get parts
+     * Get parts.
      *
      * @return ArrayCollection
      */

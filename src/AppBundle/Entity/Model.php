@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Model
+ * Model.
  *
  * @ORM\Table(name="model")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ModelRepository")
@@ -57,9 +57,8 @@ class Model
      */
     private $category;
 
-
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -69,7 +68,7 @@ class Model
     }
 
     /**
-     * Set number
+     * Set number.
      *
      * @param string $number
      *
@@ -83,7 +82,7 @@ class Model
     }
 
     /**
-     * Get number
+     * Get number.
      *
      * @return string
      */
@@ -93,7 +92,7 @@ class Model
     }
 
     /**
-     * Set author
+     * Set author.
      *
      * @param string $author
      *
@@ -107,7 +106,7 @@ class Model
     }
 
     /**
-     * Get author
+     * Get author.
      *
      * @return string
      */
@@ -117,7 +116,7 @@ class Model
     }
 
     /**
-     * Set file
+     * Set file.
      *
      * @param string $file
      *
@@ -131,7 +130,7 @@ class Model
     }
 
     /**
-     * Get file
+     * Get file.
      *
      * @return string
      */
@@ -141,7 +140,7 @@ class Model
     }
 
     /**
-     * Get parts
+     * Get parts.
      *
      * @return Collection
      */
@@ -175,7 +174,7 @@ class Model
     }
 
     /**
-     * Set category
+     * Set category.
      *
      * @param Category $category
      *
@@ -190,7 +189,7 @@ class Model
     }
 
     /**
-     * Get category
+     * Get category.
      *
      * @return Category
      */

@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Color
+ * Color.
  *
  * @ORM\Table(name="color")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ColorRepository")
@@ -43,7 +43,7 @@ class Color
     private $part_building_kits;
 
     /**
-     * Set id
+     * Set id.
      *
      * @var int
      *
@@ -57,7 +57,7 @@ class Color
     }
 
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -67,7 +67,7 @@ class Color
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -81,7 +81,7 @@ class Color
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -91,7 +91,7 @@ class Color
     }
 
     /**
-     * Set rgb
+     * Set rgb.
      *
      * @param string $rgb
      *
@@ -105,7 +105,7 @@ class Color
     }
 
     /**
-     * Get rgb
+     * Get rgb.
      *
      * @return string
      */
@@ -123,7 +123,6 @@ class Color
     }
 
     /**
-     *
      * @param Part_BuildingKit $part_building_kit
      *
      * @return Color
@@ -148,11 +147,10 @@ class Color
     }
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
         $this->part_building_kits = new \Doctrine\Common\Collections\ArrayCollection();
     }
-
 }

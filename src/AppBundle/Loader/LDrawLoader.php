@@ -3,13 +3,8 @@
 namespace AppBundle\Loader;
 
 use AppBundle\Entity\Model;
-use Doctrine\ORM\EntityManager;
 use League\Flysystem\Adapter\Local;
-use League\Flysystem\Adapter\NullAdapter;
-use League\Flysystem\FileExistsException;
-use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
-use Oneup\FlysystemBundle\OneupFlysystemBundle;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Finder\Finder;
@@ -25,7 +20,7 @@ class LDrawLoader extends Loader
     private $ldview;
 
     /**
-     * @var $ldraw Filesystem
+     * @var Filesystem
      */
     private $ldraw;
 
@@ -117,7 +112,7 @@ class LDrawLoader extends Loader
 
         $process->run();
 
-        if (!$process->isSuccessful() || !$this->dataPath->has(str_replace('.dat','.stl',$file->getFilename()))) {
+        if (!$process->isSuccessful() || !$this->dataPath->has(str_replace('.dat', '.stl', $file->getFilename()))) {
             throw new ProcessFailedException($process); //TODO
         }
     }

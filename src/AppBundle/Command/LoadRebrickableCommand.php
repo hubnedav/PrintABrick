@@ -13,8 +13,7 @@ class LoadRebrickableCommand extends ContainerAwareCommand
         $this
             ->setName('app:load:rebrickable')
             ->setDescription('Loads Rebrickable csv data')
-            ->setHelp('This command allows you to..')
-        ;
+            ->setHelp('This command allows you to..');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

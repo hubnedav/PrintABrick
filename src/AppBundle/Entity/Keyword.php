@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Keyword
+ * Keyword.
  *
  * @ORM\Table(name="keyword")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\KeywordRepository")
@@ -44,9 +44,8 @@ class Keyword
         $this->building_kits = new ArrayCollection();
     }
 
-
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -56,7 +55,7 @@ class Keyword
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -70,7 +69,7 @@ class Keyword
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -110,5 +109,4 @@ class Keyword
 
         return $this;
     }
-
 }

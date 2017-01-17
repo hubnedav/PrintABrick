@@ -15,7 +15,7 @@ class Builder
         ]);
 
         $menu->addChild('Sets', [
-            'route' => 'sets_browse',
+            'route' => 'set_browse',
         ]);
 
         return $menu;

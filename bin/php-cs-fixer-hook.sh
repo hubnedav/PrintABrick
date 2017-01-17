@@ -3,7 +3,7 @@
 # To use this hook you need to install php-cs-fixer
 # Copy this file to ./git/hooks/pre-commit to get it working.
 
-ROOT="/"
+ROOT=""
 
 echo "php-cs-fixer pre commit hook start"
 
@@ -16,7 +16,7 @@ fi
 
 if $HAS_PHP_CS_FIXER; then
     git status --porcelain | grep -e '^[AM]\(.*\).php$' | cut -c 3- | while read line; do
-        $PHP_CS_FIXER fix --config-file=$ROOT/.php_cs --verbose "$line";
+        $PHP_CS_FIXER fix --config=$ROOT/.php_cs --verbose "$line";
         git add "$line";
     done
 else

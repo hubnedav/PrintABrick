@@ -12,6 +12,7 @@ use AppBundle\Entity\Part_BuildingKit;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Helper\ProgressBar;
 
+//TODO Refactor
 class RebrickableLoader extends Loader
 {
     /**
@@ -46,7 +47,7 @@ class RebrickableLoader extends Loader
             $header = fgetcsv($handle, 200, ',');
 
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$setPieces'")));
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$setPieces'"))); //TODO replace wc-l
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();
@@ -101,7 +102,7 @@ class RebrickableLoader extends Loader
             $header = fgetcsv($handle, 500, ',');
 
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$sets'")));
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$sets'"))); //TODO replace wc-l
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();
@@ -152,7 +153,7 @@ class RebrickableLoader extends Loader
     public function loadParts()
     {
         $pieces = tempnam(sys_get_temp_dir(), 'printabrick.');
-        file_put_contents($pieces, fopen('compress.zlib://http://rebrickable.com/files/pieces.csv.gz', 'r'));
+        file_put_contents($pieces, fopen('compress.zlib://http://rebrickable.com/files/pieces.csv.gz', 'r')); //TODO replace wc-l
 
         $categoryRepository = $this->em->getRepository('AppBundle:Category');
 

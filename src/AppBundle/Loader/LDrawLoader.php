@@ -2,6 +2,7 @@
 
 namespace AppBundle\Loader;
 
+use AppBundle\Entity\Category;
 use AppBundle\Entity\Model;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -31,6 +32,9 @@ class LDrawLoader extends Loader
 
     public function __construct($em, $ldview, $dataPath)
     {
+        /*
+         * @var $em EntityManager
+         * */
         $this->em = $em;
         $this->ldview = $ldview;
         $this->dataPath = $dataPath;
@@ -38,6 +42,7 @@ class LDrawLoader extends Loader
 
     public function loadModels($LDrawLibrary)
     {
+        //TODO Refactor, use flysystem
         $adapter = new Local(getcwd().DIRECTORY_SEPARATOR.$LDrawLibrary);
         $this->ldraw = new Filesystem($adapter);
 //        $files = $this->ldraw->get('parts')->getContents();
@@ -51,51 +56,83 @@ class LDrawLoader extends Loader
         $progressBar->setFormat('%message:6s% %current%/%max% [%bar%]%percent:3s%% (%elapsed:6s%/%estimated:-6s%)');
         $progressBar->start();
         foreach ($files as $file) {
-            $this->loadModelHeader($file);
-            $this->createStlFile($file);
+            $model = $this->loadPartHeader($file);
+            $model->setFile($this->createStlFile($file)->getPath());
+
+            $this->em->persist($model);
+            $this->em->flush();
+
             $progressBar->advance();
         }
         $progressBar->finish();
     }
 
-    private function loadModelHeader(SplFileInfo $fileInfo)
+    /**
+     * @param SplFileInfo $file
+     *
+     * @return Model
+     */
+    private function loadPartHeader($file)
     {
-        $handle = fopen($fileInfo->getRealPath(), 'r');
+        $handle = fopen($file->getRealPath(), 'r');
         if ($handle) {
-            $firstLine = fgets($handle);
-            $description = trim(substr($firstLine, 2));
+            $firstLine = false;
+
             $model = new Model();
-            $model->setFile($fileInfo->getFilename());
-            $p['category'] = explode(' ', trim($description))[0];
 
-            //TODO handle ~Moved to
+            // read lines while line starts with 0 or is empty
+            while (($line = trim(fgets($handle))) !== false && ($line ? $line[0] == '0' : true)) {
+                if ($line !== '') {
+                    $line = preg_replace('/^0 /', '', $line);
 
-            while (!feof($handle)) {
-                $line = trim(fgets($handle));
-                if ($line && ($line[0] == '1')) {
-                    break;
-                } elseif ($line && ($line[0] == '0' && strpos($line, '!CATEGORY '))) {
-                    $p['category'] = trim(explode('!CATEGORY ', $line)[1]);
-                } elseif ($line && ($line[0] == '0' && strpos($line, '!KEYWORDS '))) {
-                    $keywords = explode(',', explode('!KEYWORDS ', $line)[1]);
-                    foreach ($keywords as $k) {
-                        $p['keywords'][] = trim($k);
+                    // 0 <PartDescription>
+                    if (!$firstLine) { //TODO handle ~Moved to
+                        $category = explode(' ', trim($line))[0];
+                        $firstLine = true;
                     }
-                } elseif ($line && ($line[0] == '0' && strpos($line, 'Name: '))) {
-                    $model->setNumber(trim(explode('.dat', explode('Name: ', $line)[1])[0]));
-                } elseif ($line && ($line[0] == '0' && strpos($line, 'Author: '))) {
-                    $model->setAuthor(explode('Author: ', $line)[1]);
+                    // 0 !CATEGORY <CategoryName>
+                    elseif (strpos($line, '!CATEGORY ') === 0) {
+                        $category = trim(preg_replace('/^!CATEGORY /', '', $line));
+                    }
+                    // 0 !KEYWORDS <first keyword>, <second keyword>, ..., <last keyword>
+                    elseif (strpos($line, '!KEYWORDS ') === 0) {
+                        $keywords = explode(', ', preg_replace('/^!KEYWORDS /', '', $line));
+                    }
+                    // 0 Name: <Filename>.dat
+                    elseif (strpos($line, 'Name: ') === 0) {
+                        $model->setNumber(preg_replace('/(^Name: )(.*)(.dat)/', '$2', $line));
+                    }
+                    // 0 Author: <Realname> [<Username>]
+                    elseif (strpos($line, 'Author: ') === 0) {
+                        $model->setAuthor(preg_replace('/^Author: /', '', $line));
+                    }
                 }
             }
-//            $this->em->persist($model);
-//            $this->em->flush();
+
+            $cat = $this->em->getRepository('AppBundle:Category')->findOneBy(['name' => $category]);
+            if ($cat == null) {
+                $cat = new Category();
+                $cat->setName($category);
+                $this->em->persist($cat);
+                $this->em->flush();
+            }
+
+            $model->setCategory($cat);
+            $cat->addModel($model);
         } else {
             throw new LogicException('loadHeader error'); //TODO
         }
         fclose($handle);
+
+        return $model;
     }
 
-    private function createStlFile(SplFileInfo $file)
+    /**
+     * @param SplFileInfo $file
+     *
+     * @return \League\Flysystem\File
+     */
+    private function createStlFile($file)
     {
         $builder = new ProcessBuilder();
         $process = $builder
@@ -112,8 +149,12 @@ class LDrawLoader extends Loader
 
         $process->run();
 
-        if (!$process->isSuccessful() || !$this->dataPath->has(str_replace('.dat', '.stl', $file->getFilename()))) {
+        $stlFilename = str_replace('.dat', '.stl', $file->getFilename());
+
+        if (!$process->isSuccessful() || !$this->dataPath->has($stlFilename)) {
             throw new ProcessFailedException($process); //TODO
         }
+
+        return $this->dataPath->get($stlFilename);
     }
 }

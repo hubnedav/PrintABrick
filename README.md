@@ -15,3 +15,15 @@ For full requirements see Symfony 3.2 [docs](http://symfony.com/doc/3.2/referenc
 
 ###Installing  
    
+####Back-end
+1. Make sure your system meets the application requirements
+2. Install dependencies via [Composer](https://getcomposer.org/), `$ composer install`
+
+####Front-end
+1. Install dependencies via [npm](https://www.npmjs.com/), `$ npm install`
+2. Compile assets by running [Gulp](http://gulpjs.com/) default task, `$ gulp default`
+
+####Database
+1. Set application parameters in *app/config/parameters.yml*
+2. Generate empty database by running command `$ php bin/console doctrine:database:create`    
+    

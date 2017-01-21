@@ -25,6 +25,12 @@ class Model
     /**
      * @var string
      *
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     */
+    private $name;
+    /**
+     * @var string
+     *
      * @ORM\Column(name="number", type="string", length=255, unique=true)
      */
     private $number;
@@ -53,7 +59,7 @@ class Model
     /**
      * @var Category
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category", inversedBy="models")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category", inversedBy="models", cascade={"persist"})
      */
     private $category;
 
@@ -65,6 +71,22 @@ class Model
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**

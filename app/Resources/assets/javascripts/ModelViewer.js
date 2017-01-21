@@ -1,41 +1,31 @@
-ModelViewer = function(containerId) {
-    var container = document.getElementById(containerId);
+ModelViewer = function() {
+    var container;
     var camera, scene, cameraTarget, renderer, controls, object;
+    var width, height;
 
-    if (document.defaultView && document.defaultView.getComputedStyle) {
-        var width  = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('width'));
-        var height = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('height'));
-    } else {
-        var width  = parseFloat(container.currentStyle.width);
-        var height = parseFloat(container.currentStyle.height);
-    }
+    this.init = function(containerId) {
+        container = document.getElementById(containerId);
+
+        if (document.defaultView && document.defaultView.getComputedStyle) {
+            width  = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('width'));
+            height = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('height'));
+        } else {
+            width  = parseFloat(container.currentStyle.width);
+            height = parseFloat(container.currentStyle.height);
+        }
 
 
-    this.init = function() {
         camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
         camera.position.set(-2, 2, 0.8);
         camera.lookAt(new THREE.Vector3(0, 3, 0));
 
         scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x000000, 0.1);
+        scene.fog = new THREE.FogExp2(0x000000, 0.001);
 
 
         var grid = new THREE.GridHelper( 30, 70 );
         grid.position.set(30/70,-0.5,30/70);
         scene.add( grid );
-
-        var loader = new THREE.STLLoader();
-        loader.load('./resources/3005.stl', function (geometry) {
-            var material = new THREE.MeshPhongMaterial({color: 0xaaaaaa, shininess:200,  specular: 0x333333, shading: THREE.FlatShading});
-
-            var mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(0, 0.5, 0);
-            mesh.rotation.set(Math.PI, 0, 0);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-            scene.add(mesh);
-        });
-
 
         // Lights
 
@@ -65,17 +55,33 @@ ModelViewer = function(containerId) {
 
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         controls.addEventListener( 'change', this.render ); // add this only if there is no animation loop (requestAnimationFrame)
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.25;
+        // controls.enableDamping = true;
+        // controls.dampingFactor = 0.25;
         controls.enableZoom = true;
 
     };
 
+    this.loadStl = function(model) {
+        var loader = new THREE.STLLoader();
+        loader.load(model, function (geometry) {
+            var material = new THREE.MeshPhongMaterial({color: 0xaaaaaa, shininess:200,  specular: 0x333333, shading: THREE.FlatShading});
+
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(0, 0.5, 0);
+            mesh.rotation.set(Math.PI, 0, 0);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            scene.add(mesh);
+
+            renderer.render(scene, camera);
+        });
+    };
+
     this.animate = function() {
 
-        // requestAnimationFrame(this.animate);
+        requestAnimationFrame( this.animate );
 
-        // controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+        controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
 
         this.render();
     };

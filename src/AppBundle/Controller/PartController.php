@@ -18,13 +18,11 @@ class PartController extends Controller
         $part = $this->get('manager.rebrickable')->getPart($id);
 
         $em = $this->getDoctrine()->getManager();
-        $localPart = $em->getRepository('AppBundle:Part')->findBy(['id' => $id]);
-        $model = $em->getRepository('AppBundle:Model')->findBy(['number' => $id]);
+        $localPart = $em->getRepository('AppBundle:Part')->findOneBy(['number' => $id]);
 
         return $this->render('part/detail.html.twig', [
             'part' => $part,
             'localPart' => $localPart,
-            'model' => $model,
         ]);
     }
 }

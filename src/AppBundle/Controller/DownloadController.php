@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DownloadController extends Controller
 {
     /**
-     * @Route("/model/{id}", name="model_download")
+     * @Route("/model/{id}", name="download_model")
      *
      * @return Response
      */

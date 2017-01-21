@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Loader;
+namespace AppBundle\Command\Loader;
 
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Model;
@@ -10,7 +10,6 @@ use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ProcessBuilder;
 
 class LDrawLoader extends Loader
@@ -30,7 +29,9 @@ class LDrawLoader extends Loader
      */
     private $dataPath;
 
-    public function __construct($em, $ldview, $dataPath)
+    private $ldraw_url;
+
+    public function __construct($em, $ldview, $dataPath, $ldraw_url)
     {
         /*
          * @var $em EntityManager
@@ -38,6 +39,27 @@ class LDrawLoader extends Loader
         $this->em = $em;
         $this->ldview = $ldview;
         $this->dataPath = $dataPath;
+        $this->ldraw_url = $ldraw_url;
+    }
+
+    public function downloadLibrary()
+    {
+        $this->output->writeln('Downloading set_pieces.csv from Rebrickable.com');
+        $temp = $this->downloadFile($this->ldraw_url);
+        $temp_dir = tempnam(sys_get_temp_dir(), 'printabrick.');
+        if (file_exists($temp_dir)) {
+            unlink($temp_dir);
+        }
+        mkdir($temp_dir);
+        $zip = new \ZipArchive();
+        if ($zip->open($temp) != 'true') {
+            echo 'Error :- Unable to open the Zip File';
+        }
+        $zip->extractTo($temp_dir);
+        $zip->close();
+        unlink($temp);
+
+        return $temp_dir;
     }
 
     public function loadModels($LDrawLibrary)
@@ -85,9 +107,16 @@ class LDrawLoader extends Loader
                 if ($line !== '') {
                     $line = preg_replace('/^0 /', '', $line);
 
-                    // 0 <PartDescription>
-                    if (!$firstLine) { //TODO handle ~Moved to
-                        $category = explode(' ', trim($line))[0];
+                    // 0 <CategoryName> <PartDescription>
+                    if (!$firstLine) {
+                        //TODO handle "~Moved to"
+                        //TODO        "=" - alias name for other part kept for referece
+                        //TODO        "_" shortcut
+
+                        $array = explode(' ', trim($line), 2);
+                        $category = isset($array[0]) ? $array[0] : '';
+                        $model->setName($line);
+
                         $firstLine = true;
                     }
                     // 0 !CATEGORY <CategoryName>
@@ -113,8 +142,6 @@ class LDrawLoader extends Loader
             if ($cat == null) {
                 $cat = new Category();
                 $cat->setName($category);
-                $this->em->persist($cat);
-                $this->em->flush();
             }
 
             $model->setCategory($cat);
@@ -134,25 +161,25 @@ class LDrawLoader extends Loader
      */
     private function createStlFile($file)
     {
-        $builder = new ProcessBuilder();
-        $process = $builder
-            ->setPrefix($this->ldview)
-            ->setArguments([
-//                $this->ldraw->getAdapter()->getPathPrefix().$file['path'],
-                $file->getRealPath(),
-                '-ExportFiles=1',
-                '-LDrawDir='.$this->ldraw->getAdapter()->getPathPrefix(),
-                '-ExportSuffix=.stl',
-                '-ExportsDir='.$this->dataPath->getAdapter()->getPathPrefix(),
-            ])
-            ->getProcess();
-
-        $process->run();
-
         $stlFilename = str_replace('.dat', '.stl', $file->getFilename());
 
-        if (!$process->isSuccessful() || !$this->dataPath->has($stlFilename)) {
-            throw new ProcessFailedException($process); //TODO
+        if (!$this->dataPath->has($stlFilename)) {
+            $builder = new ProcessBuilder();
+            $process = $builder
+                ->setPrefix($this->ldview)
+                ->setArguments([
+//                $this->ldraw->getAdapter()->getPathPrefix().$file['path'],
+                    $file->getRealPath(),
+                    '-LDrawDir='.$this->ldraw->getAdapter()->getPathPrefix(),
+                    '-ExportFile='.$this->dataPath->getAdapter()->getPathPrefix().$stlFilename,
+                ])
+                ->getProcess();
+
+            $process->run();
+
+            if (!$process->isSuccessful() || !$this->dataPath->has($stlFilename)) {
+                throw new LogicException($file->getFilename().' : '.$process->getOutput()); //TODO
+            }
         }
 
         return $this->dataPath->get($stlFilename);

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Loader;
+namespace AppBundle\Command\Loader;
 
 use AppBundle\Api\Manager\RebrickableManager;
 use AppBundle\Entity\BuildingKit;
@@ -9,7 +9,6 @@ use AppBundle\Entity\Color;
 use AppBundle\Entity\Keyword;
 use AppBundle\Entity\Part;
 use AppBundle\Entity\Part_BuildingKit;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 //TODO Refactor
@@ -20,34 +19,35 @@ class RebrickableLoader extends Loader
      */
     private $rebrickableManager;
 
+    private $rebrickable_url;
+
     /**
      * ModelLoaderService constructor.
      */
-    public function __construct($em, $rebrickableManager)
+    public function __construct($em, $rebrickableManager, $rebrickable_url)
     {
-        /*
-         * @var $em EntityManager
-         * */
         $this->em = $em;
         $this->rebrickableManager = $rebrickableManager;
+        $this->rebrickable_url = $rebrickable_url;
     }
 
     public function loadPartBuildingKits()
     {
+        $this->output->writeln('Downloading set_pieces.csv from Rebrickable.com');
+        $file = $this->downloadFile('compress.zlib://'.$this->rebrickable_url['set_pieces']);
+
         $partRepository = $this->em->getRepository('AppBundle:Part');
         $buldingKitRepository = $this->em->getRepository('AppBundle:BuildingKit');
         $colorRepository = $this->em->getRepository('AppBundle:Color');
 
-        $setPieces = tempnam(sys_get_temp_dir(), 'printabrick.');
-        file_put_contents($setPieces, fopen('compress.zlib://http://rebrickable.com/files/set_pieces.csv.gz', 'r'));
-
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        if (($handle = fopen($setPieces, 'r')) !== false) {
+        $this->output->writeln('Loading set_pieces.csv into Database');
+        if (($handle = fopen($file, 'r')) !== false) {
             $header = fgetcsv($handle, 200, ',');
 
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$setPieces'"))); //TODO replace wc-l
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$file'"))); //TODO replace wc-l
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();
@@ -83,26 +83,26 @@ class RebrickableLoader extends Loader
             $this->em->clear();
             fclose($handle);
             $progress->finish();
-            $progress->clear();
         }
 
-        unlink($setPieces);
+        unlink($file);
     }
 
     public function loadBuildingKits()
     {
-        $keywordRepository = $this->em->getRepository('AppBundle:Keyword');
+        $this->output->writeln('Downloading sets.csv from Rebrickable.com');
+        $file = $this->downloadFile('compress.zlib://'.$this->rebrickable_url['sets']);
 
-        $sets = tempnam(sys_get_temp_dir(), 'printabrick.');
-        file_put_contents($sets, fopen('compress.zlib://http://rebrickable.com/files/sets.csv.gz', 'r'));
+        $keywordRepository = $this->em->getRepository('AppBundle:Keyword');
 
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        if (($handle = fopen($sets, 'r')) !== false) {
+        $this->output->writeln('Loading sets.csv into Database');
+        if (($handle = fopen($file, 'r')) !== false) {
             $header = fgetcsv($handle, 500, ',');
 
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$sets'"))); //TODO replace wc-l
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$file'"))); //TODO replace wc-l
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();
@@ -145,23 +145,23 @@ class RebrickableLoader extends Loader
             fclose($handle);
 
             $progress->finish();
-            $progress->clear();
         }
-        unlink($sets);
+        unlink($file);
     }
 
     public function loadParts()
     {
-        $pieces = tempnam(sys_get_temp_dir(), 'printabrick.');
-        file_put_contents($pieces, fopen('compress.zlib://http://rebrickable.com/files/pieces.csv.gz', 'r')); //TODO replace wc-l
+        $this->output->writeln('Downloading pieces.csv from Rebrickable.com');
+        $file = $this->downloadFile('compress.zlib://'.$this->rebrickable_url['pieces']);
 
         $categoryRepository = $this->em->getRepository('AppBundle:Category');
 
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        if (($handle = fopen($pieces, 'r')) !== false) {
+        $this->output->writeln('Loading pieces.csv into Database');
+        if (($handle = fopen($file, 'r')) !== false) {
             // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$pieces'")));
+            $progress = new ProgressBar($this->output, intval(exec("wc -l '$file'"))); //TODO replace wc-l
             $progress->setFormat('very_verbose');
             $progress->setBarWidth(50);
             $progress->start();
@@ -194,14 +194,15 @@ class RebrickableLoader extends Loader
             fclose($handle);
 
             $progress->finish();
-            $progress->clear();
         }
 
-        unlink($pieces);
+        unlink($file);
     }
 
     public function loadColors()
     {
+        $this->output->writeln('Loading colors into Database');
+
         $rb_colors = $this->rebrickableManager->getColors();
 
         foreach ($rb_colors as $rb_color) {
@@ -221,10 +222,10 @@ class RebrickableLoader extends Loader
     {
         $modelRepository = $this->em->getRepository('AppBundle:Model');
 
-        if (strpos($part->getNumber(), 'p')) {
+        $model = $modelRepository->findOneBy(['number' => $part->getNumber()]);
+
+        if (!$model && strpos($part->getNumber(), 'p')) {
             $model = $modelRepository->findOneBy(['number' => explode('p', $part->getNumber())[0]]);
-        } else {
-            $model = $modelRepository->findOneBy(['number' => $part->getNumber()]);
         }
 
         return $model;

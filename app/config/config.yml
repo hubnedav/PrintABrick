@@ -7,6 +7,11 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    rebrickable_url:
+      pieces: 'http://rebrickable.com/files/pieces.csv.gz'
+      sets: 'http://rebrickable.com/files/sets.csv.gz'
+      set_pieces: 'http://rebrickable.com/files/set_pieces.csv.gz'
+    ldraw_url: 'http://www.ldraw.org/library/updates/completeCA.zip'
 
 framework:
     #esi:             ~

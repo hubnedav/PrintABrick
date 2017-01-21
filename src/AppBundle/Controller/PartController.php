@@ -6,7 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * @Route("rebrickable/part")
+ * @Route("/rebrickable/part")
  */
 class PartController extends Controller
 {

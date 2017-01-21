@@ -848,12 +848,11 @@ class Set
     {
         if ($this->lastUpdated == null) {
             return null;
-        } else {
-            try {
-                return new \DateTime($this->lastUpdated);
-            } catch (\Exception $e) {
-                return null;
-            }
+        }
+        try {
+            return new \DateTime($this->lastUpdated);
+        } catch (\Exception $e) {
+            return null;
         }
     }
 

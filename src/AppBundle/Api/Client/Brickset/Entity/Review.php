@@ -57,7 +57,7 @@ class Review
     /**
      * Review constructor.
      */
-    function __construct()
+    public function __construct()
     {
     }
 
@@ -88,12 +88,11 @@ class Review
     {
         if ($this->datePosted == null) {
             return null;
-        } else {
-            try {
-                return new \DateTime($this->datePosted);
-            } catch (\Exception $e) {
-                return null;
-            }
+        }
+        try {
+            return new \DateTime($this->datePosted);
+        } catch (\Exception $e) {
+            return null;
         }
     }
 

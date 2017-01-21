@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BuildingKit
+ * BuildingKit.
  *
  * @ORM\Table(name="building_kit")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingKitRepository")
@@ -74,9 +74,8 @@ class BuildingKit
         $this->keywords = new ArrayCollection();
     }
 
-
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -105,9 +104,8 @@ class BuildingKit
         return $this;
     }
 
-
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
      *
@@ -121,7 +119,7 @@ class BuildingKit
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -131,9 +129,9 @@ class BuildingKit
     }
 
     /**
-     * Set year
+     * Set year.
      *
-     * @param integer $year
+     * @param int $year
      *
      * @return BuildingKit
      */
@@ -145,7 +143,7 @@ class BuildingKit
     }
 
     /**
-     * Get year
+     * Get year.
      *
      * @return int
      */
@@ -175,7 +173,7 @@ class BuildingKit
     }
 
     /**
-     * Get parts
+     * Get parts.
      *
      * @return Collection
      */
@@ -209,7 +207,7 @@ class BuildingKit
     }
 
     /**
-     * Get keywords
+     * Get keywords.
      *
      * @return Collection
      */

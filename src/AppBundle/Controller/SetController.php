@@ -8,12 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/brickset/sets")
+ * @Route("/brickset/set")
  */
-class SetsController extends Controller
+class SetController extends Controller
 {
     /**
-     * @Route("/", name="sets_browse")
+     * @Route("/", name="set_browse")
      */
     public function browseAction(Request $request)
     {
@@ -32,7 +32,7 @@ class SetsController extends Controller
             ]);
         }
 
-        return $this->render('sets/browse.html.twig', [
+        return $this->render('set/browse.html.twig', [
             'form' => $form->createView(),
             'sets' => $sets,
         ]);
@@ -43,13 +43,10 @@ class SetsController extends Controller
      */
     public function detailAction(Request $request, $id, $name = null)
     {
-        $set = $this->get('manager.brickset')->getSetById($id);;
+        $set = $this->get('manager.brickset')->getSetById($id);
 
-        $parts = $this->get('app.collection_service')->getSet($set->getNumber().'-'.$set->getNumberVariant())->getParts();
-
-        return $this->render('sets/detail.html.twig', [
+        return $this->render('set/detail.html.twig', [
             'set' => $set,
-            'parts' => $parts,
         ]);
     }
 }

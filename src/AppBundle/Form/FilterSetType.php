@@ -26,36 +26,35 @@ class FilterSetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add("theme", ChoiceType::class, [
+            ->add('theme', ChoiceType::class, [
                 'choices' => $this->bricksetManager->getThemes(),
-                'choice_label' => function(Theme $theme = null) {
+                'choice_label' => function (Theme $theme = null) {
                     return $theme ? $theme->getTheme().' ('.$theme->getSetCount().')' : '';
                 },
                 'placeholder' => '',
-                'required' => false
-
+                'required' => false,
             ]);
 
         $formModifier = function (Form $form, Theme $theme = null) {
             $subthemes = null === $theme ? [] : $this->bricksetManager->getSubthemesByTheme($theme);
             $years = null === $theme ? [] : $this->bricksetManager->getYearsByTheme($theme);
 
-            $form->add("subtheme", ChoiceType::class, [
+            $form->add('subtheme', ChoiceType::class, [
                 'choices' => $subthemes,
-                'choice_label' => function(Subtheme $subtheme = null) {
+                'choice_label' => function (Subtheme $subtheme = null) {
                     return $subtheme ? $subtheme->getSubtheme() : '';
                 },
                 'placeholder' => '',
-                'required' => false
+                'required' => false,
             ]);
 
-            $form->add("years", ChoiceType::class, [
+            $form->add('years', ChoiceType::class, [
                 'choices' => $years,
-                'choice_label' => function(Year $year = null) {
+                'choice_label' => function (Year $year = null) {
                     return $year ? $year->getYear() : '';
                 },
                 'placeholder' => '',
-                'required' => false
+                'required' => false,
             ]);
         };
 
@@ -76,6 +75,6 @@ class FilterSetType extends AbstractType
             }
         );
 
-        $builder->add('submit',SubmitType::class);
+        $builder->add('submit', SubmitType::class);
     }
 }

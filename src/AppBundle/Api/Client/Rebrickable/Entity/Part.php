@@ -138,6 +138,7 @@ class Part
     {
         $this->name = $name;
     }
+
     /**
      * @return mixed
      */
@@ -185,6 +186,7 @@ class Part
     {
         $this->category = $category;
     }
+
     /**
      * @return mixed
      */
@@ -200,6 +202,7 @@ class Part
     {
         $this->colors = $colors;
     }
+
     /**
      * @return mixed
      */

@@ -11,7 +11,7 @@ class Rebrickable
 {
     const BASE_URI = 'https://rebrickable.com/api/';
     const FORMAT = 'json';
-    
+
     /**
      * @var Client
      */
@@ -21,7 +21,7 @@ class Rebrickable
      * @var string
      */
     private $apiKey;
-    
+
     /**
      * RebrickableAPI constructor.
      */
@@ -52,13 +52,12 @@ class Rebrickable
                     throw new LogicException('Invalid API Key');
                 } elseif ($content === 'NOSET' || $content === 'NOPART') {
                     return null;
-                } else {
-                    return $content;
                 }
-            } else {
+
+                return $content;
+            }
                 //TODO
                 throw new LogicException($response->getStatusCode());
-            }
         } catch (ConnectException $e) {
             //TODO
             throw new LogicException($e->getMessage());

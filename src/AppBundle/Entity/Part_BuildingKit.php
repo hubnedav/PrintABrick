@@ -2,11 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Part_BuildingKit
+ * Part_BuildingKit.
  *
  * @ORM\Table(name="part__building_kit")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\Part_BuildingKitRepository")
@@ -57,9 +56,8 @@ class Part_BuildingKit
      */
     private $building_kit;
 
-
     /**
-     * Get id
+     * Get id.
      *
      * @return int
      */
@@ -69,9 +67,9 @@ class Part_BuildingKit
     }
 
     /**
-     * Set count
+     * Set count.
      *
-     * @param integer $count
+     * @param int $count
      *
      * @return Part_BuildingKit
      */
@@ -83,7 +81,7 @@ class Part_BuildingKit
     }
 
     /**
-     * Get count
+     * Get count.
      *
      * @return int
      */
@@ -93,7 +91,7 @@ class Part_BuildingKit
     }
 
     /**
-     * Set color
+     * Set color.
      *
      * @param Color $color
      *
@@ -107,7 +105,7 @@ class Part_BuildingKit
     }
 
     /**
-     * Get color
+     * Get color.
      *
      * @return Color
      */
@@ -117,9 +115,9 @@ class Part_BuildingKit
     }
 
     /**
-     * Set type
+     * Set type.
      *
-     * @param boolean $type
+     * @param bool $type
      *
      * @return Part_BuildingKit
      */
@@ -131,7 +129,7 @@ class Part_BuildingKit
     }
 
     /**
-     * Get type
+     * Get type.
      *
      * @return bool
      */
@@ -181,6 +179,4 @@ class Part_BuildingKit
 
         return $this;
     }
-
-
 }

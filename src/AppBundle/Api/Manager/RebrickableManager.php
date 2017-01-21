@@ -2,11 +2,11 @@
 
 namespace AppBundle\Api\Manager;
 
-use AppBundle\Api\Client\Rebrickable\Rebrickable;
+use AppBundle\Api\Client\Rebrickable\Converter\PartPropertyNameConverter;
 use AppBundle\Api\Client\Rebrickable\Entity\Color;
 use AppBundle\Api\Client\Rebrickable\Entity\Part;
 use AppBundle\Api\Client\Rebrickable\Entity\Set;
-use AppBundle\Api\Client\Rebrickable\Converter\PartPropertyNameConverter;
+use AppBundle\Api\Client\Rebrickable\Rebrickable;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -33,10 +33,10 @@ class RebrickableManager
 
     private function getSerializer()
     {
-        $encoders = array(new JsonEncoder());
+        $encoders = [new JsonEncoder()];
         $nameConverter = new PartPropertyNameConverter();
         $objectNormalizer = new ObjectNormalizer(null, $nameConverter);
-        $normalizers = array($objectNormalizer, new ArrayDenormalizer());
+        $normalizers = [$objectNormalizer, new ArrayDenormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
 
         return $serializer;

@@ -3,7 +3,7 @@ services:
         class: AppBundle\Api\Client\Brickset\Brickset
         arguments: ['%brickset_apikey%']
     client.rebrickable:
-        class: AppBundle\Api\Client\Rebrickable\Rebrickable
+        class: AppBundle\Api\Client\Rebrickable\Rebrickable_v3
         arguments: ['%rebrickable_apikey%']
 
     manager.brickset:

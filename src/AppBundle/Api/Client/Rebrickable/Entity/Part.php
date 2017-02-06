@@ -5,17 +5,11 @@ namespace AppBundle\Api\Client\Rebrickable\Entity;
 class Part
 {
     /**
-     * Part ID.
+     * Part ID number.
      *
      * @var int
      */
-    private $id;
-    /**
-     * Quantity of part in set returned from getSetParts.
-     *
-     * @var int
-     */
-    private $qty;
+    private $number;
     /**
      * Part Name.
      *
@@ -23,72 +17,89 @@ class Part
      */
     private $name;
     /**
-     * Part type 1 = normal part, 2 = spare part.
+     * Part category id.
      *
      * @var int
      */
-    private $type;
+    private $categoryId;
+
     /**
      * Year the part first appeared in sets.
      *
      * @var int
      */
-    private $year1;
+    private $yearFrom;
     /**
      * Year the part was last seen in sets.
      *
      * @var int
      */
-    private $year2;
-    /**
-     * Part category/type description.
-     *
-     * @var string
-     */
-    private $category;
+    private $yearTo;
     /**
      * Array of colors the part appears in.
      *
      * @var array
      */
-    private $colors;
-    /**
-     * Array of related Part IDs used by external systems.
-     *
-     * @var array
-     */
-    private $external_part_ids;
+    private $externalIds;
     /**
      * Rebrickable URL to the Part Details page.
      *
      * @var string
      */
-    private $part_url;
+    private $url;
     /**
      * Rebrickable URL of the main part image (tries to use most common color).
      *
      * @var string
      */
-    private $part_img_url;
+    private $imgUrl;
 
-    public function __construct()
+    /**
+     * @return int
+     */
+    public function getPartNum()
     {
+        return $this->partNum;
+    }
+
+    /**
+     * @param int $partNum
+     */
+    public function setPartNum($partNum)
+    {
+        $this->partNum = $partNum;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
      * @return int
      */
-    public function getId()
+    public function getCategoryId()
     {
-        return $this->id;
+        return $this->categoryId;
     }
 
     /**
-     * @param $part_id
+     * @param int $categoryId
      */
-    public function setId($id)
+    public function setCategoryId($categoryId)
     {
-        $this->id = $id;
+        $this->categoryId = $categoryId;
     }
 
     /**
@@ -110,144 +121,80 @@ class Part
     /**
      * @return int
      */
-    public function getQty()
+    public function getYearFrom()
     {
-        return $this->qty;
+        return $this->yearFrom;
     }
 
     /**
-     * @param $qty
+     * @param int $yearFrom
      */
-    public function setQty($qty)
+    public function setYearFrom($yearFrom)
     {
-        $this->qty = $qty;
+        $this->yearFrom = $yearFrom;
+    }
+
+    /**
+     * @return int
+     */
+    public function getYearTo()
+    {
+        return $this->yearTo;
+    }
+
+    /**
+     * @param int $yearTo
+     */
+    public function setYearTo($yearTo)
+    {
+        $this->yearTo = $yearTo;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExternalIds()
+    {
+        return $this->externalIds;
+    }
+
+    /**
+     * @param array $externalIds
+     */
+    public function setExternalIds($externalIds)
+    {
+        $this->externalIds = $externalIds;
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getUrl()
     {
-        return $this->name;
+        return $this->url;
     }
 
     /**
-     * @param mixed $name
+     * @param string $url
      */
-    public function setName($name)
+    public function setUrl($url)
     {
-        $this->name = $name;
+        $this->url = $url;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getYear1()
+    public function getImgUrl()
     {
-        return $this->year1;
+        return $this->imgUrl;
     }
 
     /**
-     * @param mixed $year1
+     * @param string $imgUrl
      */
-    public function setYear1($year1)
+    public function setImgUrl($imgUrl)
     {
-        $this->year1 = $year1;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getYear2()
-    {
-        return $this->year2;
-    }
-
-    /**
-     * @param mixed $year2
-     */
-    public function setYear2($year2)
-    {
-        $this->year2 = $year2;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
-
-    /**
-     * @param mixed $category
-     */
-    public function setCategory($category)
-    {
-        $this->category = $category;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getColors()
-    {
-        return $this->colors;
-    }
-
-    /**
-     * @param mixed $colors
-     */
-    public function setColors($colors)
-    {
-        $this->colors = $colors;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getExternalPartIds()
-    {
-        return $this->external_part_ids;
-    }
-
-    /**
-     * @param mixed $external_part_ids
-     */
-    public function setExternalPartIds($external_part_ids)
-    {
-        $this->external_part_ids = $external_part_ids;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPartUrl()
-    {
-        return $this->part_url;
-    }
-
-    /**
-     * @param mixed $part_url
-     */
-    public function setPartUrl($part_url)
-    {
-        $this->part_url = $part_url;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPartImgUrl()
-    {
-        return $this->part_img_url;
-    }
-
-    /**
-     * @param $part_img_url
-     */
-    public function setPartImgUrl($part_img_url)
-    {
-        $this->part_img_url = $part_img_url;
+        $this->imgUrl = $imgUrl;
     }
 }

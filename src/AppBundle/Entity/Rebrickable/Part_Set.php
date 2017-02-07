@@ -1,16 +1,16 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\Entity\Rebrickable;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Part_BuildingKit.
+ * Part_Set.
  *
- * @ORM\Table(name="part__building_kit")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\Part_BuildingKitRepository")
+ * @ORM\Table(name="part_set")
+ * @ORM\Entity
  */
-class Part_BuildingKit
+class Part_Set
 {
     /**
      * @var int
@@ -31,7 +31,7 @@ class Part_BuildingKit
     /**
      * @var Color
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Color", inversedBy="part_building_kits")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Color", inversedBy="part_sets")
      */
     private $color;
 
@@ -45,16 +45,16 @@ class Part_BuildingKit
     /**
      * @var Part
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Part", inversedBy="building_kits" )
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Part", inversedBy="sets" )
      */
     private $part;
 
     /**
-     * @var BuildingKit
+     * @var Set
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\BuildingKit", inversedBy="parts")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Set", inversedBy="parts")
      */
-    private $building_kit;
+    private $set;
 
     /**
      * Get id.
@@ -71,7 +71,7 @@ class Part_BuildingKit
      *
      * @param int $count
      *
-     * @return Part_BuildingKit
+     * @return Part_Set
      */
     public function setCount($count)
     {
@@ -95,7 +95,7 @@ class Part_BuildingKit
      *
      * @param Color $color
      *
-     * @return Part_BuildingKit
+     * @return Part_Set
      */
     public function setColor($color)
     {
@@ -119,7 +119,7 @@ class Part_BuildingKit
      *
      * @param bool $type
      *
-     * @return Part_BuildingKit
+     * @return Part_Set
      */
     public function setType($type)
     {
@@ -149,33 +149,33 @@ class Part_BuildingKit
     /**
      * @param Part $part
      *
-     * @return Part_BuildingKit
+     * @return Part_Set
      */
     public function setPart(Part $part)
     {
-        $part->addBuildingKit($this);
+        $part->addSet($this);
         $this->part = $part;
 
         return $this;
     }
 
     /**
-     * @return BuildingKit
+     * @return Set
      */
-    public function getBuildingKit()
+    public function getSet()
     {
-        return $this->building_kit;
+        return $this->set;
     }
 
     /**
-     * @param BuildingKit $building_kit
+     * @param Set $set
      *
-     * @return Part_BuildingKit
+     * @return Part_Set
      */
-    public function setBuildingKit(BuildingKit $building_kit)
+    public function setSet(Set $set)
     {
-        $building_kit->addPart($this);
-        $this->building_kit = $building_kit;
+        $set->addPart($this);
+        $this->set = $set;
 
         return $this;
     }

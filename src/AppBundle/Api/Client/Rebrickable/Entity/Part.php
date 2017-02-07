@@ -57,17 +57,17 @@ class Part
     /**
      * @return int
      */
-    public function getPartNum()
+    public function getNumber()
     {
-        return $this->partNum;
+        return $this->number;
     }
 
     /**
-     * @param int $partNum
+     * @param int $number
      */
-    public function setPartNum($partNum)
+    public function setNumber($number)
     {
-        $this->partNum = $partNum;
+        $this->number = $number;
     }
 
     /**

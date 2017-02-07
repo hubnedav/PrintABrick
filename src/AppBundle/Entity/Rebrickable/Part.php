@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\Entity\Rebrickable;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,23 +10,26 @@ use Doctrine\ORM\Mapping as ORM;
  * Part.
  *
  * @ORM\Table(name="part")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\PartRepository")
+ * @ORM\Entity
  */
 class Part
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    //    /**
+//     * @var int
+//     *
+//     * @ORM\Column(name="id", type="integer")
+//     * @ORM\Id
+//     * @ORM\GeneratedValue(strategy="AUTO")
+//     */
+//    private $id;
 
     /**
+     * Part ID number.
+     *
      * @var string
      *
-     * @ORM\Column(name="number", type="string", length=255, unique=true)
+     * @ORM\Id
+     * @ORM\Column(name="id", type="string", length=255, unique=true)
      */
     private $number;
 
@@ -40,40 +43,23 @@ class Part
     /**
      * @var Category
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category", inversedBy="parts")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Category", inversedBy="parts")
      */
     private $category;
 
     /**
-     * @var Model
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Model", inversedBy="parts")
-     */
-    private $model;
-
-    /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Part_BuildingKit", mappedBy="part")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part_Set", mappedBy="part")
      */
-    private $building_kits;
+    private $sets;
 
     /**
      * Part constructor.
      */
     public function __construct()
     {
-        $this->building_kits = new ArrayCollection();
-    }
-
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
+        $this->sets = new ArrayCollection();
     }
 
     /**
@@ -125,53 +111,33 @@ class Part
     }
 
     /**
-     * @return Model
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @return Part
-     */
-    public function setModel($model)
-    {
-        $this->model = $model;
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
-    public function getBuildingKits()
+    public function getSets()
     {
-        return $this->building_kits;
+        return $this->sets;
     }
 
     /**
-     * @param Part_BuildingKit $building_kit
+     * @param Part_Set $set
      *
      * @return Part
      */
-    public function addBuildingKit(Part_BuildingKit $building_kit)
+    public function addSet(Part_Set $set)
     {
-        $this->building_kits->add($building_kit);
+        $this->sets->add($set);
 
         return $this;
     }
 
     /**
-     * @param Part_BuildingKit $building_kit
+     * @param Part_Set $set
      *
      * @return Part
      */
-    public function removeBuildingKit($building_kit)
+    public function removeSet($set)
     {
-        $this->building_kits->remove($building_kit);
+        $this->sets->removeElement($set);
 
         return $this;
     }

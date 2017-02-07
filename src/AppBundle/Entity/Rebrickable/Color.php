@@ -1,7 +1,8 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\Entity\Rebrickable;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Color.
  *
  * @ORM\Table(name="color")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ColorRepository")
+ * @ORM\Entity
  */
 class Color
 {
@@ -36,11 +37,26 @@ class Color
     private $rgb;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="transparent", type="boolean")
+     */
+    private $transparent;
+
+    /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Part_BuildingKit", mappedBy="color")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part_Set", mappedBy="color")
      */
-    private $part_building_kits;
+    private $part_sets;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->part_sets = new ArrayCollection();
+    }
 
     /**
      * Set id.
@@ -115,42 +131,54 @@ class Color
     }
 
     /**
+     * Is transparent.
+     *
+     * @return bool
+     */
+    public function isTransparent()
+    {
+        return $this->transparent;
+    }
+
+    /**
+     * Set transparent.
+     *
+     * @param bool $transparent
+     */
+    public function setTransparent($transparent)
+    {
+        $this->transparent = $transparent;
+    }
+
+    /**
      * @return Collection
      */
     public function getPartBuildingKits()
     {
-        return $this->part_building_kits;
+        return $this->part_sets;
     }
 
     /**
-     * @param Part_BuildingKit $part_building_kit
+     * @param Part_Set $part_building_kit
      *
      * @return Color
      */
-    public function addPartBuildingKit(Part_BuildingKit $part_building_kit)
+    public function addPartBuildingKit(Part_Set $part_set)
     {
-        $this->part_building_kits->add($part_building_kit);
+        $this->part_sets->add($part_set);
 
         return $this;
     }
 
     /**
-     * @param Part_BuildingKit $part_building_kit
+     * @param Part_Set $part_building_kit
      *
      * @return Color
      */
-    public function removePartBuildingKit(Part_BuildingKit $part_building_kit)
+    public function removePartBuildingKit(Part_Set $part_set)
     {
-        $this->part_building_kits->remove($part_building_kit);
+        $this->part_sets->remove($part_set);
 
         return $this;
-    }
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->part_building_kits = new \Doctrine\Common\Collections\ArrayCollection();
     }
 }

@@ -1,19 +1,11 @@
 ModelViewer = function() {
     var container;
-    var camera, scene, cameraTarget, renderer, controls, object;
+    var camera, cameraTarget, scene,  renderer, controls, object;
     var width, height;
 
-    this.init = function(containerId) {
-        container = document.getElementById(containerId);
-
-        if (document.defaultView && document.defaultView.getComputedStyle) {
-            width  = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('width'));
-            height = parseFloat(document.defaultView.getComputedStyle(container,null).getPropertyValue('height'));
-        } else {
-            width  = parseFloat(container.currentStyle.width);
-            height = parseFloat(container.currentStyle.height);
-        }
-
+    this.initScene = function($container) {
+        width  = parseFloat($container.width());
+        height = parseFloat($container.height());
 
         camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
         camera.position.set(-2, 2, 0.8);
@@ -21,7 +13,6 @@ ModelViewer = function() {
 
         scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x000000, 0.001);
-
 
         var grid = new THREE.GridHelper( 30, 70 );
         grid.position.set(30/70,-0.5,30/70);
@@ -51,14 +42,13 @@ ModelViewer = function() {
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.renderReverseSided = false;
 
-        container.appendChild(renderer.domElement);
+        $container.append(renderer.domElement);
 
         controls = new THREE.OrbitControls( camera, renderer.domElement );
         controls.addEventListener( 'change', this.render ); // add this only if there is no animation loop (requestAnimationFrame)
         // controls.enableDamping = true;
         // controls.dampingFactor = 0.25;
         controls.enableZoom = true;
-
     };
 
     this.loadStl = function(model) {
@@ -80,13 +70,12 @@ ModelViewer = function() {
     this.animate = function() {
 
         requestAnimationFrame( this.animate );
-
-        controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
-
         this.render();
     };
 
     this.render = function() {
+
         renderer.render(scene, camera);
+
     };
 };

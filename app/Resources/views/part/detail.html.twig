@@ -4,10 +4,7 @@
 
     {{ dump(part) }}
 
-    {{ dump(localPart) }}
-
     <div id="model" style="height: 300px; width: 300px; padding: 5px; display: inline-block"></div>
-    <img src="{{ part.imgUrl }}">
 
 {% endblock %}
 
@@ -23,9 +20,9 @@
     <script type="text/javascript">
         window.onload = function() {
             modelView = new ModelViewer();
-            modelView.init('model');
-            {% if localPart.model is defined %}
-            modelView.loadStl('{{ path('download_model', {'id' : localPart.model.id })}}');
+            var scene = modelView.initScene($('#model'));
+            {% if part.model is not null %}
+            modelView.loadStl('{{ path('download_model', {'id' : part.model.id })}}');
             {% endif %}
             modelView.render();
         };

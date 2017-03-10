@@ -18,8 +18,11 @@ services:
         arguments: ['@doctrine.orm.entity_manager', '@manager.brickset','@manager.rebrickable']
 
     loader.rebrickable:
-        class: AppBundle\Command\Loader\RebrickableLoader
-        arguments: ['@doctrine.orm.entity_manager', '@manager.rebrickable', '%rebrickable_url%' ]
+        class: AppBundle\Loader\RebrickableLoader
+        calls:
+          - [setArguments, ['@manager.rebrickable', '%rebrickable_url%']]
+        parent: service.loader
+
     loader.ldraw:
         class: AppBundle\Command\Loader\LDrawLoader
         arguments: ['@doctrine.orm.entity_manager', '%kernel.root_dir%/../bin/ldview', '@oneup_flysystem.ldraw_filesystem', '%ldraw_url%']

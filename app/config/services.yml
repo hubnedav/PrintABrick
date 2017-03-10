@@ -17,13 +17,24 @@ services:
         class: AppBundle\Service\CollectionService
         arguments: ['@doctrine.orm.entity_manager', '@manager.brickset','@manager.rebrickable']
 
+    service.loader:
+        abstract:  true
+        class: AppBundle\Loader\Loader
+        arguments: ['@doctrine.orm.entity_manager']
+
+    service.ldview:
+        class: AppBundle\Service\LDViewService
+        arguments: ['%ldview_bin%', '@oneup_flysystem.ldraw_filesystem']
+
     loader.rebrickable:
         class: AppBundle\Command\Loader\RebrickableLoader
         arguments: ['@doctrine.orm.entity_manager', '@manager.rebrickable', '%rebrickable_url%' ]
     loader.ldraw:
-        class: AppBundle\Command\Loader\LDrawLoader
-        arguments: ['@doctrine.orm.entity_manager', '%kernel.root_dir%/../bin/ldview', '@oneup_flysystem.ldraw_filesystem', '%ldraw_url%']
-  
+        class: AppBundle\Loader\LDrawLoader
+        calls:
+          - [setArguments, ['@service.ldview', '%ldraw_url%']]
+        parent: service.loader
+
     app.form.filter_set:
         class: AppBundle\Form\FilterSetType
         arguments: ['@manager.brickset']

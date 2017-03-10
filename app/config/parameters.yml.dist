@@ -23,3 +23,6 @@ parameters:
 
     # Rebrickable API key obtainable at http://rebrickable.com/api/
     rebrickable_apikey:   ~
+
+    # Absolute path to OSMesa port of LDView
+    ldview_bin: /usr/bin/ldview

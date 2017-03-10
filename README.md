@@ -8,6 +8,8 @@ A Symfony project
 * PDO
 * SOAP
 * *date.timezone* setting set in *php.ini*
+* PHP Zip Extension enabled
+* LDView OSMesa >= 4.2.1 [source](https://tcobbs.github.io/ldview/).
 
 You can check if your system meets requirements by running `$ bin/symfony_requirements`
 
@@ -26,4 +28,5 @@ For full requirements see Symfony 3.2 [docs](http://symfony.com/doc/3.2/referenc
 ####Database
 1. Set application parameters in *app/config/parameters.yml*
 2. Generate empty database by running command `$ php bin/console doctrine:database:create`    
-    
+3. To load LDraw models into database run commad `$ php bin/console app:load:ldraw`  
+     If you prefer local ldraw library you can specify source by running `$ php bin/console app:load:ldraw [ldraw_dir_path]` instead

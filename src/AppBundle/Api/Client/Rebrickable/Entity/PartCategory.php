@@ -2,32 +2,22 @@
 
 namespace AppBundle\Api\Client\Rebrickable\Entity;
 
-class Color
+class PartCategory
 {
     /**
-     * Internal Rebrickable color ID.
-     *
      * @var int
      */
     private $id;
+
     /**
-     * Color name.
-     *
      * @var string
      */
     private $name;
+
     /**
-     * RGB hex code.
-     *
-     * @var string
+     * @var int
      */
-    private $rgb;
-    /**
-     * Wether color is transparent.
-     *
-     * @var bool
-     */
-    private $isTrans;
+    private $partCount;
 
     /**
      * @return int
@@ -62,34 +52,18 @@ class Color
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getRgb()
+    public function getPartCount()
     {
-        return $this->rgb;
+        return $this->partCount;
     }
 
     /**
-     * @param string $rgb
+     * @param int $partCount
      */
-    public function setRgb($rgb)
+    public function setPartCount($partCount)
     {
-        $this->rgb = $rgb;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isIsTrans()
-    {
-        return $this->isTrans;
-    }
-
-    /**
-     * @param bool $isTrans
-     */
-    public function setIsTrans($isTrans)
-    {
-        $this->isTrans = $isTrans;
+        $this->partCount = $partCount;
     }
 }

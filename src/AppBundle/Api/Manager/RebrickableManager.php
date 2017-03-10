@@ -2,11 +2,13 @@
 
 namespace AppBundle\Api\Manager;
 
-use AppBundle\Api\Client\Rebrickable\Converter\PartPropertyNameConverter;
+use AppBundle\Api\Client\Rebrickable\Converter\PropertyNameConverter;
 use AppBundle\Api\Client\Rebrickable\Entity\Color;
 use AppBundle\Api\Client\Rebrickable\Entity\Part;
+use AppBundle\Api\Client\Rebrickable\Entity\PartCategory;
 use AppBundle\Api\Client\Rebrickable\Entity\Set;
-use AppBundle\Api\Client\Rebrickable\Rebrickable;
+use AppBundle\Api\Client\Rebrickable\Entity\Theme;
+use AppBundle\Api\Client\Rebrickable\Rebrickable_v3;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -17,25 +19,30 @@ class RebrickableManager
     const FORMAT = 'json';
 
     /**
-     * @var Rebrickable
+     * @var Rebrickable_v3
      */
     private $rebrickableClient;
 
     /**
+     * @var Serializer
+     */
+    private $serializer;
+
+    /**
      * RebrickableManager constructor.
      *
-     * @param Rebrickable $rebrickableClient
+     * @param Rebrickable_v3 $rebrickableClient
      */
-    public function __construct(Rebrickable $rebrickableClient)
+    public function __construct(Rebrickable_v3 $rebrickableClient)
     {
         $this->rebrickableClient = $rebrickableClient;
+        $this->serializer = $this->initSerializer();
     }
 
-    private function getSerializer()
+    private function initSerializer()
     {
         $encoders = [new JsonEncoder()];
-        $nameConverter = new PartPropertyNameConverter();
-        $objectNormalizer = new ObjectNormalizer(null, $nameConverter);
+        $objectNormalizer = new ObjectNormalizer(null, new PropertyNameConverter());
         $normalizers = [$objectNormalizer, new ArrayDenormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
 
@@ -43,125 +50,118 @@ class RebrickableManager
     }
 
     /**
-     * Get a list of all parts (normal + spare) used in a set.
-     *
-     * @param string $setName unique rebrickable set name
-     *
-     * @return Part[]|null
-     */
-    public function getSetParts($setName)
-    {
-        $parameters = [
-            'query' => [
-                'set' => $setName,
-            ],
-        ];
-
-        $data = $this->rebrickableClient->call('get_set_parts', $parameters);
-
-        $serializer = $this->getSerializer();
-        $partsSTD = json_decode($data, true)[0]['parts'];
-
-        if ($data) {
-            $parts = $serializer->denormalize($partsSTD, Part::class.'[]', self::FORMAT);
-            foreach ($parts as $key => &$part) {
-                $part->setCategory($this->getPartTypes()[$partsSTD[$key]['part_type_id']]);
-                $part->setColors([
-                    0 => [
-                        'color_name' => $partsSTD[$key]['color_name'],
-                        'rb_color_id' => $partsSTD[$key]['rb_color_id'],
-                        'ldraw_color_id' => $partsSTD[$key]['ldraw_color_id'],
-                    ],
-                ]);
-            }
-
-            return $data;
-        }
-
-        return null;
-    }
-
-    /**
      * Get details about a specific part.
      *
-     * @param $partID
+     * @param $id
      *
-     * @return Part|null
+     * @return Part
      */
-    public function getPart($partID)
+    public function getPart($id)
     {
-        $parameters = [
-            'query' => [
-                'part_id' => $partID,
-                'inc_ext' => 1,
-            ],
-        ];
+        $data = $this->rebrickableClient->call('GET', 'lego/parts/'.$id);
 
-        $data = $this->rebrickableClient->call('get_part', $parameters);
-        $serializer = $this->getSerializer();
-
-        return $data ? $serializer->deserialize($data, Part::class, self::FORMAT) : null;
+        return $this->serializer->deserialize($data, Part::class, self::FORMAT);
     }
 
     /**
-     * Get associative array of colors used by all parts where key == rb_color_id.
+     * Get details about a specific Color.
      *
-     * @return Color[]|null
+     * @param $id
+     *
+     * @return Color
      */
-    public function getColors()
+    public function getColor($id)
     {
-        $data = json_decode($this->rebrickableClient->call('get_colors'), true);
+        $data = $this->rebrickableClient->call('GET', 'lego/colors/'.$id);
 
-        $serializer = $this->getSerializer();
-
-        $colors = [];
-
-        foreach ($data as $item) {
-            $color = $serializer->denormalize($item, Color::class, self::FORMAT);
-            $colors[$color->getRbColorId()] = $color;
-        }
-
-        return $data ? $colors : [];
+        return $this->serializer->deserialize($data, Color::class, self::FORMAT);
     }
 
     /**
-     * Get associative array of themes used by all parts where key == part_type_id.
+     * Get details for a specific Set.
      *
-     * @return string[]
+     * @param $id
+     *
+     * @return Set
      */
-    public function getPartTypes()
+    public function getSet($id)
     {
-        $data = json_decode($this->rebrickableClient->call('get_part_types'), true)['part_types'];
+        $data = $this->rebrickableClient->call('GET', 'lego/sets/'.$id);
 
-        $types = [];
-        foreach ($data as $item) {
-            $types[$item['part_type_id']] = $item['desc'];
-        }
+        return $this->serializer->deserialize($data, Set::class, self::FORMAT);
+    }
 
-        return $data ? $types : null;
+    /**
+     * Return details for a specific Theme.
+     *
+     * @param $id
+     *
+     * @return Theme
+     */
+    public function getTheme($id)
+    {
+        $data = $this->rebrickableClient->call('GET', 'lego/themes/'.$id);
+
+        return $this->serializer->deserialize($data, Theme::class, self::FORMAT);
+    }
+
+    /**
+     * Return details for a specific PartCategory.
+     *
+     * @param $id
+     *
+     * @return PartCategory
+     */
+    public function getPartCategory($id)
+    {
+        $data = $this->rebrickableClient->call('GET', 'lego/part_categories/'.$id);
+
+        return $this->serializer->deserialize($data, PartCategory::class, self::FORMAT);
     }
 
     /**
      * Get the list of sets that a specific part/color appears in.
      *
-     * @param $partID
-     * @param $colorID
+     * @param $partId
+     * @param $colorId
+     * @param $page
      *
      * @return Set[]
      */
-    public function getPartSets($partID, $colorID)
+    public function getPartSets($partId, $colorId, $page = null)
     {
-        $parameters = [
+        $options = [
             'query' => [
-                'part_id' => $partID,
-                'color_id' => $colorID,
+                'page' => $page,
             ],
         ];
 
-        $serializer = $this->getSerializer();
+        $response = $this->rebrickableClient->call('GET', 'lego/parts/'.$partId.'/colors/'.$colorId.'/sets', $options);
+        $data = json_decode($response, true)['results'];
 
-        $data = json_decode($this->rebrickableClient->call('get_part_sets', $parameters), true)[0]['sets'];
+        return $this->serializer->denormalize($data, Set::class.'[]', self::FORMAT);
+    }
 
-        return $data ? $serializer->denormalize($data, Set::class.'[]', self::FORMAT) : null;
+    /**
+     * Get a list of all parts (normal + spare) used in a set.
+     *
+     * @param $setId
+     * @param $page
+     *
+     * @return
+     */
+    public function getSetParts($setId, $page = null)
+    {
+        $options = [
+            'query' => [
+                'page' => $page,
+            ],
+        ];
+//
+//        $response = $this->rebrickableClient->call('GET','lego/sets/'.$setId.'/parts', $options);
+//
+//        $data = json_decode($response, true)['results'];
+//
+//        return $this->serializer->denormalize($data, Part::class . '[]', self::FORMAT);
     }
 }

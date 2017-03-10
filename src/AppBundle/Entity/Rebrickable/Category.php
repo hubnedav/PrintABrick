@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\Entity\Rebrickable;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Category.
  *
  * @ORM\Table(name="category")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+ * @ORM\Entity
  */
 class Category
 {
@@ -33,14 +33,7 @@ class Category
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Model", mappedBy="category")
-     */
-    private $models;
-
-    /**
-     * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Part", mappedBy="category")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part", mappedBy="category")
      */
     private $parts;
 
@@ -49,7 +42,6 @@ class Category
      */
     public function __construct()
     {
-        $this->models = new ArrayCollection();
         $this->parts = new ArrayCollection();
     }
 
@@ -85,40 +77,6 @@ class Category
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Get models.
-     *
-     * @return ArrayCollection
-     */
-    public function getModels()
-    {
-        return $this->models;
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @return Category
-     */
-    public function addModel(Model $model)
-    {
-        $this->models->add($model);
-
-        return $this;
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @return Category
-     */
-    public function removeModel(Model $model)
-    {
-        $this->models->remove($model);
-
-        return $this;
     }
 
     /**

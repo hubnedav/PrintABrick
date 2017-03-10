@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Command\Loader;
+namespace AppBundle\Loader;
 
 use AppBundle\Api\Manager\RebrickableManager;
 use AppBundle\Entity\BuildingKit;
@@ -24,9 +24,8 @@ class RebrickableLoader extends Loader
     /**
      * ModelLoaderService constructor.
      */
-    public function __construct($em, $rebrickableManager, $rebrickable_url)
+    public function setArguments($rebrickableManager, $rebrickable_url)
     {
-        $this->em = $em;
         $this->rebrickableManager = $rebrickableManager;
         $this->rebrickable_url = $rebrickable_url;
     }

@@ -1,32 +1,33 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace AppBundle\Entity\Rebrickable;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BuildingKit.
+ * Set.
  *
- * @ORM\Table(name="building_kit")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingKitRepository")
+ * @ORM\Table(name="set")
+ * @ORM\Entity
  */
-class BuildingKit
+class Set
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    //    /**
+//     * @var int
+//     *
+//     * @ORM\Column(name="id", type="integer")
+//     * @ORM\Id
+//     * @ORM\GeneratedValue(strategy="AUTO")
+//     */
+//    private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="number", type="string", length=255, unique=true)
+     * @ORM\Id
+     * @ORM\Column(name="id", type="string", length=255, unique=true)
      */
     private $number;
 
@@ -54,35 +55,35 @@ class BuildingKit
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Part_BuildingKit", mappedBy="building_kit")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part_Set", mappedBy="set")
      */
     private $parts;
 
     /**
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Keyword", mappedBy="building_kits")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Rebrickable\Theme", mappedBy="sets")
      */
-    private $keywords;
+    private $themes;
 
     /**
-     * BuildingKit constructor.
+     * Set constructor.
      */
     public function __construct()
     {
         $this->parts = new ArrayCollection();
-        $this->keywords = new ArrayCollection();
+        $this->themes = new ArrayCollection();
     }
 
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+//    /**
+//     * Get id.
+//     *
+//     * @return int
+//     */
+//    public function getId()
+//    {
+//        return $this->id;
+//    }
 
     /**
      * @return string
@@ -95,7 +96,7 @@ class BuildingKit
     /**
      * @param string $number
      *
-     * @return BuildingKit
+     * @return Set
      */
     public function setNumber($number)
     {
@@ -109,7 +110,7 @@ class BuildingKit
      *
      * @param string $name
      *
-     * @return BuildingKit
+     * @return Set
      */
     public function setName($name)
     {
@@ -133,7 +134,7 @@ class BuildingKit
      *
      * @param int $year
      *
-     * @return BuildingKit
+     * @return Set
      */
     public function setYear($year)
     {
@@ -163,7 +164,7 @@ class BuildingKit
     /**
      * @param int $partCount
      *
-     * @return BuildingKit
+     * @return Set
      */
     public function setPartCount($partCount)
     {
@@ -183,11 +184,11 @@ class BuildingKit
     }
 
     /**
-     * @param Part_BuildingKit $part
+     * @param Part_Set $part
      *
-     * @return BuildingKit
+     * @return Set
      */
-    public function addPart(Part_BuildingKit $part)
+    public function addPart(Part_Set $part)
     {
         $this->parts->add($part);
 
@@ -195,47 +196,13 @@ class BuildingKit
     }
 
     /**
-     * @param Part_BuildingKit $part
+     * @param Part_Set $part
      *
-     * @return BuildingKit
+     * @return Set
      */
-    public function removePart(Part_BuildingKit $part)
+    public function removePart(Part_Set $part)
     {
         $this->parts->remove($part);
-
-        return $this;
-    }
-
-    /**
-     * Get keywords.
-     *
-     * @return Collection
-     */
-    public function getKeywords()
-    {
-        return $this->keywords;
-    }
-
-    /**
-     * @param Keyword $keyword
-     *
-     * @return BuildingKit
-     */
-    public function addKeyword(Keyword $keyword)
-    {
-        $this->keywords->add($keyword);
-
-        return $this;
-    }
-
-    /**
-     * @param Keyword $keyword
-     *
-     * @return BuildingKit
-     */
-    public function removeKeyword(Keyword $keyword)
-    {
-        $this->keywords->remove($keyword);
 
         return $this;
     }

@@ -24,7 +24,8 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "guzzlehttp/guzzle": "^6.2",
         "knplabs/knp-menu-bundle": "^2.0",
-        "oneup/flysystem-bundle": "^1.7"
+        "oneup/flysystem-bundle": "^1.7",
+        "knplabs/knp-paginator-bundle": "^2.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

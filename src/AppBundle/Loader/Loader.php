@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Command\Loader;
+namespace AppBundle\Loader;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Asset\Exception\LogicException;
@@ -8,7 +8,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
-class Loader
+abstract class Loader
 {
     /**
      * @var EntityManager
@@ -25,13 +25,23 @@ class Loader
      */
     protected $progressBar;
 
+    /**
+     * Loader constructor.
+     *
+     * @param EntityManager $em
+     */
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
+
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
         $this->output->setDecorated(true);
     }
 
-    private function progressCallback($notification_code, $severity, $message, $message_code, $bytes_transferred, $bytes_max)
+    protected function progressCallback($notification_code, $severity, $message, $message_code, $bytes_transferred, $bytes_max)
     {
         switch ($notification_code) {
             case STREAM_NOTIFY_FILE_SIZE_IS:

@@ -17,6 +17,10 @@ services:
         class: AppBundle\Service\CollectionService
         arguments: ['@doctrine.orm.entity_manager', '@manager.brickset','@manager.rebrickable']
 
+    service.ldview:
+        class: AppBundle\Service\LDViewService
+        arguments: ['%ldview_bin%', '@oneup_flysystem.ldraw_filesystem']
+
     loader.rebrickable:
         class: AppBundle\Command\Loader\RebrickableLoader
         arguments: ['@doctrine.orm.entity_manager', '@manager.rebrickable', '%rebrickable_url%' ]

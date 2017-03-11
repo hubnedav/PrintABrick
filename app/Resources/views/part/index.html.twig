@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+
+<div style="display: flex; flex-wrap: wrap;">
+    {% for part in parts %}
+        <div style="display: inline-block; width: 160px; margin: 5px; padding: 5px; border: solid 1px gray">
+            <h4><a href="{{ url('part_detail', {id:part.id}) }}">{{ part.id }}</a></h4>
+            <p>{{ part.name }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+
+<div class="navigation text-center">
+    {{ knp_pagination_render(parts) }}
+</div>
+{% endblock %}

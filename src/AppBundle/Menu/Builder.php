@@ -14,6 +14,10 @@ class Builder
             'route' => 'homepage',
         ]);
 
+        $menu->addChild('Parts', [
+            'route' => 'parts_index',
+        ]);
+
         $menu->addChild('Sets', [
             'route' => 'set_browse',
         ]);

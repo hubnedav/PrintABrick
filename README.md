@@ -5,10 +5,12 @@ A Symfony project
 
 ### System requirements
 * PHP needs to be a minimum version of PHP 5.5.9
-* PDO
-* SOAP
+* PHP Extensions
+    * FTP 
+    * SOAP 
+    * PDO 
+    * Zip 
 * *date.timezone* setting set in *php.ini*
-* PHP Zip Extension enabled
 * LDView OSMesa >= 4.2.1 [source](https://tcobbs.github.io/ldview/).
 
 You can check if your system meets requirements by running `$ bin/symfony_requirements`

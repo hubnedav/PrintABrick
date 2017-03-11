@@ -198,6 +198,7 @@ class Part
             } elseif ($this->aliasOf) {
                 return $this->aliasOf->getModel();
             }
+            return null;
         }
 
         return $this->model;

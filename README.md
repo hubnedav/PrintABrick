@@ -25,10 +25,11 @@ For full requirements see Symfony 3.2 [docs](http://symfony.com/doc/3.2/referenc
 
 ####Front-end
 1. Install dependencies via [npm](https://www.npmjs.com/), `$ npm install`
-2. Compile assets by running [Gulp](http://gulpjs.com/) default task, `$ gulp default`
+1. Install dependencies via [bower](https://bower.io/), `$ bower install`
+2. Compile assets by running [Gulp](http://gulpjs.com/), `$ gulp`
 
 ####Database
 1. Set application parameters in *app/config/parameters.yml*
 2. Generate empty database by running command `$ php bin/console doctrine:database:create`    
-3. To load LDraw models into database run commad `$ php bin/console app:load:ldraw`  
-     If you prefer local ldraw library you can specify source by running `$ php bin/console app:load:ldraw [ldraw_dir_path]` instead
+3. Load LDraw models into database by running commad `$ php bin/console app:load:ldraw [ldraw_dir_path]` 
+4. Load Rebrickable data into database by running command `$ php bin/console app:load:rebrickable`  

@@ -3,13 +3,7 @@
 namespace AppBundle\Loader;
 
 use AppBundle\Api\Manager\RebrickableManager;
-use AppBundle\Entity\BuildingKit;
-use AppBundle\Entity\Category;
-use AppBundle\Entity\Color;
-use AppBundle\Entity\Keyword;
-use AppBundle\Entity\Part;
-use AppBundle\Entity\Part_BuildingKit;
-use Symfony\Component\Console\Helper\ProgressBar;
+use AppBundle\Entity\Rebrickable\Set;
 
 //TODO Refactor
 class RebrickableLoader extends Loader
@@ -30,203 +24,103 @@ class RebrickableLoader extends Loader
         $this->rebrickable_url = $rebrickable_url;
     }
 
-    public function loadPartBuildingKits()
+    public function loadTables()
     {
-        $this->output->writeln('Downloading set_pieces.csv from Rebrickable.com');
-        $file = $this->downloadFile('compress.zlib://'.$this->rebrickable_url['set_pieces']);
+        $connection = $this->em->getConnection();
 
-        $partRepository = $this->em->getRepository('AppBundle:Part');
-        $buldingKitRepository = $this->em->getRepository('AppBundle:BuildingKit');
-        $colorRepository = $this->em->getRepository('AppBundle:Color');
+        try {
+            $connection->beginTransaction();
+            $connection->prepare('SET foreign_key_checks = 0;')->execute();
 
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
+            $this->truncateTables();
+            $this->loadColorTable();
+            $this->loadCategoryTable();
+            $this->loadThemeTable();
+            $this->loadPartTable();
+            $this->loadSetTable();
+            $this->loadInventoryTable();
+            $this->loadInventoryPartTable();
 
-        $this->output->writeln('Loading set_pieces.csv into Database');
-        if (($handle = fopen($file, 'r')) !== false) {
-            $header = fgetcsv($handle, 200, ',');
-
-            // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$file'"))); //TODO replace wc-l
-            $progress->setFormat('very_verbose');
-            $progress->setBarWidth(50);
-            $progress->start();
-
-            $index = 0;
-            while (($data = fgetcsv($handle, 200, ',')) !== false) {
-                $partBuildingKit = new Part_BuildingKit();
-
-                $buildingKit = $buldingKitRepository->findOneBy(['number' => $data[0]]);
-                $part = $partRepository->findOneBy(['number' => $data[1]]);
-                $color = $colorRepository->findOneBy(['id' => $data[3]]);
-
-                if ($part && $buildingKit) {
-                    $partBuildingKit
-                        ->setBuildingKit($buildingKit)
-                        ->setPart($part)
-                        ->setCount($data[2])
-                        ->setColor($color)
-                        ->setType($data[4] - 1);
-
-                    $this->em->persist($partBuildingKit);
-                }
-
-                $index = $index + 1;
-                if ($index % 25 == 0) {
-                    $this->em->flush();
-                    $this->em->clear();
-                }
-                $progress->advance();
-            }
-
-            $this->em->flush();
-            $this->em->clear();
-            fclose($handle);
-            $progress->finish();
+            $connection->prepare('SET foreign_key_checks = 1;')->execute();
+            $connection->commit();
+        } catch (\Exception $e) {
+            $connection->rollBack();
+            throw $e;
         }
-
-        unlink($file);
     }
 
-    public function loadBuildingKits()
+    private function truncateTables()
     {
-        $this->output->writeln('Downloading sets.csv from Rebrickable.com');
-        $file = $this->downloadFile('compress.zlib://'.$this->rebrickable_url['sets']);
+        $query =
+            'TRUNCATE TABLE rebrickable_inventory_parts;
+            TRUNCATE TABLE rebrickable_color;
+            TRUNCATE TABLE rebrickable_inventory;
+            TRUNCATE TABLE rebrickable_set;
+            TRUNCATE TABLE rebrickable_theme;
+            TRUNCATE TABLE rebrickable_part;
+            TRUNCATE TABLE rebrickable_category;
+           ';
 
-        $keywordRepository = $this->em->getRepository('AppBundle:Keyword');
-
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-
-        $this->output->writeln('Loading sets.csv into Database');
-        if (($handle = fopen($file, 'r')) !== false) {
-            $header = fgetcsv($handle, 500, ',');
-
-            // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$file'"))); //TODO replace wc-l
-            $progress->setFormat('very_verbose');
-            $progress->setBarWidth(50);
-            $progress->start();
-
-            $index = 0;
-            while (($data = fgetcsv($handle, 500, ',')) !== false) {
-                $buildingKit = new BuildingKit();
-
-                for ($i = 3; $i <= 5; ++$i) {
-                    $keyword = $keywordRepository->findOneBy(['name' => $data[$i]]);
-                    if ($keyword == null) {
-                        $keyword = new Keyword();
-                        $keyword->setName($data[$i]);
-                        $this->em->persist($keyword);
-                        $this->em->flush();
-                    }
-
-                    $buildingKit->addKeyword($keyword);
-                }
-
-                $buildingKit
-                    ->setNumber($data[0])
-                    ->setYear($data[1])
-                    ->setPartCount($data[2])
-                    ->setName($data[6]);
-
-                $this->em->persist($buildingKit);
-
-                $index = $index + 1;
-                if ($index % 25 == 0) {
-                    $this->em->flush();
-                    $this->em->clear();
-                }
-
-                $progress->advance();
-            }
-            $this->em->flush();
-            $this->em->clear();
-
-            fclose($handle);
-
-            $progress->finish();
-        }
-        unlink($file);
+        return $this->em->getConnection()->prepare($query)->execute();
     }
 
-    public function loadParts()
+    private function loadCsvFile($file, $table, $columns)
     {
-        $this->output->writeln('Downloading pieces.csv from Rebrickable.com');
-        $file = $this->downloadFile('compress.zlib://'.$this->rebrickable_url['pieces']);
+        $query = sprintf("LOAD DATA LOCAL INFILE '%s' 
+            REPLACE INTO TABLE %s
+            FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+            LINES TERMINATED BY '\\n'
+            IGNORE 1 LINES %s", addslashes($file), $table, $columns);
 
-        $categoryRepository = $this->em->getRepository('AppBundle:Category');
-
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-
-        $this->output->writeln('Loading pieces.csv into Database');
-        if (($handle = fopen($file, 'r')) !== false) {
-            // create a new progress bar (50 units)
-            $progress = new ProgressBar($this->output, intval(exec("wc -l '$file'"))); //TODO replace wc-l
-            $progress->setFormat('very_verbose');
-            $progress->setBarWidth(50);
-            $progress->start();
-
-            $header = fgetcsv($handle, 300, ',');
-            while (($data = fgetcsv($handle, 300, ',')) !== false) {
-                $part = new Part();
-                $part->setNumber($data[0])->setName($data[1]);
-
-                $category = $categoryRepository->findOneBy(['name' => $data[2]]);
-                if ($category == null) {
-                    $category = new Category();
-                    $category->setName($data[2]);
-                    $this->em->persist($category);
-                    $this->em->flush();
-                }
-
-                $part->setCategory($category);
-                $part->setModel($this->getModel($part));
-                $category->addPart($part);
-
-                $this->em->persist($part);
-
-                $progress->advance();
-            }
-
-            $this->em->flush();
-            $this->em->clear();
-
-            fclose($handle);
-
-            $progress->finish();
-        }
-
-        unlink($file);
+        return $this->em->getConnection()->prepare($query)->execute();
     }
 
-    public function loadColors()
+    private function loadInventoryTable()
     {
-        $this->output->writeln('Loading colors into Database');
+        $file = $this->downloadFile($this->rebrickable_url.'inventories.csv');
 
-        $rb_colors = $this->rebrickableManager->getColors();
-
-        foreach ($rb_colors as $rb_color) {
-            $color = new Color();
-            $color
-                ->setId($rb_color->getRbColorId())
-                ->setName($rb_color->getColorName())
-                ->setRgb($rb_color->getRgb());
-
-            $this->em->persist($color);
-        }
-
-        $this->em->flush();
+        return $this->loadCsvFile($file, 'rebrickable_inventory', '(`id`,`version`,`set_id`)');
     }
 
-    public function getModel(Part $part)
+    private function loadInventoryPartTable()
     {
-        $modelRepository = $this->em->getRepository('AppBundle:Model');
+        $file = $this->downloadFile($this->rebrickable_url.'inventory_parts.csv');
 
-        $model = $modelRepository->findOneBy(['number' => $part->getNumber()]);
+        return $this->loadCsvFile($file, 'rebrickable_inventory_parts', '(`inventory_id`,`part_id`,`color_id`,`quantity`, @var) SET is_spare = IF(@var=\'t\',1,0)');
+    }
 
-        if (!$model && strpos($part->getNumber(), 'p')) {
-            $model = $modelRepository->findOneBy(['number' => explode('p', $part->getNumber())[0]]);
-        }
+    private function loadSetTable()
+    {
+        $file = $this->downloadFile($this->rebrickable_url.'sets.csv');
 
-        return $model;
+        return $this->loadCsvFile($file, 'rebrickable_set', '(`id`,`name`,`year`,`theme_id`,`num_parts`)');
+    }
+
+    private function loadThemeTable()
+    {
+        $file = $this->downloadFile($this->rebrickable_url.'themes.csv');
+
+        return $this->loadCsvFile($file, 'rebrickable_theme', '(`id`,`name`,@var) SET parent_id = nullif(@var,\'\')');
+    }
+
+    private function loadPartTable()
+    {
+        $file = $this->downloadFile($this->rebrickable_url.'parts.csv');
+
+        return $this->loadCsvFile($file, 'rebrickable_part', '(`id`,`name`,`category_id`)');
+    }
+
+    private function loadCategoryTable()
+    {
+        $file = $this->downloadFile($this->rebrickable_url.'part_categories.csv');
+
+        return $this->loadCsvFile($file, 'rebrickable_category', '(`id`,`name`)');
+    }
+
+    private function loadColorTable()
+    {
+        $file = $this->downloadFile($this->rebrickable_url.'colors.csv');
+
+        return $this->loadCsvFile($file, 'rebrickable_color', '(`id`,`name`,`rgb`, @var) SET transparent = IF(@var=\'t\',1,0)');
     }
 }

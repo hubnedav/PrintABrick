@@ -22,17 +22,6 @@ class LoadRebrickableDataCommand extends ContainerAwareCommand
         $rebrickableLoader->setOutput($output);
 
         //TODO log errors
-
-        try {
-            $rebrickableLoader->loadColors();
-
-            $rebrickableLoader->loadParts();
-
-            $rebrickableLoader->loadBuildingKits();
-
-            $rebrickableLoader->loadPartBuildingKits();
-        } catch (\Exception $e) {
-            printf($e->getMessage());
-        }
+        $rebrickableLoader->loadTables();
     }
 }

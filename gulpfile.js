@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
     plugins = require('gulp-load-plugins')(),
-    build_sematnic = require('./app/Resources/assets/semantic/tasks/build'),
-    watch_sematnic = require('./app/Resources/assets/semantic/tasks/watch');
+    build_sematnic = require('./app/Resources/libs/semantic/tasks/build'),
+    watch_sematnic = require('./app/Resources/libs/semantic/tasks/watch');
 
 
 gulp.task('semantic:build', build_sematnic);
@@ -10,7 +10,7 @@ gulp.task('semantic:watch', watch_sematnic);
 
 gulp.task('css', function() {
     return gulp.src([
-        'app/Resources/assets/semantic/dist/semantic.css',
+        'app/Resources/libs/semantic/dist/semantic.css',
     ])
         .pipe(plugins.sass().on('error', plugins.sass.logError))
         .pipe(plugins.concat('main.css', {newLine: ' '}))
@@ -19,33 +19,33 @@ gulp.task('css', function() {
 
 gulp.task('three', function() {
     gulp.src([
-        'node_modules/three/build/three.js',
-        'node_modules/three/examples/js/libs/stats.min.js',
-        'node_modules/three/examples/js/loaders/STLLoader.js',
+        'bower_components/three/build/three.js',
+        'bower_components/three/examples/js/libs/stats.min.js',
+        'bower_components/three/examples/js/loaders/STLLoader.js',
     ])
         .pipe(plugins.concat('three.js'))
         .pipe(gulp.dest('web/resources/js'));
 
     gulp.src([
-        'node_modules/three/examples/js/controls/OrbitControls.js',
+        'bower_components/three/examples/js/controls/OrbitControls.js',
     ])
         .pipe(plugins.concat('OrbitControls.js'))
-        .pipe(gulp.dest('web/resources/js'));
-
-    gulp.src([
-        'app/Resources/assets/javascripts/ModelViewer.js',
-    ])
-        .pipe(plugins.concat('ModelViewer.js'))
         .pipe(gulp.dest('web/resources/js'));
 });
 
 gulp.task('js', function() {
     return gulp.src([
-        'node_modules/jquery/dist/jquery.js',
-        'app/Resources/assets/semantic/dist/semantic.js',
+        'bower_components/jquery/dist/jquery.js',
+        'app/Resources/libs/semantic/dist/semantic.js',
+        'app/Resources/js/**.js',
     ])
         .pipe(plugins.concat('main.js'))
         .pipe(gulp.dest('web/resources/js'));
+});
+
+gulp.task('watch', ['js', 'css', 'three'], function () {
+    gulp.watch('app/Resources/js/**.js' , ['js']);
+    gulp.watch('app/Resources/css/**/*.sass' , ['css']);
 });
 
 gulp.task('default', ['semantic:build'], function () {

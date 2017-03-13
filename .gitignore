@@ -19,3 +19,4 @@
 /app/Resources/assets/semantic/dist
 /web/resources/
 .php_cs.cache
+/bower_components/

@@ -8,10 +8,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-load-plugins": "^1.4.0",
     "gulp-sass": "^2.3.2",
-    "gulp-watch": "^4.3.11",
-    "jquery": "^3.1.1",
-    "semantic-ui": "^2.2.7",
-    "three": "^0.82.1"
+    "gulp-watch": "^4.3.11"
   },
   "devDependencies": {},
   "scripts": {

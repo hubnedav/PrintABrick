@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Category.
  *
- * @ORM\Table(name="category")
+ * @ORM\Table(name="rebrickable_category")
  * @ORM\Entity
  */
 class Category
@@ -21,21 +21,21 @@ class Category
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
-    private $name;
+    protected $name;
 
     /**
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part", mappedBy="category")
      */
-    private $parts;
+    protected $parts;
 
     /**
      * BuildingKit constructor.

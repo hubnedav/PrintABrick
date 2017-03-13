@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Color.
  *
- * @ORM\Table(name="color")
+ * @ORM\Table(name="rebrickable_color")
  * @ORM\Entity
  */
 class Color
@@ -20,42 +20,42 @@ class Color
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
      *
      * @ORM\Column(name="rgb", type="string", length=6, unique=false)
      */
-    private $rgb;
+    protected $rgb;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="transparent", type="boolean")
      */
-    private $transparent;
+    protected $transparent;
 
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part_Set", mappedBy="color")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory_part", mappedBy="color")
      */
-    private $part_sets;
+    protected $inventoryParts;
 
     /**
      * Constructor.
      */
     public function __construct()
     {
-        $this->part_sets = new ArrayCollection();
+        $this->inventoryParts = new ArrayCollection();
     }
 
     /**
@@ -153,31 +153,31 @@ class Color
     /**
      * @return Collection
      */
-    public function getPartBuildingKits()
+    public function getPartInventoryParts()
     {
-        return $this->part_sets;
+        return $this->inventoryParts;
     }
 
     /**
-     * @param Part_Set $part_building_kit
+     * @param Inventory_Part $part_building_kit
      *
      * @return Color
      */
-    public function addPartBuildingKit(Part_Set $part_set)
+    public function addPartInventoryPart(Inventory_Part $inventoryPart)
     {
-        $this->part_sets->add($part_set);
+        $this->inventoryParts->add($inventoryPart);
 
         return $this;
     }
 
     /**
-     * @param Part_Set $part_building_kit
+     * @param Inventory_Part $part_building_kit
      *
      * @return Color
      */
-    public function removePartBuildingKit(Part_Set $part_set)
+    public function removePartInventoryPart(Inventory_Part $inventoryPart)
     {
-        $this->part_sets->remove($part_set);
+        $this->inventoryParts->remove($inventoryPart);
 
         return $this;
     }

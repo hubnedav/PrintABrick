@@ -9,20 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Part.
  *
- * @ORM\Table(name="part")
+ * @ORM\Table(name="rebrickable_part")
  * @ORM\Entity
  */
 class Part
 {
-    //    /**
-//     * @var int
-//     *
-//     * @ORM\Column(name="id", type="integer")
-//     * @ORM\Id
-//     * @ORM\GeneratedValue(strategy="AUTO")
-//     */
-//    private $id;
-
     /**
      * Part ID number.
      *
@@ -31,35 +22,35 @@ class Part
      * @ORM\Id
      * @ORM\Column(name="id", type="string", length=255, unique=true)
      */
-    private $number;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
      */
-    private $name;
+    protected $name;
 
     /**
      * @var Category
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Category", inversedBy="parts")
      */
-    private $category;
+    protected $category;
 
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part_Set", mappedBy="part")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory_Part", mappedBy="part")
      */
-    private $sets;
+    protected $inventoryParts;
 
     /**
      * Part constructor.
      */
     public function __construct()
     {
-        $this->sets = new ArrayCollection();
+        $this->inventoryParts = new ArrayCollection();
     }
 
     /**
@@ -69,9 +60,9 @@ class Part
      *
      * @return Part
      */
-    public function setNumber($number)
+    public function setId($id)
     {
-        $this->number = $number;
+        $this->id = $id;
 
         return $this;
     }
@@ -81,9 +72,9 @@ class Part
      *
      * @return string
      */
-    public function getNumber()
+    public function getId()
     {
-        return $this->number;
+        return $this->id;
     }
 
     /**
@@ -111,33 +102,33 @@ class Part
     }
 
     /**
-     * @return mixed
+     * @return Collection
      */
-    public function getSets()
+    public function getInventoryParts()
     {
-        return $this->sets;
+        return $this->inventoryParts;
     }
 
     /**
-     * @param Part_Set $set
+     * @param Inventory_Part $invetoryPart
      *
      * @return Part
      */
-    public function addSet(Part_Set $set)
+    public function addInventoryPart(Inventory_Part $inventoryPart)
     {
-        $this->sets->add($set);
+        $this->inventoryParts->add($inventoryPart);
 
         return $this;
     }
 
     /**
-     * @param Part_Set $set
+     * @param Inventory_Part $set
      *
      * @return Part
      */
-    public function removeSet($set)
+    public function removeInventoryPart($inventoryPart)
     {
-        $this->sets->removeElement($set);
+        $this->inventoryParts->removeElement($inventoryPart);
 
         return $this;
     }

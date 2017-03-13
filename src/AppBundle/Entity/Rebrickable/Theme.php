@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Theme.
  *
- * @ORM\Table(name="theme")
+ * @ORM\Table(name="rebrickable_theme")
  * @ORM\Entity
  */
 class Theme
@@ -16,32 +16,32 @@ class Theme
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    protected $name;
 
     /**
-     * @var Collection
+     * @var Theme
      *
      * @ORM\ManyToOne(targetEntity="Theme")
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
-    private $parent;
+    protected $parent;
 
     /**
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Rebrickable\Set", inversedBy="themes")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Set", mappedBy="theme")
      */
-    private $sets;
+    protected $sets;
 
     /**
      * @return int
@@ -76,7 +76,7 @@ class Theme
     }
 
     /**
-     * @return Collection
+     * @return Theme
      */
     public function getParent()
     {
@@ -100,11 +100,11 @@ class Theme
     }
 
     /**
-     * @param Part_Set $set
+     * @param Set $set
      *
      * @return Theme
      */
-    public function addSet(Part_Set $set)
+    public function addSet(Set $set)
     {
         $this->sets->add($set);
 
@@ -112,7 +112,7 @@ class Theme
     }
 
     /**
-     * @param Part_Set $set
+     * @param Set $set
      *
      * @return Theme
      */

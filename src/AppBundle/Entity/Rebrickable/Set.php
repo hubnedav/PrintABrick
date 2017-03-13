@@ -9,81 +9,61 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Set.
  *
- * @ORM\Table(name="set")
+ * @ORM\Table(name="rebrickable_set")
  * @ORM\Entity
  */
 class Set
 {
-    //    /**
-//     * @var int
-//     *
-//     * @ORM\Column(name="id", type="integer")
-//     * @ORM\Id
-//     * @ORM\GeneratedValue(strategy="AUTO")
-//     */
-//    private $id;
-
     /**
      * @var string
      *
      * @ORM\Id
      * @ORM\Column(name="id", type="string", length=255, unique=true)
      */
-    private $number;
+    protected $number;
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
-    private $name;
+    protected $name;
 
     /**
      * @var int
      *
      * @ORM\Column(name="year", type="integer", nullable=true)
      */
-    private $year;
+    protected $year;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="part_count", type="integer", nullable=true)
+     * @ORM\Column(name="num_parts", type="integer", nullable=true)
      */
-    private $partCount;
+    protected $partCount;
 
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part_Set", mappedBy="set")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory", mappedBy="set")
      */
-    private $parts;
+    protected $inventories;
 
     /**
-     * @var Collection
+     * @var Theme
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Rebrickable\Theme", mappedBy="sets")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Theme", inversedBy="sets")
      */
-    private $themes;
+    protected $theme;
 
     /**
      * Set constructor.
      */
     public function __construct()
     {
-        $this->parts = new ArrayCollection();
-        $this->themes = new ArrayCollection();
+        $this->inventories = new ArrayCollection();
     }
-
-//    /**
-//     * Get id.
-//     *
-//     * @return int
-//     */
-//    public function getId()
-//    {
-//        return $this->id;
-//    }
 
     /**
      * @return string
@@ -178,32 +158,48 @@ class Set
      *
      * @return Collection
      */
-    public function getParts()
+    public function getInventories()
     {
-        return $this->parts;
+        return $this->inventories;
     }
 
     /**
-     * @param Part_Set $part
+     * @param Inventory $inventory
      *
      * @return Set
      */
-    public function addPart(Part_Set $part)
+    public function addInventory(Inventory $inventory)
     {
-        $this->parts->add($part);
+        $this->inventories->add($inventory);
 
         return $this;
     }
 
     /**
-     * @param Part_Set $part
+     * @param Inventory $part
      *
      * @return Set
      */
-    public function removePart(Part_Set $part)
+    public function removeInventory(Inventory $inventory)
     {
-        $this->parts->remove($part);
+        $this->inventories->removeElement($inventory);
 
         return $this;
+    }
+
+    /**
+     * @return Theme
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * @param Theme $theme
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
     }
 }

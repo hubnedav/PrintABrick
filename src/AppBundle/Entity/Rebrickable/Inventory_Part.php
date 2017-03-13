@@ -5,73 +5,54 @@ namespace AppBundle\Entity\Rebrickable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Part_Set.
+ * Inventory_Part.
  *
- * @ORM\Table(name="part_set")
+ * @ORM\Table(name="rebrickable_inventory_parts")
  * @ORM\Entity
  */
-class Part_Set
+class Inventory_Part
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
      */
-    private $id;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="count", type="integer")
-     */
-    private $count;
+    protected $quantity;
 
     /**
      * @var Color
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Color", inversedBy="part_sets")
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Color", inversedBy="inventoryParts")
      */
-    private $color;
+    protected $color;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="type", type="boolean")
+     * @ORM\Column(type="boolean")
      */
-    private $type;
+    protected $isSpare;
 
     /**
      * @var Part
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Part", inversedBy="sets" )
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Part", inversedBy="inventoryParts")
      */
-    private $part;
+    protected $part;
 
     /**
-     * @var Set
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Set", inversedBy="parts")
+     * @var Inventory
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Inventory", inversedBy="inventoryParts")
      */
-    private $set;
-
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+    protected $inventory;
 
     /**
      * Set count.
      *
      * @param int $count
      *
-     * @return Part_Set
+     * @return Inventory_Part
      */
     public function setCount($count)
     {
@@ -85,9 +66,9 @@ class Part_Set
      *
      * @return int
      */
-    public function getCount()
+    public function getQuantity()
     {
-        return $this->count;
+        return $this->quantity;
     }
 
     /**
@@ -95,7 +76,7 @@ class Part_Set
      *
      * @param Color $color
      *
-     * @return Part_Set
+     * @return Inventory_Part
      */
     public function setColor($color)
     {
@@ -119,11 +100,11 @@ class Part_Set
      *
      * @param bool $type
      *
-     * @return Part_Set
+     * @return Inventory_Part
      */
-    public function setType($type)
+    public function setIsSpare($isSpare)
     {
-        $this->type = $type;
+        $this->isSpare = $isSpare;
 
         return $this;
     }
@@ -133,9 +114,9 @@ class Part_Set
      *
      * @return bool
      */
-    public function getType()
+    public function isSpare()
     {
-        return $this->type;
+        return $this->isSpare();
     }
 
     /**
@@ -149,11 +130,10 @@ class Part_Set
     /**
      * @param Part $part
      *
-     * @return Part_Set
+     * @return Inventory_Part
      */
     public function setPart(Part $part)
     {
-        $part->addSet($this);
         $this->part = $part;
 
         return $this;
@@ -162,20 +142,19 @@ class Part_Set
     /**
      * @return Set
      */
-    public function getSet()
+    public function getInventory()
     {
-        return $this->set;
+        return $this->inventory;
     }
 
     /**
-     * @param Set $set
+     * @param Inventory $inventory
      *
-     * @return Part_Set
+     * @return Inventory_Part
      */
-    public function setSet(Set $set)
+    public function setInventory(Inventory $inventory)
     {
-        $set->addPart($this);
-        $this->set = $set;
+        $this->inventory = $inventory;
 
         return $this;
     }

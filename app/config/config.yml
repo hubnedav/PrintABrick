@@ -82,7 +82,7 @@ knp_menu:
     default_renderer: twig
 
 knp_paginator:
-    page_range: 5                      # default page range used in pagination control
+    page_range: 10                      # default page range used in pagination control
     default_options:
         page_name: page                # page query parameter name
         sort_field_name: sort          # sort field query parameter name
@@ -94,9 +94,9 @@ knp_paginator:
 
 oneup_flysystem:
     adapters:
-        ldraw_adapter:
+        media_adapter:
             local:
-                directory: "%kernel.root_dir%/../var/data/ldraw"
+                directory: "%kernel.root_dir%/../var/media/"
     filesystems:
-        ldraw:
-            adapter: ldraw_adapter
+        media:
+            adapter: media_adapter

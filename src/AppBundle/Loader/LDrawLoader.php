@@ -6,14 +6,15 @@ use AppBundle\Entity\LDraw\Category;
 use AppBundle\Entity\LDraw\Keyword;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\LDraw\Part;
+use AppBundle\Entity\LDraw\Part_Relation;
 use AppBundle\Entity\LDraw\Type;
 use AppBundle\Service\LDViewService;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Finder\Finder;
 
+//TODO refactor
 class LDrawLoader extends Loader
 {
     /**
@@ -21,6 +22,9 @@ class LDrawLoader extends Loader
      */
     private $ldraw;
 
+    /**
+     * @var string download URL with current LDraw library
+     */
     private $ldraw_url;
 
     /**
@@ -37,6 +41,11 @@ class LDrawLoader extends Loader
         $this->ldraw_url = $ldraw_url;
     }
 
+    /**
+     * Download current LDraw library and extract it to system tmp directory.
+     *
+     * @return string Absolute path to temporary Ldraw library
+     */
     public function downloadLibrary()
     {
         $this->output->writeln('Downloading LDraw library form ldraw.org');
@@ -57,18 +66,53 @@ class LDrawLoader extends Loader
         return $temp_dir;
     }
 
-    public function loadModels($LDrawLibrary)
+    /**
+     * @param $LDrawLibrary
+     */
+    public function loadData($LDrawLibrary)
     {
         $adapter = new Local($LDrawLibrary);
         $this->ldraw = new Filesystem($adapter);
-//        $files = $this->ldraw->get('parts')->getContents();
 
+        $this->loadParts();
+    }
+
+    /**
+     * Load stl model by calling LDViewSevice and create new Model.
+     *
+     * @param $file
+     * @param $header
+     *
+     * @throws \Exception
+     *
+     * @return Model|null
+     */
+    private function loadModel($file, $header)
+    {
+        if (($model = $this->em->getRepository(Model::class)->find($header['id'])) == null) {
+            $model = new Model();
+            $model->setId($header['id']);
+        }
+
+        $model->setAuthor($header['author']);
+        $model->setModified($header['modified']);
+
+        try {
+            $stlFile = $this->LDViewService->datToStl($file, $this->ldraw)->getPath();
+            $model->setFile($stlFile);
+        } catch (\Exception $e) {
+            throw $e; //TODO
+        }
+
+        return $model;
+    }
+
+    // TODO refactor
+    public function loadParts()
+    {
         $files = $this->ldraw->get('parts')->getContents();
 
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-
-//        $finder = new Finder();
-//        $files = $finder->files()->name('*.dat')->depth('== 0')->in(getcwd().DIRECTORY_SEPARATOR.$LDrawLibrary.DIRECTORY_SEPARATOR.'parts');
 
         $progressBar = new ProgressBar($this->output, count($files));
         $progressBar->setFormat('very_verbose');
@@ -110,40 +154,69 @@ class LDrawLoader extends Loader
                         }
                     }
 
-                    if ($header['print_of_id']) {
-                        if (($printParent = $this->em->getRepository(Part::class)->find($header['print_of_id'])) == null) {
+                    if ($printParentId = $this->getPrinetedParentId($header['id'])) {
+                        if (($printParent = $this->em->getRepository(Part::class)->find($printParentId)) == null) {
                             $printParent = new Part();
-                            $printParent->setId($header['print_of_id']);
+                            $printParent->setId($printParentId);
+
+                            if (!$this->ldraw->has('parts/'.$printParentId.'.dat')) {
+                                $printParent->setModel($this->loadModel($file, $header));
+                            }
                         }
-                        $part->setPrintOf($printParent);
+
+                        if (($alias = $this->em->getRepository(Part_Relation::class)->find(['parent' => $printParent, 'child' => $part, 'type' => 'Print'])) == null) {
+                            $alias = new Part_Relation();
+                            $alias->setParent($printParent);
+                            $alias->setChild($part);
+                            $alias->setCount(0);
+                            $alias->setType('Print');
+                        }
+                        $this->em->persist($alias);
                     }
 
-                    if ($header['alias_of_id']) {
-                        if (($aliasParent = $this->em->getRepository(Part::class)->find($header['alias_of_id'])) == null) {
-                            $aliasParent = new Part();
-                            $aliasParent->setId($header['alias_of_id']);
+                    if (isset($header['subparts'])) {
+                        $relationType = strpos($header['name'], '~Moved to ') === 0 ? 'Alias' : 'Subpart';
+
+                        if ($header['type'] == 'Alias') {
+                            if (count($header['subparts']) == 1) {
+                                $relationType = 'Alias';
+                            }
                         }
-                        $part->setAliasOf($aliasParent);
+
+                        foreach ($header['subparts'] as $subId) {
+                            if ($subId != $this->getPrinetedParentId($header['id'])) {
+                                if ($this->ldraw->has('parts/'.$subId.'.dat') && $this->fileFilter($this->getPartHeader($this->ldraw->get('parts/'.$subId.'.dat')->getMetadata()))) {
+                                    if (($subPart = $this->em->getRepository(Part::class)->find($subId)) == null) {
+                                        $subPart = new Part();
+                                        $subPart->setId($subId);
+
+                                        $this->em->persist($subPart);
+                                    }
+
+                                    if (($alias = $this->em->getRepository(Part_Relation::class)->find(['parent' => $part, 'child' => $subPart, 'type' => $relationType])) == null) {
+                                        $alias = new Part_Relation();
+                                        $alias->setParent($part);
+                                        $alias->setChild($subPart);
+                                        $alias->setCount(0);
+                                        $alias->setType($relationType);
+                                    }
+
+                                    $alias->setCount($alias->getCount() + 1);
+
+                                    $this->em->persist($alias);
+                                }
+                            }
+                        }
                     }
 
-                    if (!$header['print_of_id'] && !$header['alias_of_id']) {
-                        if (($model = $this->em->getRepository(Model::class)->find($header['id'])) == null) {
-                            $model = new Model();
-                            $model->setId($header['id']);
-                        }
+                    if (!in_array($header['type'], ['Print', 'Alias'])) {
+                        $part->setModel($this->loadModel($file, $header));
+                    }
 
-                        $model->setAuthor($header['author']);
-                        $model->setModified($header['modified']);
-
-                        try {
-                            $file = $this->LDViewService->datToStl($file, $this->ldraw)->getPath();
-                        } catch (\Exception $e) {
-                            dump($e);
-                        }
-
-                        $model->setFile($file);
-
-                        $part->setModel($model);
+                    try {
+                        $this->LDViewService->datToPng($file, $this->ldraw);
+                    } catch (\Exception $e) {
+                        dump($e->getMessage());
                     }
 
                     $this->em->persist($part);
@@ -156,15 +229,26 @@ class LDrawLoader extends Loader
         $progressBar->finish();
     }
 
+    /**
+     * Determine if part file should be loaded into database.
+     *
+     * @param $header
+     *
+     * @return bool
+     */
     private function fileFilter($header)
     {
-        if (strpos($header['name'], 'Sticker') !== 0 &&
-            (strpos($header['name'], '~') !== 0 || strpos($header['name'], '~Moved to ') === 0) &&
-            $header['type'] !== 'Subpart') {
+        // Do not include sticker parts and incomplete parts
+        if (strpos($header['name'], 'Sticker') !== 0 && strpos($header['id'], 's') !== 0 && $header['type'] != 'Subpart') {
+            // If file is alias of another part determine if referenced file should be included
             if (strpos($header['name'], '~Moved to ') === 0) {
-                $filepath = str_replace('\\', DIRECTORY_SEPARATOR, 'parts/'.$header['alias_of_id'].'.dat');
+                // Get file path of referenced part file
+                $alias = 'parts/'.$this->getObsoleteParentId($header['name']).'.dat';
+                if ($this->ldraw->has($alias)) {
+                    return $this->fileFilter($this->getPartHeader($this->ldraw->get($alias)->getMetadata()));
+                }
 
-                return $this->fileFilter($this->getPartHeader($this->ldraw->get($filepath)->getMetadata()));
+                return false;
             }
 
             return true;
@@ -173,11 +257,19 @@ class LDrawLoader extends Loader
         return false;
     }
 
+    /**
+     * Get printed part parent id.
+     *
+     *  part name in format:
+     *  nnnPxx, nnnnPxx, nnnnnPxx, nnnaPxx, nnnnaPxx (a = alpha, n= numeric, x = alphanumeric)
+     *
+     *  http://www.ldraw.org/library/tracker/ref/numberfaq/
+     *
+     *
+     * @param $filename
+     */
     private function getPrinetedParentId($filename)
     {
-        // nnnPxx, nnnnPxx, nnnnnPxx, nnnaPxx, nnnnaPxx
-        //  where (a = alpha, n= numeric, x = alphanumeric)
-
         if (preg_match('/(^.*)(p[0-9a-z][0-9a-z][0-9a-z]{0,1})$/', $filename, $matches)) {
             return $matches[1];
         }
@@ -185,16 +277,19 @@ class LDrawLoader extends Loader
         return null;
     }
 
-    private function isShortcutPart($filename)
-    {
-        // nnnCnn, nnnnCnn, nnnnnCnn	        Shortcut assembly of part nnn, nnnn or nnnnn with other parts or formed version of flexible part nnn, nnnn or nnnnn.
-        // nnnCnn-Fn, nnnnCnn-Fn, nnnnnCnn-Fn   Positional variant of shortcut assembly of movable parts, comprising part nnn, nnnn or nnnnn with other parts.
-        //  where (a = alpha, n= numeric, x = alphanumeric)
-
-        return preg_match('/(^.*)(c[0-9][0-9])(.*)/', $filename);
-    }
-
-    private function getAliasParentId($name)
+    /**
+     * Get parent of obsolete part kept for reference.
+     *
+     *  part description in format:
+     *  ~Moved to {new_number}
+     *
+     * http://www.ldraw.org/article/398.html  (Appendix II (02-Oct-06))
+     *
+     * @param $name 
+     *
+     * @return string|null Filename of referenced part
+     */
+    private function getObsoleteParentId($name)
     {
         if (preg_match('/^(~Moved to )(.*)$/', $name, $matches)) {
             return $matches[2];
@@ -203,11 +298,21 @@ class LDrawLoader extends Loader
         return null;
     }
 
+    /**
+     * Get file reference from part line.
+     *
+     * Line type 1 is a sub-file reference. The generic format is:
+     *  1 <colour> x y z a b c d e f g h i <file>
+     *
+     * LDraw.org Standards: File Format 1.0.2 (http://www.ldraw.org/article/218.html)
+     *
+     * @param $line
+     *
+     * @return string|null Filename of referenced part
+     */
     private function getAlias($line)
     {
-        //        1 <colour> x y z a b c d e f g h i <file>
-
-        if (preg_match('/^1(.*) (.*)\.dat$/', $line, $matches)) {
+        if (preg_match('/^1(.*) (.*)\.(dat|DAT)$/', $line, $matches)) {
             return $matches[2];
         }
 
@@ -215,13 +320,26 @@ class LDrawLoader extends Loader
     }
 
     /**
+     * Parse LDraw .dat file header identifying model store data to array.
+     *
+     * [
+     *  'id' => string
+     *  'name' => string
+     *  'category' => string
+     *  'keywords' => []
+     *  'author' => string
+     *  'modified' => DateTime
+     *  'type' => string
+     *  'subparts' => []
+     * ]
+     *
+     * LDraw.org Standards: Official Library Header Specification (http://www.ldraw.org/article/398.html)
+     *
      * @return array
      */
     private function getPartHeader($file)
     {
         $header = [];
-
-//        $handle = fopen($file->getRealPath(), 'r');
 
         $handle = $this->ldraw->readStream($file['path']);
 
@@ -237,9 +355,9 @@ class LDrawLoader extends Loader
 
                     // 0 <CategoryName> <PartDescription>
                     if (!$firstLine) {
-                        $array = explode(' ', trim($line), 2);
-                        $header['category'] = isset($array[0]) ? ltrim($array[0], '=_~') : '';
-                        $header['name'] = $line;
+                        $array = explode(' ', ltrim(trim($line, 2), '=_~'));
+                        $header['category'] = isset($array[0]) ? $array[0] : '';
+                        $header['name'] = ltrim($line, '=_');
 
                         $firstLine = true;
                     }
@@ -262,7 +380,8 @@ class LDrawLoader extends Loader
                     // 0 !LDRAW_ORG Part|Subpart|Primitive|48_Primitive|Shortcut (optional qualifier(s)) ORIGINAL|UPDATE YYYY-RR
                     elseif (strpos($line, '!LDRAW_ORG ') === 0) {
                         $type = preg_replace('/(^!LDRAW_ORG )(.*)( UPDATE| ORIGINAL)(.*)/', '$2', $line);
-                        $header['type'] = $type;
+
+                        $header['type'] = in_array($type, ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour']) ? 'Alias' : $type;
 
                         // Last modification date in format YYYY-RR
                         $date = preg_replace('/(^!LDRAW_ORG )(.*)( UPDATE | ORIGINAL )(.*)/', '$4', $line);
@@ -273,25 +392,17 @@ class LDrawLoader extends Loader
                         }
                     }
                 } elseif (strpos($line, '1 ') === 0) {
-                    if ($header['type'] == 'Part Alias' || $header['type'] == 'Shortcut Physical_Colour' || $header['type'] == 'Shortcut Alias') {
-                        // "=" -> Alias name for other part kept for referece - do not include model -> LINK
-                        // "_" -> Physical_color  - do not include model -> LINK
-                        $header['name'] = ltrim($header['name'], '=_');
-                        $header['alias_of_id'] = $this->getAlias($line);
-                    } elseif ($header['type'] == 'Shortcut') {
-                        $header['subparts'][] = $this->getAlias($line);
-                    }
+                    $header['subparts'][] = $this->getAlias($line);
                 } elseif ($line != '') {
                     break;
                 }
             }
 
-            if (isset($header['id'])) {
-                $header['print_of_id'] = $this->getPrinetedParentId($header['id']);
-            }
-
-            if (isset($header['name']) && !isset($header['alias_of_id'])) {
-                $header['alias_of_id'] = $this->getAliasParentId($header['name']);
+            if (strpos($header['name'], '~') === 0) {
+                $header['name'] = ltrim($header['name'], '~');
+                $header['type'] = 'Obsolete/Subpart';
+            } elseif ($printParentId = $this->getPrinetedParentId($header['id'])) {
+                $header['type'] = 'Print';
             }
 
             fclose($handle);

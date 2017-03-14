@@ -4,12 +4,13 @@ namespace AppBundle\Entity\LDraw;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Part.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PartRepository")
  * @ORM\Table(name="ldraw_part")
  */
 class Part
@@ -43,18 +44,18 @@ class Part
     private $category;
 
     /**
-     * @var Part
+     * @var Part_Relation
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Part",cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Part_Relation", mappedBy="parent")
      */
-    private $printOf;
+    private $relationsTo;
 
     /**
-     * @var Part
+     * @var Part_Relation
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Part",cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Part_Relation", mappedBy="child")
      */
-    private $aliasOf;
+    private $relationsFrom;
 
     /**
      * @var Model
@@ -73,6 +74,8 @@ class Part
     public function __construct()
     {
         $this->keywords = new ArrayCollection();
+        $this->relationsTo = new ArrayCollection();
+        $this->relationsFrom = new ArrayCollection();
     }
 
     /**
@@ -148,43 +151,35 @@ class Part
     }
 
     /**
-     * @return Part
+     * @return Part_Relation
      */
-    public function getPrintOf()
+    public function getRelationsTo()
     {
-        return $this->printOf;
+        return $this->relationsTo;
     }
 
     /**
-     * @param Part $printOf
-     *
-     * @return Part
+     * @param Part_Relation $relationsTo
      */
-    public function setPrintOf($printOf)
+    public function setRelationsTo($relationsTo)
     {
-        $this->printOf = $printOf;
-
-        return $this;
+        $this->relationsTo = $relationsTo;
     }
 
     /**
-     * @return Part
+     * @return Part_Relation
      */
-    public function getAliasOf()
+    public function getRelationsFrom()
     {
-        return $this->aliasOf;
+        return $this->relationsFrom;
     }
 
     /**
-     * @param Part $printOf
-     *
-     * @return Part
+     * @param Part_Relation $relationsFrom
      */
-    public function setAliasOf($aliasOf)
+    public function setRelationsFrom($relationsFrom)
     {
-        $this->aliasOf = $aliasOf;
-
-        return $this;
+        $this->relationsFrom = $relationsFrom;
     }
 
     /**
@@ -193,11 +188,12 @@ class Part
     public function getModel()
     {
         if (!$this->model) {
-            if ($this->printOf) {
-                return $this->printOf->getModel();
-            } elseif ($this->aliasOf) {
-                return $this->aliasOf->getModel();
+            if ($this->getPrintOf()) {
+                return $this->getPrintOf()->getModel();
+            } elseif ($this->getAliasOf()) {
+                return $this->getAliasOf()->getModel();
             }
+
             return null;
         }
 
@@ -246,10 +242,80 @@ class Part
      *
      * @return Part
      */
-    public function removePart(Keyword $keyword)
+    public function removeKeyword(Keyword $keyword)
     {
         $this->keywords->removeElement($keyword);
 
         return $this;
+    }
+
+    private function getRelationOf($type)
+    {
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->eq('type', $type));
+
+        $relations = $this->relationsFrom->matching($criteria);
+
+        $array = new ArrayCollection();
+        foreach ($relations as $relation) {
+            $array->add($relation->getParent());
+        }
+
+        return $array;
+    }
+
+    private function getRelations($type)
+    {
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->eq('type', $type));
+
+        $relations = $this->relationsTo->matching($criteria);
+
+        $array = new ArrayCollection();
+        foreach ($relations as $relation) {
+            $array->add($relation->getChild());
+        }
+
+        return $array;
+    }
+
+    public function getPrintOf()
+    {
+        $parents = $this->getRelationOf('Print');
+        if (count($parents) > 0) {
+            return $parents->first();
+        }
+
+        return null;
+    }
+
+    public function getPrints()
+    {
+        return $this->getRelations('Print');
+    }
+
+    public function getSubpartOf()
+    {
+        return $this->getRelationOf('Subpart');
+    }
+
+    public function getSubparts()
+    {
+        return $this->getRelations('Subpart');
+    }
+
+    public function getAliasOf()
+    {
+        $parents = $this->getRelationOf('Alias');
+        if (count($parents) > 0) {
+            return $parents->first();
+        }
+
+        return null;
+    }
+
+    public function getAliases()
+    {
+        return $this->getRelations('Alias');
     }
 }

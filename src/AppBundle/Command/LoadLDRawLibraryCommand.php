@@ -26,11 +26,12 @@ class LoadLDRawLibraryCommand extends ContainerAwareCommand
         //TODO log errors
 
         try {
+            // TODO handle relative path to dir
             if (($ldrawPath = $input->getArgument('ldraw_path')) == null) {
                 $ldrawPath = $ldrawLoader->downloadLibrary();
             }
 
-            $ldrawLoader->loadModels($ldrawPath);
+            $ldrawLoader->loadData($ldrawPath);
         } catch (\Exception $e) {
             printf($e->getMessage());
         }

@@ -3,12 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Part;
+use AppBundle\Entity\Rebrickable\Inventory;
+use AppBundle\Entity\Rebrickable\Inventory_Part;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Doctrine\ORM\Query\Expr\Join;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/parts")
@@ -18,10 +19,25 @@ class PartController extends Controller
     /**
      * @Route("/detail/{id}", name="part_detail")
      */
-    public function showAction(Request $request, Part $part)
+    public function showAction(Request $request, $id)
     {
+        $em = $this->get('doctrine.orm.default_entity_manager');
+
+        $part = $em->getRepository(Part::class)->find($id);
+        $rbPart = $em->getRepository(\AppBundle\Entity\Rebrickable\Part::class)->find($id);
+
+        $qb = $em->getRepository('AppBundle:Rebrickable\Inventory')->createQueryBuilder('i');
+
+        $qb->innerJoin(Inventory_Part::class, 'ip', Join::WITH, 'i.id = ip.inventory')
+            ->where('ip.part = :part')
+            ->setParameter('part', $id)->distinct(true);
+
+        $inventries = $qb->getQuery()->getResult();
+
         return $this->render('part/detail.html.twig', [
             'part' => $part,
+            'rbPart' => $rbPart,
+            'inventories' => $inventries,
         ]);
     }
 
@@ -35,21 +51,20 @@ class PartController extends Controller
         $queryBuilder = $em->getRepository(Part::class)->createQueryBuilder('p');
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder->where('p.model is not null');
+//        $queryBuilder->where('p.model is not null');
 
         $query = $queryBuilder->getQuery();
 
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
 
         $parts = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1)/*page number*/,
-            $request->query->getInt('limit', 30)/*limit per page*/
+            $request->query->getInt('limit', 100)/*limit per page*/
         );
 
         return $this->render('part/index.html.twig', [
             'parts' => $parts,
-            'part' => null
         ]);
     }
 }

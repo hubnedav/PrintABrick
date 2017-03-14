@@ -3,5 +3,25 @@
 {% block body %}
 
     {{ dump(set) }}
+    {{ dump(brset) }}
+
+    <h1>{{ brset.name }}</h1>
+    <img src="{{ brset.imageURL }}">
+
+    {% if set is not null %}
+        {% for inventory in set.inventories %}
+            <h2>Parts</h2>
+            <div style="display: flex; flex-wrap: wrap">
+            {% for inventoryPart in inventory.inventoryParts %}
+                <div style="height: 150px; width: 150px; padding: 5px; display: inline-block">
+                    <img src="https://rebrickable.com/media/parts/ldraw/{{ inventoryPart.color.id }}/{{ inventoryPart.part.id }}.png" style="max-height: 90%; max-width: 100%">
+                    <p><a style="color: #{{ inventoryPart.color.rgb }}" href="{{ url('part_detail', {id:inventoryPart.part.id}) }}"><strong>{{ inventoryPart.part.id }}</strong> {{ inventoryPart.quantity }}</a></p>
+                </div>
+            {% endfor %}
+            <div>
+        {% else %}
+
+        {% endfor %}
+    {% endif %}
 
 {% endblock %}

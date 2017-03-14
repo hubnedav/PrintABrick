@@ -12,7 +12,7 @@
 
     <ul>
         {% for set in sets %}
-            <li><a href="{{ url('set_detail', {'id': set.setID, 'name' : set.name|escape('url') }) }}">{{ set.LegoSetID }} - {{ set.name }}</a></li>
+            <li><a href="{{ url('set_detail', {'id': set.number~'-'~set.numberVariant, 'name' : set.name|escape('url') }) }}">{{ set.LegoSetID }} - {{ set.name }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

@@ -12,6 +12,12 @@
         {{ knp_menu_render('AppBundle:Builder:mainMenu') }}
         {% block body %}{% endblock %}
         {% block javascripts %}
+
+            <script type="text/javascript" src="{{ asset('resources/js/three.js') }}"></script>
+
+            <script type="text/javascript" src="{{ asset('resources/js/OrbitControls.js') }}"></script>
+
+
             <script src="{{ asset('resources/js/main.js') }}"></script>
         {% endblock %}
     </body>

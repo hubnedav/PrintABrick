@@ -40,4 +40,11 @@ class BricksetManager
     {
         return $this->bricksetClient->getSet($id);
     }
+
+    public function getSetByNumber($number)
+    {
+        $sets = $this->bricksetClient->getSets(['setNumber' => $number]);
+
+        return isset($sets[0]) ? $sets[0] : null;
+    }
 }

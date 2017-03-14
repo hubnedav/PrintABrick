@@ -14,9 +14,9 @@ ModelViewer = function() {
         scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x000000, 0.001);
 
-        var grid = new THREE.GridHelper( 30, 70 );
-        // grid.position.set(30/70,-0.5,30/70);
-        scene.add( grid );
+        // var grid = new THREE.GridHelper( 30, 70 );
+        // // grid.position.set(30/70,-0.5,30/70);
+        // scene.add( grid );
 
         // Lights
 

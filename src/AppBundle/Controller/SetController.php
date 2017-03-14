@@ -2,13 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Form\FilterSetType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/brickset/set")
+ * @Route("/sets")
  */
 class SetController extends Controller
 {
@@ -39,14 +40,17 @@ class SetController extends Controller
     }
 
     /**
-     * @Route("/{id}_{name}", name="set_detail")
+     * @Route("/detail/{id}_{name}", name="set_detail")
      */
     public function detailAction(Request $request, $id, $name = null)
     {
-        $set = $this->get('manager.brickset')->getSetById($id);
+        $brset = $this->get('manager.brickset')->getSetByNumber($id);
+
+        $set = $this->get('doctrine.orm.default_entity_manager')->getRepository(Set::class)->find($id);
 
         return $this->render('set/detail.html.twig', [
             'set' => $set,
+            'brset' => $brset,
         ]);
     }
 }

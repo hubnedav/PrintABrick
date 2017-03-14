@@ -3,26 +3,84 @@
 {% block body %}
 
     {{ dump(part) }}
+    {{ dump(rbPart) }}
 
-    <div id="model" style="height: 300px; width: 300px; padding: 5px; display: inline-block"></div>
+
+    <div style="display: flex; flex-wrap: wrap">
+        {% if part is not null %}
+            <div id="model" style="height: 300px; width: 300px; padding: 5px; display: inline-block"></div>
+            <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
+                <img src="{{ url('part_image', {id:part.id}) }}"  style="max-height: 90%; max-width: 100%">
+            </div>
+
+            <h2 style="width: 100%">alias of</h2>
+            {% if part.aliasOf is not null %}
+                <div style="height: 300px; width: 300px; padding: 5px; display: inline-block;">
+                    <img src="{{ url('part_image', {id:part.aliasOf.id}) }}" style="max-height: 90%; max-width: 100%;">
+                    <p><a href="{{ url('part_detail', {id:part.aliasOf.id}) }}">{{ part.aliasOf.id }}</a></p>
+                </div>
+            {% endif %}
+
+            <h2 style="width: 100%">aliases</h2>
+            {% for alias in part.aliases  %}
+                <div style="height: 300px; width: 300px; padding: 5px; display: inline-block;">
+                    <img src="{{ url('part_image', {id:alias.id}) }}" style="max-height: 90%; max-width: 100%;">
+                    <p><a href="{{ url('part_detail', {id:alias.id}) }}">{{ alias.id }}</a></p>
+                </div>
+            {% endfor %}
+
+            <h2 style="width: 100%">subparts</h2>
+            {% for subpart in part.subparts  %}
+                <div style="height: 300px; width: 300px; padding: 5px; display: inline-block;">
+                    <img src="{{ url('part_image', {id:subpart.id}) }}" style="max-height: 90%; max-width: 100%;">
+                    <p><a href="{{ url('part_detail', {id:subpart.id}) }}">{{ subpart.id }}</a></p>
+                </div>
+            {% endfor %}
+
+            <h2 style="width: 100%">subpart of</h2>
+            {% for subpart in part.subpartOf  %}
+                <div style="height: 300px; width: 300px; padding: 5px; display: inline-block;">
+                    <img src="{{ url('part_image', {id:subpart.id}) }}" style="max-height: 90%; max-width: 100%;">
+                    <p><a href="{{ url('part_detail', {id:subpart.id}) }}">{{ subpart.id }}</a></p>
+                </div>
+            {% endfor %}
+
+            {% if part.printOf is not null %}
+                <h2 style="width: 100%">print of</h2>
+                <div style="height: 300px; width: 300px; padding: 5px; display: inline-block;">
+                    <img src="{{ url('part_image', {id:part.printOf.id}) }}" style="max-height: 90%; max-width: 100%;">
+                    <p><a href="{{ url('part_detail', {id:part.printOf.id}) }}">{{ part.printOf.id }}</a></p>
+                </div>
+            {% endif %}
+
+            {% if part.prints is not empty %}
+                <h2 style="width: 100%">prints</h2>
+                {% for print in part.prints  %}
+                    <div style="height: 300px; width: 300px; padding: 5px; display: inline-block;">
+                        <img src="{{ url('part_image', {id:print.id}) }}" style="max-height: 90%; max-width: 100%;">
+                        <p><a href="{{ url('part_detail', {id:print.id}) }}">{{ print.id }}</a></p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+        {% endif %}
+        <h2 style="width: 100%">in sets</h2>
+        {% for inventory in inventories %}
+            <span style="margin: 5px"><a href="{{ url('set_detail', {id:inventory.set.number}) }}">{{ inventory.set.number }}</a></span>
+        {% endfor %}
+    </div>
 
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 
-    <script type="text/javascript" src="{{ asset('resources/js/three.js') }}"></script>
-
-    <script type="text/javascript" src="{{ asset('resources/js/OrbitControls.js') }}"></script>
-
-    <script type="text/javascript" src="{{ asset('resources/js/ModelViewer.js') }}"></script>
-
     <script type="text/javascript">
         window.onload = function() {
             modelView = new ModelViewer();
             var scene = modelView.initScene($('#model'));
-            {% if part.model is not null %}
-            modelView.loadStl('{{ path('download_model', {'id' : part.model.id })}}');
+            {% if part is not null and part.model is not null %}
+            modelView.loadStl('{{ path('model_stl', {'id' : part.model.id })}}');
             {% endif %}
             modelView.render();
         };

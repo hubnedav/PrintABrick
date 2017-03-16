@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Model.
  *
  * @ORM\Table(name="ldraw_model")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ModelRepository")
  */
 class Model
 {

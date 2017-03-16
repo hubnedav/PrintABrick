@@ -2,27 +2,8 @@
 
 namespace AppBundle\Api\Client\Rebrickable\Entity;
 
-class Part
+class Part extends \AppBundle\Entity\Rebrickable\Part
 {
-    /**
-     * Part ID number.
-     *
-     * @var int
-     */
-    private $number;
-    /**
-     * Part Name.
-     *
-     * @var string
-     */
-    private $name;
-    /**
-     * Part category id.
-     *
-     * @var int
-     */
-    private $categoryId;
-
     /**
      * Year the part first appeared in sets.
      *
@@ -42,6 +23,24 @@ class Part
      */
     private $externalIds;
     /**
+     * Array of molds of part.
+     *
+     * @var array
+     */
+    private $molds;
+    /**
+     * Array of prints the part appears in.
+     *
+     * @var array
+     */
+    private $prints;
+    /**
+     * Array of alternative prts.
+     *
+     * @var array
+     */
+    private $alternates;
+    /**
      * Rebrickable URL to the Part Details page.
      *
      * @var string
@@ -53,70 +52,6 @@ class Part
      * @var string
      */
     private $imgUrl;
-
-    /**
-     * @return int
-     */
-    public function getNumber()
-    {
-        return $this->number;
-    }
-
-    /**
-     * @param int $number
-     */
-    public function setNumber($number)
-    {
-        $this->number = $number;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCategoryId()
-    {
-        return $this->categoryId;
-    }
-
-    /**
-     * @param int $categoryId
-     */
-    public function setCategoryId($categoryId)
-    {
-        $this->categoryId = $categoryId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param int $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
 
     /**
      * @return int
@@ -164,6 +99,54 @@ class Part
     public function setExternalIds($externalIds)
     {
         $this->externalIds = $externalIds;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAlternates()
+    {
+        return $this->alternates;
+    }
+
+    /**
+     * @param array $alternates
+     */
+    public function setAlternates($alternates)
+    {
+        $this->alternates = $alternates;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMolds()
+    {
+        return $this->molds;
+    }
+
+    /**
+     * @param array $molds
+     */
+    public function setMolds($molds)
+    {
+        $this->molds = $molds;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPrints()
+    {
+        return $this->prints;
+    }
+
+    /**
+     * @param array $prints
+     */
+    public function setPrints($prints)
+    {
+        $this->prints = $prints;
     }
 
     /**

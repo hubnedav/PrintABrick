@@ -26,6 +26,13 @@ class PartController extends Controller
         $part = $em->getRepository(Part::class)->find($id);
         $rbPart = $em->getRepository(\AppBundle\Entity\Rebrickable\Part::class)->find($id);
 
+        $apiPart = null;
+        try {
+            $apiPart = $this->get('manager.rebrickable')->getPart($id);
+        } catch (\Exception $e) {
+            dump($e);
+        }
+
         $qb = $em->getRepository('AppBundle:Rebrickable\Inventory')->createQueryBuilder('i');
 
         $qb->innerJoin(Inventory_Part::class, 'ip', Join::WITH, 'i.id = ip.inventory')
@@ -37,6 +44,7 @@ class PartController extends Controller
         return $this->render('part/detail.html.twig', [
             'part' => $part,
             'rbPart' => $rbPart,
+            'apiPart' => $apiPart,
             'inventories' => $inventries,
         ]);
     }

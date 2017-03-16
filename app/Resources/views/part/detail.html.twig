@@ -5,8 +5,16 @@
     {{ dump(part) }}
     {{ dump(rbPart) }}
 
+    {{ dump(apiPart) }}
+
 
     <div style="display: flex; flex-wrap: wrap">
+        {% if apiPart is not null %}
+            <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
+                <img src="{{ apiPart.imgUrl }}"  style="max-height: 90%; max-width: 100%">
+            </div>
+        {% endif %}
+
         {% if part is not null %}
             <div id="model" style="height: 300px; width: 300px; padding: 5px; display: inline-block"></div>
             <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">

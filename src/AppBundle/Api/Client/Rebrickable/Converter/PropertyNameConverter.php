@@ -14,7 +14,7 @@ class PropertyNameConverter implements NameConverterInterface
     public function denormalize($propertyName)
     {
         switch ($propertyName) {
-            case 'part_num': return 'number';
+            case 'part_num': return 'id';
             case 'part_cat_id': return 'categoryId';
             case 'part_img_url': return 'imgUrl';
             case 'part_url': return 'url';

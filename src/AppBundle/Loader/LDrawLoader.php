@@ -154,27 +154,7 @@ class LDrawLoader extends Loader
                         }
                     }
 
-                    if ($printParentId = $this->getPrinetedParentId($header['id'])) {
-                        if (($printParent = $this->em->getRepository(Part::class)->find($printParentId)) == null) {
-                            $printParent = new Part();
-                            $printParent->setId($printParentId);
-
-                            if (!$this->ldraw->has('parts/'.$printParentId.'.dat')) {
-                                $printParent->setModel($this->loadModel($file, $header));
-                            }
-                        }
-
-                        if (($alias = $this->em->getRepository(Part_Relation::class)->find(['parent' => $printParent, 'child' => $part, 'type' => 'Print'])) == null) {
-                            $alias = new Part_Relation();
-                            $alias->setParent($printParent);
-                            $alias->setChild($part);
-                            $alias->setCount(0);
-                            $alias->setType('Print');
-                        }
-                        $this->em->persist($alias);
-                    }
-
-                    if (isset($header['subparts']) && $header['type'] != 'Print') {
+                    if (isset($header['subparts'])) {
                         if ($header['type'] == 'Alias') {
                             if (count($header['subparts']) == 1) {
                                 $relationType = 'Alias';
@@ -186,8 +166,8 @@ class LDrawLoader extends Loader
                         }
 
                         foreach ($header['subparts'] as $referenceId) {
-                            if ($referenceId != $this->getPrinetedParentId($header['id'])) {
-                                if ($this->ldraw->has('parts/'.$referenceId.'.dat') && $this->isPartIncluded($this->getPartHeader($this->ldraw->get('parts/'.$referenceId.'.dat')->getMetadata()))) {
+                            if ($referenceId != $this->getPrintedParentId($header['id'])) {
+                                if ($this->getModel($referenceId) && $this->isPartIncluded($this->getPartHeader($this->getModel($referenceId)->getMetadata()))) {
                                     if (($referencedPart = $this->em->getRepository(Part::class)->find($referenceId)) == null) {
                                         $referencedPart = new Part();
                                         $referencedPart->setId($referenceId);
@@ -219,7 +199,7 @@ class LDrawLoader extends Loader
                         }
                     }
 
-                    if (!in_array($header['type'], ['Print', 'Alias'])) {
+                    if (!in_array($header['type'], ['Alias'])) {
                         $part->setModel($this->loadModel($file, $header));
                     }
 
@@ -249,13 +229,16 @@ class LDrawLoader extends Loader
     private function isPartIncluded($header)
     {
         // Do not include sticker parts and incomplete parts
-        if (strpos($header['name'], 'Sticker') !== 0 && strpos($header['id'], 's') !== 0 && $header['type'] != 'Subpart' && !$this->isStickerShortcutPart($header['id'])) {
+        if (
+            strpos($header['name'], 'Sticker') !== 0
+            && strpos($header['id'], 's') !== 0 && $header['type'] != 'Subpart'
+            && !$this->isStickerShortcutPart($header['id'])
+            && !($this->isPrintedPart($header['id']) && $this->getModel($this->getPrintedParentId($header['id'])))
+        ) {
             // If file is alias of another part determine if referenced file should be included
-            if (strpos($header['name'], '~Moved to ') === 0) {
-                // Get file path of referenced part file
-                $alias = 'parts/'.$this->getObsoleteParentId($header['name']).'.dat';
-                if ($this->ldraw->has($alias)) {
-                    return $this->isPartIncluded($this->getPartHeader($this->ldraw->get($alias)->getMetadata()));
+            if ($alias = $this->getObsoleteParentId($header['name'])) {
+                if ($this->getModel($alias)) {
+                    return $this->isPartIncluded($this->getPartHeader($this->getModel($alias)->getMetadata()));
                 }
 
                 return false;
@@ -265,6 +248,11 @@ class LDrawLoader extends Loader
         }
 
         return false;
+    }
+
+    private function isPrintedPart($id)
+    {
+        return preg_match('/(^.*)(p[0-9a-z][0-9a-z][0-9a-z]{0,1})$/', $id);
     }
 
     /**
@@ -279,14 +267,16 @@ class LDrawLoader extends Loader
      *
      * @return string|null LDraw number of printed part parent
      */
-    private function getPrinetedParentId($id)
+    private function getPrintedParentId($id)
     {
         if (preg_match('/(^.*)(p[0-9a-z][0-9a-z][0-9a-z]{0,1})$/', $id, $matches)) {
             return $matches[1];
         }
 
-        return null;
+        return $id;
     }
+
+
 
     /**
      * Check if part is shortcut part of stricker and part
@@ -324,6 +314,13 @@ class LDrawLoader extends Loader
             return $matches[2];
         }
 
+        return null;
+    }
+
+    private function getModel($id) {
+        if ($this->ldraw->has('parts/'.$id.'.dat')) {
+            return $this->ldraw->get('parts/'.$id.'.dat');
+        }
         return null;
     }
 
@@ -400,7 +397,8 @@ class LDrawLoader extends Loader
                     }
                     // 0 Name: <Filename>.dat
                     elseif (strpos($line, 'Name: ') === 0) {
-                        $header['id'] = preg_replace('/(^Name: )(.*)(.dat)/', '$2', $line);
+                        if(!isset($header['id']))
+                            $header['id'] = preg_replace('/(^Name: )(.*)(.dat)/', '$2', $line);
                     }
                     // 0 Author: <Realname> [<Username>]
                     elseif (strpos($line, 'Author: ') === 0) {
@@ -421,7 +419,7 @@ class LDrawLoader extends Loader
                         }
                     }
                 } elseif (strpos($line, '1 ') === 0) {
-                    $header['subparts'][] = $this->getAlias($line);
+                    $header['subparts'][] = $this->getPrintedParentId($this->getAlias($line));
                 }
             }
 
@@ -429,8 +427,6 @@ class LDrawLoader extends Loader
                 $header['type'] = 'Alias';
             } elseif (strpos($header['name'], '~') === 0) {
                 $header['type'] = 'Obsolete/Subpart';
-            } elseif ($printParentId = $this->getPrinetedParentId($header['id'])) {
-                $header['type'] = 'Print';
             }
 
             fclose($handle);

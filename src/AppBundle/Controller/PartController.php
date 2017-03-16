@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Part;
+use AppBundle\Entity\LDraw\Type;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -60,6 +61,7 @@ class PartController extends Controller
 
         /** @var QueryBuilder $queryBuilder */
 //        $queryBuilder->where('p.model is not null');
+        $queryBuilder->join(Type::class,'type', JOIN::WITH, 'p.type = type.id')->where( $queryBuilder->expr()->notIn('type.name', ['Alias', 'Obsolete/Subpart']));
 
         $query = $queryBuilder->getQuery();
 

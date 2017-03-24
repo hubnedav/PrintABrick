@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Part.
  *
  * @ORM\Table(name="rebrickable_inventory")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\InventoryRepository")
  */
 class Inventory
 {

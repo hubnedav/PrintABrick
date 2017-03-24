@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Inventory_Part.
  *
  * @ORM\Table(name="rebrickable_inventory_parts")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\Inventory_PartRepository")
  */
 class Inventory_Part
 {

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Set.
  *
  * @ORM\Table(name="rebrickable_set")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\SetRepository")
  */
 class Set
 {

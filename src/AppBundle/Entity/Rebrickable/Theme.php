@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Theme.
  *
  * @ORM\Table(name="rebrickable_theme")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\ThemeRepository")
  */
 class Theme
 {

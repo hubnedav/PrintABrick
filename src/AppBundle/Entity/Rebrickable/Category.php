@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Category.
  *
  * @ORM\Table(name="rebrickable_category")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\CategoryRepository")
  */
 class Category
 {

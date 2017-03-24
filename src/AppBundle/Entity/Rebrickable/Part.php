@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Part.
  *
  * @ORM\Table(name="rebrickable_part")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\PartRepository")
  */
 class Part
 {

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Color.
  *
  * @ORM\Table(name="rebrickable_color")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\ColorRepository")
  */
 class Color
 {

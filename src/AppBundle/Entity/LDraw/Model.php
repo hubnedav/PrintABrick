@@ -9,11 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  * Model.
  *
  * @ORM\Table(name="ldraw_model")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ModelRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LDraw\ModelRepository")
  */
 class Model
 {
-    /**
      * @var string
      *
      * @ORM\Column(type="string")

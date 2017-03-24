@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Type.
  *
  * @ORM\Table(name="ldraw_type")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\TypeRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LDraw\TypeRepository")
  */
 class Type
 {

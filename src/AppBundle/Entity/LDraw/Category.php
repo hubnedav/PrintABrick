@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Category.
  *
  * @ORM\Table(name="ldraw_category")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LDraw\CategoryRepository")
  */
 class Category
 {

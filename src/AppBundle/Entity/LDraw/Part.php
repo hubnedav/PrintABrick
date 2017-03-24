@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Part.
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\PartRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LDraw\PartRepository")
  * @ORM\Table(name="ldraw_part")
  */
 class Part

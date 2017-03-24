@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Keyword.
  *
  * @ORM\Table(name="ldraw_keyword")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\KeywordRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LDraw\KeywordRepository")
  */
 class Keyword
 {

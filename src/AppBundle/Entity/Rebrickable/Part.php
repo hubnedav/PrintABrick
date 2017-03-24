@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Rebrickable;
 
+use AppBundle\Entity\Traits\NameTrait;
+use AppBundle\Entity\Traits\NumberTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,22 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Part
 {
-    /**
-     * Part ID number.
-     *
-     * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="string", length=255, unique=true)
-     */
-    protected $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255)
-     */
-    protected $name;
+    use NumberTrait;
+    use NameTrait;
 
     /**
      * @var Category
@@ -51,54 +39,6 @@ class Part
     public function __construct()
     {
         $this->inventoryParts = new ArrayCollection();
-    }
-
-    /**
-     * Set number.
-     *
-     * @param string $number
-     *
-     * @return Part
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * Get number.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set name.
-     *
-     * @param string $name
-     *
-     * @return Part
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**

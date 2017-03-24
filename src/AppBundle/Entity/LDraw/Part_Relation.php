@@ -29,19 +29,19 @@ class Part_Relation
     private $child;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
-     */
-    private $count;
-
-    /**
      * @var string
      *
      * @ORM\Id
      * @ORM\Column(type="string", length=255)
      */
     private $type;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $count;
 
     /**
      * @return Part
@@ -53,10 +53,14 @@ class Part_Relation
 
     /**
      * @param Part $parent
+     *
+     * @return Part_Relation
      */
     public function setParent($parent)
     {
         $this->parent = $parent;
+
+        return $this;
     }
 
     /**
@@ -69,10 +73,14 @@ class Part_Relation
 
     /**
      * @param Part $child
+     *
+     * @return Part_Relation
      */
     public function setChild($child)
     {
         $this->child = $child;
+
+        return $this;
     }
 
     /**
@@ -85,10 +93,14 @@ class Part_Relation
 
     /**
      * @param int $count
+     *
+     * @return Part_Relation
      */
     public function setCount($count)
     {
         $this->count = $count;
+
+        return $this;
     }
 
     /**
@@ -101,9 +113,13 @@ class Part_Relation
 
     /**
      * @param string $type
+     *
+     * @return Part_Relation
      */
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
     }
 }

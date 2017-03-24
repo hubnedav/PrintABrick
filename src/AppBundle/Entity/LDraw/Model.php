@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\LDraw;
 
+use AppBundle\Entity\Traits\NumberTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,13 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Model
 {
-     * @var string
-     *
-     * @ORM\Column(type="string")
-     * @ORM\Id
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $id;
+    use NumberTrait;
 
     /**
      * @var string
@@ -48,24 +43,6 @@ class Model
 //     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Part", mappedBy="model")
 //     */
 //    private $parts;
-
-    /**
-     * @param string $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * Get id.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @return string

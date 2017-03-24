@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\LDraw;
 
+use AppBundle\Entity\Traits\NumberTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -15,12 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Part
 {
-    /**
-     * @var string
-     * @ORM\Id
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $id;
+    use NumberTrait;
 
     /**
      * @var Type
@@ -76,26 +72,6 @@ class Part
         $this->keywords = new ArrayCollection();
         $this->relationsTo = new ArrayCollection();
         $this->relationsFrom = new ArrayCollection();
-    }
-
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return Part
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     /**

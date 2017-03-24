@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Rebrickable;
 
+use AppBundle\Entity\Traits\NameTrait;
+use AppBundle\Entity\Traits\NumberTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,20 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Set
 {
-    /**
-     * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="string", length=255, unique=true)
-     */
-    protected $number;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=true)
-     */
-    protected $name;
+    use NumberTrait;
+    use NameTrait;
 
     /**
      * @var int
@@ -53,7 +43,7 @@ class Set
     /**
      * @var Theme
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Theme", inversedBy="sets")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Theme", inversedBy="sets", fetch="EAGER")
      */
     protected $theme;
 
@@ -63,50 +53,6 @@ class Set
     public function __construct()
     {
         $this->inventories = new ArrayCollection();
-    }
-
-    /**
-     * @return string
-     */
-    public function getNumber()
-    {
-        return $this->number;
-    }
-
-    /**
-     * @param string $number
-     *
-     * @return Set
-     */
-    public function setNumber($number)
-    {
-        $this->number = $number;
-
-        return $this;
-    }
-
-    /**
-     * Set name.
-     *
-     * @param string $name
-     *
-     * @return Set
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**

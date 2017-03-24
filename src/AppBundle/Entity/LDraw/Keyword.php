@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\LDraw;
 
+use AppBundle\Entity\Traits\IdentityTrait;
+use AppBundle\Entity\Traits\NameTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,21 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Keyword
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, unique=true)
-     */
-    private $name;
+    use IdentityTrait;
+    use NameTrait;
 
     /**
      * @var ArrayCollection
@@ -42,40 +31,6 @@ class Keyword
     public function __construct()
     {
         $this->parts = new ArrayCollection();
-    }
-
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set name.
-     *
-     * @param string $name
-     *
-     * @return Keyword
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**

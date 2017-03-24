@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Rebrickable;
 
+use AppBundle\Entity\Traits\IdentityTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,15 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Inventory
 {
-    /**
-     * Inventory ID.
-     *
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     */
-    protected $id;
+    use IdentityTrait;
 
     /**
      * @var int
@@ -48,22 +41,6 @@ class Inventory
     public function __construct()
     {
         $this->inventoryParts = new ArrayCollection();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**

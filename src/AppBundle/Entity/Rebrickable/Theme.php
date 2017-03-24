@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Rebrickable;
 
+use AppBundle\Entity\Traits\IdentityTrait;
+use AppBundle\Entity\Traits\NameTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,20 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Theme
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     */
-    protected $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
-     */
-    protected $name;
+    use IdentityTrait;
+    use NameTrait;
 
     /**
      * @var Theme
@@ -42,38 +32,6 @@ class Theme
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Set", mappedBy="theme")
      */
     protected $sets;
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
 
     /**
      * @return Theme

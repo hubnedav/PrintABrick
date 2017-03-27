@@ -1,7 +1,7 @@
 <?php
 
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Oneup\FlysystemBundle\OneupFlysystemBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
+            new Lexik\Bundle\FormFilterBundle\LexikFormFilterBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

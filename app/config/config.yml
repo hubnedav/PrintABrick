@@ -38,7 +38,7 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
-    form_themes: ['form/semantic-ui.html.twig']
+    form_themes: ['form/semantic-ui.html.twig', 'LexikFormFilterBundle:Form:form_div_layout.html.twig']
 
 # Doctrine Configuration
 doctrine:

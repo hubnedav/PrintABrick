@@ -1,45 +1,6 @@
-services:
-    client.brickset:
-        class: AppBundle\Api\Client\Brickset\Brickset
-        arguments: ['%brickset_apikey%']
-    client.rebrickable:
-        class: AppBundle\Api\Client\Rebrickable\Rebrickable_v3
-        arguments: ['%rebrickable_apikey%']
-
-    manager.brickset:
-        class: AppBundle\Api\Manager\BricksetManager
-        arguments: ['@client.brickset']
-    manager.rebrickable:
-          class: AppBundle\Api\Manager\RebrickableManager
-          arguments: ['@client.rebrickable']
-
-    sevice.collection:
-        class: AppBundle\Service\CollectionService
-        arguments: ['@doctrine.orm.entity_manager', '@manager.brickset','@manager.rebrickable']
-
-    service.loader:
-        abstract:  true
-        class: AppBundle\Loader\Loader
-        arguments: ['@doctrine.orm.entity_manager']
-
-    service.ldview:
-        class: AppBundle\Service\LDViewService
-        arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
-
-    loader.rebrickable:
-        class: AppBundle\Loader\RebrickableLoader
-        calls:
-          - [setArguments, ['@manager.rebrickable', '%rebrickable_url%']]
-        parent: service.loader
-
-    loader.ldraw:
-        class: AppBundle\Loader\LDrawLoader
-        calls:
-          - [setArguments, ['@service.ldview', '%ldraw_url%']]
-        parent: service.loader
-
-    app.form.filter_set:
-        class: AppBundle\Form\FilterSetType
-        arguments: ['@manager.brickset']
-        tags:
-            - { name: form.type }
+imports:
+    - { resource: service/repository.yml }
+    - { resource: service/api.yml }
+    - { resource: service/loader.yml }
+    - { resource: service/manager.yml }
+    - { resource: service/service.yml }

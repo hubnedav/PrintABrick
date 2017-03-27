@@ -1,0 +1,21 @@
+services:
+    service.loader:
+        abstract:  true
+        class: AppBundle\Loader\Loader
+        arguments: ['@doctrine.orm.entity_manager']
+
+    service.ldview:
+        class: AppBundle\Service\LDViewService
+        arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
+
+    loader.rebrickable:
+        class: AppBundle\Loader\RebrickableLoader
+        calls:
+          - [setArguments, ['@manager.rebrickable', '%rebrickable_url%']]
+        parent: service.loader
+
+    loader.ldraw:
+        class: AppBundle\Loader\LDrawLoader
+        calls:
+          - [setArguments, ['@service.ldview', '%ldraw_url%', '@service.ldraw']]
+        parent: service.loader

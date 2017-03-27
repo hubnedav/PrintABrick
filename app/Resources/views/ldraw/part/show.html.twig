@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% import 'macro/part.html.twig' as macro %}
+
+{% block content %}
+    <dl>
+        <dt>number:</dt><dd>{{ part.number }}</dd>
+        <dt>name:</dt><dd>{{ part.name }}</dd>
+        <dt>category:</dt><dd>{{ part.category.name }}</dd>
+        <dt>type:</dt><dd>{{ part.type.name }}</dd>
+        <dt>model:</dt><dd>{{ part.model ? part.model.number }}</dd>
+    </dl>
+
+    <div>
+        {% for keyword in part.keywords %}
+            <span class="ui label">{{ keyword.name }}</span>
+        {% endfor %}
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap">
+        {% if apiPart is not null %}
+            <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
+                <img src="{{ apiPart.imgUrl }}"  style="max-height: 90%; max-width: 100%">
+            </div>
+        {% endif %}
+
+        {% if part is defined and part is not null %}
+            <div id="model" style="height: 300px; width: 300px; padding: 5px; display: inline-block"></div>
+            <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
+                <img src="{{ url('part_image', {number:part.number}) }}"  style="max-height: 90%; max-width: 100%">
+            </div>
+
+            <h2 style="width: 100%">alias of</h2>
+            {% if part.aliasOf is not null %}
+                {{ macro.part(part.aliasOf) }}
+            {% endif %}
+
+            <h2 style="width: 100%">aliases</h2>
+            {% for alias in part.aliases  %}
+                {{ macro.part(alias) }}
+            {% endfor %}
+
+            <h2 style="width: 100%">subparts</h2>
+            {% for subpart in part.subparts  %}
+                {{ macro.part(subpart) }}
+            {% endfor %}
+
+            <h2 style="width: 100%">subpart of</h2>
+            {% for subpart in part.subpartOf  %}
+                {{ macro.part(subpart) }}
+            {% endfor %}
+
+            {% if part.printOf is not null %}
+                <h2 style="width: 100%">print of</h2>
+                {{ macro.part(part.printOf) }}
+            {% endif %}
+
+            {% if part.prints is not empty %}
+                <h2 style="width: 100%">prints</h2>
+                {% for print in part.prints  %}
+                    {{ macro.part(print) }}
+                {% endfor %}
+            {% endif %}
+
+        {% endif %}
+        <h2 style="width: 100%">in sets</h2>
+        {% for set in sets %}
+            <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
+        {% endfor %}
+    </div>
+
+    {{ dump(rbPart) }}
+    {{ dump(apiPart) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        window.onload = function() {
+            modelView = new ModelViewer();
+            var scene = modelView.initScene($('#model'));
+            {% if part is defined and part is not null and part.model is not null %}
+            modelView.loadStl('{{ path('model_stl', {'id' : part.model.number })}}');
+            {% endif %}
+            modelView.render();
+        };
+    </script>
+{% endblock %}

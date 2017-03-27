@@ -9,8 +9,16 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {{ knp_menu_render('AppBundle:Builder:mainMenu') }}
-        {% block body %}{% endblock %}
+        {% block body %}
+            <div class="ui fixed inverted menu">
+            </div>
+            <div class="ui main container">
+            {% block content %}
+
+            {% endblock %}
+            </div>
+        {% endblock %}
+
         {% block javascripts %}
 
             <script type="text/javascript" src="{{ asset('resources/js/three.js') }}"></script>

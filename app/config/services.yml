@@ -4,3 +4,4 @@ imports:
     - { resource: service/loader.yml }
     - { resource: service/manager.yml }
     - { resource: service/service.yml }
+    - { resource: service/form.yml }

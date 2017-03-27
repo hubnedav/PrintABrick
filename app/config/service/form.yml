@@ -1,0 +1,7 @@
+services:
+    form.filter.category:
+        class: AppBundle\Form\Filter\CategoryFilterType
+        arguments:
+            - '@manager.ldraw.category'
+        tags:
+            - { name: form.type }

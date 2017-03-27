@@ -1,0 +1,6 @@
+{% macro part(part) %}
+    <div style="height: 100px; width: 100px; padding: 5px; display: inline-block;">
+        <img src="{{ url('part_image', {number:part.number}) }}" style="max-height: 90%; max-width: 100%;">
+        <p><a href="{{ url('ldraw_part_show', {number:part.number}) }}">{{ part.number }}</a></p>
+    </div>
+{% endmacro %}

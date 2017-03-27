@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% import 'macro/part.html.twig' as macro %}
+
+{% block content %}
+    <form method="get" action="." class="ui form">
+        {{ form_start(form) }}
+
+        {{ form_row(form.search) }}
+        <div class="field fluid search selection">
+            {{ form_label(form.category.id) }}
+            {{ form_widget(form.category.id) }}
+        </div>
+        <div class="field">
+            <input class="ui submit button" type="submit" value="filter"/>
+        </div>
+        {{ form_end(form) }}
+    </form>
+
+    <div class="ui ten column grid">
+        <div class="row">
+            {% for part in parts %}
+                <div class="column">
+                    {{ macro.part(part) }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {{ knp_pagination_render(parts) }}
+{% endblock %}

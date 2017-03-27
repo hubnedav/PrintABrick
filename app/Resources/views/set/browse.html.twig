@@ -1,20 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{% block content %}
 
     {{ form_start(form) }}
-    <div class="three fields">
+    <div class="four fields">
         {{ form_row(form.theme) }}
         {{ form_row(form.subtheme) }}
         {{ form_row(form.years) }}
+        <div class="field">
+            <label>submit</label>
+            <input type="submit" class="ui button">
+        </div>
     </div>
     {{ form_end(form) }}
 
-    <ul>
-        {% for set in sets %}
-            <li><a href="{{ url('set_detail', {'id': set.number~'-'~set.numberVariant, 'name' : set.name|escape('url') }) }}">{{ set.LegoSetID }} - {{ set.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <div class="ui seven column grid">
+        <div class="row">
+            {% for set in sets %}
+                <div class="column">
+                   <a href="{{ url('set_detail', {'number': set.number~'-'~set.numberVariant, 'name' : set.name|escape('url') }) }}">
+                       <img style="width: 100%" src="{{ set.largeThumbnailURL }}">
+                       <p>{{ set.LegoSetID }} - {{ set.name }}</p>
+                   </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}

@@ -8,7 +8,6 @@ use AppBundle\Api\Client\Brickset\Entity\Year;
 use AppBundle\Api\Manager\BricksetManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -74,7 +73,5 @@ class FilterSetType extends AbstractType
                 $formModifier($event->getForm()->getParent(), $theme);
             }
         );
-
-        $builder->add('submit', SubmitType::class);
     }
 }

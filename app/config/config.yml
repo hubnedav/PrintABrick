@@ -73,12 +73,9 @@ swiftmailer:
     spool:     { type: memory }
 
 knp_menu:
-    # use "twig: false" to disable the Twig extension and the TwigRenderer
     twig:
-        template: KnpMenuBundle::menu.html.twig
-    #  if true, enables the helper for PHP templates
+        template: menu/knp_menu.html.twig
     templating: false
-    # the renderer to use, list is also available by default
     default_renderer: twig
 
 knp_paginator:
@@ -89,7 +86,7 @@ knp_paginator:
         sort_direction_name: direction # sort direction query parameter name
         distinct: true                 # ensure distinct results, useful when ORM queries are using GROUP BY statements
     template:
-        pagination: KnpPaginatorBundle:Pagination:sliding.html.twig     # sliding pagination controls template
+        pagination: KnpPaginatorBundle:Pagination:semantic_ui_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
 
 oneup_flysystem:

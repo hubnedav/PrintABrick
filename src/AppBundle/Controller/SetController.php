@@ -2,7 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Rebrickable\Color;
+use AppBundle\Entity\Rebrickable\Inventory_Part;
+use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
+use AppBundle\Entity\Rebrickable\Theme;
 use AppBundle\Form\FilterSetType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -40,17 +44,25 @@ class SetController extends Controller
     }
 
     /**
-     * @Route("/detail/{id}_{name}", name="set_detail")
+     * @Route("/detail/{number}_{name}", name="set_detail")
      */
-    public function detailAction(Request $request, $id, $name = null)
+    public function detailAction(Request $request, $number, $name = null)
     {
-        $brset = $this->get('manager.brickset')->getSetByNumber($id);
+        $brset = $this->get('manager.brickset')->getSetByNumber($number);
 
-        $set = $this->get('doctrine.orm.default_entity_manager')->getRepository(Set::class)->find($id);
+        $set = $this->get('doctrine.orm.default_entity_manager')->getRepository(Set::class)->find($number);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $em->getRepository(Color::class)->findAll();
+
+        $em->getRepository(Theme::class)->findAll();
 
         return $this->render('set/detail.html.twig', [
             'set' => $set,
             'brset' => $brset,
+            'parts' => $em->getRepository(Part::class)->findAllBySetNumber($number),
+            'inventoryParts' => $em->getRepository(Inventory_Part::class)->findAllBySetNumber($number),
         ]);
     }
 }

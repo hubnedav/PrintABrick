@@ -32,7 +32,7 @@ class MediaController extends Controller
             // Create the disposition of the file
             $disposition = $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $model->getId().'.stl'
+                $model->getNumber().'.stl'
             );
 
             $response->headers->set('Content-Disposition', $disposition);
@@ -43,7 +43,7 @@ class MediaController extends Controller
     }
 
     /**
-     * @Route("/part/{id}", name="part_image")
+     * @Route("/part/{number}", name="part_image")
      *
      * @return Response
      */
@@ -51,20 +51,20 @@ class MediaController extends Controller
     {
         $mediaFilesystem = $this->get('oneup_flysystem.media_filesystem');
 
-        if ($mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$part->getId().'.png')) {
-            $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$part->getId().'.png');
+        if ($mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$part->getNumber().'.png')) {
+            $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$part->getNumber().'.png');
             $response->headers->set('Content-Type', 'image/png');
 
             // Create the disposition of the file
             $disposition = $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $part->getId().'png'
+                $part->getNumber().'png'
             );
 
             $response->headers->set('Content-Disposition', $disposition);
 
             return $response;
         }
-        throw new FileNotFoundException($part->getId().'png');
+        throw new FileNotFoundException($part->getNumber().'png');
     }
 }

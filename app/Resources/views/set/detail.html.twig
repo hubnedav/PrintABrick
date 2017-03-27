@@ -1,27 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{% block content %}
 
     {{ dump(set) }}
     {{ dump(brset) }}
 
-    <h1>{{ brset.name }}</h1>
-    <img src="{{ brset.imageURL }}">
+    <h1>{{brset ? brset.name }}</h1>
+    <img src="{{brset ?  brset.imageURL }}">
 
     {% if set is not null %}
-        {% for inventory in set.inventories %}
+        {#{% for inventory in set.inventories %}#}
             <h2>Parts</h2>
             <div style="display: flex; flex-wrap: wrap">
-            {% for inventoryPart in inventory.inventoryParts %}
+            {% for inventoryPart in inventoryParts %}
                 <div style="height: 150px; width: 150px; padding: 5px; display: inline-block">
-                    <img src="https://rebrickable.com/media/parts/ldraw/{{ inventoryPart.color.id }}/{{ inventoryPart.part.id }}.png" style="max-height: 90%; max-width: 100%">
-                    <p><a style="color: #{{ inventoryPart.color.rgb }}" href="{{ url('part_detail', {id:inventoryPart.part.id}) }}"><strong>{{ inventoryPart.part.id }}</strong> {{ inventoryPart.quantity }}</a></p>
+                    <img src="https://rebrickable.com/media/parts/ldraw/{{inventoryPart ? inventoryPart.color.id  }}/{{ inventoryPart.part.number }}.png" style="max-height: 90%; max-width: 100%">
+                    <p><a style="color: #{{ inventoryPart.color.rgb }}" href="{{ url('ldraw_part_show', {number:inventoryPart.part.number}) }}"><strong>{{ inventoryPart.part.number }}</strong> {{ inventoryPart.quantity }}</a></p>
                 </div>
             {% endfor %}
             <div>
-        {% else %}
+        {#{% else %}#}
 
-        {% endfor %}
+        {#{% endfor %}#}
     {% endif %}
 
 {% endblock %}

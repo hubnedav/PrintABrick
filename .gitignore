@@ -16,7 +16,6 @@
 /web/bundles/
 .idea/
 /node_modules/
-/app/Resources/assets/semantic/dist
+/app/Resources/libs/semantic/dist
 /web/resources/
 .php_cs.cache
-/bower_components/

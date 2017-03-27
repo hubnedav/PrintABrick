@@ -1,16 +1,10 @@
 var gulp = require('gulp'),
-    plugins = require('gulp-load-plugins')(),
-    build_sematnic = require('./app/Resources/libs/semantic/tasks/build'),
-    watch_sematnic = require('./app/Resources/libs/semantic/tasks/watch');
-
-
-gulp.task('semantic:build', build_sematnic);
-
-gulp.task('semantic:watch', watch_sematnic);
+    plugins = require('gulp-load-plugins')();
 
 gulp.task('css', function() {
     return gulp.src([
-        'app/Resources/libs/semantic/dist/semantic.css',
+        'node_modules/semantic-ui/dist/semantic.css',
+        'app/Resources/assets/style/style.sass',
     ])
         .pipe(plugins.sass().on('error', plugins.sass.logError))
         .pipe(plugins.concat('main.css', {newLine: ' '}))
@@ -19,15 +13,15 @@ gulp.task('css', function() {
 
 gulp.task('three', function() {
     gulp.src([
-        'bower_components/three/build/three.js',
-        'bower_components/three/examples/js/libs/stats.min.js',
-        'bower_components/three/examples/js/loaders/STLLoader.js',
+        'node_modules/three/build/three.js',
+        'node_modules/three/examples/js/libs/stats.min.js',
+        'node_modules/three/examples/js/loaders/STLLoader.js',
     ])
         .pipe(plugins.concat('three.js'))
         .pipe(gulp.dest('web/resources/js'));
 
     gulp.src([
-        'bower_components/three/examples/js/controls/OrbitControls.js',
+        'node_modules/three/examples/js/controls/OrbitControls.js',
     ])
         .pipe(plugins.concat('OrbitControls.js'))
         .pipe(gulp.dest('web/resources/js'));
@@ -35,19 +29,25 @@ gulp.task('three', function() {
 
 gulp.task('js', function() {
     return gulp.src([
-        'bower_components/jquery/dist/jquery.js',
-        'app/Resources/libs/semantic/dist/semantic.js',
-        'app/Resources/js/**.js',
+        'node_modules/jquery/dist/jquery.js',
+        'node_modules/semantic-ui/dist/semantic.js',
+        'app/Resources/assets/js/**.js',
     ])
         .pipe(plugins.concat('main.js'))
         .pipe(gulp.dest('web/resources/js'));
 });
 
-gulp.task('watch', ['js', 'css', 'three'], function () {
-    gulp.watch('app/Resources/js/**.js' , ['js']);
-    gulp.watch('app/Resources/css/**/*.sass' , ['css']);
+gulp.task('files', function () {
+    return gulp.src('node_modules/semantic-ui/dist/themes/**')
+        .pipe(plugins.newer('web/resources/css/themes'))
+        .pipe(gulp.dest('web/resources/css/themes'));
 });
 
-gulp.task('default', ['semantic:build'], function () {
-    return gulp.start(['js', 'css']);
+gulp.task('watch', ['js', 'css', 'three'], function () {
+    gulp.watch('app/Resources/assets/js/**.js' , ['js']);
+    gulp.watch('app/Resources/assets/style/**/*.sass' , ['css']);
+});
+
+gulp.task('default', function () {
+    return gulp.start(['files', 'js', 'css', 'three']);
 });

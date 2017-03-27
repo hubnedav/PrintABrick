@@ -5,3 +5,4 @@ imports:
     - { resource: service/manager.yml }
     - { resource: service/service.yml }
     - { resource: service/form.yml }
+    - { resource: service/menu.yml }

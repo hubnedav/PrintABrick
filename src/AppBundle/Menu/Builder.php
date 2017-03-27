@@ -3,19 +3,39 @@
 namespace AppBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class Builder
 {
-    public function mainMenu(FactoryInterface $factory, array $options)
+    /** @var FactoryInterface */
+    private $factory;
+
+    /** @var RequestStack */
+    private $requestStack;
+
+    /**
+     * Builder constructor.
+     *
+     * @param FactoryInterface $factory
+     * @param RequestStack     $requestStack
+     */
+    public function __construct(FactoryInterface $factory, RequestStack $requestStack)
     {
-        $menu = $factory->createItem('root');
+        $this->factory = $factory;
+        $this->requestStack = $requestStack;
+    }
+
+    public function mainMenu(array $options)
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $menu = $this->factory->createItem('root');
 
         $menu->addChild('Home', [
             'route' => 'homepage',
         ]);
 
         $menu->addChild('Parts', [
-            'route' => 'parts_index',
+            'route' => 'ldraw_part_index',
         ]);
 
         $menu->addChild('Sets', [

@@ -4,7 +4,7 @@ var gulp = require('gulp'),
 gulp.task('css', function() {
     return gulp.src([
         'node_modules/semantic-ui/dist/semantic.css',
-        'app/Resources/assets/style/style.sass',
+        'app/Resources/assets/style/style.scss',
     ])
         .pipe(plugins.sass().on('error', plugins.sass.logError))
         .pipe(plugins.concat('main.css', {newLine: ' '}))

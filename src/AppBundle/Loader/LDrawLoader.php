@@ -133,13 +133,13 @@ class LDrawLoader extends Loader
 
                     $part->setName($header['name']);
                     $part
-                        ->setCategory($this->ldrawService->getCategoryManager()->createCategory($header['category']))
+                        ->setCategory($this->ldrawService->getCategoryManager()->create($header['category']))
                         ->setType($this->ldrawService->getTypeManager()->create($header['type']));
 
                     if (isset($header['keywords'])) {
                         foreach ($header['keywords'] as $keyword) {
                             $keyword = stripslashes(strtolower(trim($keyword)));
-                            $part->addKeyword($this->ldrawService->getKeywordManager()->createKeyword($keyword));
+                            $part->addKeyword($this->ldrawService->getKeywordManager()->create($keyword));
                         }
                     }
 

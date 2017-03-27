@@ -33,6 +33,7 @@ abstract class Loader
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
     }
 
     public function setOutput(OutputInterface $output)
@@ -41,13 +42,19 @@ abstract class Loader
         $this->output->setDecorated(true);
     }
 
+    protected function initProgressBar($total)
+    {
+        $this->progressBar = new ProgressBar($this->output, $total);
+        $this->progressBar->setFormat('very_verbose');
+        $this->progressBar->setFormat('%current%/%max% [%bar%]%percent:3s%% (%elapsed:6s%/%estimated:-6s%)'.PHP_EOL);
+        $this->progressBar->start();
+    }
+
     protected function progressCallback($notification_code, $severity, $message, $message_code, $bytes_transferred, $bytes_max)
     {
         switch ($notification_code) {
             case STREAM_NOTIFY_FILE_SIZE_IS:
-                $this->progressBar = new ProgressBar($this->output);
-                $this->progressBar->setBarWidth(100);
-                $this->progressBar->start($bytes_max);
+                $this->initProgressBar($bytes_max);
                 break;
             case STREAM_NOTIFY_PROGRESS:
                 $this->progressBar->setProgress($bytes_transferred);
@@ -61,6 +68,7 @@ abstract class Loader
 
     protected function downloadFile($url)
     {
+        $this->output->writeln('Downloading file from: <info>'.$url.'</info>');
         $temp = tempnam(sys_get_temp_dir(), 'printabrick.');
 
         $ctx = stream_context_create([], [

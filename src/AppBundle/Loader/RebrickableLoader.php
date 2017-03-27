@@ -2,25 +2,18 @@
 
 namespace AppBundle\Loader;
 
-use AppBundle\Api\Manager\RebrickableManager;
 use AppBundle\Entity\Rebrickable\Set;
 
 //TODO Refactor
 class RebrickableLoader extends Loader
 {
-    /**
-     * @var RebrickableManager
-     */
-    private $rebrickableManager;
-
     private $rebrickable_url;
 
     /**
      * ModelLoaderService constructor.
      */
-    public function setArguments($rebrickableManager, $rebrickable_url)
+    public function setArguments($rebrickable_url)
     {
-        $this->rebrickableManager = $rebrickableManager;
         $this->rebrickable_url = $rebrickable_url;
     }
 

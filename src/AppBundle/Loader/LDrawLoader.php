@@ -6,11 +6,12 @@ use AppBundle\Entity\LDraw\Category;
 use AppBundle\Entity\LDraw\Keyword;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\LDraw\Part;
-use AppBundle\Entity\LDraw\Part_Relation;
 use AppBundle\Entity\LDraw\Type;
+use AppBundle\Service\LDrawService;
 use AppBundle\Service\LDViewService;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+//use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -32,13 +33,17 @@ class LDrawLoader extends Loader
      */
     private $LDViewService;
 
+    /** @var LDrawService */
+    private $ldrawService;
+
     /**
      * @param array $ldraw_url
      */
-    public function setArguments(LDViewService $LDViewService, $ldraw_url)
+    public function setArguments(LDViewService $LDViewService, $ldraw_url, LDrawService $ldrawService)
     {
         $this->LDViewService = $LDViewService;
         $this->ldraw_url = $ldraw_url;
+        $this->ldrawService = $ldrawService;
     }
 
     /**
@@ -48,19 +53,21 @@ class LDrawLoader extends Loader
      */
     public function downloadLibrary()
     {
-        $this->output->writeln('Downloading LDraw library form ldraw.org');
         $temp = $this->downloadFile($this->ldraw_url);
+
+        // Create unique temporary directory
         $temp_dir = tempnam(sys_get_temp_dir(), 'printabrick.');
-        if (file_exists($temp_dir)) {
-            unlink($temp_dir);
-        }
         mkdir($temp_dir);
+
+        // Unzip downloaded library zip file to temporary directory
         $zip = new \ZipArchive();
         if ($zip->open($temp) != 'true') {
-            echo 'Error :- Unable to open the Zip File';
+            throw new LogicException('Error :- Unable to open the Zip File');
         }
         $zip->extractTo($temp_dir);
         $zip->close();
+
+        // Unlink downloaded zip file
         unlink($temp);
 
         return $temp_dir;
@@ -91,7 +98,7 @@ class LDrawLoader extends Loader
     {
         if (($model = $this->em->getRepository(Model::class)->find($header['id'])) == null) {
             $model = new Model();
-            $model->setId($header['id']);
+            $model->setNumber($header['id']);
         }
 
         $model->setAuthor($header['author']);
@@ -110,47 +117,29 @@ class LDrawLoader extends Loader
     // TODO refactor
     public function loadParts()
     {
+        $partManager = $this->ldrawService->getPartManager();
+        $relationManager = $this->ldrawService->getPartRelationManager();
+
         $files = $this->ldraw->get('parts')->getContents();
 
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-
-        $progressBar = new ProgressBar($this->output, count($files));
-        $progressBar->setFormat('very_verbose');
-        $progressBar->setMessage('Loading LDraw library models');
-        $progressBar->setFormat('%message:6s% %current%/%max% [%bar%]%percent:3s%% (%elapsed:6s%/%estimated:-6s%)');
-        $progressBar->start();
+        $this->initProgressBar(count($files));
 
         foreach ($files as $file) {
             if ($file['type'] == 'file' && $file['extension'] == 'dat') {
                 $header = $this->getPartHeader($file);
 
                 if ($this->isPartIncluded($header)) {
-                    if (null == ($part = $this->em->getRepository(Part::class)->find($header['id']))) {
-                        $part = new Part();
-                        $part->setId($header['id']);
-                    }
+                    $part = $partManager->create($header['id']);
+
                     $part->setName($header['name']);
-
-                    if (($category = $this->em->getRepository(Category::class)->findOneBy(['name' => $header['category']])) == null) {
-                        $category = new Category();
-                        $category->setName($header['category']);
-                    }
-                    $part->setCategory($category);
-
-                    if (($type = $this->em->getRepository(Type::class)->findOneBy(['name' => $header['type']])) == null) {
-                        $type = new Type();
-                        $type->setName($header['type']);
-                    }
-                    $part->setType($type);
+                    $part
+                        ->setCategory($this->ldrawService->getCategoryManager()->createCategory($header['category']))
+                        ->setType($this->ldrawService->getTypeManager()->create($header['type']));
 
                     if (isset($header['keywords'])) {
-                        foreach ($header['keywords'] as $kword) {
-                            $kword = trim($kword);
-                            if (($keyword = $this->em->getRepository(Keyword::class)->findOneBy(['name' => $kword])) == null) {
-                                $keyword = new Keyword();
-                                $keyword->setName($kword);
-                            }
-                            $part->addKeyword($keyword);
+                        foreach ($header['keywords'] as $keyword) {
+                            $keyword = stripslashes(strtolower(trim($keyword)));
+                            $part->addKeyword($this->ldrawService->getKeywordManager()->createKeyword($keyword));
                         }
                     }
 
@@ -168,14 +157,9 @@ class LDrawLoader extends Loader
                         foreach ($header['subparts'] as $referenceId) {
                             if ($referenceId != $this->getPrintedParentId($header['id'])) {
                                 if ($this->getModel($referenceId) && $this->isPartIncluded($this->getPartHeader($this->getModel($referenceId)->getMetadata()))) {
-                                    if (($referencedPart = $this->em->getRepository(Part::class)->find($referenceId)) == null) {
-                                        $referencedPart = new Part();
-                                        $referencedPart->setId($referenceId);
+                                    $referencedPart = $this->ldrawService->getPartManager()->create($referenceId);
 
-                                        $this->em->persist($referencedPart);
-                                    }
-
-                                    if($relationType == 'Alias') {
+                                    if ($relationType == 'Alias') {
                                         $parent = $referencedPart;
                                         $child = $part;
                                     } else {
@@ -183,17 +167,10 @@ class LDrawLoader extends Loader
                                         $child = $referencedPart;
                                     }
 
-                                    if (($alias = $this->em->getRepository(Part_Relation::class)->find(['parent' => $parent, 'child' => $child, 'type' => $relationType])) == null) {
-                                        $alias = new Part_Relation();
-                                        $alias->setParent($parent);
-                                        $alias->setChild($child);
-                                        $alias->setCount(0);
-                                        $alias->setType($relationType);
-                                    }
+                                    $partRelation = $relationManager->create($parent, $child, $relationType);
+                                    $partRelation->setCount($partRelation->getCount() + 1);
 
-                                    $alias->setCount($alias->getCount() + 1);
-
-                                    $this->em->persist($alias);
+                                    $relationManager->getRepository()->save($partRelation);
                                 }
                             }
                         }
@@ -203,20 +180,18 @@ class LDrawLoader extends Loader
                         $part->setModel($this->loadModel($file, $header));
                     }
 
-                    try {
-                        $this->LDViewService->datToPng($file, $this->ldraw);
-                    } catch (\Exception $e) {
-                        dump($e->getMessage());
-                    }
+//                    try {
+//                        $this->LDViewService->datToPng($file, $this->ldraw);
+//                    } catch (\Exception $e) {
+//                        dump($e->getMessage());
+//                    }
 
-                    $this->em->persist($part);
-                    $this->em->flush();
-                    $this->em->clear();
+                    $partManager->getRepository()->save($part);
                 }
             }
-            $progressBar->advance();
+            $this->progressBar->advance();
         }
-        $progressBar->finish();
+        $this->progressBar->finish();
     }
 
     /**
@@ -276,10 +251,8 @@ class LDrawLoader extends Loader
         return $id;
     }
 
-
-
     /**
-     * Check if part is shortcut part of stricker and part
+     * Check if part is shortcut part of stricker and part.
      *
      * part name in format:
      *  nnnDnn, nnnnDnn, nnnnnDnn (a = alpha, n= numeric, x = alphanumeric)
@@ -317,10 +290,12 @@ class LDrawLoader extends Loader
         return null;
     }
 
-    private function getModel($id) {
+    private function getModel($id)
+    {
         if ($this->ldraw->has('parts/'.$id.'.dat')) {
             return $this->ldraw->get('parts/'.$id.'.dat');
         }
+
         return null;
     }
 
@@ -397,8 +372,9 @@ class LDrawLoader extends Loader
                     }
                     // 0 Name: <Filename>.dat
                     elseif (strpos($line, 'Name: ') === 0) {
-                        if(!isset($header['id']))
+                        if (!isset($header['id'])) {
                             $header['id'] = preg_replace('/(^Name: )(.*)(.dat)/', '$2', $line);
+                        }
                     }
                     // 0 Author: <Realname> [<Username>]
                     elseif (strpos($line, 'Author: ') === 0) {

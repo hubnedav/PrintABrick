@@ -22,3 +22,8 @@ services:
         class: AppBundle\Service\Loader\LDrawLoaderService
         arguments: ['@service.ldview', '%ldraw_url%', '@manager.ldraw', '@util.dat.parser']
         parent: service.loader
+
+    service.loader.relation:
+        class: AppBundle\Service\Loader\RelationLoader
+        arguments: ['@manager.ldraw.model', '@repository.rebrickable.part', '@api.manager.rebrickable']
+        parent: service.loader

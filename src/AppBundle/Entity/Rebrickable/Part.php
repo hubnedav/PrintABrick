@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Rebrickable;
 
+use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Traits\NameTrait;
 use AppBundle\Entity\Traits\NumberTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -32,6 +33,13 @@ class Part
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory_Part", mappedBy="part")
      */
     protected $inventoryParts;
+
+    /**
+     * @var Model
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="parts")
+     */
+    private $model;
 
     /**
      * Part constructor.
@@ -89,6 +97,26 @@ class Part
     public function setCategory(Category $category)
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Model
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param Model $model
+     *
+     * @return Part
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
 
         return $this;
     }

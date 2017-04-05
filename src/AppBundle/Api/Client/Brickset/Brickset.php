@@ -9,6 +9,10 @@ use AppBundle\Api\Client\Brickset\Entity\Set;
 use AppBundle\Api\Client\Brickset\Entity\Subtheme;
 use AppBundle\Api\Client\Brickset\Entity\Theme;
 use AppBundle\Api\Client\Brickset\Entity\Year;
+use AppBundle\Api\Exception\ApiException;
+use AppBundle\Api\Exception\AuthenticationFailedException;
+use AppBundle\Api\Exception\CallFailedException;
+use AppBundle\Api\Exception\EmptyResponseException;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
@@ -42,6 +46,8 @@ class Brickset extends \SoapClient
     {
         $this->apiKey = $apikey;
 
+        $options['cache_wsdl'] = WSDL_CACHE_NONE;
+
         foreach (self::$classmap as $key => $value) {
             if (!isset($options['classmap'][$key])) {
                 $options['classmap'][$key] = $value;
@@ -66,13 +72,12 @@ class Brickset extends \SoapClient
         $parameters['apiKey'] = $this->apiKey;
 
         try {
+            $this->checkApiKey();
             return $this->__soapCall($method, [$parameters])->{$method.'Result'};
         } catch (\SoapFault $e) {
-            //TODO
-            throw new LogicException($e->getCode().' - '.$e->getMessage());
+            throw new CallFailedException(ApiException::BRICKSET);
         } catch (ContextErrorException $e) {
-            //TODO empty resposne
-            throw new LogicException($method.' - '.$e->getMessage());
+            throw new EmptyResponseException(ApiException::BRICKSET);
         }
     }
 
@@ -247,10 +252,14 @@ class Brickset extends \SoapClient
     /**
      * Check if an API key is valid.
      *
-     * @return bool
+     * @throws AuthenticationFailedException If api key is not valid
      */
-    public function checkKey()
+    private function checkApiKey()
     {
-        return ($this->call('checkKey', [])) == 'OK' ? true : false;
+        $parameters['apiKey'] = $this->apiKey;
+
+        if($this->__soapCall('checkKey', [$parameters])->checkKeyResult != 'OK') {
+            throw new AuthenticationFailedException(ApiException::BRICKSET);
+        }
     }
 }

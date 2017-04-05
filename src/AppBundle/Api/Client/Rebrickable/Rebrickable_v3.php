@@ -2,6 +2,10 @@
 
 namespace AppBundle\Api\Client\Rebrickable;
 
+use AppBundle\Api\Exception\ApiException;
+use AppBundle\Api\Exception\AuthenticationFailedException;
+use AppBundle\Api\Exception\CallFailedException;
+use AppBundle\Api\Exception\EmptyResponseException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
@@ -51,17 +55,15 @@ class Rebrickable_v3
 
             return $content;
         } catch (ConnectException $e) {
-            //TODO
-            throw new LogicException($e);
+            throw new CallFailedException(ApiException::REBRICKABLE);
         } catch (ClientException $e) {
-            //TODO
             if ($e->getCode() == 404) {
-                throw new LogicException('Not Found');
+                throw new EmptyResponseException(ApiException::REBRICKABLE);
+            } else if ($e->getCode() == 401) {
+                throw new AuthenticationFailedException(ApiException::REBRICKABLE);
             }
-            if ($e->getCode() == 500) {
-                throw new LogicException('Invalid token');
-            }
-            throw new LogicException($e);
+
+            throw new ApiException(ApiException::REBRICKABLE,$e,$e->getCode());
         }
     }
 }

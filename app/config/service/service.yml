@@ -1,8 +1,4 @@
 services:
-    sevice.collection:
-        class: AppBundle\Service\CollectionService
-        arguments: ['@doctrine', '@manager.brickset','@manager.rebrickable']
-
     manager.ldraw:
         class: AppBundle\Manager\LDrawManager
         arguments:

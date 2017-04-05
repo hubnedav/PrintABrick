@@ -1,18 +1,18 @@
 <?php
 
-namespace AppBundle\Loader;
+namespace AppBundle\Service\Loader;
 
 use AppBundle\Entity\Rebrickable\Set;
 
 //TODO Refactor
-class RebrickableLoader extends Loader
+class RebrickableLoaderService extends BaseLoaderService
 {
     private $rebrickable_url;
 
     /**
      * ModelLoaderService constructor.
      */
-    public function setArguments($rebrickable_url)
+    public function __construct($rebrickable_url)
     {
         $this->rebrickable_url = $rebrickable_url;
     }
@@ -27,9 +27,9 @@ class RebrickableLoader extends Loader
 
             $this->truncateTables();
             $this->loadColorTable();
+            $this->loadPartTable();
             $this->loadCategoryTable();
             $this->loadThemeTable();
-            $this->loadPartTable();
             $this->loadSetTable();
             $this->loadInventoryTable();
             $this->loadInventoryPartTable();

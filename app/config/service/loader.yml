@@ -9,10 +9,9 @@ services:
         class: AppBundle\Service\LDViewService
         arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
 
-    loader.rebrickable:
-        class: AppBundle\Loader\RebrickableLoader
-        calls:
-          - [setArguments, ['@manager.rebrickable', '%rebrickable_url%']]
+    service.loader.rebrickable:
+        class: AppBundle\Service\Loader\RebrickableLoaderService
+        arguments: ['%rebrickable_url%']
         parent: service.loader
 
     util.dat.parser:

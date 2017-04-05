@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% import 'macros/elements.html.twig' as elements %}
+
+{% block content %}
+    <dl>
+        <dt>number:</dt><dd>{{ part.number }}</dd>
+        <dt>name:</dt><dd>{{ part.name }}</dd>
+        <dt>category:</dt><dd>{{ part.category ? part.category.name }}</dd>
+    </dl>
+
+    <div style="display: flex; flex-wrap: wrap">
+        {% if apiPart is not null %}
+            <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
+                <img src="{{ apiPart.imgUrl }}"  style="max-height: 90%; max-width: 100%">
+            </div>
+        {% endif %}
+        <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
+            <img src="{{ url('model_image', {number:part.number}) }}"  style="max-height: 90%; max-width: 100%">
+        </div>
+
+        {% if part.model %}
+            {{ elements.part(part.model) }}
+        {% endif %}
+    </div>
+
+    <h4 class="ui horizontal divider header">
+        <i class="puzzle icon"></i> Sets
+    </h4>
+
+    {% for set in sets %}
+        <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
+    {% endfor %}
+
+    {{ dump(apiPart) }}
+
+{% endblock %}

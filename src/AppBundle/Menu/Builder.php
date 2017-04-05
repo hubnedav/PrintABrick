@@ -34,12 +34,16 @@ class Builder
             'route' => 'homepage',
         ]);
 
-        $menu->addChild('Parts', [
-            'route' => 'ldraw_part_index',
+        $menu->addChild('Models', [
+            'route' => 'ldraw_model_index',
         ]);
 
         $menu->addChild('Sets', [
-            'route' => 'set_browse',
+            'route' => 'set_index',
+        ]);
+
+        $menu->addChild('Colors', [
+            'route' => 'color_index',
         ]);
 
         return $menu;

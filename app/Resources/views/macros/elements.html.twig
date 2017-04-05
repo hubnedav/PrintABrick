@@ -1,0 +1,34 @@
+{% macro part(model) %}
+    <div style="height: 100px; width: 100px; padding: 5px; display: inline-block;">
+        <img src="{{ url('model_image', {'number': model.number }) }}" style="max-height: 90%; max-width: 100%;">
+        <p><a href="{{ url('model_detail', {'number': model.number}) }}">{{ model.number }}</a></p>
+    </div>
+{% endmacro %}
+
+{% macro flash(type,message) %}
+    {% if type == 'error' %}
+        {% set icon = 'ban' %}
+        {% set title = 'flash.error.title' %}
+    {% elseif type == 'warning' %}
+        {% set icon = 'warning' %}
+        {% set title = 'flash.warning.title' %}
+    {% elseif type == 'success' %}
+        {% set icon = 'check' %}
+        {% set title = 'flash.success.title' %}
+    {% elseif type == 'info' %}
+        {% set icon = 'info' %}
+        {% set title = 'flash.info.title' %}
+    {% endif %}
+
+
+    <div class="ui icon {{ type ? type : '' }} message">
+        <i class="{{ icon }} icon"></i>
+        <i class="close icon"></i>
+        <div class="content">
+            <div class="header">
+                {{ title|trans }}
+            </div>
+            <p>{{ message|trans }}</p>
+        </div>
+    </div>
+{% endmacro %}

@@ -10,12 +10,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PartFilterType extends AbstractType
+class ModelFilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('search', Filters\TextFilterType::class, [
-            'apply_filter' => [$this, 'partSearchCallback'],
+            'apply_filter' => [$this, 'modelSearchCallback'],
             'label' => 'filter.part.search',
         ]);
 
@@ -30,7 +30,7 @@ class PartFilterType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'part_filter';
+        return 'model_filter';
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -41,7 +41,7 @@ class PartFilterType extends AbstractType
         ]);
     }
 
-    public function partSearchCallback(QueryInterface $filterQuery, $field, $values)
+    public function modelSearchCallback(QueryInterface $filterQuery, $field, $values)
     {
         if (empty($values['value'])) {
             return null;
@@ -49,8 +49,9 @@ class PartFilterType extends AbstractType
 
         // expression that represent the condition
         $expression = $filterQuery->getExpr()->orX(
-            $filterQuery->getExpr()->like('part.number', ':value'),
-            $filterQuery->getExpr()->like('part.name', ':value')
+            $filterQuery->getExpr()->like('model.number', ':value'),
+            $filterQuery->getExpr()->like('model.name', ':value')
+            //TODO filter by keywords
         );
 
         return $filterQuery->createCondition($expression, ['value' => '%'.$values['value'].'%']);

@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Model;
-use AppBundle\Entity\LDraw\Part;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
@@ -17,16 +16,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class MediaController extends Controller
 {
     /**
-     * @Route("/model/{id}", name="model_stl")
+     * @Route("/model/stl/{number}", name="model_stl")
      *
      * @return Response
      */
-    public function modelAction(Model $model)
+    public function stlAction(Model $model)
     {
         $mediaFilesystem = $this->get('oneup_flysystem.media_filesystem');
 
-        if ($mediaFilesystem->has($model->getFile())) {
-            $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.$model->getFile());
+        if ($mediaFilesystem->has($model->getPath())) {
+            $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.$model->getPath());
             $response->headers->set('Content-Type', 'application/vnd.ms-pki.stl');
 
             // Create the disposition of the file
@@ -39,32 +38,32 @@ class MediaController extends Controller
 
             return $response;
         }
-        throw new FileNotFoundException($model->getFile());
+        throw new FileNotFoundException($model->getPath());
     }
 
     /**
-     * @Route("/part/{number}", name="part_image")
+     * @Route("/model/image/{number}", name="model_image")
      *
      * @return Response
      */
-    public function PartImageAction(Part $part)
+    public function imageAction(Model $model)
     {
         $mediaFilesystem = $this->get('oneup_flysystem.media_filesystem');
 
-        if ($mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$part->getNumber().'.png')) {
-            $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$part->getNumber().'.png');
+        if ($mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$model->getNumber().'.png')) {
+            $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$model->getNumber().'.png');
             $response->headers->set('Content-Type', 'image/png');
 
             // Create the disposition of the file
             $disposition = $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $part->getNumber().'png'
+                $model->getNumber().'png'
             );
 
             $response->headers->set('Content-Disposition', $disposition);
 
             return $response;
         }
-        throw new FileNotFoundException($part->getNumber().'png');
+        throw new FileNotFoundException($model->getNumber().'png');
     }
 }

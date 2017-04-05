@@ -2,9 +2,10 @@
 
 namespace AppBundle\Controller\LDraw;
 
-use AppBundle\Entity\LDraw\Part;
+use AppBundle\Entity\LDraw\Model;
+use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
-use AppBundle\Form\Filter\PartFilterType;
+use AppBundle\Form\Filter\ModelFilterType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -13,26 +14,24 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Part controller.
  *
- * @Route("ldraw_part")
+ * @Route("ldraw")
  */
-class PartController extends Controller
+class ModelController extends Controller
 {
     /**
      * Lists all part entities.
      *
-     * @Route("/", name="ldraw_part_index")
+     * @Route("/models/", name="ldraw_model_index")
      * @Method("GET")
      */
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $form = $this->get('form.factory')->create(PartFilterType::class);
+        $form = $this->get('form.factory')->create(ModelFilterType::class);
 
-        $filterBuilder = $this->get('repository.ldraw.part')
-            ->createQueryBuilder('part');
-
-//        $filterBuilder->where('part.type = 1');
+        $filterBuilder = $this->get('repository.ldraw.model')
+            ->createQueryBuilder('model');
 
         if ($request->query->has($form->getName())) {
             // manually bind values from the request
@@ -43,14 +42,14 @@ class PartController extends Controller
         }
 
         $paginator = $this->get('knp_paginator');
-        $parts = $paginator->paginate(
+        $models = $paginator->paginate(
             $filterBuilder->getQuery(),
             $request->query->getInt('page', 1)/*page number*/,
             $request->query->getInt('limit', 100)/*limit per page*/
         );
 
-        return $this->render('ldraw/part/index.html.twig', [
-            'parts' => $parts,
+        return $this->render('ldraw/model/index.html.twig', [
+            'models' => $models,
             'form' => $form->createView(),
         ]);
     }
@@ -58,31 +57,29 @@ class PartController extends Controller
     /**
      * Finds and displays a part entity.
      *
-     * @Route("/{number}", name="ldraw_part_show")
+     * @Route("/models/{number}", name="model_detail")
      * @Method("GET")
      */
-    public function showAction($number)
+    public function detailAction($number)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $rbPart = $em->getRepository(\AppBundle\Entity\Rebrickable\Part::class)->find($number);
+        if($model = $this->get('manager.ldraw.model')->findByNumber($number)) {
+            try {
+                $rbParts = $model != null ? $em->getRepository(Part::class)->findAllByModel($model) : null;
+                $sets = $model != null ? $em->getRepository(Set::class)->findAllByModel($model) : null;
 
-        $part = $em->getRepository(Part::class)->find($number);
+                return $this->render('ldraw/model/detail.html.twig', [
+                    'model' => $model,
+                    'rbParts' => $rbParts,
+                    'sets' => $sets,
+                ]);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
 
-        $apiPart = null;
-        try {
-            $apiPart = $this->get('manager.rebrickable')->getPart($number);
-        } catch (\Exception $e) {
-            dump($e);
         }
 
-        $sets = $em->getRepository(Set::class)->findAllByPartNumber($number);
-
-        return $this->render('ldraw/part/show.html.twig', [
-            'part' => $part,
-            'rbPart' => $rbPart,
-            'apiPart' => $apiPart,
-            'sets' => $sets,
-        ]);
+        return $this->render('error/error.html.twig');
     }
 }

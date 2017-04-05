@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <table class="ui celled padded table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>RGB</th>
+            <th>Material</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for color in colors %}
+            <tr>
+                <td style="background-color: #{{ color.rgb }}"></td>
+                <td>{{ color.id }}</td>
+                <td>{{ color.name }}</td>
+                <td>#{{ color.rgb }}</td>
+                <td>{{ color.transparent ? 'Transparent' : 'Solid' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

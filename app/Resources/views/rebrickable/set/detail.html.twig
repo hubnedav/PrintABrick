@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    {{ dump(set) }}
+
+    {{ brset ? dump(brset) }}
+
+    {#<h1>{{brset ? brset.name }}</h1>#}
+    {#<img src="{{brset ?  brset.imageURL }}">#}
+
+    {% if set is not null %}
+        <h4 class="ui horizontal divider header">
+            <i class="cubes icon"></i> Parts {{ inventoryParts|length }}
+        </h4>
+
+        <div class="ui eight column grid">
+        {% for inventoryPart in inventoryParts %}
+            <div class="column">
+                <div class="ui fluid image {{ inventoryPart.part.model == null ? 'active dimmer'}}" style="height: 150px;">
+                    <a class="ui right red circular label">{{ inventoryPart.quantity }}</a>
+                    <a href="{{ path('rebrickable_part_show', {number: inventoryPart.part.number}) }}">
+                        <img src="https://rebrickable.com/media/parts/ldraw/{{inventoryPart.color ? inventoryPart.color.id  }}/{{ inventoryPart.part.number }}.png">
+                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 2px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}</div>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+        <div>
+
+
+        <h4 class="ui horizontal divider header">
+            <i class="cubes icon"></i> Models {{ parts|length }}
+        </h4>
+
+        <div class="ui eight column grid">
+        {% for part in parts %}
+            <div class="column">
+                <div class="ui fluid image">
+                    <a href="{{ path('model_detail', {number: part.number}) }}">
+                        <img src="https://rebrickable.com/media/parts/ldraw/-1/{{ part.number }}.png">
+                        <div class="ui bottom attached label">{{ part.number }}</div>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+        <div>
+
+
+    {% endif %}
+
+{% endblock %}

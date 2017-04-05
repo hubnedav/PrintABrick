@@ -21,16 +21,16 @@ class Keyword
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\LDraw\Part", mappedBy="keywords")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\LDraw\Model", mappedBy="keywords")
      */
-    private $parts;
+    private $models;
 
     /**
      * Keyword constructor.
      */
     public function __construct()
     {
-        $this->parts = new ArrayCollection();
+        $this->models = new ArrayCollection();
     }
 
     /**
@@ -38,31 +38,31 @@ class Keyword
      *
      * @return ArrayCollection
      */
-    public function getParts()
+    public function getModels()
     {
-        return $this->parts;
+        return $this->models;
     }
 
     /**
-     * @param Part $part
+     * @param Model $part
      *
      * @return Keyword
      */
-    public function addPart(Part $part)
+    public function addModel(Model $part)
     {
-        $this->parts->add($part);
+        $this->models->add($part);
 
         return $this;
     }
 
     /**
-     * @param Part $part
+     * @param Model $part
      *
      * @return Keyword
      */
-    public function removeModel(Part $part)
+    public function removeModel(Model $part)
     {
-        $this->parts->removeElement($part);
+        $this->models->removeElement($part);
 
         return $this;
     }

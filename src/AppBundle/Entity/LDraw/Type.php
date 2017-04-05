@@ -27,16 +27,16 @@ class Type
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="Part", mappedBy="type")
+     * @ORM\OneToMany(targetEntity="Model", mappedBy="type")
      */
-    private $parts;
+    private $models;
 
     /**
      * BuildingKit constructor.
      */
     public function __construct()
     {
-        $this->parts = new ArrayCollection();
+        $this->models = new ArrayCollection();
     }
 
     /**
@@ -56,35 +56,35 @@ class Type
     }
 
     /**
-     * Get parts.
+     * Get models.
      *
      * @return ArrayCollection
      */
-    public function getParts()
+    public function getModels()
     {
-        return $this->parts;
+        return $this->models;
     }
 
     /**
-     * @param Part $part
+     * @param Model $model
      *
      * @return Type
      */
-    public function addPart(Part $part)
+    public function addModel(Model $model)
     {
-        $this->parts->add($part);
+        $this->models->add($model);
 
         return $this;
     }
 
     /**
-     * @param Part $part
+     * @param Model $model
      *
      * @return Type
      */
-    public function removePart(Part $part)
+    public function removeModel(Model $model)
     {
-        $this->parts->remove($part);
+        $this->models->remove($model);
 
         return $this;
     }

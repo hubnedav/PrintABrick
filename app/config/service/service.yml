@@ -3,14 +3,15 @@ services:
         class: AppBundle\Service\CollectionService
         arguments: ['@doctrine', '@manager.brickset','@manager.rebrickable']
 
-    service.ldraw:
-        class: AppBundle\Service\LDrawService
+    manager.ldraw:
+        class: AppBundle\Manager\LDrawManager
         arguments:
             - '@manager.ldraw.category'
             - '@manager.ldraw.keyword'
             - '@manager.ldraw.type'
-            - '@manager.ldraw.part'
-            - '@manager.ldraw.partRelation'
+            - '@manager.ldraw.subpart'
+            - '@manager.ldraw.model'
+            - '@manager.ldraw.alias'
 
     app.form.filter_set:
         class: AppBundle\Form\FilterSetType

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\LDraw;
 
 use AppBundle\Entity\Traits\NumberTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,11 +18,60 @@ class Model
     use NumberTrait;
 
     /**
+     * @var Type
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Type", inversedBy="models", cascade={"persist"})
+     */
+    private $type;
+
+    /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $file;
+    private $name;
+
+    /**
+     * @var Category
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Category", inversedBy="models", cascade={"persist"})
+     */
+    private $category;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Alias", mappedBy="model", cascade={"persist"})
+     */
+    private $aliases;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Subpart", mappedBy="parent")
+     */
+    private $subparts;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Subpart", mappedBy="subpart")
+     */
+    private $parents;
+
+    /**
+     * @var Collection
+     *
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\LDraw\Keyword", inversedBy="models", cascade={"persist"})
+     */
+    private $keywords;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $path;
 
     /**
      * @var string
@@ -37,31 +87,36 @@ class Model
      */
     private $modified;
 
-//    /**
-//     * @var Collection
-//     *
-//     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Part", mappedBy="model")
-//     */
-//    private $parts;
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Part", mappedBy="model")
+     */
+    private $parts;
+
+    public function __construct()
+    {
+        $this->keywords = new ArrayCollection();
+        $this->subparts = new ArrayCollection();
+        $this->parents = new ArrayCollection();
+        $this->aliases = new ArrayCollection();
+        $this->parts = new ArrayCollection();
+    }
 
     /**
      * @return string
      */
-    public function getFile()
+    public function getPath()
     {
-        return $this->file;
+        return $this->path;
     }
 
     /**
-     * @param string $file
-     *
-     * @return Model
+     * @param string $path
      */
-    public function setFile($file)
+    public function setPath($path)
     {
-        $this->file = $file;
-
-        return $this;
+        $this->path = $path;
     }
 
     /**
@@ -106,5 +161,142 @@ class Model
         $this->modified = $modified;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Category
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return Model
+     */
+    public function setCategory(Category $category)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSubparts()
+    {
+        return $this->subparts;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getParents()
+    {
+        return $this->parents;
+    }
+
+    /**
+     * Get keywords.
+     *
+     * @return Collection
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
+    }
+
+    /**
+     * @param Keyword $keyword
+     *
+     * @return Model
+     */
+    public function addKeyword(Keyword $keyword)
+    {
+        if (!$this->keywords->contains($keyword)) {
+            $this->keywords->add($keyword);
+            $keyword->addModel($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Keyword $keyword
+     *
+     * @return Model
+     */
+    public function removeKeyword(Keyword $keyword)
+    {
+        $this->keywords->removeElement($keyword);
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
+
+    /**
+     * @param Alias $alias
+     *
+     * @return $this
+     */
+    public function addAlias($alias)
+    {
+        if (!$this->aliases->contains($alias)) {
+            $this->aliases->add($alias);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getParts()
+    {
+        return $this->parts;
     }
 }

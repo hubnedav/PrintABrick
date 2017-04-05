@@ -29,11 +29,17 @@ services:
           arguments:
               - AppBundle\Entity\LDraw\Type
 
-    repository.ldraw.partRelation:
+    repository.ldraw.subpart:
           class: Doctrine\ORM\EntityRepository
           factory: ["@doctrine", getRepository]
           arguments:
-              - AppBundle\Entity\LDraw\Part_Relation
+              - AppBundle\Entity\LDraw\Subpart
+
+    repository.ldraw.alias:
+          class: Doctrine\ORM\EntityRepository
+          factory: ["@doctrine", getRepository]
+          arguments:
+              - AppBundle\Entity\LDraw\Alias
 
     repository.rebrickable.category:
           class: Doctrine\ORM\EntityRepository

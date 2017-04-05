@@ -11,13 +11,18 @@ services:
         class: AppBundle\Manager\LDraw\TypeManager
         arguments:
             - "@repository.ldraw.type"
-    manager.ldraw.part:
-        class: AppBundle\Manager\LDraw\PartManager
+    manager.ldraw.subpart:
+        class: AppBundle\Manager\LDraw\SubpartManager
         arguments:
-            - "@repository.ldraw.part"
-    manager.ldraw.partRelation:
-        class: AppBundle\Manager\LDraw\Part_RelationManager
+            - "@repository.ldraw.subpart"
+    manager.ldraw.model:
+        class: AppBundle\Manager\LDraw\ModelManager
         arguments:
-            - "@repository.ldraw.partRelation"
+            - "@repository.ldraw.model"
+    manager.ldraw.alias:
+        class: AppBundle\Manager\LDraw\AliasManager
+        arguments:
+            - "@repository.ldraw.alias"
+
 
 

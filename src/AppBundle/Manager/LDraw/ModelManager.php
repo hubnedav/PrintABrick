@@ -27,11 +27,21 @@ class ModelManager extends BaseManager
      */
     public function create($number)
     {
-        if (($model = $this->repository->find($number)) == null) {
+        if (($model = $this->repository->findOneBy(['number' => $number])) == null) {
             $model = new Model();
             $model->setNumber($number);
         }
 
         return $model;
+    }
+
+    public function findByNumber($number)
+    {
+        return $this->repository->findOneByNumber($number);
+    }
+
+    public function findByName($name)
+    {
+        return $this->repository->findOneBy(['name' => $name]);
     }
 }

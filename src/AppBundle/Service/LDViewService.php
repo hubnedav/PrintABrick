@@ -16,9 +16,14 @@ class LDViewService
     private $ldview;
 
     /**
-     * @var \League\Flysystem\Filesystem
+     * @var Filesystem
      */
     private $mediaFilesystem;
+
+    /**
+     * @var Filesystem
+     */
+    private $ldrawFilesystem;
 
     /**
      * LDViewService constructor.
@@ -33,6 +38,14 @@ class LDViewService
     }
 
     /**
+     * @param Filesystem $ldrawFilesystem
+     */
+    public function setLdrawFilesystem($ldrawFilesystem)
+    {
+        $this->ldrawFilesystem = $ldrawFilesystem;
+    }
+
+    /**
      * Convert LDraw model from .dat format to .stl by using LDView
      * stores created file to $stlStorage filesystem.
      *
@@ -40,18 +53,18 @@ class LDViewService
      *
      * @return File
      */
-    public function datToStl($file, $LDrawDir)
+    public function datToStl($file, $LDrawDir = null)
     {
-        if(!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'models')) {
-            $this->mediaFilesystem->createDir('ldraw' . DIRECTORY_SEPARATOR . 'models');
+        if (!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'models')) {
+            $this->mediaFilesystem->createDir('ldraw'.DIRECTORY_SEPARATOR.'models');
         }
 
         $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.$file['filename'].'.stl';
 
         if (!$this->mediaFilesystem->has($newFile)) {
             $this->runLDView([
-                $LDrawDir->getAdapter()->getPathPrefix().$file['path'],
-                '-LDrawDir='.$LDrawDir->getAdapter()->getPathPrefix(),
+                $this->ldrawFilesystem->getAdapter()->getPathPrefix().$file['path'],
+                '-LDrawDir='.$this->ldrawFilesystem->getAdapter()->getPathPrefix(),
                 '-ExportFiles=1',
                 '-ExportSuffix=.stl',
                 '-ExportsDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'ldraw'.DIRECTORY_SEPARATOR.'models',
@@ -74,18 +87,18 @@ class LDViewService
      *
      * @return File
      */
-    public function datToPng($file, $LDrawDir)
+    public function datToPng($file, $LDrawDir = null)
     {
-        if(!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images')) {
-            $this->mediaFilesystem->createDir('ldraw' . DIRECTORY_SEPARATOR . 'images');
+        if (!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images')) {
+            $this->mediaFilesystem->createDir('ldraw'.DIRECTORY_SEPARATOR.'images');
         }
 
         $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.$file['filename'].'.png';
 
         if (!$this->mediaFilesystem->has($newFile)) {
             $this->runLDView([
-                $LDrawDir->getAdapter()->getPathPrefix().$file['path'],
-                '-LDrawDir='.$LDrawDir->getAdapter()->getPathPrefix(),
+                $this->ldrawFilesystem->getAdapter()->getPathPrefix().$file['path'],
+                '-LDrawDir='.$this->ldrawFilesystem->getAdapter()->getPathPrefix(),
                 '-AutoCrop=1',
                 '-SaveAlpha=0',
                 '-SnapshotSuffix=.png',

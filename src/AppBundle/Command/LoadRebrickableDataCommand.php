@@ -18,7 +18,7 @@ class LoadRebrickableDataCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $rebrickableLoader = $this->getContainer()->get('loader.rebrickable');
+        $rebrickableLoader = $this->getContainer()->get('service.loader.rebrickable');
         $rebrickableLoader->setOutput($output);
 
         //TODO log errors

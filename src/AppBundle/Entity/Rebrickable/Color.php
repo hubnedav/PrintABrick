@@ -43,7 +43,7 @@ class Color
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory_part", mappedBy="color")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory_Part", mappedBy="color")
      */
     protected $inventoryParts;
 

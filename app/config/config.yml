@@ -7,12 +7,15 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    # rebrickable csv files root URL
     rebrickable_url: 'http://rebrickable.com/media/downloads/'
-    ldraw_url: 'http://www.ldraw.org/library/updates/completeCA.zip'
+    # LDraw library zip file URL
+    ldraw_url: 'http://www.ldraw.org/library/updates/complete.zip'
 
 framework:
     #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
+    translator:
+        fallbacks: ["%locale%"]
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"

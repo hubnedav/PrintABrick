@@ -1,14 +1,14 @@
 services:
-    client.brickset:
+    api.client.brickset:
         class: AppBundle\Api\Client\Brickset\Brickset
         arguments: ['%brickset_apikey%']
-    client.rebrickable:
+    api.client.rebrickable:
         class: AppBundle\Api\Client\Rebrickable\Rebrickable_v3
         arguments: ['%rebrickable_apikey%']
 
-    manager.brickset:
+    api.manager.brickset:
         class: AppBundle\Api\Manager\BricksetManager
-        arguments: ['@client.brickset']
-    manager.rebrickable:
+        arguments: ['@api.client.brickset']
+    api.manager.rebrickable:
         class: AppBundle\Api\Manager\RebrickableManager
-        arguments: ['@client.rebrickable']
+        arguments: ['@api.client.rebrickable']

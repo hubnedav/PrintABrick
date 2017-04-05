@@ -11,9 +11,10 @@ services:
 
     app.form.filter_set:
         class: AppBundle\Form\FilterSetType
-        arguments: ['@manager.brickset']
+        arguments: ['@api.manager.brickset']
         tags:
-            - { name: form.type }    app.relation.mapper:
+            - { name: form.type }
+
     app.relation.mapper:
         class: AppBundle\Utils\RelationMapper
         arguments:

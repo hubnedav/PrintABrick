@@ -20,7 +20,7 @@ class LoadLDRawLibraryCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ldrawLoader = $this->getContainer()->get('loader.ldraw');
+        $ldrawLoader = $this->getContainer()->get('service.loader.ldraw');
         $ldrawLoader->setOutput($output);
 
         //TODO log errors

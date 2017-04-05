@@ -119,6 +119,20 @@ class RebrickableManager
         return $this->serializer->deserialize($data, PartCategory::class, self::FORMAT);
     }
 
+    public function getPartsByLDrawNumber($number) {
+        $options = [
+            'query' => [
+                'ldraw_id' => $number
+            ],
+        ];
+
+        $response = $this->rebrickableClient->call('GET','lego/parts', $options);
+
+        $data = json_decode($response, true)['results'];
+
+        return $this->serializer->denormalize($data,Part::class.'[]',self::FORMAT);
+    }
+
     /**
      * Get the list of sets that a specific part/color appears in.
      *

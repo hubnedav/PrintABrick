@@ -1,14 +1,16 @@
 <?php
 
-namespace AppBundle\Loader;
+namespace AppBundle\Service\Loader;
 
+use AppBundle\Utils\RelationMapper;
 use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
-abstract class Loader
+abstract class BaseLoaderService
 {
     /**
      * @var EntityManager
@@ -25,14 +27,19 @@ abstract class Loader
      */
     protected $progressBar;
 
+    /** @var RelationMapper */
+    protected $relationMapper;
+
     /**
      * Loader constructor.
      *
      * @param EntityManager $em
+     * @param Translator    $translator
      */
-    public function __construct(EntityManager $em)
+    public function setArguments(EntityManager $em, $relationMapper)
     {
         $this->em = $em;
+        $this->relationMapper = $relationMapper;
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
     }
 

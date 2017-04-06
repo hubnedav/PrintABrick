@@ -39,7 +39,7 @@ class PartController extends Controller
 
             $sets = $part != null ? $em->getRepository(Set::class)->findAllByPartNumber($part->getNumber()) : null;
 
-            return $this->render('rebrickable/part/show.html.twig', [
+            return $this->render('rebrickable/part/detail.html.twig', [
                 'part' => $part,
                 'apiPart' => $apiPart,
                 'sets' => $sets,

@@ -57,6 +57,7 @@ class SetController extends Controller
 
         $set = $this->getDoctrine()->getManager()->getRepository(Set::class)->find($number);
 
+        $rbset = $this->get('api.manager.rebrickable')->getSet($number);
 
         $em = $this->getDoctrine()->getManager();
         $em->getRepository(Color::class)->findAll();
@@ -65,6 +66,7 @@ class SetController extends Controller
         return $this->render('rebrickable/set/detail.html.twig', [
             'set' => $set,
             'brset' => $brset,
+            'rbset' => $rbset,
             'parts' => $em->getRepository(Model::class)->findAllBySetNumber($number),
             'inventoryParts' => $em->getRepository(Inventory_Part::class)->findAllBySetNumber($number),
         ]);

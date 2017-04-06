@@ -31,7 +31,7 @@ class Inventory_Part
      *
      * @ORM\Column(type="boolean")
      */
-    protected $isSpare;
+    protected $spare;
 
     /**
      * @var Part
@@ -102,9 +102,9 @@ class Inventory_Part
      *
      * @return Inventory_Part
      */
-    public function setIsSpare($isSpare)
+    public function setSpare($spare)
     {
-        $this->isSpare = $isSpare;
+        $this->spare = $spare;
 
         return $this;
     }
@@ -116,7 +116,7 @@ class Inventory_Part
      */
     public function isSpare()
     {
-        return $this->isSpare();
+        return $this->spare;
     }
 
     /**
@@ -140,7 +140,7 @@ class Inventory_Part
     }
 
     /**
-     * @return Set
+     * @return Inventory
      */
     public function getInventory()
     {

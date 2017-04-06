@@ -4,7 +4,7 @@ namespace AppBundle\Service\Loader;
 
 use AppBundle\Entity\Rebrickable\Set;
 
-//TODO Refactor
+//TODO Refactor + validate csv files
 class RebrickableLoaderService extends BaseLoaderService
 {
     private $rebrickable_url;
@@ -79,7 +79,7 @@ class RebrickableLoaderService extends BaseLoaderService
     {
         $file = $this->downloadFile($this->rebrickable_url.'inventory_parts.csv');
 
-        return $this->loadCsvFile($file, 'rebrickable_inventory_parts', '(`inventory_id`,`part_id`,`color_id`,`quantity`, @var) SET is_spare = IF(@var=\'t\',1,0)');
+        return $this->loadCsvFile($file, 'rebrickable_inventory_parts', '(`inventory_id`,`part_id`,`color_id`,`quantity`, @var) SET spare = IF(@var=\'t\',1,0)');
     }
 
     private function loadSetTable()

@@ -1,15 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-
-    {{ dump(set) }}
-
-    {{ brset ? dump(brset) }}
-
-    {#<h1>{{brset ? brset.name }}</h1>#}
-    {#<img src="{{brset ?  brset.imageURL }}">#}
-
     {% if set is not null %}
+        <dl>
+            <dt>number:</dt><dd>{{ set.number }}</dd>
+            <dt>year:</dt><dd>{{ set.year }}</dd>
+            <dt>name:</dt><dd>{{ set.name }}</dd>
+            <dt>theme:</dt><dd>{{ set.theme.name }}</dd>
+            <dt>count of parts:</dt><dd>{{ set.partCount }}</dd>
+        </dl>
+
+        <img class="ui bordered image medium" src="{{ rbset ?  rbset.imgUrl }}">
+
+
         <h4 class="ui horizontal divider header">
             <i class="cubes icon"></i> Parts {{ inventoryParts|length }}
         </h4>
@@ -21,7 +24,7 @@
                     <a class="ui right red circular label">{{ inventoryPart.quantity }}</a>
                     <a href="{{ path('rebrickable_part_show', {number: inventoryPart.part.number}) }}">
                         <img src="https://rebrickable.com/media/parts/ldraw/{{inventoryPart.color ? inventoryPart.color.id  }}/{{ inventoryPart.part.number }}.png">
-                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 2px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}</div>
+                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
                     </a>
                 </div>
             </div>
@@ -36,10 +39,10 @@
         <div class="ui eight column grid">
         {% for part in parts %}
             <div class="column">
-                <div class="ui fluid image">
+                <div class="ui bordered fluid image">
                     <a href="{{ path('model_detail', {number: part.number}) }}">
                         <img src="https://rebrickable.com/media/parts/ldraw/-1/{{ part.number }}.png">
-                        <div class="ui bottom attached label">{{ part.number }}</div>
+                        <div class="ui bottom attached label">{{ part.number }} </div>
                     </a>
                 </div>
             </div>
@@ -48,5 +51,8 @@
 
 
     {% endif %}
+
+    {{ brset ? dump(brset) }}
+
 
 {% endblock %}

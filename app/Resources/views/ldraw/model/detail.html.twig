@@ -8,7 +8,6 @@
             <dt>number:</dt><dd>{{ model.number }}</dd>
             <dt>name:</dt><dd>{{ model.name }}</dd>
             <dt>category:</dt><dd>{{ model.category ? model.category.name }}</dd>
-            <dt>type:</dt><dd>{{ model.type ? model.type.name }}</dd>
             <dt>model:</dt><dd>{{ model.path }}</dd>
             <dt>author:</dt><dd>{{ model.author }}</dd>
             <dt>keywords:</dt>
@@ -24,7 +23,7 @@
                 {% endfor %}
             </dd>
             <dd>Download:</dd>
-            <dt><a href="{{ path('model_stl', {'number' : model.number })}}">{{ model.number }}</a></dt>
+            <dt><a href="{{ url('media_file', {'path': model.path}) }}">{{ model.number }}</a></dt>
             <dt>rebrickable parts ({{ rbParts|length }}):</dt>
             <dd>
                 <p>
@@ -42,7 +41,7 @@
     <div style="display: flex; flex-wrap: wrap">
         <div id="model" style="height: 300px; width: 300px; padding: 5px; display: inline-block"></div>
         <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
-            <img src="{{ url('model_image', {'number': model.number}) }}"  style="max-height: 90%; max-width: 100%">
+            <img src="{{ url('media_file', {'path': 'ldraw/images/'~model.number~'.png'}) }}"  style="max-height: 90%; max-width: 100%">
         </div>
 
         <h4 class="ui horizontal divider header">
@@ -78,7 +77,7 @@
         window.onload = function() {
             modelView = new ModelViewer();
             var scene = modelView.initScene($('#model'));
-            modelView.loadStl('{{ path('model_stl', {'number' : model.number })}}');
+            modelView.loadStl('{{ url('media_file', {'path': model.path }) }}');
             modelView.render();
         };
     </script>

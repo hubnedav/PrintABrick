@@ -92,11 +92,26 @@ knp_paginator:
         pagination: KnpPaginatorBundle:Pagination:semantic_ui_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
 
+#liip_imagine:
+#    filter_sets:
+#        cache: ~
+#        square_thumb:
+###            cache: my_remote_resolver
+#            data_loader: remote.loader
+##            quality: 75
+##            filters:
+##                thumbnail: { size: [150, 150], mode: outbound }
+
 oneup_flysystem:
     adapters:
         media_adapter:
             local:
                 directory: "%kernel.root_dir%/../var/media/"
+        ldraw_library_adapter:
+            local:
+                directory: "%ldraw_library%"
     filesystems:
         media:
             adapter: media_adapter
+        ldraw_library:
+            adapter: ldraw_library_adapter

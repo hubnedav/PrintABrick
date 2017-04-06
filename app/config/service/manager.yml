@@ -7,10 +7,6 @@ services:
         class: AppBundle\Manager\LDraw\CategoryManager
         arguments:
             - "@repository.ldraw.category"
-    manager.ldraw.type:
-        class: AppBundle\Manager\LDraw\TypeManager
-        arguments:
-            - "@repository.ldraw.type"
     manager.ldraw.subpart:
         class: AppBundle\Manager\LDraw\SubpartManager
         arguments:

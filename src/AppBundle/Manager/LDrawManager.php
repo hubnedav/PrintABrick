@@ -17,9 +17,6 @@ class LDrawManager
     /** @var KeywordManager */
     private $keywordManager;
 
-    /** @var TypeManager */
-    private $typeManager;
-
     /** @var SubpartManager */
     private $subpartManager;
 
@@ -34,16 +31,14 @@ class LDrawManager
      *
      * @param CategoryManager $categoryManager
      * @param KeywordManager  $keywordManager
-     * @param TypeManager     $typeManager
      * @param SubpartManager  $subpartManager
      * @param ModelManager    $modelManager
      * @param AliasManager    $aliasManager
      */
-    public function __construct(CategoryManager $categoryManager, KeywordManager $keywordManager, TypeManager $typeManager, SubpartManager $subpartManager, ModelManager $modelManager, AliasManager $aliasManager)
+    public function __construct(CategoryManager $categoryManager, KeywordManager $keywordManager, SubpartManager $subpartManager, ModelManager $modelManager, AliasManager $aliasManager)
     {
         $this->categoryManager = $categoryManager;
         $this->keywordManager = $keywordManager;
-        $this->typeManager = $typeManager;
         $this->subpartManager = $subpartManager;
         $this->modelManager = $modelManager;
         $this->aliasManager = $aliasManager;
@@ -63,14 +58,6 @@ class LDrawManager
     public function getKeywordManager()
     {
         return $this->keywordManager;
-    }
-
-    /**
-     * @return TypeManager
-     */
-    public function getTypeManager()
-    {
-        return $this->typeManager;
     }
 
     /**

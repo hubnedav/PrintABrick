@@ -26,7 +26,9 @@
         "knplabs/knp-menu-bundle": "^2.0",
         "oneup/flysystem-bundle": "^1.7",
         "knplabs/knp-paginator-bundle": "^2.5",
-        "lexik/form-filter-bundle": "~5.0"
+        "knplabs/knp-gaufrette-bundle": "~0.3",
+        "lexik/form-filter-bundle": "~5.0",
+        "liip/imagine-bundle": "^1.7"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

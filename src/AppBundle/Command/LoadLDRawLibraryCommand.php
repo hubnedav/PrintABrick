@@ -15,7 +15,7 @@ class LoadLDRawLibraryCommand extends ContainerAwareCommand
             ->setName('app:load:ldraw')
             ->setDescription('Loads LDraw library parts')
             ->setHelp('This command allows you to..')
-            ->addArgument('ldraw_path', InputArgument::OPTIONAL, 'Path to LDraw library folder');
+            ->addArgument('file', InputArgument::OPTIONAL, 'Model to load');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -27,11 +27,11 @@ class LoadLDRawLibraryCommand extends ContainerAwareCommand
 
         try {
             // TODO handle relative path to dir
-            if (($ldrawPath = $input->getArgument('ldraw_path')) == null) {
-                $ldrawPath = $ldrawLoader->downloadLibrary();
+            if (($ldrawPath = $input->getArgument('file')) != null) {
+                $ldrawPath = $ldrawLoader->loadModel($ldrawPath);
+            } else {
+                $ldrawLoader->loadAllModels();
             }
-
-            $ldrawLoader->loadData($ldrawPath);
         } catch (\Exception $e) {
             printf($e->getMessage());
         }

@@ -26,3 +26,6 @@ parameters:
 
     # Absolute path to OSMesa port of LDView
     ldview_bin: /usr/bin/ldview
+
+    # Path to LDraw library
+    ldraw_library: ~

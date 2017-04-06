@@ -18,13 +18,6 @@ class Model
     use NumberTrait;
 
     /**
-     * @var Type
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Type", inversedBy="models", cascade={"persist"})
-     */
-    private $type;
-
-    /**
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -161,22 +154,6 @@ class Model
         $this->modified = $modified;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
     }
 
     /**

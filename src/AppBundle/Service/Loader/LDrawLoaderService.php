@@ -5,8 +5,8 @@ namespace AppBundle\Service\Loader;
 use AppBundle\Entity\LDraw\Category;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\LDraw\Type;
+use AppBundle\Exception\FileNotFoundException;
 use AppBundle\Manager\LDrawManager;
-use AppBundle\Service\LDrawService;
 use AppBundle\Service\LDViewService;
 use AppBundle\Utils\DatParser;
 use League\Flysystem\Adapter\Local;
@@ -22,7 +22,7 @@ class LDrawLoaderService extends BaseLoaderService
     /**
      * @var Filesystem
      */
-    private $ldraw;
+    private $ldrawLibraryFilesystem;
 
     /**
      * @var string download URL with current LDraw library
@@ -41,67 +41,35 @@ class LDrawLoaderService extends BaseLoaderService
     private $datParser;
 
     /**
-     * @param array $ldraw_url
+     * LDrawLoaderService constructor.
+     * @param Filesystem $ldrawLibraryFilesystem
+     * @param LDViewService $LDViewService
+     * @param $ldraw_url
+     * @param LDrawManager $ldrawService
+     * @param DatParser $datParser
      */
-    public function __construct(LDViewService $LDViewService, $ldraw_url, LDrawManager $ldrawService, $datParser)
+    public function __construct($ldrawLibraryFilesystem, $LDViewService, $ldraw_url, $ldrawService, $datParser)
     {
         $this->LDViewService = $LDViewService;
         $this->ldraw_url = $ldraw_url;
         $this->ldrawService = $ldrawService;
         $this->datParser = $datParser;
+        $this->ldrawLibraryFilesystem = $ldrawLibraryFilesystem;
     }
 
-    /**
-     * Download current LDraw library and extract it to system tmp directory.
-     *
-     * @return string Absolute path to temporary Ldraw library
-     */
-    public function downloadLibrary()
+    public function loadAllModels()
     {
-        $temp = $this->downloadFile($this->ldraw_url);
-
-        // Create unique temporary directory
-        $temp_dir = tempnam(sys_get_temp_dir(), 'printabrick.');
-        mkdir($temp_dir);
-
-        // Unzip downloaded library zip file to temporary directory
-        $zip = new \ZipArchive();
-        if ($zip->open($temp) != 'true') {
-            throw new LogicException('Error :- Unable to open the Zip File');
-        }
-        $zip->extractTo($temp_dir);
-        $zip->close();
-
-        // Unlink downloaded zip file
-        unlink($temp);
-
-        return $temp_dir;
-    }
-
-    /**
-     * @param $LDrawLibrary
-     */
-    public function loadData($LDrawLibrary)
-    {
-        $adapter = new Local($LDrawLibrary);
-        $this->ldraw = new Filesystem($adapter);
-
-        $this->LDViewService->setLdrawFilesystem($this->ldraw);
-
-        $this->loadParts();
-    }
-
-    // TODO refactor
-
-    public function loadParts()
-    {
-        $files = $this->ldraw->get('parts')->getContents();
+        $files = $this->ldrawLibraryFilesystem->get('parts')->getContents();
+        $modelManager = $this->ldrawService->getModelManager();
 
         $this->initProgressBar(count($files));
 
         foreach ($files as $file) {
             if ($file['type'] == 'file' && $file['extension'] == 'dat') {
-                $this->loadModel($file);
+                $model = $this->loadModel($this->ldrawLibraryFilesystem->getAdapter()->getPathPrefix().$file['path']);
+
+                if($model)
+                    $modelManager->getRepository()->save($model);
             }
 
             $this->progressBar->advance();
@@ -116,31 +84,32 @@ class LDrawLoaderService extends BaseLoaderService
      *
      * @return Model|null
      */
-    private function loadModel($file)
+    public function loadModel($file)
     {
         $modelManager = $this->ldrawService->getModelManager();
         $subpartManager = $this->ldrawService->getSubpartManager();
         $aliasManager = $this->ldrawService->getAliasManager();
 
-        $header = $this->datParser->parse($this->ldraw->get($file['path']));
+        if($model = $modelManager->findByNumber(basename($file,'.dat'))) {
+            return $model;
+        }
+
+        $header = $this->datParser->parse($file);
 
         if ($this->isModelIncluded($header)) {
-            if (isset($header['parent']) && ($parent = $this->getModelParent($header['parent'])) && ($parentFile = $this->getModelFile($parent))) {
-                $parentHeader = $this->datParser->parse($parentFile);
+            if (isset($header['parent']) && ($parent = $this->getModelParent($header['parent'])) && ($parentFile = $this->findModelFile($parent))) {
+                $parentModel = $this->loadModel($parentFile);
 
-                if ($this->isModelIncluded($parentHeader)) {
-                    $model = $modelManager->create($parentHeader['id']);
-                    $alias = $aliasManager->create($header['id'], $model);
+                if ($parentModel) {
+                    $alias = $aliasManager->create($header['id'], $parentModel);
                     $aliasManager->getRepository()->save($alias);
-
-                    return $model;
+                    $this->progressBar->advance();
                 }
+                return $parentModel;
             } else {
                 $model = $modelManager->create($header['id']);
                 $model->setName($header['name']);
-                $model
-                    ->setCategory($this->ldrawService->getCategoryManager()->create($header['category']))
-                    ->setType($this->ldrawService->getTypeManager()->create($header['type']));
+                $model->setCategory($this->ldrawService->getCategoryManager()->create($header['category']));
 
                 if (isset($header['keywords'])) {
                     foreach ($header['keywords'] as $keyword) {
@@ -150,20 +119,19 @@ class LDrawLoaderService extends BaseLoaderService
                 }
 
                 if (isset($header['subparts'])) {
-                    $model->setType($this->ldrawService->getTypeManager()->create('Shortcut'));
+                    foreach ($header['subparts'] as $subpartId) {
+                        $subpartId = $this->getModelParent($subpartId);
 
-                    foreach ($header['subparts'] as $subpart) {
-                        $subpart = $this->getModelParent($subpart);
+                        $subModel = $modelManager->getRepository()->findOneBy(['number'=>$subpartId]);
 
-                        if ($subpartFile = $this->getModelFile($subpart)) {
-                            $subpartHeader = $this->datParser->parse($subpartFile);
+                        if(!$subModel && ($subpartFile = $this->findModelFile($subpartId)) != null) {
+                            $subModel = $this->loadModel($subpartFile);
+                        }
 
-                            if ($this->isModelIncluded($subpartHeader)) {
-                                $subpartModel = $modelManager->create($subpartHeader['id']);
-
-                                $subpart = $subpartManager->create($model, $subpartModel);
-                                $subpartManager->getRepository()->save($subpart);
-                            }
+                        if ($subModel) {
+                            $subpart = $subpartManager->create($model, $subModel);
+                            $subpartManager->getRepository()->save($subpart);
+                            $this->progressBar->advance();
                         }
                     }
                 }
@@ -172,13 +140,9 @@ class LDrawLoaderService extends BaseLoaderService
                 $model->setModified($header['modified']);
                 $model->setPath($this->loadStlModel($file));
 
-                $modelManager->getRepository()->save($model);
-
                 return $model;
             }
         }
-
-        return null;
     }
 
     /**
@@ -186,13 +150,13 @@ class LDrawLoaderService extends BaseLoaderService
      *
      * @param $id
      *
-     * @return \League\Flysystem\Directory|File|\League\Flysystem\Handler|null
+     * @return string
      */
-    private function getModelFile($id)
+    private function findModelFile($id)
     {
         $path = 'parts/'.strtolower($id).'.dat';
-        if ($this->ldraw->has($path)) {
-            return $this->ldraw->get($path);
+        if ($this->ldrawLibraryFilesystem->has($path)) {
+            return $this->ldrawLibraryFilesystem->getAdapter()->getPathPrefix().$path;
         }
 
         return null;
@@ -207,7 +171,7 @@ class LDrawLoaderService extends BaseLoaderService
      */
     private function getModelParent($number)
     {
-        if (($file = $this->getModelFile($number)) == null) {
+        if (($file = $this->findModelFile($number)) == null) {
             return $number;
         }
 
@@ -216,7 +180,7 @@ class LDrawLoaderService extends BaseLoaderService
         do {
             $parent = isset($header['parent']) ? $header['parent'] : null;
 
-            if ($file = $this->getModelFile($parent)) {
+            if ($file = $this->findModelFile($parent)) {
                 $header = $this->datParser->parse($file);
             } else {
                 break;
@@ -240,7 +204,7 @@ class LDrawLoaderService extends BaseLoaderService
             strpos($header['id'], 's') !== 0
             && $header['type'] != 'Subpart'
             && $header['type'] != 'Sticker'
-            && !(($header['type'] == 'Printed') && $this->getModelFile($header['parent']))
+            && !(($header['type'] == 'Printed') && $this->findModelFile($header['parent']))
         ) {
             return true;
         }
@@ -260,7 +224,7 @@ class LDrawLoaderService extends BaseLoaderService
     private function loadStlModel($file)
     {
         try {
-            return $this->LDViewService->datToStl($file, $this->ldraw)->getPath();
+            return $this->LDViewService->datToStl($file)->getPath();
         } catch (\Exception $e) {
             throw $e; //TODO
         }

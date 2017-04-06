@@ -1,6 +1,6 @@
 {% macro part(model) %}
     <div style="height: 100px; width: 100px; padding: 5px; display: inline-block;">
-        <img src="{{ url('model_image', {'number': model.number }) }}" style="max-height: 90%; max-width: 100%;">
+        <img src="{{ url('media_file', {'path': 'ldraw/images/'~model.number~'.png'}) }}"  style="max-height: 90%; max-width: 100%">
         <p><a href="{{ url('model_detail', {'number': model.number}) }}">{{ model.number }}</a></p>
     </div>
 {% endmacro %}

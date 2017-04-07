@@ -19,7 +19,6 @@ class AppKernel extends Kernel
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Oneup\FlysystemBundle\OneupFlysystemBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
-            new Knp\Bundle\GaufretteBundle\KnpGaufretteBundle(),
             new Lexik\Bundle\FormFilterBundle\LexikFormFilterBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
         ];

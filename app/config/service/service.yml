@@ -17,7 +17,7 @@ services:
     app.twig_extension:
         class: AppBundle\Twig\AppExtension
         public: false
-        arguments: ['api.@manager.rebrickable']
+        arguments: ['@api.manager.rebrickable']
         tags:
             - { name: twig.extension }
 

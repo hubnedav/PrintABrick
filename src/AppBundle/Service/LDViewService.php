@@ -102,9 +102,14 @@ class LDViewService
             $this->runLDView([
                 $file,
                 '-LDrawDir='.$this->ldrawLibraryFilesystem->getAdapter()->getPathPrefix(),
-                '-AutoCrop=1',
-                '-SaveAlpha=0',
+                '-AutoCrop=0',
+                '-SaveAlpha=1',
+                '-BackgroundColor3=0xFFFFFF',
+                '-DefaultColor3=0x136FC3',
                 '-SnapshotSuffix=.png',
+                '-HiResPrimitives=1',
+                '-CurveQuality=10',
+                '-DefaultLatLong=40,35',
                 '-SaveDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'ldraw'.DIRECTORY_SEPARATOR.'images',
                 '-SaveSnapshots=1',
             ]);

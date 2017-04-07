@@ -3,6 +3,9 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Api\Manager\RebrickableManager;
+use AppBundle\Entity\Rebrickable\Color;
+use AppBundle\Entity\Rebrickable\Part;
+use AppBundle\Entity\Rebrickable\Set;
 
 class AppExtension extends \Twig_Extension
 {
@@ -12,7 +15,7 @@ class AppExtension extends \Twig_Extension
     /**
      * AppExtension constructor.
      *
-     * @param $rebrickableAPIManager
+     * @param RebrickableManager $rebrickableAPIManager
      */
     public function __construct($rebrickableAPIManager)
     {
@@ -23,13 +26,17 @@ class AppExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter('partImage', [$this, 'partImage']),
+            new \Twig_SimpleFilter('setImage', [$this, 'setImage']),
         ];
     }
 
-    public function partImage($number)
+    public function partImage(Part $part, Color $color = null)
     {
-        if ($part = $this->rebrickableAPIManager->getPart($number)) {
-            return $part->getImgUrl();
-        }
+        return '/parts/ldraw/'.($color ? $color->getId():'-1').'/'.$part->getNumber().'.png';
+    }
+
+    public function setImage(Set $set)
+    {
+        return '/sets/'.strtolower($set->getNumber()).'.jpg';
     }
 }

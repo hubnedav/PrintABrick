@@ -92,26 +92,55 @@ knp_paginator:
         pagination: KnpPaginatorBundle:Pagination:semantic_ui_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
 
-#liip_imagine:
-#    filter_sets:
-#        cache: ~
-#        square_thumb:
-###            cache: my_remote_resolver
-#            data_loader: remote.loader
-##            quality: 75
-##            filters:
-##                thumbnail: { size: [150, 150], mode: outbound }
+liip_imagine:
+    loaders:
+        media:
+          flysystem:
+              filesystem_service: oneup_flysystem.media_filesystem
+        rebrickable:
+              stream:
+                  wrapper: 'http://rebrickable.com/media/'
+
+    resolvers:
+        default:
+            web_path: ~
+
+    filter_sets:
+         model:
+            data_loader: media
+            cache: ~
+            quality: 80
+            filters:
+                thumbnail: { size: [200, 200], mode: inset }
+         rebrickable_part_min:
+            quality: 80
+            data_loader: rebrickable
+            cache: ~
+            filters:
+                thumbnail: { size: [200, 200], mode: inset }
+         rebrickable_set_mid:
+            quality: 80
+            data_loader: rebrickable
+            cache: ~
+            filters:
+                thumbnail: { size: [600, 600], mode: inset }
+         rebrickable_set_min:
+                     quality: 80
+                     data_loader: rebrickable
+                     cache: ~
+                     filters:
+                         thumbnail: { size: [300, 300], mode: inset }
 
 oneup_flysystem:
     adapters:
-        media_adapter:
+        media:
             local:
                 directory: "%kernel.root_dir%/../var/media/"
-        ldraw_library_adapter:
+        ldraw_library:
             local:
                 directory: "%ldraw_library%"
     filesystems:
         media:
-            adapter: media_adapter
+            adapter: media
         ldraw_library:
-            adapter: ldraw_library_adapter
+            adapter: ldraw_library

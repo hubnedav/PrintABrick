@@ -23,10 +23,9 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
         "guzzlehttp/guzzle": "^6.2",
-        "knplabs/knp-menu-bundle": "^2.0",
+        "knplabs/knp-menu-bundle": "^2.1",
         "oneup/flysystem-bundle": "^1.7",
         "knplabs/knp-paginator-bundle": "^2.5",
-        "knplabs/knp-gaufrette-bundle": "~0.3",
         "lexik/form-filter-bundle": "~5.0",
         "liip/imagine-bundle": "^1.7"
     },

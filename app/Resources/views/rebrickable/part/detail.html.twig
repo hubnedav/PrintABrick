@@ -15,9 +15,6 @@
                 <img src="{{ apiPart.imgUrl }}"  style="max-height: 90%; max-width: 100%">
             </div>
         {% endif %}
-        <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
-            <img src="{{ url('model_image', {number:part.number}) }}"  style="max-height: 90%; max-width: 100%">
-        </div>
 
         {% if part.model %}
             {{ elements.part(part.model) }}
@@ -28,9 +25,19 @@
         <i class="puzzle icon"></i> Sets
     </h4>
 
+
+    <div class="ui eight column grid">
     {% for set in sets %}
-        <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
+        <div class="column">
+            <div class="ui fluid bordered image">
+                <a href="{{ url('set_detail', {number:set.number}) }}">
+                    <img class="ui bordered image" src="{{ set|setImage|imagine_filter('rebrickable_set_min') }}">
+                    <div class="ui bottom attached label">{{ set.number }}<br></div>
+                </a>
+            </div>
+        </div>
     {% endfor %}
+    <div>
 
     {{ dump(apiPart) }}
 

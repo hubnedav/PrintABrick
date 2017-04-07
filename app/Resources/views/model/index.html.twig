@@ -3,7 +3,7 @@
 {% import 'macros/elements.html.twig' as elements %}
 
 {% block content %}
-    <form method="get" action="." class="ui form">
+    <form method="get" action="" class="ui form">
         {{ form_start(form) }}
 
         {{ form_row(form.search) }}
@@ -19,14 +19,10 @@
 
 
     <p>{{ models.getTotalItemCount }}</p>
-    <div class="ui ten column grid">
-        <div class="row">
-            {% for model in models %}
-                <div class="column">
-                    {{ elements.part(model) }}
-                </div>
-            {% endfor %}
-        </div>
+    <div class="ui eight column grid">
+        {% for model in models %}
+            {{ elements.part(model) }}
+        {% endfor %}
     </div>
 
     {{ knp_pagination_render(models) }}

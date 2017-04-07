@@ -18,4 +18,5 @@
 /node_modules/
 /app/Resources/libs/semantic/dist
 /web/resources/
+/web/media/
 .php_cs.cache

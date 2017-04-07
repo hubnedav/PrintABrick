@@ -10,8 +10,9 @@
             <dt>count of parts:</dt><dd>{{ set.partCount }}</dd>
         </dl>
 
-        <img class="ui bordered image medium" src="{{ rbset ?  rbset.imgUrl }}">
+        <img class="ui bordered image medium" src="{{ set|setImage|imagine_filter('rebrickable_set_mid') }}">
 
+        {{ dump(rbset.imgUrl) }}
 
         <h4 class="ui horizontal divider header">
             <i class="cubes icon"></i> Parts {{ inventoryParts|length }}
@@ -20,35 +21,17 @@
         <div class="ui eight column grid">
         {% for inventoryPart in inventoryParts %}
             <div class="column">
-                <div class="ui fluid image {{ inventoryPart.part.model == null ? 'active dimmer'}}" style="height: 150px;">
-                    <a class="ui right red circular label">{{ inventoryPart.quantity }}</a>
+                <div class="ui fluid bordered image">
+                    <a class="ui right {{ inventoryPart.part.model == null ? 'black' : 'red'}} circular label">{{ inventoryPart.quantity }}</a>
                     <a href="{{ path('rebrickable_part_show', {number: inventoryPart.part.number}) }}">
-                        <img src="https://rebrickable.com/media/parts/ldraw/{{inventoryPart.color ? inventoryPart.color.id  }}/{{ inventoryPart.part.number }}.png">
+                        <img src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}">
                         <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
                     </a>
                 </div>
+
             </div>
         {% endfor %}
         <div>
-
-
-        <h4 class="ui horizontal divider header">
-            <i class="cubes icon"></i> Models {{ parts|length }}
-        </h4>
-
-        <div class="ui eight column grid">
-        {% for part in parts %}
-            <div class="column">
-                <div class="ui bordered fluid image">
-                    <a href="{{ path('model_detail', {number: part.number}) }}">
-                        <img src="https://rebrickable.com/media/parts/ldraw/-1/{{ part.number }}.png">
-                        <div class="ui bottom attached label">{{ part.number }} </div>
-                    </a>
-                </div>
-            </div>
-        {% endfor %}
-        <div>
-
 
     {% endif %}
 

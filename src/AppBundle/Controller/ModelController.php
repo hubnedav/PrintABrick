@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller\LDraw;
+namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Part;
@@ -14,14 +14,14 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Part controller.
  *
- * @Route("ldraw")
+ * @Route("models")
  */
 class ModelController extends Controller
 {
     /**
      * Lists all part entities.
      *
-     * @Route("/models/", name="ldraw_model_index")
+     * @Route("/", name="model_index")
      * @Method("GET")
      */
     public function indexAction(Request $request)
@@ -45,10 +45,10 @@ class ModelController extends Controller
         $models = $paginator->paginate(
             $filterBuilder->getQuery(),
             $request->query->getInt('page', 1)/*page number*/,
-            $request->query->getInt('limit', 100)/*limit per page*/
+            $request->query->getInt('limit', 40)/*limit per page*/
         );
 
-        return $this->render('ldraw/model/index.html.twig', [
+        return $this->render('model/index.html.twig', [
             'models' => $models,
             'form' => $form->createView(),
         ]);
@@ -57,7 +57,7 @@ class ModelController extends Controller
     /**
      * Finds and displays a part entity.
      *
-     * @Route("/models/{number}", name="model_detail")
+     * @Route("/{number}", name="model_detail")
      * @Method("GET")
      */
     public function detailAction($number)
@@ -65,11 +65,20 @@ class ModelController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         if($model = $this->get('manager.ldraw.model')->findByNumber($number)) {
+
+
+//            $bin = $this->get('imagine.data.loader.media')->find('/ldraw/images/'.$model->getNumber().'.png');
+//
+//            $path = $this->get('imagine.cache.resolver.media')->resolve('/ldraw/images/'.$model->getNumber().'.png','model');
+//
+//            $this->get('imagine.cache.resolver.media')->store($bin,$path,'model');
+
+
             try {
                 $rbParts = $model != null ? $em->getRepository(Part::class)->findAllByModel($model) : null;
                 $sets = $model != null ? $em->getRepository(Set::class)->findAllByModel($model) : null;
 
-                return $this->render('ldraw/model/detail.html.twig', [
+                return $this->render('model/detail.html.twig', [
                     'model' => $model,
                     'rbParts' => $rbParts,
                     'sets' => $sets,

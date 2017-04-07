@@ -1,7 +1,11 @@
 {% macro part(model) %}
-    <div style="height: 100px; width: 100px; padding: 5px; display: inline-block;">
-        <img src="{{ url('media_file', {'path': 'ldraw/images/'~model.number~'.png'}) }}"  style="max-height: 90%; max-width: 100%">
-        <p><a href="{{ url('model_detail', {'number': model.number}) }}">{{ model.number }}</a></p>
+    <div class="column">
+        <div class="ui bordered fluid image">
+            <a href="{{ url('model_detail', {'number': model.number})}}">
+                <img src="{{ asset('/ldraw/images/'~model.number~'.png') | imagine_filter('model') }}">
+                <div class="ui bottom attached label">{{ model.number }}</div>
+            </a>
+        </div>
     </div>
 {% endmacro %}
 

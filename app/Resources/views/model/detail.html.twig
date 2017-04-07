@@ -2,8 +2,11 @@
 
 {% import 'macros/elements.html.twig' as elements %}
 
+{% block title %}{{ model.name }}{% endblock %}
+
+{% block header %}{{ model.name }}{% endblock %}
+
 {% block content %}
-    {% if model %}
         <dl>
             <dt>number:</dt><dd>{{ model.number }}</dd>
             <dt>name:</dt><dd>{{ model.name }}</dd>
@@ -34,12 +37,10 @@
                 </div>
                 </p>
             </dd>
-
         </dl>
-    {% endif %}
 
     <div style="display: flex; flex-wrap: wrap">
-        <div id="model" style="height: 300px; width: 300px; padding: 5px; display: inline-block"></div>
+        <div id="model" style="height: 200px; width: 300px; padding: 5px; display: inline-block"></div>
         <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
             <img src="{{ url('media_file', {'path': 'ldraw/images/'~model.number~'.png'}) }}"  style="max-height: 90%; max-width: 100%">
         </div>
@@ -75,10 +76,8 @@
 
     <script type="text/javascript">
         window.onload = function() {
-            modelView = new ModelViewer();
-            var scene = modelView.initScene($('#model'));
+            modelView = new ModelViewer($('#model'));
             modelView.loadStl('{{ url('media_file', {'path': model.path }) }}');
-            modelView.render();
         };
     </script>
 {% endblock %}

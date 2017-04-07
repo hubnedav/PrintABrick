@@ -2,39 +2,56 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('resources/css/main.css') }}">
-        {% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-        {% block body %}
-            <div class="ui fixed inverted menu">
-                {{ knp_menu_render('mainMenu') }}
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}PrintABrick{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('resources/css/main.css') }}">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+{% block body %}
+    <div class="ui fixed inverted menu">
+        {{ knp_menu_render('mainMenu') }}
+    </div>
+    <div class="ui main container">
+
+        <div class="ui masthead vertical segment">
+            <div class="introduction">
+                <div class="ui small breadcrumb">
+                    {% for breadcrumb_item in knp_menu_get_breadcrumbs_array(knp_menu_get_current_item('mainMenu')) %}
+                        {% if not loop.last %}
+                            <a class="section" href="{{ breadcrumb_item.uri }}">{{ breadcrumb_item.label }}</a>
+                            <i class="right chevron icon divider"></i>
+                        {% else %}
+                            <a class="active section">{{ breadcrumb_item.label }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <h1 class="ui header">{% block header %}{% endblock %}</h1>
             </div>
-            <div class="ui main container">
-            {% for label, flashes in app.session.flashbag.all %}
-                {% for flash in flashes %}
-                    {{ elements.flash(label,flash) }}
-                {% endfor %}
+        </div>
+
+        {% for label, flashes in app.session.flashbag.all %}
+            {% for flash in flashes %}
+                {{ elements.flash(label,flash) }}
             {% endfor %}
-            {% block content %}
+        {% endfor %}
 
-            {% endblock %}
-            </div>
+        {% block content %}
+
         {% endblock %}
+    </div>
+{% endblock %}
 
-        {% block javascripts %}
+{% block javascripts %}
 
-            <script type="text/javascript" src="{{ asset('resources/js/three.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('resources/js/three.js') }}"></script>
 
-            <script type="text/javascript" src="{{ asset('resources/js/OrbitControls.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('resources/js/OrbitControls.js') }}"></script>
 
-
-            <script src="{{ asset('resources/js/main.js') }}"></script>
-        {% endblock %}
-    </body>
+    <script src="{{ asset('resources/js/main.js') }}"></script>
+{% endblock %}
+</body>
 </html>

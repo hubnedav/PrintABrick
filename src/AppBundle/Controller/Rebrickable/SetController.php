@@ -67,7 +67,6 @@ class SetController extends Controller
             'set' => $set,
             'brset' => $brset,
             'rbset' => $rbset,
-            'parts' => $em->getRepository(Model::class)->findAllBySetNumber($number),
             'inventoryParts' => $em->getRepository(Inventory_Part::class)->findAllBySetNumber($number),
         ]);
     }

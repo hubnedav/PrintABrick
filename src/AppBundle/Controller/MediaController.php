@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/media")
+ * @Route("/files")
  */
 class MediaController extends Controller
 {

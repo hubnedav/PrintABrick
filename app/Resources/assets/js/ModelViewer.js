@@ -1,45 +1,75 @@
-var ModelViewer = function($container) {
+var ModelViewer = function($dom_element) {
     var $this = this;
-    this.container = $container;
+    this.container = document.createElement('div');
+
+    this.dom_element = $dom_element;
+
+    $dom_element.append(this.container);
+    this.container.style.display = "none";
 
     this.camera = null;
     this.scene = null;
     this.renderer = null;
     this.controls = null;
     this.object = null;
-    this.width  = parseFloat(this.container.width());
-    this.height = parseFloat(this.container.height());
+    this.width  = parseFloat($dom_element.width());
+    this.height = parseFloat($dom_element.height());
     this.visible = true;
+    this.stats = null;
     this.scale = 1;
+    this.wireframe = false;
+    this.rendering = false;
 
+    this.initHtml();
     this.initScene();
 
     function renderLoop() {
-        requestAnimationFrame( renderLoop );
-        $this.render();
+        requestAnimationFrame(renderLoop);
+        if($this.rendering) {
+            $this.render();
+        }
+        $this.stats.update();
     }
 
     renderLoop();
 };
 
+ModelViewer.prototype.initHtml = function () {
+    $this = this;
+
+    var buttons = document.createElement("div");
+    buttons.setAttribute("class", "modelviewer-buttons");
+
+    var toggleButton = $('<button/>', {
+        'class':'toggle',
+        'html':'<span>3D View</span>',
+        'click': $this.toggleRendering.bind($this)
+    }).appendTo(buttons);
+
+    this.dom_element.append(buttons);
+};
+
 ModelViewer.prototype.initScene = function() {
 
     this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color( 0xffffff );
 
-    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 1000);
-    this.camera.position.z = 8;
+    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 300);
+    this.camera.position.z = 7;
     this.camera.position.y = -5;
     this.camera.position.x = 3;
     this.camera.up = new THREE.Vector3(0, 0, 1);
 
-    this.reflectCamera = new THREE.CubeCamera(1, 50, 200);
-    this.scene.add(this.reflectCamera);
+    // this.reflectCamera = new THREE.CubeCamera(1, 50, 100);
+    // this.scene.add(this.reflectCamera);
+
+    this.scene.fog = new THREE.FogExp2(0xbbbbbb, 0.2);
 
     var material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
         shading: THREE.SmoothShading,
-        fog: false,
+        fog: true,
         side: THREE.BackSide
     });
 
@@ -48,13 +78,13 @@ ModelViewer.prototype.initScene = function() {
     this.scene.add(skybox);
 
     var groundPlaneMaterial = new THREE.MeshPhongMaterial({
-        color: 0x888888,
+        color: 0x999999,
         wireframe: false,
         transparent: true,
         opacity: 0.25,
-        // fog: true,
-        // specular: 0x999999,
-        envMap: this.reflectCamera.renderTarget
+        fog: false,
+        specular: 0x999999,
+        // envMap: this.reflectCamera.renderTarget
     });
     var x = 80;
     var y = 80;
@@ -86,47 +116,54 @@ ModelViewer.prototype.initScene = function() {
     this.renderer = new THREE.WebGLRenderer();
 
     this.renderer.setSize(this.width, this.height);
+    this.renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+
 
     this.container.append(this.renderer.domElement);
 
+    // this.renderer.shadowMap.enabled = true;
+    // this.renderer.shadowMap.renderReverseSided = false;
 
-    this.scene.fog = new THREE.FogExp2(0xcacaca, 0.9);
 
-    // // Light
-    this.spotLight = new THREE.SpotLight(0xffffff, 0.9, 0);
-    this.spotLight.position.set(-70, 100, 100);
+    this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+    this.controls.enableZoom = true;
+
+
+    this.initLights();
+
+    this.stats = new Stats();
+    this.container.append( this.stats.dom );
+};
+
+ModelViewer.prototype.initLights = function () {
+    this.spotLight = new THREE.SpotLight(0xffffff, 0.8, 0);
+    this.spotLight.position.set(-100, 100, 100);
     this.spotLight.castShadow = false;
     this.scene.add(this.spotLight);
 
-    this.bottomSpotLight = new THREE.SpotLight(0xffffff, 0.3, 0);
+    this.bottomSpotLight = new THREE.SpotLight(0xffffff, 0.5, 0);
     this.bottomSpotLight.position.set(70, -100, -100);
     this.bottomSpotLight.castShadow = false;
     this.scene.add(this.bottomSpotLight);
 
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+    this.scene.add(this.ambientLight);
 
-    this.pointLight = new THREE.PointLight(0xffaaff, 0.9, 0);
+    this.pointLight = new THREE.PointLight(0xfdfdfd, 1, 0);
     this.pointLight.position.set(32, -39, 35);
     this.pointLight.castShadow = true;
     this.scene.add(this.pointLight);
-
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.renderReverseSided = false;
-
-    // $container.append(this.renderer.domElement);
-
-    this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-    this.controls.enableZoom = true;
 };
 
 ModelViewer.prototype.addModel = function(geometry) {
     var material = new THREE.MeshPhongMaterial({
-        color: 0x136FC3,
+        color: 0x1379d7,
         specular: 0x0D0D0D,
         shading: THREE.SmoothShading,
-        shininess: 150,
+        shininess: 30,
         fog: false,
         side: THREE.DoubleSide,
-        // wireframe: true,
+        wireframe: this.wireframe,
     });
 
     geometry.center();
@@ -179,7 +216,8 @@ ModelViewer.prototype.centerCamera = function(mesh) {
 
     var geometry = mesh.geometry;
 
-    var distanceX = (geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2 / Math.tan(this.camera.fov * this.camera.aspect * Math.PI / 360);
+
+    var distanceX = ((geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2) / Math.tan(this.camera.fov * this.camera.aspect * Math.PI / 360);
     var distanceY = (geometry.boundingBox.max.y - geometry.boundingBox.min.y) / 2 / Math.tan(this.camera.fov * this.camera.aspect * Math.PI / 360);
     var distanceZ = (geometry.boundingBox.max.z - geometry.boundingBox.min.z) / 2 / Math.tan(this.camera.fov * Math.PI / 360);
 
@@ -193,6 +231,16 @@ ModelViewer.prototype.centerCamera = function(mesh) {
     this.controls.position0 = cameraPosition;
     this.controls.target0 = sceneCenter;
     this.controls.reset();
+};
+
+ModelViewer.prototype.toggleRendering = function () {
+    if($this.rendering) {
+        $this.container.style.display = "none";
+        $this.rendering = false;
+    } else {
+        $this.container.style.display = "block";
+        $this.rendering = true;
+    }
 };
 
 ModelViewer.prototype.objectCenter = function (mesh) {

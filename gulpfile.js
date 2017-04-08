@@ -32,6 +32,7 @@ gulp.task('js', function() {
         'node_modules/jquery/dist/jquery.js',
         'node_modules/semantic-ui/dist/semantic.js',
         'app/Resources/assets/js/**.js',
+        'node_modules/three/examples/js/libs/stats.min.js'
     ])
         .pipe(plugins.concat('main.js'))
         .pipe(gulp.dest('web/resources/js'));
@@ -45,7 +46,7 @@ gulp.task('files', function () {
 
 gulp.task('watch', ['js', 'css', 'three'], function () {
     gulp.watch('app/Resources/assets/js/**.js' , ['js']);
-    gulp.watch('app/Resources/assets/style/**/*.sass' , ['css']);
+    gulp.watch('app/Resources/assets/style/**/*.scss' , ['css']);
 });
 
 gulp.task('default', function () {

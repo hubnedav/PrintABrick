@@ -7,44 +7,44 @@
 {% block header %}{{ model.name }}{% endblock %}
 
 {% block content %}
-        <dl>
-            <dt>number:</dt><dd>{{ model.number }}</dd>
-            <dt>name:</dt><dd>{{ model.name }}</dd>
-            <dt>category:</dt><dd>{{ model.category ? model.category.name }}</dd>
-            <dt>model:</dt><dd>{{ model.path }}</dd>
-            <dt>author:</dt><dd>{{ model.author }}</dd>
-            <dt>keywords:</dt>
-            <dd>
-                {% for keyword in model.keywords %}
-                    <span class="ui label">{{ keyword.name }}</span>
-                {% endfor %}
-            </dd>
-            <dt>aliases:</dt>
-            <dd>
-                {% for alias in model.aliases %}
-                    <span class="ui label">{{ alias.number }}</span>
-                {% endfor %}
-            </dd>
-            <dd>Download:</dd>
-            <dt><a href="{{ url('media_file', {'path': model.path}) }}">{{ model.number }}</a></dt>
-            <dt>rebrickable parts ({{ rbParts|length }}):</dt>
-            <dd>
-                <p>
-                <div class="ui eight doubling cards">
-                    {% for alias in rbParts %}
-                        <a href="{{ url('rebrickable_part_show', {number:alias.number}) }}" class="ui label">{{ alias.number }}</a>
-                    {% endfor %}
-                </div>
-                </p>
-            </dd>
-        </dl>
+    <div class="model-container">
+        <img src="{{ asset('ldraw/images/'~model.number~'.png') | imagine_filter('model_large')}}">
+        <div id="model-viewer"></div>
+    </div>
 
-    <div style="display: flex; flex-wrap: wrap">
-        <div id="model" style="height: 200px; width: 300px; padding: 5px; display: inline-block"></div>
-        <div style="height: 300px; width: 300px; padding: 5px; display: inline-block">
-            <img src="{{ url('media_file', {'path': 'ldraw/images/'~model.number~'.png'}) }}"  style="max-height: 90%; max-width: 100%">
-        </div>
+    <dl>
+        <dt>number:</dt><dd>{{ model.number }}</dd>
+        <dt>name:</dt><dd>{{ model.name }}</dd>
+        <dt>category:</dt><dd>{{ model.category ? model.category.name }}</dd>
+        <dt>model:</dt><dd>{{ model.path }}</dd>
+        <dt>author:</dt><dd>{{ model.author }}</dd>
+        <dt>keywords:</dt>
+        <dd>
+            {% for keyword in model.keywords %}
+                <span class="ui label">{{ keyword.name }}</span>
+            {% endfor %}
+        </dd>
+        <dt>aliases:</dt>
+        <dd>
+            {% for alias in model.aliases %}
+                <span class="ui label">{{ alias.number }}</span>
+            {% endfor %}
+        </dd>
+        <dd>Download:</dd>
+        <dt><a href="{{ url('media_file', {'path': model.path}) }}">{{ model.number }}</a></dt>
+        <dt>rebrickable parts ({{ rbParts|length }}):</dt>
+        <dd>
+            <p>
+            <div class="ui eight doubling cards">
+                {% for alias in rbParts %}
+                    <a href="{{ url('rebrickable_part_show', {number:alias.number}) }}" class="ui label">{{ alias.number }}</a>
+                {% endfor %}
+            </div>
+            </p>
+        </dd>
+    </dl>
 
+    <div>
         <h4 class="ui horizontal divider header">
             <i class="puzzle icon"></i> Subparts of this model
         </h4>
@@ -76,7 +76,7 @@
 
     <script type="text/javascript">
         window.onload = function() {
-            modelView = new ModelViewer($('#model'));
+            modelView = new ModelViewer($('#model-viewer'));
             modelView.loadStl('{{ url('media_file', {'path': model.path }) }}');
         };
     </script>

@@ -5,6 +5,7 @@ namespace AppBundle\Repository\Rebrickable;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
+use AppBundle\Entity\Rebrickable\Inventory_Set;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Repository\BaseRepository;
 use Doctrine\ORM\Query\Expr\Join;

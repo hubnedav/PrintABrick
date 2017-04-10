@@ -28,7 +28,7 @@ class Inventory_Part
 
     /**
      * @var bool
-     *
+     * @ORM\Id
      * @ORM\Column(type="boolean")
      */
     protected $spare;

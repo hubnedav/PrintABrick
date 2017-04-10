@@ -33,6 +33,7 @@ class RebrickableLoaderService extends BaseLoaderService
             $this->loadSetTable();
             $this->loadInventoryTable();
             $this->loadInventoryPartTable();
+            $this->loadInventorySetTable();
 
             $connection->prepare('SET foreign_key_checks = 1;')->execute();
             $connection->commit();
@@ -80,6 +81,13 @@ class RebrickableLoaderService extends BaseLoaderService
         $file = $this->downloadFile($this->rebrickable_url.'inventory_parts.csv');
 
         return $this->loadCsvFile($file, 'rebrickable_inventory_parts', '(`inventory_id`,`part_id`,`color_id`,`quantity`, @var) SET spare = IF(@var=\'t\',1,0)');
+    }
+
+    private function loadInventorySetTable()
+    {
+        $file = $this->downloadFile($this->rebrickable_url.'inventory_sets.csv');
+
+        return $this->loadCsvFile($file, 'rebrickable_inventory_sets', '(`inventory_id`,`set_id`,`quantity`)');
     }
 
     private function loadSetTable()

@@ -5,6 +5,7 @@ namespace AppBundle\Entity\LDraw;
 use AppBundle\Entity\Traits\NumberTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,7 +42,7 @@ class Model
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Subpart", mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Subpart", mappedBy="parent", cascade={"persist"})
      */
     private $subparts;
 
@@ -264,6 +265,21 @@ class Model
     {
         if (!$this->aliases->contains($alias)) {
             $this->aliases->add($alias);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @param Subpart $subpart
+     *
+     * @return $this
+     */
+    public function addSubpart($subpart)
+    {
+        if (!$this->subparts->contains($subpart)) {
+            $this->subparts->add($subpart);
         }
 
         return $this;

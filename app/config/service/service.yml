@@ -25,10 +25,3 @@ services:
         class: AppBundle\Utils\RelationMapper
         arguments:
             - ['%kernel.root_dir%/Resources/relations']
-
-    imagine.data.loader.remote:
-        class: AppBundle\Imagine\Loader\RemoteStreamLoader
-        arguments:
-            - 'http://rebrickable.com/media/'
-        tags:
-            - { name: "liip_imagine.remote.steram.loader", loader: remote.loader }

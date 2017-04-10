@@ -4,6 +4,7 @@ var gulp = require('gulp'),
 gulp.task('css', function() {
     return gulp.src([
         'node_modules/semantic-ui/dist/semantic.css',
+        'node_modules/lightbox2/dist/css/lightbox.css',
         'app/Resources/assets/style/style.scss',
     ])
         .pipe(plugins.sass().on('error', plugins.sass.logError))
@@ -31,6 +32,7 @@ gulp.task('js', function() {
     return gulp.src([
         'node_modules/jquery/dist/jquery.js',
         'node_modules/semantic-ui/dist/semantic.js',
+        'node_modules/lightbox2/dist/js/lightbox.js',
         'app/Resources/assets/js/**.js',
         'node_modules/three/examples/js/libs/stats.min.js'
     ])
@@ -38,11 +40,20 @@ gulp.task('js', function() {
         .pipe(gulp.dest('web/resources/js'));
 });
 
-gulp.task('files', function () {
-    return gulp.src('node_modules/semantic-ui/dist/themes/**')
-        .pipe(plugins.newer('web/resources/css/themes'))
+gulp.task('files:semantic', function () {
+    return gulp.src(
+        'node_modules/semantic-ui/dist/themes/**'
+    )
         .pipe(gulp.dest('web/resources/css/themes'));
 });
+
+gulp.task('files:images', function () {
+    return gulp.src(
+        'node_modules/lightbox2/dist/images/**'
+    )
+        .pipe(gulp.dest('web/resources/images'));
+});
+
 
 gulp.task('watch', ['js', 'css', 'three'], function () {
     gulp.watch('app/Resources/assets/js/**.js' , ['js']);

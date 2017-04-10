@@ -11,6 +11,7 @@
     "gulp-sass": "^2.3.2",
     "gulp-watch": "^4.3.11",
     "jquery": "^3.2.1",
+    "lightbox2": "^2.9.0",
     "semantic-ui": "^2.2.9",
     "three": "^0.84.0"
   },

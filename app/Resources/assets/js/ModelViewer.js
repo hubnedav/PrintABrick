@@ -1,34 +1,49 @@
-var ModelViewer = function($dom_element) {
+var ModelViewer = function($dom_element, model_url) {
     var $this = this;
     this.container = document.createElement('div');
-
+    this.container.setAttribute('class','model-view');
     this.dom_element = $dom_element;
-
     $dom_element.append(this.container);
-    this.container.style.display = "none";
 
     this.camera = null;
     this.scene = null;
     this.renderer = null;
     this.controls = null;
-    this.object = null;
     this.width  = parseFloat($dom_element.width());
     this.height = parseFloat($dom_element.height());
-    this.visible = true;
-    this.stats = null;
     this.scale = 1;
     this.wireframe = false;
     this.rendering = false;
+    this.container.style.display = "none";
+    this.toggleButton = null;
+    this.background = 0xffffff;
+    this.model_url = model_url;
+    this.loaded = false;
+
+    this.object = null;
 
     this.initHtml();
     this.initScene();
 
+
+    this.stats = new Stats();
+    this.stats.dom.style.position = 'absolute';
+    this.container.append(this.stats.dom);
+
+
     function renderLoop() {
         requestAnimationFrame(renderLoop);
         if($this.rendering) {
+            if(!$this.loaded) {
+                $this.loadStl($this.model_url);
+                $this.loaded = true;
+            }
+
+            if($this.stats) {
+                $this.stats.update();
+            }
             $this.render();
         }
-        $this.stats.update();
     }
 
     renderLoop();
@@ -40,99 +55,68 @@ ModelViewer.prototype.initHtml = function () {
     var buttons = document.createElement("div");
     buttons.setAttribute("class", "modelviewer-buttons");
 
-    var toggleButton = $('<button/>', {
+    this.wireframeButton = $('<button/>', {
+        'class':'model',
+        'style':'display:none',
+        'html':'<i class="eye icon"/>Wireframe',
+        'click': $this.toggleMaterial.bind($this)
+    }).appendTo(buttons);
+
+    this.toggleButton = $('<button/>', {
         'class':'toggle',
-        'html':'<span>3D View</span>',
+        'html':'<i class="cube icon"/>3D',
         'click': $this.toggleRendering.bind($this)
     }).appendTo(buttons);
 
     this.dom_element.append(buttons);
 };
 
-ModelViewer.prototype.initScene = function() {
-
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color( 0xffffff );
-
-    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 300);
-    this.camera.position.z = 7;
-    this.camera.position.y = -5;
-    this.camera.position.x = 3;
+ModelViewer.prototype.initCamera = function () {
+    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, .1, 300);
+    this.camera.position.z = 35;
+    this.camera.position.y = -35;
+    this.camera.position.x = 35;
     this.camera.up = new THREE.Vector3(0, 0, 1);
+};
 
-    // this.reflectCamera = new THREE.CubeCamera(1, 50, 100);
-    // this.scene.add(this.reflectCamera);
+ModelViewer.prototype.initScene = function() {
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color( this.background );
 
-    this.scene.fog = new THREE.FogExp2(0xbbbbbb, 0.2);
+    this.scene.fog = new THREE.FogExp2(this.background, 0.06);
 
-    var material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        emissive: 0xffffff,
-        shading: THREE.SmoothShading,
-        fog: true,
-        side: THREE.BackSide
-    });
-
-    var skybox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), material);
-    skybox.name = 'skybox';
-    this.scene.add(skybox);
+    this.initLights();
+    this.initCamera();
 
     var groundPlaneMaterial = new THREE.MeshPhongMaterial({
-        color: 0x999999,
+        color: 0xFFFFFF,
         wireframe: false,
         transparent: true,
         opacity: 0.25,
         fog: false,
         specular: 0x999999,
-        // envMap: this.reflectCamera.renderTarget
+        shininess: 100
     });
-    var x = 80;
-    var y = 80;
-    var division_x = Math.floor(x / 2);
-    var division_y = Math.floor(y / 2);
 
-    this.plane = new THREE.Mesh(new THREE.PlaneGeometry(x, y, division_x, division_y), groundPlaneMaterial);
-    this.plane.name = 'plane';
+    this.plane = new THREE.Mesh(new THREE.PlaneGeometry(80,80), groundPlaneMaterial);
     this.plane.receiveShadow = true;
     this.scene.add(this.plane);
 
-    this.grid = new THREE.GridHelper( 80, 100, 0xEEEEEE,0xEEEEEE);
+    this.grid = new THREE.GridHelper( 80, 100, 0x000000, 0xAAAAAA);
     this.grid.rotation.x = Math.PI/2;
-
     this.scene.add(this.grid);
 
-
-    // this.wirePlane = new THREE.Mesh(new THREE.PlaneGeometry(x, y, division_x, division_y), new THREE.MeshPhongMaterial({
-    //     emissive: 0xEEEEEE,
-    //     color: 0x000000,
-    //     wireframe: true,
-    //     wireframeLinewidth: 2
-    // }));
-    // this.wirePlane.name = 'planewire';
-    // this.wirePlane.receiveShadow = true;
-    // this.wirePlane.position.z = this.plane.position.z + .01;
-    // this.scene.add(this.wirePlane);
-
     this.renderer = new THREE.WebGLRenderer();
-
     this.renderer.setSize(this.width, this.height);
     this.renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
-
 
     this.container.append(this.renderer.domElement);
 
     // this.renderer.shadowMap.enabled = true;
     // this.renderer.shadowMap.renderReverseSided = false;
 
-
     this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
     this.controls.enableZoom = true;
-
-
-    this.initLights();
-
-    this.stats = new Stats();
-    this.container.append( this.stats.dom );
 };
 
 ModelViewer.prototype.initLights = function () {
@@ -141,8 +125,8 @@ ModelViewer.prototype.initLights = function () {
     this.spotLight.castShadow = false;
     this.scene.add(this.spotLight);
 
-    this.bottomSpotLight = new THREE.SpotLight(0xffffff, 0.5, 0);
-    this.bottomSpotLight.position.set(70, -100, -100);
+    this.bottomSpotLight = new THREE.SpotLight(0xffffff, 0.8, 0);
+    this.bottomSpotLight.position.set(0, -10, -100);
     this.bottomSpotLight.castShadow = false;
     this.scene.add(this.bottomSpotLight);
 
@@ -157,7 +141,7 @@ ModelViewer.prototype.initLights = function () {
 
 ModelViewer.prototype.addModel = function(geometry) {
     var material = new THREE.MeshPhongMaterial({
-        color: 0x1379d7,
+        color: 0x136fc3,
         specular: 0x0D0D0D,
         shading: THREE.SmoothShading,
         shininess: 30,
@@ -192,7 +176,8 @@ ModelViewer.prototype.addModel = function(geometry) {
 
     mesh.position.set(0, positionY, positionZ);
 
-    // this.scene.face_count = mesh.geometry.faces.length;
+    this.object = mesh;
+
     this.scene.add(mesh);
 
     this.centerCamera(mesh);
@@ -203,9 +188,10 @@ ModelViewer.prototype.loadStl = function(model) {
 
     var loader = new THREE.STLLoader();
 
-    loader.load(model, function (geometry) {
-        self.addModel(geometry);
-    });
+        loader.load(model, function (geometry) {
+                self.addModel(geometry);
+        }
+        );
 };
 
 ModelViewer.prototype.centerCamera = function(mesh) {
@@ -222,7 +208,7 @@ ModelViewer.prototype.centerCamera = function(mesh) {
     var distanceZ = (geometry.boundingBox.max.z - geometry.boundingBox.min.z) / 2 / Math.tan(this.camera.fov * Math.PI / 360);
 
     var maxDistance = Math.max(Math.max(distanceX, distanceY), distanceZ);
-    maxDistance *= 2.6 * this.scale;
+    maxDistance *= 1.6 * this.scale;
 
     var cameraPosition = this.camera.position.normalize().multiplyScalar(maxDistance);
 
@@ -237,10 +223,30 @@ ModelViewer.prototype.toggleRendering = function () {
     if($this.rendering) {
         $this.container.style.display = "none";
         $this.rendering = false;
+        $this.toggleButton.html('<i class="cube icon"/>3D');
+        $this.wireframeButton.hide();
     } else {
         $this.container.style.display = "block";
         $this.rendering = true;
+        $this.toggleButton.html('<i class="close icon"/>Close');
+        $this.wireframeButton.show();
     }
+};
+
+ModelViewer.prototype.toggleMaterial = function () {
+    if($this.wireframe) {
+        $this.wireframe = false;
+        $this.wireframeButton.html('<i class="eye icon"/>Wireframe')
+    } else {
+        $this.wireframe = true;
+        $this.wireframeButton.html('<i class="eye icon"/>Solid')
+    }
+
+    this.scene.traverse(function(object) {
+        if (object instanceof THREE.Mesh) {
+            object.material.wireframe = $this.wireframe;
+        }
+    });
 };
 
 ModelViewer.prototype.objectCenter = function (mesh) {
@@ -256,6 +262,14 @@ ModelViewer.prototype.objectCenter = function (mesh) {
 
     mesh.localToWorld(middle);
     return middle;
+};
+
+ModelViewer.prototype.resize = function(width, height) {
+    this.width = width;
+    this.height = height;
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(width, height);
 };
 
 ModelViewer.prototype.render = function() {

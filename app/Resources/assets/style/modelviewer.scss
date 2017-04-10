@@ -1,7 +1,8 @@
 .model-container {
-  width:600px;
-  height: 400px;
+  width:700px;
+  height: 525px;
   position: relative;
+  border: 1px solid #DDDDDD;
 
   img {
     width: 100%;
@@ -9,13 +10,22 @@
   }
 
   .modelviewer-buttons {
+    text-align: right;
     position: absolute;
     top: 0;
-    height: 30px;
+    height: 35px;
     width: 100%;
+    padding: 3px 4px;
+
+    > button {
+      border: none;
+      height: 100%;
+      margin-left: 5px;
+      padding: 0 15px;
+    }
   }
 
-  #model-viewer {
+  .model-view {
     position: absolute;
     top: 0;
     left: 0;

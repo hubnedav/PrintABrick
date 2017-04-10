@@ -1,0 +1,17 @@
+<h4 class="ui horizontal divider header">
+    Sets
+</h4>
+<div class="ui eight column grid">
+    {% for inventorySet in inventorySets %}
+        <div class="column">
+            <div class="ui fluid bordered image">
+                <a href="{{ path('rebrickable_set_detail', {number: inventorySet.set}) }}">
+                    <div class="image load">
+                        <img src="{{ inventorySet.set|setImage| imagine_filter('rebrickable_set_min') }}" data-src="{{ inventorySet.set|setImage| imagine_filter('rebrickable_set_min') }}" class="transition visible">
+                    </div>
+                    <div class="ui bottom attached label">{{ inventorySet.set.number }}<br>{{ inventorySet.quantity }}</div>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>

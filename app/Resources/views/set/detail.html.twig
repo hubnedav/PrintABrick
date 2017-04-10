@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ rbset ? rbset.number }}  {{ rbset ? rbset.name }}{% endblock %}
+
+{% block header %}{{ rbset ? rbset.number }}  {{ rbset ? rbset.name }}{% endblock %}
+
+{% block content %}
+    {% if brset %}
+        <a href="{{ brset.bricksetURL }}"><img class="image ui mini" src="http://brickset.com/assets/images/logo/bricks.jpg"> Brickset</a>
+    {% endif %}
+
+
+    {% if rbset is not null %}
+        <a href="http://rebrickable.com/sets/{{ rbset ? rbset.number }}"><img class="image ui mini" src="https://s.rebrickable.com/static/img/robo3ta.png"> Rebrickable</a>
+        <dl>
+            <dt>number:</dt><dd>{{ rbset.number }}</dd>
+            <dt>year:</dt><dd>{{ rbset.year }}</dd>
+            <dt>name:</dt><dd>{{ rbset.name }}</dd>
+            <dt>theme:</dt><dd>{{ rbset.theme.name }}</dd>
+            {% if rbset.theme.parent %}
+                <dt>themeparent:</dt><dd>{{ rbset.theme.parent.name }}</dd>
+                {% if rbset.theme.parent.parent %}
+                    <dt>themeparent:</dt><dd>{{ rbset.theme.parent.parent.name }}</dd>
+                {% endif %}
+            {% endif %}
+            <dt>count of parts:</dt><dd>{{ rbset.partCount }}</dd>
+        </dl>
+    {% endif %}
+
+    {% if brset is not null %}
+        <dl>
+            <dt>year:</dt><dd>{{ brset.year }}</dd>
+            <dt>name:</dt><dd>{{ brset.name }}</dd>
+            <dt>themegroup:</dt><dd>{{ brset.themeGroup }}</dd>
+            <dt>theme:</dt><dd>{{ brset.theme }}</dd>
+            <dt>subtheme:</dt><dd>{{ brset.subtheme }}</dd>
+            <dt>count of parts:</dt><dd>{{ brset.pieces }}</dd>
+            <dt>lego id:</dt><dd>{{ brset.legoSetID }}</dd>
+            <dt>minifigs:</dt><dd>{{ brset.minifigs }}</dd>
+            <dt>description:</dt><dd>{{ brset.description }}</dd>
+        </dl>
+    {% endif %}
+
+    {% if brset %}
+        <img class="ui bordered image medium" src="{{ brset.imageURL }}">
+    {% elseif rbset %}
+        <img class="ui bordered image medium" src="{{ rbset|setImage|imagine_filter('rebrickable') }}">
+    {% endif %}
+
+    {#{{ brset ? dump(brset) }}#}
+
+    <div class="ui tabular menu">
+        <a class="item active" data-tab="parts"><i class="cubes icon"></i> Parts ({{ rbset ? rbset.partCount : 0}})</a>
+        {% if brset %}
+            <a class="item" data-tab="images"> <i class="image icon"></i> Images ({{ brset.additionalImageCount }})</a>
+            <a class="item" data-tab="instructions"> <i class="file pdf outline icon"></i> Instructions ({{ brset.instructionsCount }})</a>
+            <a class="item" data-tab="reviews"><i class="write icon"></i> Reviews ({{ brset.reviewCount }})</a>
+        {% endif %}
+    </div>
+    <div class="ui tab active" data-tab="parts">
+        {% if rbset %}
+            {#{{ render(controller('AppBundle:Rebrickable/Set:parts', { 'number': rbset.number })) }}#}
+        {% endif %}
+    </div>
+    {% if brset %}
+        <div class="ui tab" data-tab="images">
+            {{ render(controller('AppBundle:Brickset/Set:images', { 'id': brset.setID })) }}
+        </div>
+        <div class="ui tab" data-tab="instructions">
+            {{ render(controller('AppBundle:Brickset/Set:instructions', { 'id': brset.setID })) }}
+        </div>
+        <div class="ui tab" data-tab="reviews">
+            {{ render(controller('AppBundle:Brickset/Set:reviews', { 'id': brset.setID })) }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -6,8 +6,7 @@
             {% for set in sets %}
                 <div class="column">
                    <a href="{{ url('set_detail', {'number': set.number, 'name' : set.name|escape('url') }) }}">
-
-                       {#<img style="width: 100%" src="{{ set }}">#}
+                       <img class="ui bordered image medium" src="{{ set|setImage|imagine_filter('rebrickable_set_min') }}">
                        <p>{{ set.number }} - {{ set.name }}</p>
                    </a>
                 </div>

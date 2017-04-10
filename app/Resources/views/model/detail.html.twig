@@ -7,9 +7,9 @@
 {% block header %}{{ model.name }}{% endblock %}
 
 {% block content %}
-    <div class="model-container">
+
+    <div id="model-viewer" class="model-container">
         <img src="{{ asset('ldraw/images/'~model.number~'.png') | imagine_filter('model_large')}}">
-        <div id="model-viewer"></div>
     </div>
 
     <dl>
@@ -18,6 +18,7 @@
         <dt>category:</dt><dd>{{ model.category ? model.category.name }}</dd>
         <dt>model:</dt><dd>{{ model.path }}</dd>
         <dt>author:</dt><dd>{{ model.author }}</dd>
+        <dt>modified:</dt><dd>{{ model.modified ? model.modified|date('Y-m-d') }}</dd>
         <dt>keywords:</dt>
         <dd>
             {% for keyword in model.keywords %}
@@ -49,17 +50,25 @@
             <i class="puzzle icon"></i> Subparts of this model
         </h4>
 
-        {% for subpart in model.subparts  %}
-            {{ elements.part(subpart.subpart) }}
-        {% endfor %}
+        <div class="ui eight cards">
+            {% for subpart in model.subparts  %}
+                <div class="column">
+                    {{ elements.part(subpart.subpart) }}
+                </div>
+            {% endfor %}
+        </div>
 
         <h4 class="ui horizontal divider header">
             <i class="cube icon"></i> Model is subpart of
         </h4>
 
-        {% for subpart in model.parents  %}
-            {{ elements.part(subpart.parent) }}
-        {% endfor %}
+        <div class="ui eight cards">
+            {% for subpart in model.parents  %}
+                <div class="column">
+                    {{ elements.part(subpart.parent) }}
+                </div>
+            {% endfor %}
+        </div>
 
         <h4 class="ui horizontal divider header">
             <i class="cubes icon"></i> Sets ({{ sets|length }})
@@ -73,11 +82,9 @@
 
 {% block javascripts %}
     {{ parent() }}
-
     <script type="text/javascript">
         window.onload = function() {
-            modelView = new ModelViewer($('#model-viewer'));
-            modelView.loadStl('{{ url('media_file', {'path': model.path }) }}');
+            modelView = new ModelViewer($('#model-viewer'), '{{ url('media_file', {'path': model.path }) }}');
         };
     </script>
 {% endblock %}

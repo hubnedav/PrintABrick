@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+<h4 class="ui horizontal divider header">
+    Regular parts
+</h4>
+
+<div class="ui eight column grid">
+    {% for inventoryPart in regularParts %}
+        {% if inventoryPart.part is defined %}
+            <div class="column">
+                <div class="ui fluid bordered image">
+                    <a class="ui right {{ inventoryPart.part.model == null ? 'black' : 'red'}} circular label">{{ inventoryPart.quantity }}</a>
+                    <a href="{{ path('reb_part_detail', {number: inventoryPart.part.number}) }}">
+                        <div class="image load">
+                            <img src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
+                        </div>
+                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<h4 class="ui horizontal divider header">
+    Spare parts
+</h4>
+<div class="ui eight column grid">
+    {% for inventoryPart in spareParts %}
+        {% if inventoryPart.part is defined %}
+            <div class="column">
+                <div class="ui fluid bordered image">
+                    <a class="ui right {{ inventoryPart.part.model == null ? 'black' : 'red'}} circular label">{{ inventoryPart.quantity }}</a>
+                    <a href="{{ path('reb_part_detail', {number: inventoryPart.part.number}) }}">
+                        <div class="image load">
+                            <img src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
+                        </div>
+                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

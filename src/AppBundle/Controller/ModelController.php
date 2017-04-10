@@ -65,15 +65,6 @@ class ModelController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         if($model = $this->get('manager.ldraw.model')->findByNumber($number)) {
-
-
-//            $bin = $this->get('imagine.data.loader.media')->find('/ldraw/images/'.$model->getNumber().'.png');
-//
-//            $path = $this->get('imagine.cache.resolver.media')->resolve('/ldraw/images/'.$model->getNumber().'.png','model');
-//
-//            $this->get('imagine.cache.resolver.media')->store($bin,$path,'model');
-
-
             try {
                 $rbParts = $model != null ? $em->getRepository(Part::class)->findAllByModel($model) : null;
                 $sets = $model != null ? $em->getRepository(Set::class)->findAllByModel($model) : null;

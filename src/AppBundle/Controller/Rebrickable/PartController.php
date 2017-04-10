@@ -19,10 +19,10 @@ class PartController extends Controller
     /**
      * Finds and displays a part entity.
      *
-     * @Route("/{number}", name="rebrickable_part_show")
+     * @Route("/{number}", name="reb_part_detail")
      * @Method("GET")
      */
-    public function showAction(Part $part = null)
+    public function detailAction(Part $part)
     {
         $em = $this->getDoctrine()->getManager();
 

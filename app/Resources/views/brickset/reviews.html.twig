@@ -1,0 +1,26 @@
+<div class="ui comments">
+    {% for review in reviews %}
+        <div class="comment">
+            <a class="avatar">
+                {#<img src="/images/avatar/small/matt.jpg">#}
+            </a>
+            <div class="content">
+                <div class="header">
+                    <h4>{{ review.title }}</h4>
+                </div>
+                <span class="author">{{ review.author }}</span> {{ review.hTML }}
+                <div class="metadata">
+                    <span class="date">{{ review.datePosted|date("Y.m.d H:m:i")}}</span>
+
+                </div>
+                <div class="text">
+                    {{ review.review|raw }}
+                </div>
+                <div>
+                    Overall rating <div class="ui star rating" data-rating="{{ review.overallRating }}" data-max-rating="5"></div>
+                    {#Value for money <div class="ui star rating" data-rating="{{ review.valueForMoney }}" data-max-rating="5"></div>#}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

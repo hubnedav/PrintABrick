@@ -1,0 +1,30 @@
+{% import 'macros/utils.html.twig' as utils %}
+
+{% if instructions|length != 0 %}
+    <p>
+        {{ 'set.instructions.text' | trans }}
+    </p>
+
+    <table class="ui celled padded table">
+        <thead>
+        <tr>
+            <th>{{ 'set.instructions.description' | trans }}</th>
+            <th>{{ 'set.instructions.filesize' | trans }}</th>
+            <th>{{ 'set.instructions.download' | trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for instruction in instructions %}
+            <tr>
+                <td>{{ instruction.description }}</td>
+                <td>{{ utils.bytesToSize( remoteSize(instruction.uRL)) }}</td>
+                <td><a href="{{ instruction.uRL }}">{{ remoteFilename(instruction.uRL) }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h2 class="ui center aligned icon">
+        <i class="circular warning icon"></i>
+    </h2>
+{% endif %}

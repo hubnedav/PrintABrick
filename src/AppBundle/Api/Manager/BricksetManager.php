@@ -47,4 +47,16 @@ class BricksetManager
 
         return isset($sets[0]) ? $sets[0] : null;
     }
+
+    public function getSetInstructions($id) {
+        return $this->bricksetClient->getInstructions($id);
+    }
+
+    public function getSetReviews($id) {
+        return $this->bricksetClient->getReviews($id);
+    }
+
+    public function getAdditionalImages($id) {
+        return $this->bricksetClient->getAdditionalImages($id);
+    }
 }

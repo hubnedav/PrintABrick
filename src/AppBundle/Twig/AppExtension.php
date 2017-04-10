@@ -30,6 +30,13 @@ class AppExtension extends \Twig_Extension
         ];
     }
 
+    public function getFunctions() {
+        return [
+            new \Twig_SimpleFunction('remoteSize', [$this, 'remoteSize']),
+            new \Twig_SimpleFunction('remoteFilename', [$this, 'remoteFilename']),
+        ];
+    }
+
     public function partImage(Part $part, Color $color = null)
     {
         return '/parts/ldraw/'.($color ? $color->getId():'-1').'/'.$part->getNumber().'.png';
@@ -38,5 +45,23 @@ class AppExtension extends \Twig_Extension
     public function setImage(Set $set)
     {
         return '/sets/'.strtolower($set->getNumber()).'.jpg';
+    }
+
+    public function remoteSize($url) {
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, TRUE);
+        curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+
+        $data = curl_exec($ch);
+        $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+
+        curl_close($ch);
+        return $size;
+    }
+
+    public function remoteFilename($url) {
+       return basename($url);
     }
 }

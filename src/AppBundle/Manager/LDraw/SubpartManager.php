@@ -25,17 +25,17 @@ class SubpartManager extends BaseManager
      *
      * @return Subpart
      */
-    public function create($parent, $child)
+    public function create($parent, $child, $count)
     {
-        if (($subpart = $this->repository->findOneByKeys($parent, $child))) {
-            $subpart->setCount($subpart->getCount() + 1);
-        } else {
+//        if (($subpart = $this->repository->findOneByKeys($parent, $child))) {
+//            $subpart->setCount($count);
+//        } else {
             $subpart = new Subpart();
             $subpart
                 ->setParent($parent)
                 ->setSubpart($child)
-                ->setCount(1);
-        }
+                ->setCount($count);
+//        }
 
         return $subpart;
     }

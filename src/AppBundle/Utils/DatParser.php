@@ -8,19 +8,6 @@ use Symfony\Component\Asset\Exception\LogicException;
 
 class DatParser
 {
-    /** @var RelationMapper */
-    protected $relationMapper;
-
-    /**
-     * DatParser constructor.
-     *
-     * @param RelationMapper $relationMapper
-     */
-    public function __construct($relationMapper)
-    {
-        $this->relationMapper = $relationMapper;
-    }
-
     /**
      * Parse LDraw .dat file header identifying model store data to array.
      *
@@ -93,18 +80,20 @@ class DatParser
                                 }
                             }
                         } elseif (strpos($line, '1 ') === 0) {
-                            $header['subparts'][] = $this->getAlias($line);
+                            $id = $this->getAlias($line);
+
+                            if(isset($header['subparts'][$id])) {
+                                $header['subparts'][$id] = $header['subparts'][$id] + 1;
+                            } else {
+                                $header['subparts'][$id] = 1;
+                            }
                         }
                     }
 
                     if ($this->isStickerShortcutPart($header['name'], $header['id'])) {
                         $header['type'] = 'Sticker';
-                    } elseif (($parent = $this->relationMapper->find($header['id'], 'alias_model')) != $header['id']) {
-                        $header['type'] = 'Alias';
-                        $header['subparts'] = null;
-                        $header['parent'] = $parent;
                     } elseif (isset($header['subparts']) && count($header['subparts']) == 1 && in_array($header['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
-                        $header['parent'] = $header['subparts'][0];
+                        $header['parent'] = array_keys($header['subparts'])[0];
                         $header['subparts'] = null;
                     } elseif ($parent = $this->getPrintedParentId($header['id'])) {
                         $header['type'] = 'Printed';
@@ -118,19 +107,26 @@ class DatParser
                         $header['type'] = 'Obsolete/Subpart';
                     }
 
-                    $header['name'] = ltrim($header['name'], '~');
+                    if(!isset($header['type'])) {
+                        $header['type'] = 'Unknown';
+                    }
+
+                    if(!isset($header['modified'])) {
+                        $header['modified'] = null;
+                    }
+
+//                    $header['name'] = ltrim($header['name'], '~');
 
                     fclose($handle);
 
                     return $header;
                 }
             } catch (\Exception $exception) {
-                dump($exception->getMessage());
-
-                return null;
+                dump($exception);
+                throw new LogicException('Error parsing '.$file);
             }
         }
-        return null;
+        throw new LogicException('File not found '.$file);
     }
 
     /**
@@ -147,6 +143,8 @@ class DatParser
      */
     public function getAlias($line)
     {
+        if(preg_match('/^1 16 0 0 0 -1 0 0 0 1 0 0 0 1 (.*)\.(dat|DAT)$/', $line, $matches))
+            return null;
         if (preg_match('/^1(.*) (.*)\.(dat|DAT)$/', $line, $matches)) {
             return $matches[2];
         }

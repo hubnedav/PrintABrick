@@ -14,13 +14,9 @@ services:
         arguments: ['%rebrickable_url%']
         parent: service.loader
 
-    util.dat.parser:
-        class: AppBundle\Utils\DatParser
-        arguments: ['@app.relation.mapper']
-
     service.loader.ldraw:
         class: AppBundle\Service\Loader\LDrawLoaderService
-        arguments: ['@oneup_flysystem.ldraw_library_filesystem','@service.ldview', '%ldraw_url%', '@manager.ldraw', '@util.dat.parser']
+        arguments: ['@oneup_flysystem.ldraw_library_filesystem','@service.ldview', '@manager.ldraw', '@app.relation.mapper']
         parent: service.loader
 
     service.loader.relation:

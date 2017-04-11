@@ -60,6 +60,7 @@ class Set
     public function __construct()
     {
         $this->inventories = new ArrayCollection();
+        $this->inventorySets = new ArrayCollection();
     }
 
     /**

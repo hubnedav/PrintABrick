@@ -45,8 +45,9 @@ class RebrickableLoaderService extends BaseLoaderService
 
     private function truncateTables()
     {
-        $query =
-            'TRUNCATE TABLE rebrickable_inventory_parts;
+        $query ='
+            TRUNCATE TABLE rebrickable_inventory_parts;
+            TRUNCATE TABLE rebrickable_inventory_sets;
             TRUNCATE TABLE rebrickable_color;
             TRUNCATE TABLE rebrickable_inventory;
             TRUNCATE TABLE rebrickable_set;

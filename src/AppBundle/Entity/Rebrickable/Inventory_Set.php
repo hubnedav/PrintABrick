@@ -15,7 +15,7 @@ class Inventory_Set
     /**
      * @var Inventory
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Inventory", inversedBy="inventoryParts")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Inventory", inversedBy="inventorySets")
      */
     protected $inventory;
 

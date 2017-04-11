@@ -2,10 +2,13 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Exception\ConvertingFailedException;
+use AppBundle\Exception\FileNotFoundException;
 use League\Flysystem\File;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ProcessBuilder;
 
 //TODO enable file overwrite
@@ -33,13 +36,11 @@ class LDViewService
      *
      * @param string     $ldview                    Path to LDView OSMesa binary file
      * @param Filesystem $mediaFilesystem           Filesystem for generated web assets
-     * @param Filesystem $ldrawLibraryFilesystem    Filesystem with ldraw source files library
      */
-    public function __construct($ldview, $mediaFilesystem, $ldrawLibraryFilesystem)
+    public function __construct($ldview, $mediaFilesystem)
     {
         $this->ldview = $ldview;
         $this->mediaFilesystem = $mediaFilesystem;
-        $this->ldrawLibraryFilesystem = $ldrawLibraryFilesystem;
     }
 
     /**
@@ -54,9 +55,10 @@ class LDViewService
      * Convert LDraw model from .dat format to .stl by using LDView
      * stores created file to $stlStorage filesystem.
      *
-     * @param Filesystem $LDrawDir
+     * @param $file
      *
      * @return File
+     * @throws ConvertingFailedException
      */
     public function datToStl($file)
     {
@@ -79,7 +81,7 @@ class LDViewService
 
             // Check if file created successfully
             if (!$this->mediaFilesystem->has($newFile)) {
-                throw new LogicException($newFile.': new file not found'); //TODO
+                throw new ConvertingFailedException($newFile);
             }
         }
 
@@ -90,9 +92,10 @@ class LDViewService
      * Convert LDraw model from .dat format to .stl by using LDView
      * stores created file to $stlStorage filesystem.
      *
-     * @param Filesystem $LDrawDir
+     * @param $file
      *
      * @return File
+     * @throws ConvertingFailedException
      */
     public function datToPng($file)
     {
@@ -124,7 +127,7 @@ class LDViewService
 
             // Check if file created successfully
             if (!$this->mediaFilesystem->has($newFile)) {
-                throw new LogicException($newFile.': new file not found'); //TODO
+                throw new ConvertingFailedException($newFile);
             }
         }
 
@@ -147,7 +150,7 @@ class LDViewService
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new LogicException($process->getOutput()); //TODO
+            throw new ProcessFailedException($process); //TODO
         }
     }
 }

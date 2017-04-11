@@ -3,6 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Exception\FileNotFoundException;
+use AppBundle\Exception\ParseErrorException;
 use League\Flysystem\File;
 use Symfony\Component\Asset\Exception\LogicException;
 
@@ -25,12 +26,23 @@ class DatParser
      * LDraw.org Standards: Official Library Header Specification (http://www.ldraw.org/article/398.html)
      *
      * @return array
+     * @throws FileNotFoundException|ParseErrorException
      */
     public function parse($file)
     {
-        $header = [];
-
         if(file_exists($file)) {
+            $model = [
+                'id' => null,
+                'name' => null,
+                'category' => null,
+                'keywords' => [],
+                'author' => null,
+                'modified' => null,
+                'type' => null,
+                'subparts' => [],
+                'parent' => null
+            ];
+
             try {
                 $handle = fopen($file, 'r');
 
@@ -47,86 +59,68 @@ class DatParser
                             // 0 <CategoryName> <PartDescription>
                             if (!$firstLine) {
                                 $array = explode(' ', ltrim(trim($line, 2), '=_~'));
-                                $header['category'] = isset($array[0]) ? $array[0] : '';
-                                $header['name'] = preg_replace('/ {2,}/', ' ', ltrim($line, '=_'));
+                                $model['category'] = isset($array[0]) ? $array[0] : '';
+                                $model['name'] = preg_replace('/ {2,}/', ' ', ltrim($line, '=_'));
 
                                 $firstLine = true;
                             } // 0 !CATEGORY <CategoryName>
                             elseif (strpos($line, '!CATEGORY ') === 0) {
-                                $header['category'] = trim(preg_replace('/^!CATEGORY /', '', $line));
+                                $model['category'] = trim(preg_replace('/^!CATEGORY /', '', $line));
                             } // 0 !KEYWORDS <first keyword>, <second keyword>, ..., <last keyword>
                             elseif (strpos($line, '!KEYWORDS ') === 0) {
-                                $header['keywords'] = explode(', ', preg_replace('/^!KEYWORDS /', '', $line));
+                                $model['keywords'] = explode(', ', preg_replace('/^!KEYWORDS /', '', $line));
                             } // 0 Name: <Filename>.dat
-                            elseif (strpos($line, 'Name: ') === 0) {
-                                if (!isset($header['id'])) {
-                                    $header['id'] = preg_replace('/(^Name: )(.*)(.dat)/', '$2', $line);
-                                }
+                            elseif (strpos($line, 'Name: ') === 0 && !isset($header['id'])) {
+                                $model['id'] = preg_replace('/(^Name: )(.*)(.dat)/', '$2', $line);
                             } // 0 Author: <Realname> [<Username>]
                             elseif (strpos($line, 'Author: ') === 0) {
-                                $header['author'] = preg_replace('/^Author: /', '', $line);
+                                $model['author'] = preg_replace('/^Author: /', '', $line);
                             } // 0 !LDRAW_ORG Part|Subpart|Primitive|48_Primitive|Shortcut (optional qualifier(s)) ORIGINAL|UPDATE YYYY-RR
                             elseif (strpos($line, '!LDRAW_ORG ') === 0) {
                                 $type = preg_replace('/(^!LDRAW_ORG )(.*)( UPDATE| ORIGINAL)(.*)/', '$2', $line);
 
-                                $header['type'] = $type;
+                                $model['type'] = $type;
 
                                 // Last modification date in format YYYY-RR
                                 $date = preg_replace('/(^!LDRAW_ORG )(.*)( UPDATE | ORIGINAL )(.*)/', '$4', $line);
                                 if (preg_match('/^[1-2][0-9]{3}-[0-9]{2}$/', $date)) {
-                                    $header['modified'] = \DateTime::createFromFormat('Y-m-d H:i:s', $date . '-01 00:00:00');
-                                } else {
-                                    $header['modified'] = null;
+                                    $model['modified'] = \DateTime::createFromFormat('Y-m-d H:i:s', $date . '-01 00:00:00');
                                 }
                             }
                         } elseif (strpos($line, '1 ') === 0) {
-                            $id = $this->getAlias($line);
+                            $id = $this->getReferencedModelNumber($line);
 
-                            if(isset($header['subparts'][$id])) {
-                                $header['subparts'][$id] = $header['subparts'][$id] + 1;
+                            if(isset($model['subparts'][$id])) {
+                                $model['subparts'][$id] = $model['subparts'][$id] + 1;
                             } else {
-                                $header['subparts'][$id] = 1;
+                                $model['subparts'][$id] = 1;
                             }
                         }
                     }
 
-                    if ($this->isStickerShortcutPart($header['name'], $header['id'])) {
-                        $header['type'] = 'Sticker';
-                    } elseif (isset($header['subparts']) && count($header['subparts']) == 1 && in_array($header['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
-                        $header['parent'] = array_keys($header['subparts'])[0];
-                        $header['subparts'] = null;
-                    } elseif ($parent = $this->getPrintedParentId($header['id'])) {
-                        $header['type'] = 'Printed';
-                        $header['subparts'] = null;
-                        $header['parent'] = $parent;
-                    } elseif ($parent = $this->getObsoleteParentId($header['name'])) {
-                        $header['type'] = 'Alias';
-                        $header['subparts'] = null;
-                        $header['parent'] = $parent;
-                    } elseif (strpos($header['name'], '~') === 0 && $header['type'] != 'Alias') {
-                        $header['type'] = 'Obsolete/Subpart';
+                    if ($this->isSticker($model['name'], $model['id'])) {
+                        $model['type'] = 'Sticker';
+                    } elseif (count($model['subparts']) == 1 && in_array($model['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
+                        $model['parent'] = array_keys($model['subparts'])[0];
+                    } elseif ($parent = $this->getPrintedModelParentNumber($model['id'])) {
+                        $model['type'] = 'Printed';
+                        $model['parent'] = $parent;
+                    } elseif ($parent = $this->getObsoleteModelParentNumber($model['name'])) {
+                        $model['type'] = 'Alias';
+                        $model['parent'] = $parent;
+                    } elseif (strpos($model['name'], '~') === 0 && $model['type'] != 'Alias') {
+                        $model['type'] = 'Obsolete/Subpart';
                     }
-
-                    if(!isset($header['type'])) {
-                        $header['type'] = 'Unknown';
-                    }
-
-                    if(!isset($header['modified'])) {
-                        $header['modified'] = null;
-                    }
-
-//                    $header['name'] = ltrim($header['name'], '~');
 
                     fclose($handle);
 
-                    return $header;
+                    return $model;
                 }
             } catch (\Exception $exception) {
-                dump($exception);
-                throw new LogicException('Error parsing '.$file);
+                throw new ParseErrorException($file);
             }
         }
-        throw new LogicException('File not found '.$file);
+        throw new FileNotFoundException($file);
     }
 
     /**
@@ -141,7 +135,7 @@ class DatParser
      *
      * @return string|null Filename of referenced part
      */
-    public function getAlias($line)
+    public function getReferencedModelNumber($line)
     {
         if(preg_match('/^1 16 0 0 0 -1 0 0 0 1 0 0 0 1 (.*)\.(dat|DAT)$/', $line, $matches))
             return null;
@@ -164,7 +158,7 @@ class DatParser
      *
      * @return string|null LDraw number of printed part parent
      */
-    public function getPrintedParentId($id)
+    public function getPrintedModelParentNumber($id)
     {
         if (preg_match('/(^.*)(p[0-9a-z][0-9a-z][0-9a-z]{0,1})$/', $id, $matches)) {
             return $matches[1];
@@ -186,7 +180,7 @@ class DatParser
      *
      * @return string|null LDraw number of printed part parent
      */
-    public function isStickerShortcutPart($name, $number)
+    public function isSticker($name, $number)
     {
         if (strpos($name, 'Sticker') === 0) {
             return true;
@@ -208,7 +202,7 @@ class DatParser
      *
      * @return string|null Filename of referenced part
      */
-    public function getObsoleteParentId($name)
+    public function getObsoleteModelParentNumber($name)
     {
         if (preg_match('/^(~Moved to )(.*)$/', $name, $matches)) {
             return $matches[2];

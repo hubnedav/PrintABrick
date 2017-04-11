@@ -2,10 +2,10 @@
 
 namespace AppBundle\Repository\LDraw;
 
+use AppBundle\Entity\LDraw\Category;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\LDraw\Alias;
-use AppBundle\Entity\LDraw\Type;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Repository\BaseRepository;
@@ -13,19 +13,10 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class ModelRepository extends BaseRepository
 {
-    public function findAllByType($type)
-    {
-        $queryBuilder = $this->createQueryBuilder('model')
-            ->join(Type::class, 'type', Join::LEFT_JOIN, 'model.type = :type')
-            ->setParameter('type', $type);
-
-        return $queryBuilder->getQuery();
-    }
-
     public function findAllByCategory($category)
     {
         $queryBuilder = $this->createQueryBuilder('model')
-            ->join(Type::class, 'type', Join::LEFT_JOIN, 'model.category = :category')
+            ->join(Category::class, 'type', Join::LEFT_JOIN, 'model.category = :category')
             ->setParameter('category', $category);
 
         return $queryBuilder->getQuery();

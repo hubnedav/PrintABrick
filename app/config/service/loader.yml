@@ -14,9 +14,9 @@ services:
         arguments: ['%rebrickable_url%']
         parent: service.loader
 
-    service.loader.ldraw:
-        class: AppBundle\Service\Loader\LDrawLoaderService
-        arguments: ['@oneup_flysystem.ldraw_library_filesystem','@service.ldview', '@manager.ldraw', '@app.relation.mapper']
+    service.loader.model:
+        class: AppBundle\Service\Loader\ModelLoaderService
+        arguments: ['@service.ldview', '@manager.ldraw', '@app.relation.mapper']
         parent: service.loader
 
     service.loader.relation:

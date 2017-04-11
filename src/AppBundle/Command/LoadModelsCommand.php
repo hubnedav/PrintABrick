@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,6 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class LoadModelsCommand extends ContainerAwareCommand
 {
+    use LockableTrait;
+
     protected function configure()
     {
         $this
@@ -18,35 +21,45 @@ class LoadModelsCommand extends ContainerAwareCommand
             ->setDescription('Loads LDraw library models into database')
             ->setHelp('This command allows you to load LDraw library models into while converting .dat files to .stl')
             ->setDefinition(
-                new InputDefinition(array(
-                    new InputOption('images', 'i'),
-                    new InputOption('ldraw', 'l', InputOption::VALUE_REQUIRED),
-                    new InputOption('file', 'f', InputOption::VALUE_REQUIRED),
-                ))
+                new InputDefinition([
+                    new InputArgument('ldraw', InputArgument::REQUIRED, 'Path to LDraw library directory'),
+                    new InputOption('images', 'i',InputOption::VALUE_NONE, 'Do you want to generate images of models?'),
+                    new InputOption('all','a',InputOption::VALUE_NONE, 'Do you want to load whole LDraw libary?'),
+                    new InputOption('file','f',InputOption::VALUE_REQUIRED, 'Path to DAT file that should be loaded into database')
+                ])
             );
     }
 
+    //TODO log errors
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ldrawLoader = $this->getContainer()->get('service.loader.ldraw');
-        $ldrawLoader->setOutput($output);
+        if (!$this->lock()) {
+            $output->writeln('The command is already running in another process.');
 
-        //TODO log errors
+            return 0;
+        }
+
+        $ldrawLoader = $this->getContainer()->get('service.loader.model');
+        $ldrawLoader->setOutput($output);
+        $ldrawLoader->setLDrawLibraryContext(realpath($input->getArgument('ldraw')));
+
         try {
-            // TODO handle relative path to dir
             if (($ldrawPath = $input->getOption('file')) != null) {
-                $ldrawLoader->loadFileContext($ldrawPath);
+                $ldrawLoader->loadFileContext(dirname(realpath($ldrawPath)));
 
                 $model = $ldrawLoader->loadModel($ldrawPath);
 
                 if($model !== null) {
                     $this->getContainer()->get('manager.ldraw.model')->getRepository()->save($model);
                 }
-            } else {
-                $ldrawLoader->loadAllModels();
+            }
+            if ($input->getOption('all')) {
+               $ldrawLoader->loadAllModels();
             }
         } catch (\Exception $e) {
             printf($e->getMessage());
         }
+
+        $this->release();
     }
 }

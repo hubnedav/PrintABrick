@@ -142,11 +142,6 @@ oneup_flysystem:
         media:
             local:
                 directory: "%kernel.root_dir%/../var/media/"
-        ldraw_library:
-            local:
-                directory: "%ldraw_library%"
     filesystems:
         media:
             adapter: media
-        ldraw_library:
-            adapter: ldraw_library

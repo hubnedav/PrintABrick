@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
-use AppBundle\Form\Filter\ModelFilterType;
+use AppBundle\Form\Filter\Model\ModelFilterType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -26,8 +26,6 @@ class ModelController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-
         $form = $this->get('form.factory')->create(ModelFilterType::class);
 
         $filterBuilder = $this->get('repository.ldraw.model')

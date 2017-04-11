@@ -8,12 +8,6 @@ services:
             - '@manager.ldraw.model'
             - '@manager.ldraw.alias'
 
-    app.form.filter_set:
-        class: AppBundle\Form\FilterSetType
-        arguments: ['@api.manager.brickset']
-        tags:
-            - { name: form.type }
-
     app.twig_extension:
         class: AppBundle\Twig\AppExtension
         public: false

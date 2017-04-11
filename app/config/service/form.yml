@@ -1,7 +1,20 @@
 services:
     form.filter.category:
-        class: AppBundle\Form\Filter\CategoryFilterType
+        class: AppBundle\Form\Filter\Model\CategoryFilterType
         arguments:
             - '@manager.ldraw.category'
+        tags:
+            - { name: form.type }
+
+    form.filter.brickset:
+        class: AppBundle\Form\FilterSetType
+        arguments: ['@api.manager.brickset']
+        tags:
+            - { name: form.type }
+
+    form.filter.theme:
+        class: AppBundle\Form\Filter\Set\ThemeFilterType
+        arguments:
+            - '@local.manager.rebrickable'
         tags:
             - { name: form.type }

@@ -1,4 +1,14 @@
 services:
+    local.manager.base:
+        abstract:  true
+        class: AppBundle\Manager\BaseManager
+        calls:
+            - [setEntityManager, ['@doctrine.orm.entity_manager']]
+
+    local.manager.rebrickable:
+        class: AppBundle\Manager\RebrickableManager
+        parent: local.manager.base
+
     manager.ldraw.keyword:
         class: AppBundle\Manager\LDraw\KeywordManager
         arguments:
@@ -19,6 +29,4 @@ services:
         class: AppBundle\Manager\LDraw\AliasManager
         arguments:
             - "@repository.ldraw.alias"
-
-
 

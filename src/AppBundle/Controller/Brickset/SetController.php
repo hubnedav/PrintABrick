@@ -31,11 +31,17 @@ class SetController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $sets = $this->get('api.client.brickset')->getSets([
-                'theme' => $data['theme'] ? $data['theme']->getTheme() : '',
-                'subtheme' => $data['subtheme'] ? $data['subtheme']->getSubtheme() : '',
-                'year' => $data['years'] ? $data['years']->getYear() : '',
-            ]);
+            try {
+                $sets = $this->get('api.client.brickset')->getSets([
+                    'theme' => $data['theme'] ? $data['theme']->getTheme() : '',
+                    'subtheme' => $data['subtheme'] ? $data['subtheme']->getSubtheme() : '',
+                    'year' => $data['years'] ? $data['years']->getYear() : '',
+                ]);
+            }  catch (EmptyResponseException $e) {
+                $this->addFlash('warning', 'No set found on '.$e->getService());
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
         }
 
         return $this->render('brickset/browse.html.twig', [

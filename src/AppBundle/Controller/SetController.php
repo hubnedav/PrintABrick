@@ -6,9 +6,11 @@ use AppBundle\Api\Exception\EmptyResponseException;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Color;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
+use AppBundle\Entity\Rebrickable\Inventory_Set;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Entity\Rebrickable\Theme;
+use AppBundle\Form\Filter\Set\SetFilterType;
 use AppBundle\Form\FilterSetType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,19 +27,29 @@ class SetController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $form = $this->get('form.factory')->create(SetFilterType::class);
 
-        $qb = $em->getRepository(Set::class)->createQueryBuilder('s');
+        $filterBuilder = $this->get('repository.rebrickable.set')
+            ->createQueryBuilder('s');
+
+        if ($request->query->has($form->getName())) {
+            // manually bind values from the request
+            $form->submit($request->query->get($form->getName()));
+
+            // build the query from the given form object
+            $this->get('lexik_form_filter.query_builder_updater')->addFilterConditions($form, $filterBuilder);
+        }
 
         $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
-            $qb->getQuery(),
+            $filterBuilder->getQuery(),
             $request->query->getInt('page', 1)/*page number*/,
             $request->query->getInt('limit', 30)/*limit per page*/
         );
 
         return $this->render('set/index.html.twig', [
             'sets' => $sets,
+            'form' => $form->createView()
         ]);
     }
 
@@ -48,6 +60,9 @@ class SetController extends Controller
     {
         $brset = null;
         $rbset = null;
+        $inventorySets = null;
+
+        $inventorySets = $this->getDoctrine()->getManager()->getRepository(Inventory_Set::class)->findAllBySetNumber($number);
         try {
             if(($rbset = $this->getDoctrine()->getManager()->getRepository(Set::class)->find($number)) == null) {
                 $this->addFlash('warning', 'Set not found in Rebrickable database');
@@ -62,6 +77,7 @@ class SetController extends Controller
 
         return $this->render('set/detail.html.twig', [
             'rbset' => $rbset,
+            'inventorySets' => $inventorySets,
             'brset' => $brset,
         ]);
     }

@@ -14,12 +14,14 @@
     </div>
     {{ form_end(form) }}
 
+    <h3>{{ sets|length }}</h3>
+
     <div class="ui seven column grid">
         <div class="row">
             {% for set in sets %}
                 <div class="column">
                    <a href="{{ url('set_detail', {'number': set.number~'-'~set.numberVariant, 'name' : set.name|escape('url') }) }}">
-                       <img style="width: 100%" src="{{ set.largeThumbnailURL }}">
+                       <img style="width: 100%" src="{{ set.legoSetID|setImage|imagine_filter('rebrickable_set_min') }}">
                        <p>{{ set.LegoSetID }} - {{ set.name }}</p>
                    </a>
                 </div>

@@ -29,7 +29,7 @@
         <div class="column">
             <div class="ui fluid bordered image">
                 <a href="{{ url('set_detail', {number:set.number}) }}">
-                    <img class="ui bordered image" src="{{ set|setImage|imagine_filter('rebrickable_set_min') }}">
+                    <img class="ui bordered image" src="{{ set.number|setImage|imagine_filter('rebrickable_set_min') }}">
                     <div class="ui bottom attached label">{{ set.number }}<br></div>
                 </a>
             </div>

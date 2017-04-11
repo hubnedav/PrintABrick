@@ -38,7 +38,7 @@
             <p>
             <div class="ui eight doubling cards">
                 {% for alias in rbParts %}
-                    <a href="{{ url('rebrickable_part_show', {number:alias.number}) }}" class="ui label">{{ alias.number }}</a>
+                    <a href="{{ url('reb_part_detail', {number:alias.number}) }}" class="ui label">{{ alias.number }}</a>
                 {% endfor %}
             </div>
             </p>

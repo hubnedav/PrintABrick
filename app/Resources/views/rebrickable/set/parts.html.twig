@@ -1,7 +1,3 @@
-{% extends 'base.html.twig' %}
-
-{% block content %}
-
 <h4 class="ui horizontal divider header">
     Regular parts
 </h4>
@@ -14,7 +10,7 @@
                     <a class="ui right {{ inventoryPart.part.model == null ? 'black' : 'red'}} circular label">{{ inventoryPart.quantity }}</a>
                     <a href="{{ path('reb_part_detail', {number: inventoryPart.part.number}) }}">
                         <div class="image load">
-                            <img src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
+                            <img src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
                         </div>
                         <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
                     </a>
@@ -35,7 +31,7 @@
                     <a class="ui right {{ inventoryPart.part.model == null ? 'black' : 'red'}} circular label">{{ inventoryPart.quantity }}</a>
                     <a href="{{ path('reb_part_detail', {number: inventoryPart.part.number}) }}">
                         <div class="image load">
-                            <img src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part|partImage(inventoryPart.color)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
+                            <img src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
                         </div>
                         <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
                     </a>
@@ -44,5 +40,3 @@
         {% endif %}
     {% endfor %}
 </div>
-
-{% endblock %}

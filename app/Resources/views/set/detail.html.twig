@@ -44,7 +44,7 @@
     {% if brset %}
         <img class="ui bordered image medium" src="{{ brset.imageURL }}">
     {% elseif rbset %}
-        <img class="ui bordered image medium" src="{{ rbset|setImage|imagine_filter('rebrickable') }}">
+        <img class="ui bordered image medium" src="{{ rbset.number|setImage|imagine_filter('rebrickable') }}">
     {% endif %}
 
     {#{{ brset ? dump(brset) }}#}
@@ -59,7 +59,25 @@
     </div>
     <div class="ui tab active" data-tab="parts">
         {% if rbset %}
-            {#{{ render(controller('AppBundle:Rebrickable/Set:parts', { 'number': rbset.number })) }}#}
+            {{ render(controller('AppBundle:Rebrickable/Set:parts', { 'number': rbset.number })) }}
+            <div class="ui seven column grid">
+                <div class="row">
+
+                    <h4 class="ui horizontal divider header">
+                        Sets
+                    </h4>
+
+                    {% for set in inventorySets %}
+                        <div class="column">
+                            <a href="{{ url('set_detail', {'number': set.set.number}) }}">
+                                <img class="ui bordered image medium" src="{{ set.set.number|setImage|imagine_filter('rebrickable_set_min') }}">
+                                <p>{{ set.set.number }} - {{ set.set.name }}</p>
+                                <p>{{ set.quantity}}</p>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         {% endif %}
     </div>
     {% if brset %}

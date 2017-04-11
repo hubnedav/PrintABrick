@@ -37,14 +37,14 @@ class AppExtension extends \Twig_Extension
         ];
     }
 
-    public function partImage(Part $part, Color $color = null)
+    public function partImage($number, $color = null)
     {
-        return '/parts/ldraw/'.($color ? $color->getId():'-1').'/'.$part->getNumber().'.png';
+        return '/parts/ldraw/'.($color ? $color :'-1').'/'.$number.'.png';
     }
 
-    public function setImage(Set $set)
+    public function setImage($number)
     {
-        return '/sets/'.strtolower($set->getNumber()).'.jpg';
+        return '/sets/'.strtolower($number).'.jpg';
     }
 
     public function remoteSize($url) {

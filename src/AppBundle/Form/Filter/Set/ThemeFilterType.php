@@ -24,13 +24,19 @@ class ThemeFilterType extends AbstractType
     {
         $builder->add('id', Filters\ChoiceFilterType::class, [
             'choices' => $this->rebrickableManager->FindAllThemes(),
-            'choice_label' =>  function ($allChoices, $currentChoiceKey) {
-
-                dump($currentChoiceKey);
-
-                $parent = $allChoices->getParent();
-
-                return $parent ? $parent->getName().' > '.$allChoices->getName() : $allChoices->getName();
+            'choice_label' =>  function ($theme, $currentChoiceKey) {
+                if($parent = $theme->getParent()) {
+                    if($parentParent = $parent->getParent()) {
+                        if($parentParentParent = $parentParent->getParent()) {
+                            return $parentParentParent->getName().' > '.$parentParent->getName().' > '.$parent->getName().' > '.$theme->getName();
+                        }
+                        return $parentParent->getName().' > '.$parent->getName().' > '.$theme->getName();
+                    } else {
+                        return $parent->getName().' > '.$theme->getName();
+                    }
+                } else {
+                    return $theme->getName();
+                }
             },
             'label' => 'filter.set.theme',
         ]);

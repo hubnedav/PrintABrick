@@ -8,11 +8,24 @@ use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Entity\Rebrickable\Inventory_Set;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
+use AppBundle\Entity\Rebrickable\Theme;
 use AppBundle\Repository\BaseRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 class SetRepository extends BaseRepository
 {
+    public function findAllByTheme(Theme $theme) {
+
+        dump($this->getEntityManager()->getRepository(Theme::class)->findAllSubthemes($theme));
+
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->join(Theme::class, 'theme',Join::WITH, 's.theme = theme')
+            ->where('theme.id = :id')
+            ->setParameter('id', $theme->getId());
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     public function findAllByPartNumber($number)
     {
         $queryBuilder = $this->createQueryBuilder('s')

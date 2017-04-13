@@ -62,5 +62,5 @@ gulp.task('watch', ['js', 'css', 'three'], function () {
 });
 
 gulp.task('default', function () {
-    return gulp.start(['files', 'js', 'css', 'three']);
+    return gulp.start(['files:semantic', 'files:images', 'js', 'css', 'three']);
 });

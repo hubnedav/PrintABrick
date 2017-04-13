@@ -71,14 +71,14 @@ class ModelLoaderService extends BaseLoaderService
         $this->LDViewService->setLdrawFilesystem($this->ldrawLibraryContext);
     }
 
-    public function loadFileContext($file) {
+    public function setFileContext($file) {
         $adapter = new Local($file);
         $this->fileContext = new Filesystem($adapter);
     }
 
     public function loadAllModels()
     {
-        $files = $this->finder->in(['/home/hubnedav/Documents/ldraw'])->path('parts/')->name('*.dat')->depth(1)->files();
+        $files = $this->finder->in([$this->ldrawLibraryContext->getAdapter()->getPathPrefix()])->path('parts/')->name('*.dat')->depth(1)->files();
 
         $modelManager = $this->ldrawService->getModelManager();
 

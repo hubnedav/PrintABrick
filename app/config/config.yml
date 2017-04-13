@@ -108,7 +108,7 @@ liip_imagine:
             data_loader: media
             cache: ~
             quality: 80
-            default_image: '/resources/images/unknown_image_min.png'
+            default_image: '/resources/images/unknown_image.png'
             filters:
                 thumbnail: { size: [200, 200], mode: inset }
                 background: { size: [250, 250], position: center, color: '#FFFFFF' }
@@ -125,13 +125,13 @@ liip_imagine:
               quality: 80
               data_loader: rebrickable
               cache: ~
-              default_image: '/resources/images/unknown_image_min.png'
+              default_image: '/resources/images/unknown_image.png'
               filters:
                   thumbnail: { size: [250, 250], mode: inset }
         rebrickable_set_min:
               quality: 80
               data_loader: rebrickable
-              default_image: '/resources/images/unknown_image_min.png'
+              default_image: '/resources/images/unknown_image.png'
               cache: ~
               filters:
                   thumbnail: { size: [250, 250], mode: inset }

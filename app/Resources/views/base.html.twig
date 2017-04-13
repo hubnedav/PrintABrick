@@ -6,37 +6,43 @@
     <div class="ui fixed inverted menu">
         {{ knp_menu_render('mainMenu') }}
     </div>
-    <div class="ui main container">
-        <div class="ui masthead vertical segment">
-            <div class="introduction">
-                <div class="ui small breadcrumb">
-                    {% for breadcrumb_item in knp_menu_get_breadcrumbs_array(knp_menu_get_current_item('mainMenu')) %}
-                        {% if not loop.last %}
-                            <a class="section" href="{{ breadcrumb_item.uri }}">{{ breadcrumb_item.label }}</a>
-                            <i class="right chevron icon divider"></i>
-                        {% else %}
-                            <a class="active section">{{ breadcrumb_item.label }}</a>
-                        {% endif %}
-                    {% endfor %}
+    {% block page %}
+        <div class="ui main">
+            <div class="ui container">
+                <div class="ui masthead vertical segment">
+                    <div class="introduction">
+                        <div class="ui small breadcrumb">
+                            {% for breadcrumb_item in knp_menu_get_breadcrumbs_array(knp_menu_get_current_item('mainMenu')) %}
+                                {% if not loop.last %}
+                                    <a class="section" href="{{ breadcrumb_item.uri }}">{{ breadcrumb_item.label }}</a>
+                                    <i class="right chevron icon divider"></i>
+                                {% else %}
+                                    <a class="active section">{{ breadcrumb_item.label }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <h1 class="ui header">{% block header %}{% endblock %}</h1>
+                    </div>
                 </div>
-                <h1 class="ui header">{% block header %}{% endblock %}</h1>
+                <div class="ui vertical segment content">
+                    {% for label, flashes in app.session.flashbag.all %}
+                        {% for flash in flashes %}
+                            {{ elements.flash(label,flash) }}
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% block content %}
+
+                    {% endblock %}
+                </div>
             </div>
         </div>
-
-        {% for label, flashes in app.session.flashbag.all %}
-            {% for flash in flashes %}
-                {{ elements.flash(label,flash) }}
-            {% endfor %}
-        {% endfor %}
-
-        {% block content %}
-
-        {% endblock %}
-    </div>
-
+    {% endblock page %}
     <div class="ui black inverted vertical footer segment stripe">
-        <div class="ui center aligned container">
+        {% block footer %}
+            <div class="ui center aligned container">
 
-        </div>
+            </div>
+        {% endblock  %}
     </div>
 {% endblock %}

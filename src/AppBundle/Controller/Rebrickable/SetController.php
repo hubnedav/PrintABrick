@@ -33,44 +33,32 @@ class SetController extends Controller
         $regularParts = $em->getRepository(Inventory_Part::class)->findAllRegularBySetNumber($set->getNumber());
         $spareParts = $em->getRepository(Inventory_Part::class)->findAllSpareBySetNumber($set->getNumber());
 
-        return $this->render('rebrickable/set/parts.html.twig', [
+        $template = $this->render('rebrickable/set/parts.html.twig', [
             'regularParts' => $regularParts,
             'spareParts' => $spareParts,
         ]);
+
+        $json = json_encode($template->getContent());
+        $response = new Response($json, 200);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 
+    /**
+     * @Route("/{number}/sets", name="rebrickable_set_sets")
+     */
+    public function setsAction(Set $set) {
+        $em = $this->getDoctrine()->getManager();
 
-//    /**
-//     * @Route("/download/{number}", name="set_download")
-//     */
-//    public function downloadZipAction(Request $request, $number) {
-//        $em = $this->getDoctrine()->getManager();
-//
-//        $inventoryParts = $em->getRepository(Inventory_Part::class)->findAllBySetNumber($number);
-//
-//        $zip = new \ZipArchive();
-//        $zipName = 'set_'.$number.'.zip';
-//        $zip->open($zipName,  \ZipArchive::CREATE);
-//        /** @var Inventory_Part $part */
-//        foreach ($inventoryParts as $part) {
-//            $filename = $part->getPart()->getNumber().'_('.$part->getColor()->getName().'_'.$part->getQuantity().'x).stl';
-//
-//            try {
-//                if($part->getPart()->getModel()) {
-//                    $zip->addFromString($filename, $this->get('oneup_flysystem.media_filesystem')->read($part->getPart()->getModel()->getPath()));
-//                }
-//            } catch (\Exception $e) {
-//                dump($e);
-//            }
-//        }
-//        $zip->close();
-//
-//        $response = new Response(file_get_contents($zipName));
-//        $response->headers->set('Content-Type', 'application/zip');
-//        $response->headers->set('Content-Disposition', 'attachment;filename="' . $zipName . '"');
-//        $response->headers->set('Content-length', filesize($zipName));
-//
-//        return $response;
-//    }
+        $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getNumber());
 
+        $template = $this->render('rebrickable/set/sets.html.twig', [
+            'inventorySets' => $inventorySets,
+        ]);
+
+        $json = json_encode($template->getContent());
+        $response = new Response($json, 200);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
 }

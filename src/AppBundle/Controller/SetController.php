@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Exception\EmptyResponseException;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Color;
@@ -58,88 +59,64 @@ class SetController extends Controller
      */
     public function detailAction(Request $request, $number)
     {
-        $brset = null;
-        $rbset = null;
-        $inventorySets = null;
-
-        $inventorySets = $this->getDoctrine()->getManager()->getRepository(Inventory_Set::class)->findAllBySetNumber($number);
+        $rebrickableSet = null;
+        $bricksetSet = null;
         try {
-            if(($rbset = $this->getDoctrine()->getManager()->getRepository(Set::class)->find($number)) == null) {
+            if(($rebrickableSet = $this->getDoctrine()->getManager()->getRepository(Set::class)->find($number)) == null) {
                 $this->addFlash('warning', 'Set not found in Rebrickable database');
             };
 
-            $brset = $this->get('api.manager.brickset')->getSetByNumber($number);
+            $bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($number);
+            dump($bricksetSet);
         } catch (EmptyResponseException $e) {
             $this->addFlash('warning', 'Set not found in Brickset database');
+        } catch (ApiException $e) {
+            $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
+        if(!$rebrickableSet && !$bricksetSet) {
+            return $this->render('error/error.html.twig');
+        }
+
         return $this->render('set/detail.html.twig', [
-            'rbset' => $rbset,
-            'inventorySets' => $inventorySets,
-            'brset' => $brset,
+            'rbset' => $rebrickableSet,
+            'brset' => $bricksetSet,
         ]);
     }
-//
-//    /**
-//     * @Route("/{number}/parts", name="set_parts")
-//     */
-//    public function partsAction(Set $set) {
-//        $em = $this->getDoctrine()->getManager();
-//
-//        $em->getRepository(Color::class)->findAll();
-//        $em->getRepository(Part::class)->findAllBySetNumber($set->getNumber());
-//
-//        $regularParts = $em->getRepository(Inventory_Part::class)->findAllRegularBySetNumber($set->getNumber());
-//        $spareParts = $em->getRepository(Inventory_Part::class)->findAllSpareBySetNumber($set->getNumber());
-//
-//        $count = 0;
-//        /** @var Inventory_Part $inventoryPart */
-//        foreach ($regularParts as $inventoryPart) {
-//            $count += $inventoryPart->getQuantity();
-//        }
-//
-//        dump($count);
-//
-//        return $this->render('rebrickable/set/parts.html.twig', [
-//            'regularParts' => $regularParts,
-//            'spareParts' => $spareParts,
-//            'totalParts' => $count
-//        ]);
-//    }
-//
-////    /**
-////     * @Route("/download/{number}", name="set_download")
-////     */
-////    public function downloadZipAction(Request $request, $number) {
-////        $em = $this->getDoctrine()->getManager();
-////
-////        $inventoryParts = $em->getRepository(Inventory_Part::class)->findAllBySetNumber($number);
-////
-////        $zip = new \ZipArchive();
-////        $zipName = 'set_'.$number.'.zip';
-////        $zip->open($zipName,  \ZipArchive::CREATE);
-////        /** @var Inventory_Part $part */
-////        foreach ($inventoryParts as $part) {
-////            $filename = $part->getPart()->getNumber().'_('.$part->getColor()->getName().'_'.$part->getQuantity().'x).stl';
-////
-////            try {
-////                if($part->getPart()->getModel()) {
-////                    $zip->addFromString($filename, $this->get('oneup_flysystem.media_filesystem')->read($part->getPart()->getModel()->getPath()));
-////                }
-////            } catch (\Exception $e) {
-////                dump($e);
-////            }
-////        }
-////        $zip->close();
-////
-////        $response = new Response(file_get_contents($zipName));
-////        $response->headers->set('Content-Type', 'application/zip');
-////        $response->headers->set('Content-Disposition', 'attachment;filename="' . $zipName . '"');
-////        $response->headers->set('Content-length', filesize($zipName));
-////
-////        return $response;
-////    }
+
+    /**
+     * @Route("/{number}/download", name="set_download")
+     */
+    public function downloadZipAction(Request $request, $number) {
+        $em = $this->getDoctrine()->getManager();
+
+        $inventoryParts = $em->getRepository(Inventory_Part::class)->findAllRegularBySetNumber($number);
+
+        $zip = new \ZipArchive();
+        $zipName = 'set_'.$number.'.zip';
+        $zip->open($zipName,  \ZipArchive::CREATE);
+        /** @var Inventory_Part $part */
+        foreach ($inventoryParts as $part) {
+            $filename = $part->getPart()->getNumber().'_('.$part->getColor()->getName().'_'.$part->getQuantity().'x).stl';
+
+            try {
+                if($part->getPart()->getModel()) {
+                    $zip->addFromString($filename, $this->get('oneup_flysystem.media_filesystem')->read($part->getPart()->getModel()->getPath()));
+                }
+            } catch (\Exception $e) {
+                dump($e);
+            }
+        }
+        $zip->close();
+
+        $response = new Response(file_get_contents($zipName));
+        $response->headers->set('Content-Type', 'application/zip');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $zipName . '"');
+        $response->headers->set('Content-length', filesize($zipName));
+
+        return $response;
+    }
 
 }

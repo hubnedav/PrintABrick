@@ -2,7 +2,13 @@
 
 {% import 'macros/elements.html.twig' as elements %}
 
+{% block title %}{{ 'page.model.index' | trans }}{% endblock %}
+
+{% block header %}{{ 'page.model.index' | trans }}{% endblock %}
+
 {% block content %}
+<div class="ui container stackable grid">
+    <div class="column four wide">
     <form method="get" action="" class="ui form">
         {{ form_start(form) }}
 
@@ -16,8 +22,9 @@
         </div>
         {{ form_end(form) }}
     </form>
-
-
+    </div>
+    <div class="column twelve wide">
+        {{ knp_pagination_render(models) }}
     <p>{{ models.getTotalItemCount }}</p>
     <div class="ui eight column grid">
         {% for model in models %}
@@ -26,4 +33,6 @@
     </div>
 
     {{ knp_pagination_render(models) }}
+    </div>
+</div>
 {% endblock %}

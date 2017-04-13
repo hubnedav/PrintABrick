@@ -2,82 +2,111 @@
 
 {% import 'macros/elements.html.twig' as elements %}
 
-{% block title %}{{ model.name }}{% endblock %}
+{% block title %}#{{ model.number }} - {{ model.name }}{% endblock %}
 
-{% block header %}{{ model.name }}{% endblock %}
+{% block header %}#{{ model.number }} - {{ model.name }}{% endblock %}
 
 {% block content %}
 
-    <div id="model-viewer" class="model-container">
-        <img src="{{ asset('ldraw/images/'~model.number~'.png') | imagine_filter('model_large')}}">
+    <div class="ui grid">
+        <div class="column ten wide">
+            <div id="model-viewer" class="model-container">
+                <img src="{{ asset('ldraw/images/'~model.number~'.png') | imagine_filter('model_large')}}">
+            </div>
+        </div>
+        <div class="column six wide">
+            <div class="grey">
+                <table>
+                    <tr>
+                        <th>category</th><td>{{ model.category ? model.category.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>model</th><td>{{ model.path }}</td>
+                    </tr>
+                    <tr>
+                        <th>author</th><td>{{ model.author }}</td>
+                    </tr>
+                </table>
+
+                <dl>
+                    <dt>keywords:</dt>
+                    <dd>
+                        {% for keyword in model.keywords %}
+                            <span class="ui label">{{ keyword.name }}</span>
+                        {% endfor %}
+                    </dd>
+                    <dt>aliases:</dt>
+                    <dd>
+                        {% for alias in model.aliases %}
+                            <span>{{ alias.number }}</span>{%  if not loop.last %},{% endif %}
+                        {% endfor %}
+                    </dd>
+                    <dd>Download:</dd>
+                    <dt><a href="{{ url('media_file', {'path': model.path}) }}">{{ model.number }}</a></dt>
+                    <dt>rebrickable parts ({{ rbParts|length }}):</dt>
+                    <dd>
+                        {#<p>#}
+                        {#<div class="ui eight doubling cards">#}
+                        {#{% for alias in rbParts %}#}
+                        {#<a href="{{ url('reb_part_detail', {number:alias.number}) }}" class="ui label">{{ alias.number }}</a>#}
+                        {#{% endfor %}#}
+                        {#</div>#}
+                        {#</p>#}
+                    </dd>
+                </dl>
+            </div>
+        </div>
     </div>
 
-    <dl>
-        <dt>number:</dt><dd>{{ model.number }}</dd>
-        <dt>name:</dt><dd>{{ model.name }}</dd>
-        <dt>category:</dt><dd>{{ model.category ? model.category.name }}</dd>
-        <dt>model:</dt><dd>{{ model.path }}</dd>
-        <dt>author:</dt><dd>{{ model.author }}</dd>
-        <dt>modified:</dt><dd>{{ model.modified ? model.modified|date('Y-m-d') }}</dd>
-        <dt>keywords:</dt>
-        <dd>
-            {% for keyword in model.keywords %}
-                <span class="ui label">{{ keyword.name }}</span>
-            {% endfor %}
-        </dd>
-        <dt>aliases:</dt>
-        <dd>
-            {% for alias in model.aliases %}
-                <span class="ui label">{{ alias.number }}</span>
-            {% endfor %}
-        </dd>
-        <dd>Download:</dd>
-        <dt><a href="{{ url('media_file', {'path': model.path}) }}">{{ model.number }}</a></dt>
-        <dt>rebrickable parts ({{ rbParts|length }}):</dt>
-        <dd>
-            <p>
-            <div class="ui eight doubling cards">
-                {% for alias in rbParts %}
-                    <a href="{{ url('reb_part_detail', {number:alias.number}) }}" class="ui label">{{ alias.number }}</a>
-                {% endfor %}
+
+
+    <h4 class="ui horizontal divider header">
+        Subparts of this model
+    </h4>
+
+    <div class="ui eight column grid">
+        {% for subpart in model.subparts  %}
+            <div class="column">
+                {{ elements.part(subpart.subpart) }}
             </div>
-            </p>
-        </dd>
-    </dl>
-
-    <div>
-        <h4 class="ui horizontal divider header">
-            <i class="puzzle icon"></i> Subparts of this model
-        </h4>
-
-        <div class="ui eight cards">
-            {% for subpart in model.subparts  %}
-                <div class="column">
-                    {{ elements.part(subpart.subpart) }}
-                </div>
-            {% endfor %}
-        </div>
-
-        <h4 class="ui horizontal divider header">
-            <i class="cube icon"></i> Model is subpart of
-        </h4>
-
-        <div class="ui eight cards">
-            {% for subpart in model.parents  %}
-                <div class="column">
-                    {{ elements.part(subpart.parent) }}
-                </div>
-            {% endfor %}
-        </div>
-
-        <h4 class="ui horizontal divider header">
-            <i class="cubes icon"></i> Sets ({{ sets|length }})
-        </h4>
-
-        {% for set in sets %}
-            <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
         {% endfor %}
     </div>
+
+    <h4 class="ui horizontal divider header">
+        Model is subpart of
+    </h4>
+
+    <div class="ui eight column grid">
+        {% for subpart in model.parents  %}
+            <div class="column">
+                {{ elements.part(subpart.parent) }}
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <h4 class="ui horizontal divider header">
+        Related
+    </h4>
+
+    <div class="ui eight column grid">
+        {% for subpart in related  %}
+            <div class="column">
+                {{ elements.part(subpart) }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <h4 class="ui horizontal divider header">
+        <i class="cubes icon"></i> Sets ({{ sets|length }})
+    </h4>
+
+    {% for set in sets %}
+        <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
+    {% endfor %}
+
+
+
 {% endblock %}
 
 {% block javascripts %}

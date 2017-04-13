@@ -48,9 +48,10 @@ gulp.task('files:semantic', function () {
 });
 
 gulp.task('files:images', function () {
-    return gulp.src(
-        'node_modules/lightbox2/dist/images/**'
-    )
+    return gulp.src([
+        'node_modules/lightbox2/dist/images/**',
+        'app/Resources/assets/images/**'
+    ])
         .pipe(gulp.dest('web/resources/images'));
 });
 

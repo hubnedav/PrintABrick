@@ -1,8 +1,9 @@
+{% if regularParts|length > 0 %}
 <h4 class="ui horizontal divider header">
     Regular parts
 </h4>
 
-<div class="ui eight column grid">
+<div class="ui ten column grid">
     {% for inventoryPart in regularParts %}
         {% if inventoryPart.part is defined %}
             <div class="column">
@@ -12,18 +13,20 @@
                         <div class="image load">
                             <img src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
                         </div>
-                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
+                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}</div>
                     </a>
                 </div>
             </div>
         {% endif %}
     {% endfor %}
 </div>
+{% endif %}
 
+{% if spareParts|length > 0 %}
 <h4 class="ui horizontal divider header">
     Spare parts
 </h4>
-<div class="ui eight column grid">
+<div class="ui ten column grid">
     {% for inventoryPart in spareParts %}
         {% if inventoryPart.part is defined %}
             <div class="column">
@@ -33,10 +36,11 @@
                         <div class="image load">
                             <img src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" data-src="{{ inventoryPart.part.number|partImage(inventoryPart.color.id)| imagine_filter('rebrickable_part_min') }}" class="transition visible">
                         </div>
-                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}<br>{{ inventoryPart.isSpare ? 'Spare' : 'Regular' }}</div>
+                        <div style="border-bottom: #{{ inventoryPart.color.rgb }} 5px solid" class="ui bottom attached label">{{ inventoryPart.part.number }}</div>
                     </a>
                 </div>
             </div>
         {% endif %}
     {% endfor %}
 </div>
+{% endif %}

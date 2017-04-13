@@ -3,6 +3,8 @@
 namespace AppBundle\Repository\LDraw;
 
 use AppBundle\Entity\LDraw\Category;
+use AppBundle\Entity\LDraw\Model;
+use AppBundle\Entity\LDraw\Subpart;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\LDraw\Alias;
@@ -51,6 +53,23 @@ class ModelRepository extends BaseRepository
             ->join(Set::class, 's', Join::WITH, 'inventory.set = s.number')
             ->where('s.number LIKE :number')
             ->setParameter('number', $number)
+            ->distinct(true);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function findAllRelatedModels($number)
+    {
+        $queryBuilder = $this->createQueryBuilder('model');
+
+        $queryBuilder
+            ->select('related')
+            ->join(Subpart::class, 'subpart', JOIN::WITH, 'model.number = subpart.subpart')
+            ->join(Subpart::class, 'parent', JOIN::WITH, 'subpart.parent = parent.parent')
+            ->join(Model::class, 'related', JOIN::WITH, 'related.number = parent.subpart')
+            ->where('model.number = :number')
+            ->setParameter('number', $number)
+            ->andWhere('related.number != :number')
             ->distinct(true);
 
         return $queryBuilder->getQuery()->getResult();

@@ -67,10 +67,13 @@ class ModelController extends Controller
                 $rbParts = $model != null ? $em->getRepository(Part::class)->findAllByModel($model) : null;
                 $sets = $model != null ? $em->getRepository(Set::class)->findAllByModel($model) : null;
 
+                $related = $em->getRepository(Model::class)->findAllRelatedModels($model->getNumber());
+
                 return $this->render('model/detail.html.twig', [
                     'model' => $model,
                     'rbParts' => $rbParts,
                     'sets' => $sets,
+                    'related' => $related
                 ]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());

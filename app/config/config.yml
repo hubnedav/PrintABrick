@@ -9,8 +9,6 @@ parameters:
     locale: en
     # rebrickable csv files root URL
     rebrickable_url: 'http://rebrickable.com/media/downloads/'
-    # LDraw library zip file URL
-    ldraw_url: 'http://www.ldraw.org/library/updates/complete.zip'
 
 framework:
     #esi:             ~

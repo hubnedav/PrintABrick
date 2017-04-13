@@ -47,6 +47,7 @@ class Brickset extends \SoapClient
         $this->apiKey = $apikey;
 
         $options['cache_wsdl'] = WSDL_CACHE_NONE;
+        $options['exceptions'] = true;
 
         foreach (self::$classmap as $key => $value) {
             if (!isset($options['classmap'][$key])) {
@@ -56,7 +57,12 @@ class Brickset extends \SoapClient
         if (!$wsdl) {
             $wsdl = self::WSDL;
         }
-        parent::__construct($wsdl, $options);
+
+        try {
+            parent::__construct($wsdl, $options);
+        } catch (\Exception $exception) {
+            throw new ApiException(ApiException::BRICKSET);
+        }
     }
 
     /**
@@ -78,6 +84,8 @@ class Brickset extends \SoapClient
             throw new CallFailedException(ApiException::BRICKSET);
         } catch (ContextErrorException $e) {
             throw new EmptyResponseException(ApiException::BRICKSET);
+        } catch (\Exception $e) {
+            throw new ApiException(ApiException::BRICKSET);
         }
     }
 
@@ -105,7 +113,7 @@ class Brickset extends \SoapClient
 
         $response = $this->call('getSets', $parameters)->sets;
 
-        return is_array($response) ? $response : [$response];
+        return is_array($response) ? $response : [$this->getSet($response->getSetID())];
     }
 
     /**

@@ -26,9 +26,9 @@ var ModelViewer = function($dom_element, model_url) {
     this.initScene();
 
 
-    this.stats = new Stats();
-    this.stats.dom.style.position = 'absolute';
-    this.container.append(this.stats.dom);
+    // this.stats = new Stats();
+    // this.stats.dom.style.position = 'absolute';
+    // this.container.append(this.stats.dom);
 
 
     function renderLoop() {
@@ -44,7 +44,10 @@ var ModelViewer = function($dom_element, model_url) {
             }
             $this.render();
         }
+
+        $this.resize(parseInt($this.dom_element.width()), parseInt($this.dom_element.height()));
     }
+
 
     renderLoop();
 };
@@ -73,8 +76,8 @@ ModelViewer.prototype.initHtml = function () {
 
 ModelViewer.prototype.initCamera = function () {
     this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, .1, 300);
-    this.camera.position.z = 35;
-    this.camera.position.y = -35;
+    this.camera.position.z = 80;
+    this.camera.position.y = -45;
     this.camera.position.x = 35;
     this.camera.up = new THREE.Vector3(0, 0, 1);
 };
@@ -111,9 +114,6 @@ ModelViewer.prototype.initScene = function() {
     this.renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 
     this.container.append(this.renderer.domElement);
-
-    // this.renderer.shadowMap.enabled = true;
-    // this.renderer.shadowMap.renderReverseSided = false;
 
     this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
     this.controls.enableZoom = true;
@@ -208,7 +208,7 @@ ModelViewer.prototype.centerCamera = function(mesh) {
     var distanceZ = (geometry.boundingBox.max.z - geometry.boundingBox.min.z) / 2 / Math.tan(this.camera.fov * Math.PI / 360);
 
     var maxDistance = Math.max(Math.max(distanceX, distanceY), distanceZ);
-    maxDistance *= 1.6 * this.scale;
+    maxDistance *= 1.9 * this.scale;
 
     var cameraPosition = this.camera.position.normalize().multiplyScalar(maxDistance);
 

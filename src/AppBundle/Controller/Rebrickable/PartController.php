@@ -3,11 +3,13 @@
 namespace AppBundle\Controller\Rebrickable;
 
 use AppBundle\Api\Exception\EmptyResponseException;
+use AppBundle\Entity\Rebrickable\Category;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Part controller.
@@ -16,6 +18,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class PartController extends Controller
 {
+    /**
+     * @Route("/", name="part_index")
+     */
+    public function indexAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository(Part::class)->createQueryBuilder('part');
+        $queryBuilder->where('part.category = 17');
+
+        $paginator = $this->get('knp_paginator');
+        $sets = $paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1)/*page number*/,
+            $request->query->getInt('limit', 30)/*limit per page*/
+        );
+
+        return $this->render(':rebrickable/part:index.html.twig', [
+            'parts' => $sets,
+        ]);
+    }
+
     /**
      * Finds and displays a part entity.
      *
@@ -28,7 +52,7 @@ class PartController extends Controller
 
         $apiPart = null;
 
-        if($part) {
+        if ($part) {
             try {
                 $apiPart = $this->get('api.manager.rebrickable')->getPart($part->getNumber());
             } catch (EmptyResponseException $e) {

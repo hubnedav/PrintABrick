@@ -3,9 +3,6 @@
 namespace AppBundle\Controller\Brickset;
 
 use AppBundle\Api\Exception\EmptyResponseException;
-use AppBundle\Entity\Rebrickable\Color;
-use AppBundle\Entity\Rebrickable\Inventory_Part;
-use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Entity\Rebrickable\Theme;
 use AppBundle\Form\FilterSetType;
@@ -37,7 +34,7 @@ class SetController extends Controller
                     'subtheme' => $data['subtheme'] ? $data['subtheme']->getSubtheme() : '',
                     'year' => $data['years'] ? $data['years']->getYear() : '',
                 ]);
-            }  catch (EmptyResponseException $e) {
+            } catch (EmptyResponseException $e) {
                 $this->addFlash('warning', 'No set found on '.$e->getService());
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
@@ -58,13 +55,13 @@ class SetController extends Controller
         $instructions = [];
         try {
             $instructions = $this->get('api.manager.brickset')->getSetInstructions($id);
-        }  catch (EmptyResponseException $e) {
-//            $this->addFlash('warning', 'No instruction found on Brickset.com');
+        } catch (EmptyResponseException $e) {
+            //            $this->addFlash('warning', 'No instruction found on Brickset.com');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->render('brickset/instructions.html.twig',[
+        return $this->render('brickset/instructions.html.twig', [
             'instructions' => $instructions,
         ]);
     }
@@ -77,13 +74,13 @@ class SetController extends Controller
         $reviews = [];
         try {
             $reviews = $this->get('api.manager.brickset')->getSetReviews($id);
-        }  catch (EmptyResponseException $e) {
-//            $this->addFlash('warning', 'No review found on Brickset.com');
+        } catch (EmptyResponseException $e) {
+            //            $this->addFlash('warning', 'No review found on Brickset.com');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->render('brickset/reviews.html.twig',[
+        return $this->render('brickset/reviews.html.twig', [
             'reviews' => $reviews,
         ]);
     }
@@ -96,13 +93,13 @@ class SetController extends Controller
         $images = [];
         try {
             $images = $this->get('api.manager.brickset')->getAdditionalImages($id);
-        }  catch (EmptyResponseException $e) {
-//            $this->addFlash('warning', 'No images found on Brickset.com');
+        } catch (EmptyResponseException $e) {
+            //            $this->addFlash('warning', 'No images found on Brickset.com');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->render('brickset/images.html.twig',[
+        return $this->render('brickset/images.html.twig', [
             'images' => $images,
         ]);
     }

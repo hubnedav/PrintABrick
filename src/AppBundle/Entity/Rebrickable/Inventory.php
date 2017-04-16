@@ -45,7 +45,6 @@ class Inventory
      */
     protected $inventorySets;
 
-
     public function __construct()
     {
         $this->inventoryParts = new ArrayCollection();

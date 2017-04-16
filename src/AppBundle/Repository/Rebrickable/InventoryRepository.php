@@ -7,12 +7,12 @@ use AppBundle\Repository\BaseRepository;
 
 class InventoryRepository extends BaseRepository
 {
-    public function findNewestInventoryBySetNumber($number) {
-
+    public function findNewestInventoryBySetNumber($number)
+    {
         $queryBuilder = $this->createQueryBuilder('inventory')
             ->where('inventory.set = :setNumber')
             ->setParameter('setNumber', $number)
-            ->orderBy('inventory.version','DESC')
+            ->orderBy('inventory.version', 'DESC')
             ->setMaxResults(1);
 
         return $queryBuilder->getQuery()->getOneOrNullResult();

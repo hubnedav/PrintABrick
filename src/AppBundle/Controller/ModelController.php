@@ -28,8 +28,7 @@ class ModelController extends Controller
     {
         $form = $this->get('form.factory')->create(ModelFilterType::class);
 
-        $filterBuilder = $this->get('repository.ldraw.model')
-            ->createQueryBuilder('model');
+        $filterBuilder = $this->get('repository.ldraw.model')->getFilteredQueryBuilder();
 
         if ($request->query->has($form->getName())) {
             // manually bind values from the request
@@ -62,7 +61,7 @@ class ModelController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        if($model = $this->get('manager.ldraw.model')->findByNumber($number)) {
+        if ($model = $this->get('repository.ldraw.model')->findOneByNumber($number)) {
             try {
                 $rbParts = $model != null ? $em->getRepository(Part::class)->findAllByModel($model) : null;
                 $sets = $model != null ? $em->getRepository(Set::class)->findAllByModel($model) : null;
@@ -73,12 +72,11 @@ class ModelController extends Controller
                     'model' => $model,
                     'rbParts' => $rbParts,
                     'sets' => $sets,
-                    'related' => $related
+                    'related' => $related,
                 ]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
             }
-
         }
 
         return $this->render('error/error.html.twig');

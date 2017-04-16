@@ -8,12 +8,12 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class ThemeRepository extends BaseRepository
 {
-    public function findAllSubthemes(Theme $theme) {
-
-        $subQueryBuilder =  $this->createQueryBuilder('subtheme');
+    public function findAllSubthemes(Theme $theme)
+    {
+        $subQueryBuilder = $this->createQueryBuilder('subtheme');
 
         $queryBuilder = $this->createQueryBuilder('subtheme')
-            ->leftJoin(Theme::class,'theme', Join::WITH, 'subtheme.parent = theme.id')
+            ->leftJoin(Theme::class, 'theme', Join::WITH, 'subtheme.parent = theme.id')
             ->where('subtheme.parent = :id')
             ->setParameter('id', $theme->getId());
 

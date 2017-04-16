@@ -3,8 +3,8 @@
 namespace AppBundle\Controller\Rebrickable;
 
 use AppBundle\Entity\Rebrickable\Color;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Part controller.
@@ -14,10 +14,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class ColorController extends Controller
 {
     /**
-     *
      * @Route("/", name="color_index")
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         $em = $this->getDoctrine()->getManager();
 
         $colors = $em->getRepository(Color::class)->findAll();

@@ -13,7 +13,6 @@ use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Exception\AuthenticationFailedException;
 use AppBundle\Api\Exception\CallFailedException;
 use AppBundle\Api\Exception\EmptyResponseException;
-use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
 class Brickset extends \SoapClient
@@ -79,6 +78,7 @@ class Brickset extends \SoapClient
 
         try {
             $this->checkApiKey();
+
             return $this->__soapCall($method, [$parameters])->{$method.'Result'};
         } catch (\SoapFault $e) {
             throw new CallFailedException(ApiException::BRICKSET);
@@ -266,7 +266,7 @@ class Brickset extends \SoapClient
     {
         $parameters['apiKey'] = $this->apiKey;
 
-        if($this->__soapCall('checkKey', [$parameters])->checkKeyResult != 'OK') {
+        if ($this->__soapCall('checkKey', [$parameters])->checkKeyResult != 'OK') {
             throw new AuthenticationFailedException(ApiException::BRICKSET);
         }
     }

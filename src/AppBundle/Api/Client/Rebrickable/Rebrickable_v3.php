@@ -9,7 +9,6 @@ use AppBundle\Api\Exception\EmptyResponseException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
-use Symfony\Component\Asset\Exception\LogicException;
 
 class Rebrickable_v3
 {
@@ -59,11 +58,11 @@ class Rebrickable_v3
         } catch (ClientException $e) {
             if ($e->getCode() == 404) {
                 throw new EmptyResponseException(ApiException::REBRICKABLE);
-            } else if ($e->getCode() == 401) {
+            } elseif ($e->getCode() == 401) {
                 throw new AuthenticationFailedException(ApiException::REBRICKABLE);
             }
 
-            throw new ApiException(ApiException::REBRICKABLE,$e,$e->getCode());
+            throw new ApiException(ApiException::REBRICKABLE, $e, $e->getCode());
         }
     }
 }

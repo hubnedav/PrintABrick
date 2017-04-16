@@ -7,8 +7,8 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    # rebrickable csv files root URL
-    rebrickable_url: 'http://rebrickable.com/media/downloads/'
+    # rebrickable csv files root URL (http://rebrickable.com/media/downloads/ or local dir containing csv files)
+    rebrickable_csv_url: 'http://rebrickable.com/media/downloads/'
 
 framework:
     #esi:             ~

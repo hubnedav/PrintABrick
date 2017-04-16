@@ -3,9 +3,7 @@
 namespace AppBundle\Form\Filter\Set;
 
 use AppBundle\Entity\Rebrickable\Theme;
-use AppBundle\Entity\LDraw\Category;
-use AppBundle\Manager\LDraw\CategoryManager;
-use AppBundle\Manager\RebrickableManager;
+use AppBundle\Repository\Rebrickable\ThemeRepository;
 use Lexik\Bundle\FormFilterBundle\Filter\Form\Type as Filters;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,30 +11,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ThemeFilterType extends AbstractType
 {
-    private $rebrickableManager;
+    private $themeRepository;
 
-    public function __construct(RebrickableManager $rebrickableManager)
+    public function __construct(ThemeRepository $themeRepository)
     {
-        $this->rebrickableManager = $rebrickableManager;
+        $this->themeRepository = $themeRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('id', Filters\ChoiceFilterType::class, [
-            'choices' => $this->rebrickableManager->FindAllThemes(),
-            'choice_label' =>  function ($theme, $currentChoiceKey) {
-                if($parent = $theme->getParent()) {
-                    if($parentParent = $parent->getParent()) {
-                        if($parentParentParent = $parentParent->getParent()) {
+            'choices' => $this->themeRepository->findAll(),
+            'choice_label' => function ($theme, $currentChoiceKey) {
+                if ($parent = $theme->getParent()) {
+                    if ($parentParent = $parent->getParent()) {
+                        if ($parentParentParent = $parentParent->getParent()) {
                             return $parentParentParent->getName().' > '.$parentParent->getName().' > '.$parent->getName().' > '.$theme->getName();
                         }
+
                         return $parentParent->getName().' > '.$parent->getName().' > '.$theme->getName();
-                    } else {
-                        return $parent->getName().' > '.$theme->getName();
                     }
-                } else {
-                    return $theme->getName();
+
+                    return $parent->getName().' > '.$theme->getName();
                 }
+
+                return $theme->getName();
             },
             'label' => 'filter.set.theme',
         ]);

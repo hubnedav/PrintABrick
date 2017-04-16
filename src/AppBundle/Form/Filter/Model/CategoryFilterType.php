@@ -3,7 +3,7 @@
 namespace AppBundle\Form\Filter\Model;
 
 use AppBundle\Entity\LDraw\Category;
-use AppBundle\Manager\LDraw\CategoryManager;
+use AppBundle\Repository\LDraw\CategoryRepository;
 use Lexik\Bundle\FormFilterBundle\Filter\Form\Type as Filters;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,17 +11,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CategoryFilterType extends AbstractType
 {
-    private $categoryManager;
+    private $categoryRepository;
 
-    public function __construct(CategoryManager $categoryManager)
+    public function __construct(CategoryRepository $categoryRepository)
     {
-        $this->categoryManager = $categoryManager;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('id', Filters\ChoiceFilterType::class, [
-            'choices' => $this->categoryManager->findAll(),
+            'choices' => $this->categoryRepository->findAll(),
             'choice_label' => 'name',
             'label' => 'filter.part.category',
         ]);

@@ -2,7 +2,7 @@ services:
     form.filter.category:
         class: AppBundle\Form\Filter\Model\CategoryFilterType
         arguments:
-            - '@manager.ldraw.category'
+            - '@repository.ldraw.category'
         tags:
             - { name: form.type }
 
@@ -15,6 +15,6 @@ services:
     form.filter.theme:
         class: AppBundle\Form\Filter\Set\ThemeFilterType
         arguments:
-            - '@local.manager.rebrickable'
+            - '@repository.rebrickable.theme'
         tags:
             - { name: form.type }

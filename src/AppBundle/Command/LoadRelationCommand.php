@@ -12,8 +12,8 @@ class LoadRelationCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:load:relations')
-            ->setDescription('Loads relations between LDraw models and Rebrickable parts')
-            ->setHelp('This command allows you to..');
+            ->setDescription('Loads relations between LDraw models and Rebrickable parts.')
+            ->setHelp('This command allows you to load relation between models and parts into database.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

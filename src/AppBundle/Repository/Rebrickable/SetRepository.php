@@ -6,16 +6,28 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Entity\Rebrickable\Part;
+use AppBundle\Entity\Rebrickable\Set;
+use AppBundle\Entity\Rebrickable\Theme;
 use AppBundle\Repository\BaseRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 class SetRepository extends BaseRepository
 {
+    public function findAllByTheme(Theme $theme)
+    {
+        dump($this->getEntityManager()->getRepository(Theme::class)->findAllSubthemes($theme));
+
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->join(Theme::class, 'theme', Join::WITH, 's.theme = theme')
+            ->where('theme.id = :id')
+            ->setParameter('id', $theme->getId());
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     public function findAllByPartNumber($number)
     {
-        $queryBuilder = $this->createQueryBuilder('s');
-
-        $queryBuilder
+        $queryBuilder = $this->createQueryBuilder('s')
             ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory.set = s.number')
             ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'inventory.id = inventory_part.inventory')
             ->join(Part::class, 'part', Join::WITH, 'inventory_part.part = part.number')
@@ -28,9 +40,7 @@ class SetRepository extends BaseRepository
 
     public function findAllByModel(Model $model)
     {
-        $queryBuilder = $this->createQueryBuilder('s');
-
-        $queryBuilder
+        $queryBuilder = $this->createQueryBuilder('s')
             ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory.set = s.number')
             ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'inventory.id = inventory_part.inventory')
             ->join(Part::class, 'part', Join::WITH, 'inventory_part.part = part.number')

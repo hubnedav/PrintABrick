@@ -18,7 +18,7 @@ class Alias
     /**
      * @var Model
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="aliases", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="aliases")
      */
     private $model;
 

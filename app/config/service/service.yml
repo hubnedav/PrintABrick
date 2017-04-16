@@ -1,19 +1,10 @@
 services:
-    manager.ldraw:
-        class: AppBundle\Manager\LDrawManager
-        arguments:
-            - '@manager.ldraw.category'
-            - '@manager.ldraw.keyword'
-            - '@manager.ldraw.type'
-            - '@manager.ldraw.subpart'
-            - '@manager.ldraw.model'
-            - '@manager.ldraw.alias'
-
-    app.form.filter_set:
-        class: AppBundle\Form\FilterSetType
-        arguments: ['@api.manager.brickset']
+    app.twig_extension:
+        class: AppBundle\Twig\AppExtension
+        public: false
+        arguments: ['@api.manager.rebrickable']
         tags:
-            - { name: form.type }
+            - { name: twig.extension }
 
     app.relation.mapper:
         class: AppBundle\Utils\RelationMapper

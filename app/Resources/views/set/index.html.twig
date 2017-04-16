@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <form method="get" action="" class="ui form">
+        {{ form_start(form) }}
+
+        {{ form_row(form.search) }}
+        <div class="field fluid search selection">
+            {{ form_label(form.theme.id) }}
+            {{ form_widget(form.theme.id) }}
+        </div>
+        <div class="field">
+            <input class="ui submit button" type="submit" value="filter"/>
+        </div>
+        {{ form_rest(form) }}
+        {{ form_end(form) }}
+    </form>
+
+    <div class="ui seven column grid">
+        <div class="row">
+            {% for set in sets %}
+                <div class="column">
+                   <a href="{{ url('set_detail', {'number': set.number, 'name' : set.name|escape('url') }) }}">
+                       <img class="ui bordered image medium" src="{{ set.number|setImage|imagine_filter('rebrickable_set_min') }}">
+                       <p>{{ set.number }} - {{ set.name }}</p>
+                   </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <p>{{ sets.getTotalItemCount }}</p>
+
+    {{ knp_pagination_render(sets) }}
+{% endblock %}

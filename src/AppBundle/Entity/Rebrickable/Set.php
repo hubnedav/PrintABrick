@@ -48,11 +48,19 @@ class Set
     protected $theme;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory_Set", mappedBy="set")
+     */
+    protected $inventorySets;
+
+    /**
      * Set constructor.
      */
     public function __construct()
     {
         $this->inventories = new ArrayCollection();
+        $this->inventorySets = new ArrayCollection();
     }
 
     /**
@@ -131,6 +139,22 @@ class Set
         $this->inventories->removeElement($inventory);
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getInventorySets()
+    {
+        return $this->inventorySets;
+    }
+
+    /**
+     * @param Collection $inventorySets
+     */
+    public function setInventorySets($inventorySets)
+    {
+        $this->inventorySets = $inventorySets;
     }
 
     /**

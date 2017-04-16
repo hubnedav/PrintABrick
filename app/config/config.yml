@@ -7,10 +7,8 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    # rebrickable csv files root URL
-    rebrickable_url: 'http://rebrickable.com/media/downloads/'
-    # LDraw library zip file URL
-    ldraw_url: 'http://www.ldraw.org/library/updates/complete.zip'
+    # rebrickable csv files root URL (http://rebrickable.com/media/downloads/ or local dir containing csv files)
+    rebrickable_csv_url: 'http://rebrickable.com/media/downloads/'
 
 framework:
     #esi:             ~
@@ -92,11 +90,56 @@ knp_paginator:
         pagination: KnpPaginatorBundle:Pagination:semantic_ui_pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
 
+liip_imagine:
+    loaders:
+        media:
+          flysystem:
+              filesystem_service: oneup_flysystem.media_filesystem
+        rebrickable:
+              stream:
+                  wrapper: 'http://m.rebrickable.com/media/'
+
+    resolvers:
+        default:
+            web_path: ~
+
+    filter_sets:
+        model_min:
+            data_loader: media
+            cache: ~
+            quality: 80
+            default_image: '/resources/images/unknown_image.png'
+            filters:
+                thumbnail: { size: [200, 200], mode: inset }
+                background: { size: [250, 250], position: center, color: '#FFFFFF' }
+        model_large:
+              data_loader: media
+              cache: ~
+              quality: 92
+              filters:
+                  thumbnail: { size: [800, 600], mode: inset }
+                  background: { size: [1100, 800], position: center, color: '#FFFFFF' }
+        rebrickable:
+                      data_loader: rebrickable
+        rebrickable_part_min:
+              quality: 80
+              data_loader: rebrickable
+              cache: ~
+              default_image: '/resources/images/unknown_image.png'
+              filters:
+                  thumbnail: { size: [250, 250], mode: inset }
+        rebrickable_set_min:
+              quality: 80
+              data_loader: rebrickable
+              default_image: '/resources/images/unknown_image.png'
+              cache: ~
+              filters:
+                  thumbnail: { size: [250, 250], mode: inset }
 oneup_flysystem:
     adapters:
-        media_adapter:
+        media:
             local:
                 directory: "%kernel.root_dir%/../var/media/"
     filesystems:
         media:
-            adapter: media_adapter
+            adapter: media

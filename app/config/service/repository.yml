@@ -41,6 +41,13 @@ services:
           arguments:
               - AppBundle\Entity\LDraw\Alias
 
+    repository.ldraw.author:
+            class: Doctrine\ORM\EntityRepository
+            factory: ["@doctrine", getRepository]
+            arguments:
+                - AppBundle\Entity\LDraw\Author
+
+
     repository.rebrickable.category:
           class: Doctrine\ORM\EntityRepository
           factory: ["@doctrine", getRepository]

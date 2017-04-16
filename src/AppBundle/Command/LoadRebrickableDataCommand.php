@@ -12,8 +12,8 @@ class LoadRebrickableDataCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:load:rebrickable')
-            ->setDescription('Loads Rebrickable database')
-            ->setHelp('This command allows you to..');
+            ->setDescription('Loads Rebrickable data about sets and parts into database.')
+            ->setHelp('This command allows you to load Rebrickable CSV files containing information about sets and parts into database.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

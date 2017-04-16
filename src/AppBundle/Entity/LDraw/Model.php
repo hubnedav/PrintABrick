@@ -18,13 +18,6 @@ class Model
     use NumberTrait;
 
     /**
-     * @var Type
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Type", inversedBy="models", cascade={"persist"})
-     */
-    private $type;
-
-    /**
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -48,7 +41,7 @@ class Model
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Subpart", mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Subpart", mappedBy="parent", cascade={"persist"})
      */
     private $subparts;
 
@@ -74,9 +67,9 @@ class Model
     private $path;
 
     /**
-     * @var string
+     * @var Author
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Author", cascade={"persist"}, inversedBy="models")
      */
     private $author;
 
@@ -122,7 +115,7 @@ class Model
     /**
      * Set author.
      *
-     * @param string $author
+     * @param Author $author
      *
      * @return Model
      */
@@ -136,7 +129,7 @@ class Model
     /**
      * Get author.
      *
-     * @return string
+     * @return Author
      */
     public function getAuthor()
     {
@@ -161,22 +154,6 @@ class Model
         $this->modified = $modified;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
     }
 
     /**
@@ -287,6 +264,20 @@ class Model
     {
         if (!$this->aliases->contains($alias)) {
             $this->aliases->add($alias);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Subpart $subpart
+     *
+     * @return $this
+     */
+    public function addSubpart($subpart)
+    {
+        if (!$this->subparts->contains($subpart)) {
+            $this->subparts->add($subpart);
         }
 
         return $this;

@@ -35,7 +35,7 @@ class Builder
         ]);
 
         $menu->addChild('Models', [
-            'route' => 'ldraw_model_index',
+            'route' => 'model_index',
         ]);
 
         $menu->addChild('Sets', [

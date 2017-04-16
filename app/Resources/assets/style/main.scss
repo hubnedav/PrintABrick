@@ -1,3 +1,43 @@
-.ui.fixed + .ui.main {
-  margin-top: 5em;
+.default-theme {
+
+  .ui.fixed + .ui.grid {
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .item-info {
+    min-height: 300px;
+  }
+
+  .ui.fixed + .ui.main {
+    margin-top: 3em;
+    padding-bottom: 4em;
+  }
+
+  .link {
+    padding-left: 30px;
+    position: relative;
+  }
+
+  .link:before {
+    width: 23px;
+    height: 23px;
+    position: absolute;
+    left: 0;
+    display: inline-block;
+  }
+
+  .link.brickset:before {
+    content: '';
+    background: url("/resources/images/brickset_logo.png");
+    background-size: cover;
+  }
+
+  .link.rebrickable:before {
+    content: '';
+    background: url("/resources/images/rebrickable_logo.png");
+    background-size: cover;
+  }
+
 }

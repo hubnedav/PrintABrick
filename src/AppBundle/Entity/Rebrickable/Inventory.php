@@ -38,9 +38,17 @@ class Inventory
      */
     protected $inventoryParts;
 
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rebrickable\Inventory_Set", mappedBy="inventory")
+     */
+    protected $inventorySets;
+
     public function __construct()
     {
         $this->inventoryParts = new ArrayCollection();
+        $this->inventorySets = new ArrayCollection();
     }
 
     /**
@@ -89,5 +97,21 @@ class Inventory
     public function setInventoryParts($inventoryParts)
     {
         $this->inventoryParts = $inventoryParts;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getInventorySets()
+    {
+        return $this->inventorySets;
+    }
+
+    /**
+     * @param Collection $inventorySets
+     */
+    public function setInventorySets($inventorySets)
+    {
+        $this->inventorySets = $inventorySets;
     }
 }

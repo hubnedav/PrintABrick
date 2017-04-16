@@ -16,7 +16,7 @@ class Subpart
      * @var Model
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="subparts", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="subparts")
      */
     private $parent;
 

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% import 'macros/elements.html.twig' as elements %}
+
+{% block title %}{{ 'page.model.index' | trans }}{% endblock %}
+
+{% block header %}{{ 'page.model.index' | trans }}{% endblock %}
+
+{% block content %}
+<div class="ui container stackable grid">
+    <div class="column four wide">
+    <form method="get" action="" class="ui form">
+        {{ form_start(form) }}
+
+        {{ form_row(form.search) }}
+        <div class="field fluid search selection">
+            {{ form_label(form.category.id) }}
+            {{ form_widget(form.category.id) }}
+        </div>
+        <div class="field">
+            <input class="ui submit button" type="submit" value="filter"/>
+        </div>
+        {{ form_end(form) }}
+    </form>
+    </div>
+    <div class="column twelve wide">
+        {{ knp_pagination_render(models) }}
+    <p>{{ models.getTotalItemCount }}</p>
+    <div class="ui eight column grid">
+        {% for model in models %}
+            {{ elements.part(model) }}
+        {% endfor %}
+    </div>
+
+    {{ knp_pagination_render(models) }}
+    </div>
+</div>
+{% endblock %}

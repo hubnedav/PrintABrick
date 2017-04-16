@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}PrintABrick{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('resources/css/main.css') }}">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body class="default-theme">
+{% block body %}
+    
+{% endblock %}
+
+{% block javascripts %}
+
+    <script type="text/javascript" src="{{ asset('resources/js/three.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('resources/js/OrbitControls.js') }}"></script>
+
+    <script src="{{ asset('resources/js/main.js') }}"></script>
+{% endblock %}
+</body>
+</html>

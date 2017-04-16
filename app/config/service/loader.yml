@@ -1,29 +1,25 @@
 services:
-    service.loader:
+    service.loader.base:
         abstract:  true
-        class: AppBundle\Service\Loader\BaseLoaderService
+        class: AppBundle\Service\Loader\BaseLoader
         calls:
-          - [setArguments, ['@doctrine.orm.entity_manager', '@app.relation.mapper']]
+          - [setArguments, ['@doctrine.orm.entity_manager', '@monolog.logger.loader']]
 
     service.ldview:
         class: AppBundle\Service\LDViewService
         arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
 
     service.loader.rebrickable:
-        class: AppBundle\Service\Loader\RebrickableLoaderService
-        arguments: ['%rebrickable_url%']
-        parent: service.loader
+        class: AppBundle\Service\Loader\RebrickableLoader
+        arguments: ['%rebrickable_csv_url%']
+        parent: service.loader.base
 
-    util.dat.parser:
-        class: AppBundle\Utils\DatParser
-        arguments: ['@app.relation.mapper']
-
-    service.loader.ldraw:
-        class: AppBundle\Service\Loader\LDrawLoaderService
-        arguments: ['@service.ldview', '%ldraw_url%', '@manager.ldraw', '@util.dat.parser']
-        parent: service.loader
+    service.loader.model:
+        class: AppBundle\Service\Loader\ModelLoader
+        arguments: ['@service.ldview', '@app.relation.mapper']
+        parent: service.loader.base
 
     service.loader.relation:
         class: AppBundle\Service\Loader\RelationLoader
-        arguments: ['@manager.ldraw.model', '@repository.rebrickable.part', '@api.manager.rebrickable']
-        parent: service.loader
+        arguments: ['@api.manager.rebrickable', '@app.relation.mapper']
+        parent: service.loader.base

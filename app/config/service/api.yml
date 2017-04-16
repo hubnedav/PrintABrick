@@ -1,7 +1,7 @@
 services:
     api.client.brickset:
         class: AppBundle\Api\Client\Brickset\Brickset
-        arguments: ['%brickset_apikey%']
+        arguments: ['%brickset_apikey%', '%kernel.root_dir%/config/brickset.xml']
     api.client.rebrickable:
         class: AppBundle\Api\Client\Rebrickable\Rebrickable_v3
         arguments: ['%rebrickable_apikey%']

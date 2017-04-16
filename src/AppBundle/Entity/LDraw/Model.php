@@ -5,7 +5,6 @@ namespace AppBundle\Entity\LDraw;
 use AppBundle\Entity\Traits\NumberTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -68,9 +67,9 @@ class Model
     private $path;
 
     /**
-     * @var string
+     * @var Author
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Author", cascade={"persist"}, inversedBy="models")
      */
     private $author;
 
@@ -116,7 +115,7 @@ class Model
     /**
      * Set author.
      *
-     * @param string $author
+     * @param Author $author
      *
      * @return Model
      */
@@ -130,7 +129,7 @@ class Model
     /**
      * Get author.
      *
-     * @return string
+     * @return Author
      */
     public function getAuthor()
     {
@@ -269,7 +268,6 @@ class Model
 
         return $this;
     }
-
 
     /**
      * @param Subpart $subpart

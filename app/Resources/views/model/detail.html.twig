@@ -24,7 +24,7 @@
                         <th>model</th><td>{{ model.path }}</td>
                     </tr>
                     <tr>
-                        <th>author</th><td>{{ model.author }}</td>
+                        <th>author</th><td>{{ model.author.name }}</td>
                     </tr>
                 </table>
 
@@ -59,10 +59,14 @@
     </div>
 
 
-
     <h4 class="ui horizontal divider header">
-        Subparts of this model
+        Related Models
     </h4>
+
+
+    <h5 class="ui horizontal divider header">
+        Subparts of this model
+    </h5>
 
     <div class="ui eight column grid">
         {% for subpart in model.subparts  %}
@@ -72,9 +76,9 @@
         {% endfor %}
     </div>
 
-    <h4 class="ui horizontal divider header">
+    <h5 class="ui horizontal divider header">
         Model is subpart of
-    </h4>
+    </h5>
 
     <div class="ui eight column grid">
         {% for subpart in model.parents  %}
@@ -84,10 +88,9 @@
         {% endfor %}
     </div>
 
-
-    <h4 class="ui horizontal divider header">
-        Related
-    </h4>
+    <h5 class="ui horizontal divider header">
+        Model pairs with
+    </h5>
 
     <div class="ui eight column grid">
         {% for subpart in related  %}

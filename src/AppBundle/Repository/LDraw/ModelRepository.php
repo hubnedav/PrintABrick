@@ -2,19 +2,29 @@
 
 namespace AppBundle\Repository\LDraw;
 
+use AppBundle\Entity\LDraw\Alias;
 use AppBundle\Entity\LDraw\Category;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\LDraw\Subpart;
-use AppBundle\Entity\Rebrickable\Set;
-use AppBundle\Entity\Rebrickable\Part;
-use AppBundle\Entity\LDraw\Alias;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
+use AppBundle\Entity\Rebrickable\Part;
+use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Repository\BaseRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 class ModelRepository extends BaseRepository
 {
+    public function getFilteredQueryBuilder()
+    {
+        $queryBuilder = $this->createQueryBuilder('model')
+//            ->where('model.name NOT LIKE :obsolete')
+//            ->setParameter('obsolete','~%')
+;
+
+        return $queryBuilder;
+    }
+
     public function findAllByCategory($category)
     {
         $queryBuilder = $this->createQueryBuilder('model')
@@ -40,6 +50,11 @@ class ModelRepository extends BaseRepository
         }
 
         return $model;
+    }
+
+    public function findOneByName($name)
+    {
+        return $this->findOneBy(['name' => $name]);
     }
 
     public function findAllBySetNumber($number)
@@ -73,5 +88,22 @@ class ModelRepository extends BaseRepository
             ->distinct(true);
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * Create new Model entity with $number or retrieve one.
+     *
+     * @param $number
+     *
+     * @return Model
+     */
+    public function getOrCreate($number)
+    {
+        if (($model = $this->findOneBy(['number' => $number])) == null) {
+            $model = new Model();
+            $model->setNumber($number);
+        }
+
+        return $model;
     }
 }

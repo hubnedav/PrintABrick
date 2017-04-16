@@ -19,18 +19,18 @@ class LoadModelsCommand extends ContainerAwareCommand
         $this
             ->setName('app:load:models')
             ->setDescription('Loads LDraw library models into database')
-            ->setHelp('This command allows you to load LDraw library models into while converting .dat files to .stl')
+            ->setHelp('This command allows you to load LDraw library models into database while converting .dat files to .stl format.')
             ->setDefinition(
                 new InputDefinition([
                     new InputArgument('ldraw', InputArgument::REQUIRED, 'Path to LDraw library directory'),
-                    new InputOption('images', 'i',InputOption::VALUE_NONE, 'Do you want to generate images of models?'),
-                    new InputOption('all','a',InputOption::VALUE_NONE, 'Do you want to load whole LDraw libary?'),
-                    new InputOption('file','f',InputOption::VALUE_REQUIRED, 'Path to DAT file that should be loaded into database')
+//                    new InputOption('images', 'i', InputOption::VALUE_NONE, 'Do you want to generate images of models?'),
+                    new InputOption('all', 'a', InputOption::VALUE_NONE, 'Load all models from LDraw libary folder (/parts directory)'),
+                    new InputOption('file', 'f', InputOption::VALUE_REQUIRED, 'Load single modle into database'),
+                    new InputOption('update', 'u', InputOption::VALUE_NONE, 'Overwrite already loaded models'),
                 ])
             );
     }
 
-    //TODO log errors
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if (!$this->lock()) {
@@ -39,25 +39,49 @@ class LoadModelsCommand extends ContainerAwareCommand
             return 0;
         }
 
-        $ldrawLoader = $this->getContainer()->get('service.loader.model');
-        $ldrawLoader->setOutput($output);
-        $ldrawLoader->setLDrawLibraryContext(realpath($input->getArgument('ldraw')));
+        $modelLoader = $this->getContainer()->get('service.loader.model');
+        $modelLoader->setOutput($output);
+        $modelLoader->setRewite($input->getOption('update'));
 
-        try {
-            if (($ldrawPath = $input->getOption('file')) != null) {
-                $ldrawLoader->loadFileContext(dirname(realpath($ldrawPath)));
+        $ldraw = $input->getArgument('ldraw');
 
-                $model = $ldrawLoader->loadModel($ldrawPath);
+        if ($ldrawPath = realpath($ldraw)) {
+            $modelLoader->setLDrawLibraryContext($ldrawPath);
 
-                if($model !== null) {
-                    $this->getContainer()->get('manager.ldraw.model')->getRepository()->save($model);
+            if (($path = $input->getOption('file')) != null) {
+                if ($file = realpath($path)) {
+                    $output->writeln([
+                        'Loading model',
+                        'path: '.$file,
+                        '------------------------------------------------------------------------------',
+                    ]);
+
+                    $modelLoader->loadOneModel($file);
+
+                    $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
+                    $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';
+
+                    $output->writeln(['Done with "'.$errors.'" errors.']);
+                } else {
+                    $output->writeln("File $path not found");
                 }
             }
+
+            // Load all models inside ldraw/parts directory
             if ($input->getOption('all')) {
-               $ldrawLoader->loadAllModels();
+                $output->writeln([
+                    'Loading models from LDraw library: <comment>'.$ldrawPath.'</comment>',
+                ]);
+
+                $modelLoader->loadAllModels();
+
+                $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
+                $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';
+
+                $output->writeln(['Done with "'.$errors.'" errors.']);
             }
-        } catch (\Exception $e) {
-            printf($e->getMessage());
+        } else {
+            $output->writeln($ldraw.' is not valid path');
         }
 
         $this->release();

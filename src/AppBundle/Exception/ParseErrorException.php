@@ -2,31 +2,14 @@
 
 namespace AppBundle\Exception;
 
+use Throwable;
 
-class ParseErrorException extends \Exception
+class ParseErrorException extends FileException
 {
-    private $filepath;
-
-    public function __construct($filepath = "", $message = "", $code = 0, Exception $previous = null)
+    public function __construct($path, $message = '', $code = 0, Throwable $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+        $message = sprintf('Error parsing "%s" file.', $path);
 
-        $this->filepath = $filepath;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFilepath()
-    {
-        return $this->filepath;
-    }
-
-    /**
-     * @param mixed $filepath
-     */
-    public function setFilepath($filepath)
-    {
-        $this->filepath = $filepath;
+        parent::__construct($path, $message, $code, $previous);
     }
 }

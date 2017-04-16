@@ -3,11 +3,8 @@
 namespace AppBundle\Service;
 
 use AppBundle\Exception\ConvertingFailedException;
-use AppBundle\Exception\FileNotFoundException;
 use League\Flysystem\File;
 use League\Flysystem\Filesystem;
-use Symfony\Component\Asset\Exception\LogicException;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -27,15 +24,13 @@ class LDViewService
     /**
      * @var Filesystem
      */
-    private $ldrawLibraryFilesystem;
-
-    private $rewrite = false;
+    private $ldrawLibraryContext;
 
     /**
      * LDViewService constructor.
      *
-     * @param string     $ldview                    Path to LDView OSMesa binary file
-     * @param Filesystem $mediaFilesystem           Filesystem for generated web assets
+     * @param string     $ldview          Path to LDView OSMesa binary file
+     * @param Filesystem $mediaFilesystem Filesystem for generated web assets
      */
     public function __construct($ldview, $mediaFilesystem)
     {
@@ -44,11 +39,11 @@ class LDViewService
     }
 
     /**
-     * @param Filesystem $ldrawFilesystem
+     * @param string $ldrawLibraryContext
      */
-    public function setLdrawFilesystem($ldrawLibraryFilesystem)
+    public function setLDrawLibraryContext($ldrawLibraryContext)
     {
-        $this->ldrawLibraryFilesystem = $ldrawLibraryFilesystem;
+        $this->ldrawLibraryContext = $ldrawLibraryContext;
     }
 
     /**
@@ -57,35 +52,36 @@ class LDViewService
      *
      * @param $file
      *
-     * @return File
      * @throws ConvertingFailedException
+     *
+     * @return File
      */
-    public function datToStl($file)
+    public function datToStl($file, $rewrite = false)
     {
         if (!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'models')) {
             $this->mediaFilesystem->createDir('ldraw'.DIRECTORY_SEPARATOR.'models');
         }
 
-        $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.basename($file,'.dat').'.stl';
+        $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.stl';
 
-        if (!file_exists($newFile) || $this->rewrite) {
+        if (!$this->mediaFilesystem->has($newFile) || $rewrite) {
             $this->runLDView([
                 $file,
-                '-LDrawDir='.$this->ldrawLibraryFilesystem->getAdapter()->getPathPrefix(),
+                '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
                 '-ExportFiles=1',
                 '-ExportSuffix=.stl',
                 '-ExportsDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'ldraw'.DIRECTORY_SEPARATOR.'models',
             ]);
 
-
-
             // Check if file created successfully
-            if (!$this->mediaFilesystem->has($newFile)) {
-                throw new ConvertingFailedException($newFile);
+            if ($this->mediaFilesystem->has($newFile)) {
+                return $this->mediaFilesystem->get($newFile);
             }
+        } else {
+            return $this->mediaFilesystem->get($newFile);
         }
 
-        return $this->mediaFilesystem->get($newFile);
+        throw new ConvertingFailedException($file, 'STL');
     }
 
     /**
@@ -94,21 +90,22 @@ class LDViewService
      *
      * @param $file
      *
-     * @return File
      * @throws ConvertingFailedException
+     *
+     * @return File
      */
-    public function datToPng($file)
+    public function datToPng($file, $rewrite = false)
     {
         if (!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images')) {
             $this->mediaFilesystem->createDir('ldraw'.DIRECTORY_SEPARATOR.'images');
         }
 
-        $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.basename($file,'.dat').'.png';
+        $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.png';
 
         if (!$this->mediaFilesystem->has($newFile) || $this->rewrite) {
             $this->runLDView([
                 $file,
-                '-LDrawDir='.$this->ldrawLibraryFilesystem->getAdapter()->getPathPrefix(),
+                '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
                 '-AutoCrop=0',
                 '-SaveAlpha=0',
                 '-BackgroundColor3=0xFFFFFF',
@@ -126,12 +123,14 @@ class LDViewService
             ]);
 
             // Check if file created successfully
-            if (!$this->mediaFilesystem->has($newFile)) {
-                throw new ConvertingFailedException($newFile);
+            if ($this->mediaFilesystem->has($newFile)) {
+                return $this->mediaFilesystem->get($newFile);
             }
+        } else {
+            return $this->mediaFilesystem->get($newFile);
         }
 
-        return $this->mediaFilesystem->get($newFile);
+        throw new ConvertingFailedException($file, 'PNG');
     }
 
     /**

@@ -1,0 +1,52 @@
+#declare main_mesh = m_MYSOLID;
+#include "math.inc"
+#include "finish.inc"
+#include "transforms.inc"
+#include "colors.inc"
+
+background {color rgb 1}
+
+light_source { <-10,-15,15> color White }
+light_source { <-11,-4,10> color White }
+light_source { <-10,14,20> color White }
+
+
+global_settings {
+  assumed_gamma 2
+}
+
+camera {
+	location <-1.3, -1.1, 0.7>
+    angle 40
+	sky z
+	look_at 0
+	right -1*x
+}
+
+#declare Min = min_extent( main_mesh );
+#declare Max = max_extent( main_mesh );
+
+#declare MaxLength = max(
+    Max.x-Min.x,
+    Max.y-Min.y,
+    Max.z-Min.z
+);
+
+object
+{
+    main_mesh
+    Center_Trans(main_mesh, x+y+z)
+
+//    rotate <-90,0,0>
+
+    rotate <0,90,0>
+    
+    texture
+    {
+        pigment{ SlateBlue }
+        finish { phong .51}
+    }
+    scale (1/MaxLength)
+}
+
+

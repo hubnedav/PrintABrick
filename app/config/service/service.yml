@@ -10,3 +10,7 @@ services:
         class: AppBundle\Utils\RelationMapper
         arguments:
             - ['%kernel.root_dir%/Resources/relations']
+
+    service.renderer.stl:
+        class: AppBundle\Service\StlRendererService
+        arguments: ['%kernel.root_dir%/Resources/povray_layout/layout.tmpl', '%povray_bin%','%stl2pov_bin%']

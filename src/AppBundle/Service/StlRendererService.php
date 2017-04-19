@@ -85,8 +85,7 @@ class StlRendererService
      *
      * Generated file is saved to tmp directory specifed in constructor of this class and path to file is returned
      *
-     *
-     * stl2pov (version 2.5.0) - https://rsmith.home.xs4all.nl/software/py-stl-stl2pov.html
+     * stl2pov (version 3.3.0) - https://rsmith.home.xs4all.nl/software/py-stl-stl2pov.html
      *
      * @param string $file The full path to stl file
      * @return string Return the full path to the generated pov scene
@@ -97,42 +96,54 @@ class StlRendererService
         if(!file_exists($file)) {
             throw new FileNotFoundException($file);
         }
+        if(pathinfo($file, PATHINFO_EXTENSION) != 'stl') {
+            throw new ConvertingFailedException($file, 'POV', 'Wrong input filetype');
+        }
 
+        // Save the current working directory and change directory to tmp dir
+        // stl2pov outputs converted file to current directory and destination can not be changed
+        $cwd = getcwd();
+        chdir($this->tmpDir);
+
+        $filename = pathinfo($file)['filename'];
+
+        // Run stl2pov conversion
         $processBuilder = new ProcessBuilder();
         $process = $processBuilder->setPrefix($this->stl2pov)
             ->setArguments([
                 $file
             ])
             ->getProcess();
+        $process->mustRun();
 
-        $process->start();
+        // Check if file created successfully
+        if (!file_exists($filename.'.inc')) {
+            throw new ConvertingFailedException($file, 'POV');
+        }
 
-        $modelInc = null;
-
-        // Read std output from stl2pov command
-        foreach ($process as $type => $data) {
-            if (Process::OUT === $type) {
-                $modelInc .= $data;
-            }
-        };
-
+        // Load contents of .inc file to variable
+        $incFile = file_get_contents($filename.'.inc',LOCK_EX);
         // Replace mesh name in loaded inc file to match declaration in scene layout
-        $modelInc = preg_replace('/#declare m_(.*) = mesh/','#declare m_MYSOLID = mesh',$modelInc);
+        $incFile = preg_replace('/# declare m_(.*) = mesh/','#declare m_MYSOLID = mesh',$incFile);
 
-        // Get filename of new file
-        $outputFile = $this->tmpDir.DIRECTORY_SEPARATOR.pathinfo($file)['filename'].'.pov';
+        // Remove no longer needed inc file
+        unlink($filename.'.inc');
+        chdir($cwd);
+
+        // Get desired filepath of new pov file
+        $outputFile = $this->tmpDir.DIRECTORY_SEPARATOR.$filename.'.pov';
 
         // Load contents of pov-ray layout file
         $layout = file_get_contents($this->layout);
 
-        // Try to write contents of converted inc file and concat int with scene definition
-        if (!file_put_contents($outputFile, $modelInc, LOCK_EX)) {
+        // Try to write contents of converted inc file and concat int with scene definitions
+        if (!file_put_contents($outputFile, $incFile, LOCK_EX)) {
             throw new ConvertingFailedException($file, 'POV');
         }
         if(!file_put_contents($outputFile, $layout, FILE_APPEND | LOCK_EX)) {
             throw new ConvertingFailedException($file, 'POV');
         }
-        if (!strlen(file_get_contents($outputFile))) {
+        if (!file_exists($outputFile)) {
             throw new ConvertingFailedException($file, 'POV');
         }
 
@@ -183,8 +194,7 @@ class StlRendererService
                 "+A0.5",
                 "-D",
             ])->getProcess();
-
-        $process->run();
+        $process->mustRun();
 
         if(!file_exists($outputFile)) {
             throw new RenderFailedException("{$to}{$filename}.png");

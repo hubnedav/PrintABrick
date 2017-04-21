@@ -12,7 +12,7 @@ light_source { <-10,14,20> color White }
 
 
 global_settings {
-  assumed_gamma 2
+  assumed_gamma 2.1
 }
 
 #declare Min = min_extent( main_mesh );
@@ -24,7 +24,7 @@ global_settings {
     Max.z-Min.z
 );
 
-// Calculate camera distace factor - if object is large on Y axis and Z axis move camera further
+// Calculate camera distace factor - if object is large on Y axis and Z axis move the camera further
 #declare cameraDistance = (((Max.x-Min.x)*(1/MaxLength) > 0.3) & ((Max.y-Min.y)*(1/MaxLength) > 0.95) ? 1: 0.9);
 
 camera
@@ -47,7 +47,7 @@ object
     
     texture
     {
-        pigment{ SlateBlue }
+        pigment{ color rgb<0, 0.34, 0.6> }
         finish { phong .51}
     }
     scale (1/MaxLength)

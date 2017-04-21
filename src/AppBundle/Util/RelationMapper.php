@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Utils;
+namespace AppBundle\Util;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;

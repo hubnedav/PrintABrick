@@ -3,20 +3,25 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Api\Manager\RebrickableManager;
+use AppBundle\Transformer\FormatTransformer;
 
 class AppExtension extends \Twig_Extension
 {
     /** @var RebrickableManager */
     private $rebrickableAPIManager;
 
+    /** @var FormatTransformer */
+    private $formatTransformer;
+
     /**
      * AppExtension constructor.
      *
      * @param RebrickableManager $rebrickableAPIManager
      */
-    public function __construct($rebrickableAPIManager)
+    public function __construct($rebrickableAPIManager, $formatTransformer)
     {
         $this->rebrickableAPIManager = $rebrickableAPIManager;
+        $this->formatTransformer = $formatTransformer;
     }
 
     public function getFilters()
@@ -24,6 +29,7 @@ class AppExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter('partImage', [$this, 'partImage']),
             new \Twig_SimpleFilter('setImage', [$this, 'setImage']),
+            new \Twig_SimpleFilter('bytesToSize', [$this, 'bytesToSize']),
         ];
     }
 
@@ -37,12 +43,16 @@ class AppExtension extends \Twig_Extension
 
     public function partImage($number, $color = null)
     {
-        return '/parts/ldraw/'.($color ? $color : '-1').'/'.$number.'.png';
+        return '/parts/ldraw/'.($color !== null ? $color : '-1').'/'.$number.'.png';
     }
 
     public function setImage($number)
     {
         return '/sets/'.strtolower($number).'.jpg';
+    }
+
+    public function bytesToSize($bytes, $precision = 2) {
+        return $this->formatTransformer->bytesToSize($bytes, $precision);
     }
 
     public function remoteSize($url)

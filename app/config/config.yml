@@ -8,7 +8,7 @@ imports:
 parameters:
     locale: en
     # rebrickable csv files root URL (http://rebrickable.com/media/downloads/ or local dir containing csv files)
-    rebrickable_csv_url: 'http://rebrickable.com/media/downloads/'
+    rebrickable_downloads_url: 'http://rebrickable.com/media/downloads/'
 
 framework:
     #esi:             ~
@@ -65,13 +65,13 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
 
-# Swiftmailer Configuration
-swiftmailer:
-    transport: "%mailer_transport%"
-    host:      "%mailer_host%"
-    username:  "%mailer_user%"
-    password:  "%mailer_password%"
-    spool:     { type: memory }
+## Swiftmailer Configuration
+#swiftmailer:
+#    transport: "%mailer_transport%"
+#    host:      "%mailer_host%"
+#    username:  "%mailer_user%"
+#    password:  "%mailer_password%"
+#    spool:     { type: memory }
 
 knp_menu:
     twig:
@@ -97,7 +97,7 @@ liip_imagine:
               filesystem_service: oneup_flysystem.media_filesystem
         rebrickable:
               stream:
-                  wrapper: 'http://m.rebrickable.com/media/'
+                  wrapper: 'http://rebrickable.com/media/'
 
     resolvers:
         default:

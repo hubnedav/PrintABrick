@@ -1,0 +1,8 @@
+services:
+    app.transformer.format:
+        class: AppBundle\Transformer\FormatTransformer
+
+    app.relation.mapper:
+        class: AppBundle\Util\RelationMapper
+        arguments:
+            - ['%kernel.root_dir%/Resources/relations']

@@ -2,14 +2,9 @@ services:
     app.twig_extension:
         class: AppBundle\Twig\AppExtension
         public: false
-        arguments: ['@api.manager.rebrickable']
+        arguments: ['@api.manager.rebrickable', '@app.transformer.format']
         tags:
             - { name: twig.extension }
-
-    app.relation.mapper:
-        class: AppBundle\Utils\RelationMapper
-        arguments:
-            - ['%kernel.root_dir%/Resources/relations']
 
     service.renderer.stl:
         class: AppBundle\Service\StlRendererService

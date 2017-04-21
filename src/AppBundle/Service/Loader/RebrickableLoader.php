@@ -21,7 +21,7 @@ class RebrickableLoader extends BaseLoader
         $this->rebrickable_url = $rebrickable_url;
     }
 
-    public function loadTables()
+    public function loadAll()
     {
         $connection = $this->em->getConnection();
         $connection->beginTransaction();
@@ -33,9 +33,8 @@ class RebrickableLoader extends BaseLoader
             $this->truncateTables();
             $connection->prepare('SET foreign_key_checks = 1;')->execute();
 
-            $this->output->writeln([
+            $this->writeOutput([
                 '<info>Truncated</info> <comment>rebrickable</comment> <info>database tables.</info>',
-                '------------------------------------------------------------------------------',
                 'Loading CSV files into database...',
             ]);
 
@@ -54,7 +53,7 @@ class RebrickableLoader extends BaseLoader
 
             $connection->commit();
 
-            $this->output->writeln('Rebrickable database loaded successfully!');
+            $this->writeOutput(['Rebrickable database loaded successfully!']);
         } catch (\Exception $e) {
             $connection->rollBack();
             throw $e;
@@ -65,19 +64,17 @@ class RebrickableLoader extends BaseLoader
     {
         $array = ['inventories', 'inventory_parts', 'inventory_sets', 'sets', 'themes', 'parts', 'part_categories', 'colors'];
 
-        $this->output->writeln([
-            'Loading Rebrickable CSV files',
-            '------------------------------------------------------------------------------',
+        $this->writeOutput([
+            '<fg=cyan>------------------------------------------------------------------------------</>',
+            '<fg=cyan>Loading Rebrickable CSV files</>',
+            '<fg=cyan>------------------------------------------------------------------------------</>',
         ]);
 
         foreach ($array as $item) {
             $this->csvFile[$item] = $this->downloadFile($this->rebrickable_url.$item.'.csv');
         }
 
-        $this->output->writeln([
-            '<info>Done</info>',
-            '------------------------------------------------------------------------------',
-        ]);
+        $this->writeOutput(['<info>All CSV files loaded.</info>']);
     }
 
     private function truncateTables()

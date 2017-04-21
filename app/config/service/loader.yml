@@ -3,11 +3,7 @@ services:
         abstract:  true
         class: AppBundle\Service\Loader\BaseLoader
         calls:
-          - [setArguments, ['@doctrine.orm.entity_manager', '@monolog.logger.loader']]
-
-    service.ldview:
-        class: AppBundle\Service\LDViewService
-        arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
+          - [setArguments, ['@doctrine.orm.entity_manager', '@monolog.logger.loader', '@app.transformer.format']]
 
     service.loader.rebrickable:
         class: AppBundle\Service\Loader\RebrickableLoader

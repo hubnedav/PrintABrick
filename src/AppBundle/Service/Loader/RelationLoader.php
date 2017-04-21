@@ -30,26 +30,21 @@ class RelationLoader extends BaseLoader
     public function loadAll()
     {
         $parts = $this->em->getRepository(Part::class)->findAll();
-
-        $this->initProgressBar(count($parts));
-        /** @var Part $part */
-        foreach ($parts as $part) {
-            $this->load($part);
-
-            $this->progressBar->advance();
-        }
-        $this->progressBar->finish();
+        $this->load($parts);
     }
 
-    public function loadNotPaired()
+    public function loadNotPaired($parts)
     {
         $parts = $this->em->getRepository(Part::class)->findAllNotPaired();
+        $this->load($parts);
+    }
 
+    private function load($parts) {
         $this->initProgressBar(count($parts));
         /** @var Part $part */
         foreach ($parts as $part) {
-            $this->load($part);
-            $this->progressBar->setMessage($part->getNumber(), 'filename');
+            $this->loadPartRelation($part);
+            $this->progressBar->setMessage($part->getNumber());
             $this->progressBar->advance();
         }
         $this->progressBar->finish();
@@ -62,7 +57,7 @@ class RelationLoader extends BaseLoader
      *
      * @return Model $m
      */
-    private function load(Part $part)
+    private function loadPartRelation(Part $part)
     {
         $modelRepository = $this->em->getRepository(Model::class);
 

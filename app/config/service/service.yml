@@ -14,3 +14,7 @@ services:
     service.renderer.stl:
         class: AppBundle\Service\StlRendererService
         arguments: ['%kernel.root_dir%/Resources/povray_layout/layout.tmpl', '%povray_bin%','%stl2pov_bin%']
+
+    service.ldview:
+        class: AppBundle\Service\LDViewService
+        arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']

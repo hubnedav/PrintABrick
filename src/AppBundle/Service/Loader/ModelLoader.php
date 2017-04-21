@@ -12,15 +12,14 @@ use AppBundle\Exception\ConvertingFailedException;
 use AppBundle\Exception\FileException;
 use AppBundle\Exception\ParseErrorException;
 use AppBundle\Service\LDViewService;
-use AppBundle\Utils\LDModelParser;
-use AppBundle\Utils\RelationMapper;
+use AppBundle\Util\LDModelParser;
+use AppBundle\Util\RelationMapper;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Exception;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-//TODO refactor
 class ModelLoader extends BaseLoader
 {
     /**
@@ -80,7 +79,7 @@ class ModelLoader extends BaseLoader
         }
     }
 
-    public function loadOneModel($file)
+    public function loadOne($file)
     {
         $connection = $this->em->getConnection();
         try {
@@ -95,7 +94,7 @@ class ModelLoader extends BaseLoader
         }
     }
 
-    public function loadAllModels()
+    public function loadAll()
     {
         $files = $this->finder->in([
             $this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
@@ -109,7 +108,7 @@ class ModelLoader extends BaseLoader
             $connection->beginTransaction();
 
             try {
-                $this->progressBar->setMessage($file->getFilename(), 'filename');
+                $this->progressBar->setMessage($file->getFilename());
 
                 $this->loadModel($file->getRealPath());
 
@@ -127,7 +126,8 @@ class ModelLoader extends BaseLoader
     }
 
     /**
-     * Load Model entity into database.
+     * Load model entity and all related submodels into database while generating stl file of model.
+     * Uses LDView to convert LDraw .dat to .stl
      *
      * @param $file
      *
@@ -144,7 +144,8 @@ class ModelLoader extends BaseLoader
 
         // Parse model file save data to $modelArray
         try {
-            $modelArray = $this->ldModelParser->parse($file);
+            $content = file_get_contents($file);
+            $modelArray = $this->ldModelParser->parse($content);
         } catch (ParseErrorException $e) {
             $this->logger->error($e->getMessage(), [$file]);
 
@@ -172,8 +173,8 @@ class ModelLoader extends BaseLoader
 
                 return $parentModel;
             }
-            // Load model
 
+            // Load model
             $model = $this->em->getRepository(Model::class)->getOrCreate($modelArray['id']);
 
             // Recursively load models of subparts
@@ -203,7 +204,7 @@ class ModelLoader extends BaseLoader
             try {
                 // update model only if newer version
                 if (!$model->getModified() || ($model->getModified() < $modelArray['modified'])) {
-                    $stl = $this->LDViewService->datToStl($file, $rewrite)->getPath();
+                    $stl = $this->LDViewService->datToStl($file, $this->rewite)->getPath();
                     $model->setPath($stl);
 
                     $model
@@ -271,12 +272,14 @@ class ModelLoader extends BaseLoader
             return $context->getAdapter()->getPathPrefix().$filename;
         }
         // Try to find model in current LDRAW\PARTS sub-directory
-        elseif ($this->ldrawLibraryContext->has('parts/'.$filename)) {
-            return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'parts'.DIRECTORY_SEPARATOR.$filename;
-        }
-        // Try to find model in current LDRAW\P sub-directory
-        elseif ($this->ldrawLibraryContext->has('p'.DIRECTORY_SEPARATOR.$filename)) {
-            return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'p'.DIRECTORY_SEPARATOR.$filename;
+        elseif($this->ldrawLibraryContext) {
+            if($this->ldrawLibraryContext->has('parts/'.$filename)) {
+                return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'parts'.DIRECTORY_SEPARATOR.$filename;
+            }
+            // Try to find model in current LDRAW\P sub-directory
+            elseif ($this->ldrawLibraryContext->has('p'.DIRECTORY_SEPARATOR.$filename)) {
+                return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'p'.DIRECTORY_SEPARATOR.$filename;
+            }
         }
 
         return null;
@@ -297,6 +300,7 @@ class ModelLoader extends BaseLoader
             return new Filesystem($adapter);
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
+            return null;
         }
     }
 
@@ -322,7 +326,6 @@ class ModelLoader extends BaseLoader
         // Do not include models without permission to redistribute
         elseif ($modelArray['license'] != 'Redistributable under CCAL version 2.0') {
             $this->logger->info('Model skipped.', ['number' => $modelArray['id'], 'license' => $modelArray['license']]);
-
             return false;
         }
 

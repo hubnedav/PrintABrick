@@ -58,11 +58,11 @@ class LDViewService
      */
     public function datToStl($file, $rewrite = false)
     {
-        if (!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'models')) {
-            $this->mediaFilesystem->createDir('ldraw'.DIRECTORY_SEPARATOR.'models');
+        if (!$this->mediaFilesystem->has('models')) {
+            $this->mediaFilesystem->createDir('models');
         }
 
-        $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.stl';
+        $newFile = 'models'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.stl';
 
         if (!$this->mediaFilesystem->has($newFile) || $rewrite) {
             $this->runLDView([
@@ -70,7 +70,7 @@ class LDViewService
                 '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
                 '-ExportFiles=1',
                 '-ExportSuffix=.stl',
-                '-ExportsDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'ldraw'.DIRECTORY_SEPARATOR.'models',
+                '-ExportsDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'models',
             ]);
 
             // Check if file created successfully
@@ -96,11 +96,11 @@ class LDViewService
      */
     public function datToPng($file, $rewrite = false)
     {
-        if (!$this->mediaFilesystem->has('ldraw'.DIRECTORY_SEPARATOR.'images')) {
-            $this->mediaFilesystem->createDir('ldraw'.DIRECTORY_SEPARATOR.'images');
+        if (!$this->mediaFilesystem->has('images')) {
+            $this->mediaFilesystem->createDir('images');
         }
 
-        $newFile = 'ldraw'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.png';
+        $newFile = 'images'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.png';
 
         if (!$this->mediaFilesystem->has($newFile) || $this->rewrite) {
             $this->runLDView([
@@ -118,7 +118,7 @@ class LDViewService
                 '-SaveWidth=800',
                 '-CurveQuality=12',
                 '-DefaultLatLong=45,40',
-                '-SaveDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'ldraw'.DIRECTORY_SEPARATOR.'images',
+                '-SaveDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'images',
                 '-SaveSnapshots=1',
             ]);
 

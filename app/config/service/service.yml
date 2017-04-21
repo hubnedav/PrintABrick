@@ -6,6 +6,10 @@ services:
         tags:
             - { name: twig.extension }
 
+    app.brickset.cache_provider:
+          class: Doctrine\Common\Cache\PhpFileCache
+          arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
+
     service.renderer.stl:
         class: AppBundle\Service\StlRendererService
         arguments: ['%kernel.root_dir%/Resources/povray_layout/layout.tmpl', '%povray_bin%','%stl2pov_bin%']

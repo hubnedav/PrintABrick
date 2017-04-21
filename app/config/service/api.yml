@@ -8,7 +8,7 @@ services:
 
     api.manager.brickset:
         class: AppBundle\Api\Manager\BricksetManager
-        arguments: ['@api.client.brickset']
+        arguments: ['@api.client.brickset', '@app.brickset.cache_provider']
     api.manager.rebrickable:
         class: AppBundle\Api\Manager\RebrickableManager
         arguments: ['@api.client.rebrickable']

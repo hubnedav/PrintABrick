@@ -3,6 +3,7 @@
 namespace AppBundle\Api\Manager;
 
 use AppBundle\Api\Client\Brickset\Brickset;
+use Doctrine\Common\Cache\CacheProvider;
 
 class BricksetManager
 {
@@ -11,55 +12,121 @@ class BricksetManager
      */
     private $bricksetClient;
 
+    private $cache;
+
+    const CACHE_LIFETIME = 86400;
+
     /**
      * BricksetManager constructor.
      *
      * @param Brickset $bricksetClient
      */
-    public function __construct(Brickset $bricksetClient)
+    public function __construct(Brickset $bricksetClient, CacheProvider $cache)
     {
         $this->bricksetClient = $bricksetClient;
+        $this->cache = $cache;
     }
 
     public function getThemes()
     {
-        return $this->bricksetClient->getThemes();
+        if(!$data = unserialize($this->cache->fetch('themes')))
+        {
+            $data =  $this->bricksetClient->getThemes();
+            $this->cache->save('themes', serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 
     public function getSubthemesByTheme($theme)
     {
-        return $this->bricksetClient->getSubthemes($theme);
+        $key = "subthemes-".$theme;
+
+        if(!$data = unserialize($this->cache->fetch($key)))
+        {
+            $data =  $this->bricksetClient->getSubthemes($theme);
+            $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 
     public function getYearsByTheme($theme)
     {
-        return $this->bricksetClient->getYears($theme);
+        $key = "years-".$theme;
+
+        if(!$data = unserialize($this->cache->fetch($key)))
+        {
+            $data =  $this->bricksetClient->getYears($theme);
+            $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 
     public function getSetById($id)
     {
-        return $this->bricksetClient->getSet($id);
+        $key = "set-".$id;
+
+        if(!$data = unserialize($this->cache->fetch($key))) {
+            $data = $this->bricksetClient->getSet($id);
+            $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 
     public function getSetByNumber($number)
     {
-        $sets = $this->bricksetClient->getSets(['setNumber' => $number]);
+        $key = "set-".$number;
 
-        return isset($sets[0]) ? $sets[0] : null;
+        if(!$data = unserialize($this->cache->fetch($key)))
+        {
+            $sets = $this->bricksetClient->getSets(['setNumber' => $number]);
+            $data = isset($sets[0]) ? $sets[0] : null;
+
+            $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 
     public function getSetInstructions($id)
     {
-        return $this->bricksetClient->getInstructions($id);
+        $key = "instructions-".$id;
+
+        if(!$data = unserialize($this->cache->fetch($key)))
+        {
+            $data = $this->bricksetClient->getInstructions($id);
+            $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 
     public function getSetReviews($id)
     {
-        return $this->bricksetClient->getReviews($id);
+        $key = "reviews-".$id;
+
+        if(!$data = unserialize($this->cache->fetch($key)))
+        {
+            $data = $this->bricksetClient->getReviews($id);
+            $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 
     public function getAdditionalImages($id)
     {
-        return $this->bricksetClient->getAdditionalImages($id);
+        $key = "images-".$id;
+
+        if(!$data = unserialize($this->cache->fetch($key)))
+        {
+            $data =  $this->bricksetClient->getAdditionalImages($id);
+            $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
+        }
+
+        return $data;
     }
 }

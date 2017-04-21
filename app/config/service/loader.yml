@@ -3,15 +3,11 @@ services:
         abstract:  true
         class: AppBundle\Service\Loader\BaseLoader
         calls:
-          - [setArguments, ['@doctrine.orm.entity_manager', '@monolog.logger.loader']]
-
-    service.ldview:
-        class: AppBundle\Service\LDViewService
-        arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
+          - [setArguments, ['@doctrine.orm.entity_manager', '@monolog.logger.loader', '@app.transformer.format']]
 
     service.loader.rebrickable:
         class: AppBundle\Service\Loader\RebrickableLoader
-        arguments: ['%rebrickable_csv_url%']
+        arguments: ['%rebrickable_downloads_url%']
         parent: service.loader.base
 
     service.loader.model:
@@ -22,4 +18,9 @@ services:
     service.loader.relation:
         class: AppBundle\Service\Loader\RelationLoader
         arguments: ['@api.manager.rebrickable', '@app.relation.mapper']
+        parent: service.loader.base
+
+    service.loader.image:
+        class: AppBundle\Service\Loader\ImageLoader
+        arguments: ['@oneup_flysystem.media_filesystem', '%rebrickable_downloads_url%','@service.renderer.stl']
         parent: service.loader.base

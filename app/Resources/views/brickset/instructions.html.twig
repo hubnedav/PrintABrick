@@ -17,7 +17,7 @@
         {% for instruction in instructions %}
             <tr>
                 <td>{{ instruction.description }}</td>
-                <td>{{ utils.bytesToSize( remoteSize(instruction.uRL)) }}</td>
+                <td>{{ remoteSize(instruction.uRL) | bytesToSize }}</td>
                 <td><a href="{{ instruction.uRL }}">{{ remoteFilename(instruction.uRL) }}</a></td>
             </tr>
         {% endfor %}

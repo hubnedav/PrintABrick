@@ -2,7 +2,7 @@ imports:
     - { resource: service/repository.yml }
     - { resource: service/api.yml }
     - { resource: service/loader.yml }
-    - { resource: service/manager.yml }
+    - { resource: service/util.yml }
     - { resource: service/service.yml }
     - { resource: service/form.yml }
     - { resource: service/menu.yml }

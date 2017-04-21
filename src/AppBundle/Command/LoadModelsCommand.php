@@ -23,7 +23,6 @@ class LoadModelsCommand extends ContainerAwareCommand
             ->setDefinition(
                 new InputDefinition([
                     new InputArgument('ldraw', InputArgument::REQUIRED, 'Path to LDraw library directory'),
-//                    new InputOption('images', 'i', InputOption::VALUE_NONE, 'Do you want to generate images of models?'),
                     new InputOption('all', 'a', InputOption::VALUE_NONE, 'Load all models from LDraw libary folder (/parts directory)'),
                     new InputOption('file', 'f', InputOption::VALUE_REQUIRED, 'Load single modle into database'),
                     new InputOption('update', 'u', InputOption::VALUE_NONE, 'Overwrite already loaded models'),
@@ -35,8 +34,7 @@ class LoadModelsCommand extends ContainerAwareCommand
     {
         if (!$this->lock()) {
             $output->writeln('The command is already running in another process.');
-
-            return 0;
+            return 1;
         }
 
         $modelLoader = $this->getContainer()->get('service.loader.model');
@@ -51,12 +49,10 @@ class LoadModelsCommand extends ContainerAwareCommand
             if (($path = $input->getOption('file')) != null) {
                 if ($file = realpath($path)) {
                     $output->writeln([
-                        'Loading model',
-                        'path: '.$file,
-                        '------------------------------------------------------------------------------',
+                        "Loading model: {$path}",
                     ]);
 
-                    $modelLoader->loadOneModel($file);
+                    $modelLoader->loadOne($file);
 
                     $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
                     $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';
@@ -70,10 +66,12 @@ class LoadModelsCommand extends ContainerAwareCommand
             // Load all models inside ldraw/parts directory
             if ($input->getOption('all')) {
                 $output->writeln([
-                    'Loading models from LDraw library: <comment>'.$ldrawPath.'</comment>',
+                    '<fg=cyan>------------------------------------------------------------------------------</>',
+                    "<fg=cyan>Loading models from LDraw library:</> <comment>{$ldrawPath}</comment>",
+                    '<fg=cyan>------------------------------------------------------------------------------</>',
                 ]);
 
-                $modelLoader->loadAllModels();
+                $modelLoader->loadAll();
 
                 $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
                 $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';
@@ -81,7 +79,9 @@ class LoadModelsCommand extends ContainerAwareCommand
                 $output->writeln(['Done with "'.$errors.'" errors.']);
             }
         } else {
-            $output->writeln($ldraw.' is not valid path');
+            $output->writeln("<error>{$ldraw} is not a valid path!</error>");
+            $this->release();
+            return 1;
         }
 
         $this->release();

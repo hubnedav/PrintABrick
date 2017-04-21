@@ -21,7 +21,15 @@ class LoadRelationCommand extends ContainerAwareCommand
         $relationLoader = $this->getContainer()->get('service.loader.relation');
         $relationLoader->setOutput($output);
 
-        //TODO log errors
-        $relationLoader->loadNotPaired();
+
+        $output->writeln([
+            '<fg=cyan>------------------------------------------------------------------------------</>',
+            "<fg=cyan>Loading relations between parts and models...</>",
+            '<fg=cyan>------------------------------------------------------------------------------</>',
+        ]);
+
+        $relationLoader->loadAll();
+
+        $output->writeln(['<info>Done!</info>']);
     }
 }

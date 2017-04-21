@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use League\Flysystem\Exception;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +22,11 @@ class LoadRebrickableDataCommand extends ContainerAwareCommand
         $rebrickableLoader = $this->getContainer()->get('service.loader.rebrickable');
         $rebrickableLoader->setOutput($output);
 
-        //TODO log errors
-        $rebrickableLoader->loadTables();
+        try {
+            $rebrickableLoader->loadAll();
+        } catch (Exception $exception) {
+            $output->writeln("<error>{$exception->getMessage()}</error>");
+            return 1;
+        }
     }
 }

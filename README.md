@@ -1,4 +1,4 @@
-# Website for printable building kits
+    # Website for printable building kits
 A Symfony project 
 
 ## Install
@@ -29,8 +29,8 @@ For full requirements see Symfony 3.2 [docs](http://symfony.com/doc/3.2/referenc
 
 #### Database
 1. Set application parameters in *app/config/parameters.yml*
-2. Generate empty database by running command `$ php bin/console doctrine:database:create`   
-3. Create database tables by running command `$ bin/console doctrine:schema:create`
+2. Generate an empty database by running command (if it does not yet exist) `$ php bin/console doctrine:database:create`   
+3. Run doctrine migrations by running command`$ bin/console doctrine:migrations:migrate`
 3. Load LDraw models into database by running commad `$ php bin/console app:load:models <ldraw_dir> [--all] [--file=FILE] [--update]`
 4. Load Rebrickable data into database by running command `$ php bin/console app:load:rebrickable`  
 5. Load relations between LDraw models and Rebrickable parts by running command `$ php bin/console app:load:relation`  

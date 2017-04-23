@@ -1,7 +1,8 @@
 <?php
 
-namespace AppBundle\Entity\Rebrickable;
+namespace AppBundle\Entity;
 
+use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Entity\Traits\NameTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Color.
  *
- * @ORM\Table(name="rebrickable_color")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\Rebrickable\ColorRepository")
+ * @ORM\Table(name="color")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ColorRepository")
  */
 class Color
 {
@@ -48,11 +49,19 @@ class Color
     protected $inventoryParts;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Subpart", mappedBy="color")
+     */
+    protected $subparts;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         $this->inventoryParts = new ArrayCollection();
+        $this->subparts = new ArrayCollection();
     }
 
     /**
@@ -139,5 +148,13 @@ class Color
         $this->inventoryParts->remove($inventoryPart);
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSubparts()
+    {
+        return $this->subparts;
     }
 }

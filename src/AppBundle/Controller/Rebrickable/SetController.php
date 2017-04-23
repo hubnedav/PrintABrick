@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Rebrickable;
 
-use AppBundle\Entity\Rebrickable\Color;
+use AppBundle\Entity\Color;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Entity\Rebrickable\Inventory_Set;
 use AppBundle\Entity\Rebrickable\Part;

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Rebrickable;
 
-use AppBundle\Entity\Rebrickable\Color;
+use AppBundle\Entity\Color;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 

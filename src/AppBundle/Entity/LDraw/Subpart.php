@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\LDraw;
 
+use AppBundle\Entity\Color;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +28,14 @@ class Subpart
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="parents", cascade={"persist"} )
      */
     private $subpart;
+
+    /**
+     * @var Color
+     *
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Color", inversedBy="subparts")
+     */
+    private $color;
 
     /**
      * @var int
@@ -73,6 +82,22 @@ class Subpart
         $this->subpart = $subpart;
 
         return $this;
+    }
+
+    /**
+     * @return Color
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param Color $color
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
     }
 
     /**

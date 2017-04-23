@@ -16,7 +16,12 @@ class LDModelParser
      *  'author' => string
      *  'modified' => DateTime
      *  'type' => string
-     *  'subparts' => [],
+     *  'subparts' => [
+     *      'id' => [
+     *         'color' => int
+     *      ]
+     *  ],
+     *  'parent' => sting
      *  'licence' => string
      * ].
      *
@@ -67,7 +72,7 @@ class LDModelParser
                 }
                 // 0 Name: <Filename>.dat
                 elseif (strpos($line, 'Name: ') === 0 && !isset($header['id'])) {
-                    $model['id'] = preg_replace('/(^Name: )(.*)(.dat)/', '$2', $line);
+                    $model['id'] = preg_replace('/(^Name: )(.*)(.dat|.DAT)/', '$2', $line);
                 }
                 // 0 Author: <Realname> [<Username>]
                 elseif (strpos($line, 'Author: ') === 0) {
@@ -90,19 +95,23 @@ class LDModelParser
                     $model['license'] = preg_replace('/(^!LICENSE )(.*) : (.*)$/', '$2', $line);
                 }
             } elseif (strpos($line, '1 ') === 0) {
-                $id = strtolower($this->getReferencedModelNumber($line));
+                $reference = $this->getReferencedModelNumber($line);
 
-                if (isset($model['subparts'][$id])) {
-                    $model['subparts'][$id] = $model['subparts'][$id] + 1;
+                $id = strtolower($reference['id']);
+                $color = strtolower($reference['color']);
+
+                // group subparts by color and id 
+                if (isset($model['subparts'][$id][$color])) {
+                    $model['subparts'][$id][$color] = $model['subparts'][$id][$color] + 1;
                 } else {
-                    $model['subparts'][$id] = 1;
+                    $model['subparts'][$id][$color] = 1;
                 }
             } elseif (!empty($line) && !in_array($line[0], ['2', '3', '4', '5'])) {
                 throw new ErrorParsingLineException($model['id'],$line);
             }
         }
 
-        if ($this->isSticker($model['name'], $model['id'])) {
+        if ($this->isSticker($model['name'], $model['id']) && !in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
             $model['type'] = 'Sticker';
         } elseif (count($model['subparts']) == 1 && in_array($model['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
             $model['parent'] = array_keys($model['subparts'])[0];
@@ -130,10 +139,13 @@ class LDModelParser
      */
     public function getReferencedModelNumber($line)
     {
-        $line = ($line);
+        $line = strtolower(preg_replace('!\s+!', ' ', $line));
 
-        if (preg_match('/^1(.*) (.*)\.dat$/', strtolower($line), $matches)) {
-            return str_replace('\\', DIRECTORY_SEPARATOR, $matches[2]);
+        if (preg_match('/^1 ([0-9]{1,3}) (.*) (.*)\.dat$/', $line, $matches)) {
+            $id = str_replace('\\', DIRECTORY_SEPARATOR, $matches[3]);
+            $color = $matches[1];
+
+            return ['id' => $id, 'color' => $color];
         }
 
         return null;
@@ -180,7 +192,7 @@ class LDModelParser
         }
 
         // Check if in format n*Daa == sticker
-        return preg_match('/(^.*)(d[0-9]{2})$/', $number);
+        return preg_match('/(^.*)(d[0-9a-z]{2})$/', $number);
     }
 
     /**

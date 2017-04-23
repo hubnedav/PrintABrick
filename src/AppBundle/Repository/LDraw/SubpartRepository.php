@@ -2,14 +2,15 @@
 
 namespace AppBundle\Repository\LDraw;
 
+use AppBundle\Entity\Color;
 use AppBundle\Entity\LDraw\Subpart;
 use AppBundle\Repository\BaseRepository;
 
 class SubpartRepository extends BaseRepository
 {
-    public function findOneByKeys($parent, $child)
+    public function findOneByKeys($parent, $child, $color)
     {
-        return $this->find(['parent' => $parent, 'subpart' => $child]);
+        return $this->find(['parent' => $parent, 'subpart' => $child, 'color' => $color]);
     }
 
     /**
@@ -19,16 +20,23 @@ class SubpartRepository extends BaseRepository
      *
      * @return Subpart
      */
-    public function getOrCreate($parent, $child, $count)
+    public function getOrCreate($parent, $child, $count, $colorId)
     {
-        if (($subpart = $this->findOneByKeys($parent, $child))) {
+        if (($subpart = $this->findOneByKeys($parent, $child, $colorId))) {
             $subpart->setCount($count);
         } else {
             $subpart = new Subpart();
+
+            $colorRepository = $this->getEntityManager()->getRepository(Color::class);
+            if(!($color = $colorRepository->find($colorId))) {
+                $color = $colorRepository->find(-1);
+            }
+
             $subpart
                 ->setParent($parent)
                 ->setSubpart($child)
-                ->setCount($count);
+                ->setCount($count)
+                ->setColor($color);
         }
 
         return $subpart;

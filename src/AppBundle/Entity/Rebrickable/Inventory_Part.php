@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Rebrickable;
 
+use AppBundle\Entity\Color;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,7 +23,7 @@ class Inventory_Part
     /**
      * @var Color
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Color", inversedBy="inventoryParts")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Color", inversedBy="inventoryParts")
      */
     protected $color;
 

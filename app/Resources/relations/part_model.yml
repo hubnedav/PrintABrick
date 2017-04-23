@@ -1,6 +1,6 @@
 # Define the relationship between LDraw models that are not automatically recognizabe to eliminate duplication of models
 #
-# To load changes `run app:load:relation` command
+# To load changes run `bin/console app:load:relation` command
 #
 # format:
 #   rebrickable_part_ID: ldraw_model_ID
@@ -208,3 +208,5 @@ tech029: 2698c01
 
 33299a: 33299
 33299b: 33299
+
+x222: 13459

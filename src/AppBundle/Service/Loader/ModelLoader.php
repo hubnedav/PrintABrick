@@ -179,16 +179,18 @@ class ModelLoader extends BaseLoader
 
             // Recursively load models of subparts
             if (isset($modelArray['subparts'])) {
-                foreach ($modelArray['subparts'] as $subpartId => $count) {
-                    // Try to find model of subpart
-                    if (($subpartFile = $this->findSubmodelFile($subpartId, $fileContext)) !== null) {
-                        $subModel = $this->loadModel($subpartFile);
-                        if ($subModel) {
-                            $subpart = $this->em->getRepository(Subpart::class)->getOrCreate($model, $subModel, $count);
-                            $model->addSubpart($subpart);
+                foreach ($modelArray['subparts'] as $subpartId => $colors) {
+                    foreach ($colors as $color => $count) {
+                        // Try to find model of subpart
+                        if (($subpartFile = $this->findSubmodelFile($subpartId, $fileContext)) !== null) {
+                            $subModel = $this->loadModel($subpartFile);
+                            if ($subModel) {
+                                $subpart = $this->em->getRepository(Subpart::class)->getOrCreate($model, $subModel, $count, $color);
+                                $model->addSubpart($subpart);
+                            }
+                        } else {
+                            $this->logger->error('Subpart file not found', ['subpart' => $subpartId, 'model' => $modelArray]);
                         }
-                    } else {
-                        $this->logger->error('Subpart file not found', ['subpart' => $subpartId, 'model' => $modelArray]);
                     }
                 }
             }
@@ -217,7 +219,6 @@ class ModelLoader extends BaseLoader
                 }
             } catch (ConvertingFailedException $e) {
                 $this->logger->error($e->getMessage());
-
                 return null;
             }
 

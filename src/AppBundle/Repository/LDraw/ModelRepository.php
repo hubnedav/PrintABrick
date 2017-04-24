@@ -20,7 +20,7 @@ class ModelRepository extends BaseRepository
         $queryBuilder = $this->createQueryBuilder('model')
 //            ->where('model.name NOT LIKE :obsolete')
 //            ->setParameter('obsolete','~%')
-;
+        ;
 
         return $queryBuilder;
     }
@@ -57,6 +57,23 @@ class ModelRepository extends BaseRepository
         return $this->findOneBy(['name' => $name]);
     }
 
+    public function findAllRegularBySetNumber($number)
+    {
+        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
+
+        $queryBuilder = $this->createQueryBuilder('model');
+        
+        $queryBuilder
+            ->join(Part::class, 'part', JOIN::WITH, 'part.model = model')
+            ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'part.number = inventory_part.part')
+            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = :inventory')
+            ->setParameter('inventory', $inventory)
+            ->addSelect('inventory_part')
+            ->distinct(true);
+
+        return ($queryBuilder->getQuery()->getScalarResult());
+    }
+
     public function findAllBySetNumber($number)
     {
         $queryBuilder = $this->createQueryBuilder('model');
@@ -88,6 +105,25 @@ class ModelRepository extends BaseRepository
             ->distinct(true);
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function findByQuery($query, $limit = null) {
+        $queryBuilder = $this->createQueryBuilder('model');
+
+
+        $queryBuilder->where(
+            $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like('model.number', ':number'),
+                $queryBuilder->expr()->like('model.name', ':name')
+            ))
+            ->setParameter('name', '%'.$query.'%')
+            ->setParameter('number', $query.'%');
+
+        if($limit) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return  $queryBuilder->getQuery()->getResult();
     }
 
     /**

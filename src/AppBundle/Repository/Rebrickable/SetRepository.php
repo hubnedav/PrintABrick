@@ -50,4 +50,18 @@ class SetRepository extends BaseRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function findByQuery($query, $limit = null) {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->where('s.name LIKE :name')
+            ->orWhere('s.number LIKE :number')
+            ->setParameter('name', '%'.$query.'%')
+            ->setParameter('number', $query.'%');
+
+        if($limit) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

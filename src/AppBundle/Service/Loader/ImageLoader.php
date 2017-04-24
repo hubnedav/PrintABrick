@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service\Loader;
 
-
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Service\StlRendererService;
 use League\Flysystem\Filesystem;
@@ -25,6 +24,10 @@ class ImageLoader extends BaseLoader
         $this->stlRendererService = $stlRendererService;
     }
 
+    /**
+     * @param $color
+     * @param null $path
+     */
     public function loadColorFromRebrickable($color, $path = null)
     {
         if(!$path) {
@@ -46,23 +49,38 @@ class ImageLoader extends BaseLoader
         }
     }
 
-    public function loadMissingModelImages($color) {
+
+    /**
+     * Load images of models
+     *
+     */
+    public function loadMissingModelImages() {
         $models = $this->em->getRepository(Model::class)->findAll();
 
         $this->initProgressBar(count($models));
         foreach ($models as $model) {
             $this->progressBar->setMessage($model->getNumber());
-            if(!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.$color.DIRECTORY_SEPARATOR.$model->getNumber().'.png')) {
+            if(!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR.$model->getNumber().'.png')) {
                 try {
-                    $this->stlRendererService->render(
-                        $this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath(),
-                        $this->mediaFilesystem->getAdapter()->getPathPrefix().'images'.DIRECTORY_SEPARATOR.$color.DIRECTORY_SEPARATOR
-                    );
+                    $this->loadModelImage($this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath());
                 } catch (\Exception $e) {
                     dump($e->getMessage());
                 }
             }
             $this->progressBar->advance();
         }
+        $this->progressBar->finish();
+    }
+
+    /**
+     * Render model and save image into co
+     *
+     * @param $file
+     */
+    public function loadModelImage($file) {
+        $this->stlRendererService->render(
+            $file,
+            $this->mediaFilesystem->getAdapter()->getPathPrefix().'images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR
+        );
     }
 }

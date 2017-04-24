@@ -42,7 +42,7 @@ class LoadModelImagesCommand extends ContainerAwareCommand
         }
 
         if($input->getOption('models')) {
-            $imageLoaderService->loadMissingModelImages($color);
+            $imageLoaderService->loadMissingModelImages();
         }
     }
 }

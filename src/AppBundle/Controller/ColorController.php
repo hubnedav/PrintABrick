@@ -1,15 +1,14 @@
 <?php
 
-namespace AppBundle\Controller\Rebrickable;
+namespace AppBundle\Controller;
 
-use AppBundle\Entity\Color;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Part controller.
  *
- * @Route("rebrickable/colors")
+ * @Route("colors")
  */
 class ColorController extends Controller
 {
@@ -18,11 +17,9 @@ class ColorController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $colors = $this->get('repository.color')->findAll();
 
-        $colors = $em->getRepository(Color::class)->findAll();
-
-        return $this->render('rebrickable/color/index.html.twig', [
+        return $this->render('color/index.html.twig', [
             'colors' => $colors,
         ]);
     }

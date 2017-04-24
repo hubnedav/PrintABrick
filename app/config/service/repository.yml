@@ -1,4 +1,10 @@
 services:
+    repository.color:
+          class: Doctrine\ORM\EntityRepository
+          factory: ["@doctrine", getRepository]
+          arguments:
+              - AppBundle\Entity\Color
+
     repository.ldraw.keyword:
           class: Doctrine\ORM\EntityRepository
           factory: ["@doctrine", getRepository]
@@ -53,12 +59,6 @@ services:
           factory: ["@doctrine", getRepository]
           arguments:
               - AppBundle\Entity\Rebrickable\Category
-
-    repository.rebrickable.color:
-          class: Doctrine\ORM\EntityRepository
-          factory: ["@doctrine", getRepository]
-          arguments:
-              - AppBundle\Entity\Rebrickable\Color
 
     repository.rebrickable.inventory:
           class: Doctrine\ORM\EntityRepository

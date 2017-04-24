@@ -4,7 +4,19 @@
 
 {% block body %}
     <div class="ui fixed inverted menu">
-        {{ knp_menu_render('mainMenu') }}
+        <div class="ui container">
+            {{ knp_menu_render('mainMenu') }}
+
+            <div class="right menu">
+                <div class="ui search item category right aligned">
+                    <div class="ui icon input transparent inverted">
+                        <input class="prompt" type="text" placeholder="Search..." >
+                        <i class="search icon"></i>
+                    </div>
+                    <div class="results transition"></div>
+                </div>
+            </div>
+        </div>
     </div>
     {% block page %}
         <div class="ui main">
@@ -45,4 +57,24 @@
             </div>
         {% endblock  %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $('.ui.search')
+            .search({
+                type: 'category',
+                apiSettings: {
+                    action: 'search',
+                    url: '{{ path('search_autocomplete')}}?query={query}',
+                },
+                minCharacters : 3,
+                fields: {
+                    title: 'title',
+                    url: 'url'
+                }
+            });
+    </script>
 {% endblock %}

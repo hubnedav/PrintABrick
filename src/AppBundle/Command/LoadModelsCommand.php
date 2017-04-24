@@ -43,6 +43,11 @@ class LoadModelsCommand extends ContainerAwareCommand
 
         $ldraw = $input->getArgument('ldraw');
 
+        if(!$input->getOption('file') && !$input->getOption('all')){
+            $output->writeln('Either the --all or --file option is required');
+            return 1;
+        }
+
         if ($ldrawPath = realpath($ldraw)) {
             $modelLoader->setLDrawLibraryContext($ldrawPath);
 

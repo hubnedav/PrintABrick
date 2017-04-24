@@ -17,7 +17,12 @@
     {% endif %}
 
     {% if part.model %}
-        {{ elements.part(part.model) }}
+        <a href="{{ url('model_detail', {'number': part.model.number})}}">
+            <div class="image load">
+                <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/-1/'~part.model.number~'.png') | imagine_filter('model_min') }}" class="transition visible">
+            </div>
+            <div class="ui bottom attached label">{{ part.model.number }}</div>
+        </a>
     {% endif %}
 
     <h4 class="ui horizontal divider header">
@@ -29,7 +34,9 @@
         <div class="column">
             <div class="ui fluid bordered image">
                 <a href="{{ url('set_detail', {number:set.number}) }}">
-                    <img class="ui bordered image" src="{{ set.number|setImage|imagine_filter('rebrickable_set_min') }}">
+                    <div class="image load">
+                    <img class="ui bordered" src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ set.number|setImage|imagine_filter('rebrickable_set_min') }}">
+                    </div>
                     <div class="ui bottom attached label">{{ set.number }}<br></div>
                 </a>
             </div>

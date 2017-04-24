@@ -26,6 +26,9 @@
                     <tr>
                         <th>author</th><td>{{ model.author.name }}</td>
                     </tr>
+                    <tr>
+                        <th>sets</th><td>{{ sets|length }}</td>
+                    </tr>
                 </table>
 
                 <dl>
@@ -38,26 +41,15 @@
                     <dt>aliases:</dt>
                     <dd>
                         {% for alias in model.aliases %}
-                            <span>{{ alias.number }}</span>{%  if not loop.last %},{% endif %}
+                        <span>{{ alias.number }}</span>{%  if not loop.last %},{% endif %}
                         {% endfor %}
                     </dd>
                     <dd>Download:</dd>
                     <dt><a href="{{ url('media_file', {'path': model.path}) }}">{{ model.number }}</a></dt>
-                    <dt>rebrickable parts ({{ rbParts|length }}):</dt>
-                    <dd>
-                        {#<p>#}
-                        {#<div class="ui eight doubling cards">#}
-                        {#{% for alias in rbParts %}#}
-                        {#<a href="{{ url('reb_part_detail', {number:alias.number}) }}" class="ui label">{{ alias.number }}</a>#}
-                        {#{% endfor %}#}
-                        {#</div>#}
-                        {#</p>#}
-                    </dd>
                 </dl>
             </div>
         </div>
     </div>
-
 
     <h4 class="ui horizontal divider header">
         Related Models
@@ -72,6 +64,8 @@
         {% for subpart in model.subparts  %}
             <div class="column">
                 {{ elements.part(subpart.subpart) }}
+                <p>{{ subpart.count }}</p>
+                <p style="border-bottom: 2px solid #{{ subpart.color.rgb }}">color: {{ subpart.color.name }}</p>
             </div>
         {% endfor %}
     </div>
@@ -105,7 +99,7 @@
     </h4>
 
     {% for set in sets %}
-        <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
+    <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
     {% endfor %}
 
 

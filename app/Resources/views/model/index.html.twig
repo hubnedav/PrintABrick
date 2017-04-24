@@ -7,32 +7,42 @@
 {% block header %}{{ 'page.model.index' | trans }}{% endblock %}
 
 {% block content %}
-<div class="ui container stackable grid">
-    <div class="column four wide">
-    <form method="get" action="" class="ui form">
-        {{ form_start(form) }}
+    <div class="ui container divided stackable grid">
+        <div class="row">
+            <div class="column four wide">
+                <form method="get" action="" class="ui form">
+                    {{ form_start(form) }}
 
-        {{ form_row(form.search) }}
-        <div class="field fluid search selection">
-            {{ form_label(form.category.id) }}
-            {{ form_widget(form.category.id) }}
-        </div>
-        <div class="field">
-            <input class="ui submit button" type="submit" value="filter"/>
-        </div>
-        {{ form_end(form) }}
-    </form>
-    </div>
-    <div class="column twelve wide">
-        {{ knp_pagination_render(models) }}
-    <p>{{ models.getTotalItemCount }}</p>
-    <div class="ui eight column grid">
-        {% for model in models %}
-            {{ elements.part(model) }}
-        {% endfor %}
-    </div>
+                    {{ form_row(form.search) }}
+                    <div class="field fluid search selection">
+                        {{ form_label(form.category.id) }}
+                        {{ form_widget(form.category.id) }}
+                    </div>
+                    <div class="field">
+                        <input class="ui submit button" type="submit" value="filter"/>
+                    </div>
+                    {{ form_end(form) }}
+                </form>
+            </div>
+            <div class="column twelve wide">
+                <div class="ui eight column doubling grid">
+                    {% for model in models %}
+                        <div class="column">
+                            <div class="ui bordered fluid image">
+                                <a href="{{ url('model_detail', {'number': model.number})}}">
+                                    <div class="image load">
+                                        <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/-1/'~model.number~'.png') | imagine_filter('model_min') }}" class="transition visible">
+                                    </div>
+                                    <div class="ui bottom attached label {%  if model.parts|length == 0 %}black{% endif %}">{{ model.number }}</div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
 
-    {{ knp_pagination_render(models) }}
+                {{ knp_pagination_render(models) }}
+                <p>{{ models.getTotalItemCount }}</p>
+            </div>
+        </div>
     </div>
-</div>
 {% endblock %}

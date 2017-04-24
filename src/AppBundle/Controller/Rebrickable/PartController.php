@@ -19,28 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 class PartController extends Controller
 {
     /**
-     * @Route("/", name="part_index")
-     */
-    public function indexAction(Request $request)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $queryBuilder = $em->getRepository(Part::class)->createQueryBuilder('part');
-        $queryBuilder->where('part.category = 17');
-
-        $paginator = $this->get('knp_paginator');
-        $sets = $paginator->paginate(
-            $queryBuilder->getQuery(),
-            $request->query->getInt('page', 1)/*page number*/,
-            $request->query->getInt('limit', 30)/*limit per page*/
-        );
-
-        return $this->render(':rebrickable/part:index.html.twig', [
-            'parts' => $sets,
-        ]);
-    }
-
-    /**
      * Finds and displays a part entity.
      *
      * @Route("/{number}", name="reb_part_detail")

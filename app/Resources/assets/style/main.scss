@@ -6,11 +6,15 @@
     box-shadow: none;
   }
 
+  .ui.menu .ui.search .prompt {
+    border-radius: 0;
+  }
+
   .item-info {
     min-height: 300px;
   }
 
-  .ui.fixed + .ui.main {
+  .ui.fixed + .ui.header {
     margin-top: 3em;
     padding-bottom: 4em;
   }

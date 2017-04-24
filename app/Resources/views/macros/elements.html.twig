@@ -2,11 +2,8 @@
     <div class="column">
         <div class="ui bordered fluid image">
             <a href="{{ url('model_detail', {'number': model.number})}}">
-                <div class="image">
-                    <img src="{{ asset('/images/-1/'~model.number~'.png') | imagine_filter('model_min') }}" data-src="{{ asset('/ldraw/images/-1/'~model.number~'.png') | imagine_filter('model_min') }}" class="transition visible">
-                    {#<div class="image load">#}
-                        {#<img src="{{ model.number|partImage|imagine_filter('rebrickable_part_min') }}" data-src="{{ model.number|partImage|imagine_filter('rebrickable_part_min') }}" class="transition visible">#}
-                    {#</div>#}
+                <div class="image load">
+                    <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/-1/'~model.number~'.png') | imagine_filter('model_min') }}" class="transition visible">
                 </div>
                 <div class="ui bottom attached label {%  if model.parts|length == 0 %}black{% endif %}">{{ model.number }}</div>
             </a>

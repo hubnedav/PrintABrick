@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {% set count = 0 %}
+
+<div class="ui ten column grid">
+    {% for model in models %}
+        <div class="column">
+            <div class="ui bordered fluid image">
+                <a href="{{ url('model_detail', {'number': model['model'].number})}}">
+                    <div class="image load">
+                        <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/-1/'~model['model'].number~'.png') | imagine_filter('model_min') }}" class="transition visible">
+                    </div>
+                    <div class="ui bottom attached label {%  if model['model'].parts|length == 0 %}black{% endif %}">{{ model['model'].number }}</div>
+                </a>
+            </div>
+            {% for color in model['colors'] %}
+                {% set count = count + color['quantity'] %}
+                <div style="border-bottom: 4px solid #{{ color['color'].rgb }}">{{ color['quantity'] }} {{ color['color'].name }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+
+<div class="ui ten column grid">
+    {% for model in spareModels %}
+        <div class="column">
+            <div class="ui bordered fluid image">
+                <a href="{{ url('model_detail', {'number': model['model'].number})}}">
+                    <div class="image load">
+                        <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/-1/'~model['model'].number~'.png') | imagine_filter('model_min') }}" class="transition visible">
+                    </div>
+                    <div class="ui bottom attached label {%  if model['model'].parts|length == 0 %}black{% endif %}">{{ model['model'].number }}</div>
+                </a>
+            </div>
+            {% for color in model['colors'] %}
+                {% set count = count + color['quantity'] %}
+                <div style="border-bottom: 4px solid #{{ color['color'].rgb }}">{{ color['quantity'] }} {{ color['color'].name }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+<p>{{ set.partCount }}</p>
+<p>{{ count }} models</p>
+
+{% endblock %}

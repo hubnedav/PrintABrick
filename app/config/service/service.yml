@@ -1,11 +1,4 @@
 services:
-    app.twig_extension:
-        class: AppBundle\Twig\AppExtension
-        public: false
-        arguments: ['@api.manager.rebrickable', '@app.transformer.format']
-        tags:
-            - { name: twig.extension }
-
     app.brickset.cache_provider:
           class: Doctrine\Common\Cache\PhpFileCache
           arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]

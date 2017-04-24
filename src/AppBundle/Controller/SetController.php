@@ -25,7 +25,8 @@ class SetController extends Controller
         $form = $this->get('form.factory')->create(SetFilterType::class);
 
         $filterBuilder = $this->get('repository.rebrickable.set')
-            ->createQueryBuilder('s');
+            ->createQueryBuilder('s')
+            ->orderBy('s.year','DESC');
 
         if ($request->query->has($form->getName())) {
             // manually bind values from the request
@@ -55,13 +56,15 @@ class SetController extends Controller
     {
         $rebrickableSet = null;
         $bricksetSet = null;
+        $colors = null;
+
         try {
-            if (($rebrickableSet = $this->getDoctrine()->getManager()->getRepository(Set::class)->find($number)) == null) {
+            if (($rebrickableSet = $this->get('repository.rebrickable.set')->find($number)) == null) {
                 $this->addFlash('warning', 'Set not found in Rebrickable database');
             }
 
             $bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($number);
-            dump($bricksetSet);
+
         } catch (EmptyResponseException $e) {
             $this->addFlash('warning', 'Set not found in Brickset database');
         } catch (ApiException $e) {

@@ -9,6 +9,7 @@ parameters:
     locale: en
     # rebrickable csv files root URL (http://rebrickable.com/media/downloads/ or local dir containing csv files)
     rebrickable_downloads_url: 'http://rebrickable.com/media/downloads/'
+    media_root: "%kernel.root_dir%/../var/media/"
 
 framework:
     #esi:             ~
@@ -104,6 +105,10 @@ liip_imagine:
         rebrickable:
               stream:
                   wrapper: 'http://rebrickable.com/media/'
+        brickset:
+              stream:
+                  wrapper: 'https://images.brickset.com/'
+
 
     resolvers:
         default:
@@ -126,7 +131,7 @@ liip_imagine:
                   thumbnail: { size: [800, 600], mode: inset }
                   background: { size: [1100, 800], position: center, color: '#FFFFFF' }
         rebrickable:
-                      data_loader: rebrickable
+              data_loader: rebrickable
         rebrickable_part_min:
               quality: 80
               data_loader: rebrickable
@@ -140,12 +145,31 @@ liip_imagine:
               default_image: '/resources/images/unknown_image.png'
               cache: ~
               filters:
-                  thumbnail: { size: [250, 250], mode: inset }
+                  thumbnail: { size: [250, 200], mode: inset }
+                  background: { size: [250, 200], position: center, color: '#FFFFFF' }
+
+        rebrickable_large:
+              data_loader: rebrickable
+              cache: ~
+              quality: 92
+              filters:
+                  thumbnail: { size: [840, 580], mode: inset }
+                  background: { size: [900, 600], position: center, color: '#FFFFFF' }
+
+        brickset:
+              data_loader: brickset
+        brickset_large:
+              data_loader: brickset
+              cache: ~
+              quality: 92
+              filters:
+                  thumbnail: { size: [840, 580], mode: inset }
+                  background: { size: [900, 600], position: center, color: '#FFFFFF' }
 oneup_flysystem:
     adapters:
         media:
             local:
-                directory: "%kernel.root_dir%/../var/media/"
+                directory: "%media_root%"
     filesystems:
         media:
             adapter: media

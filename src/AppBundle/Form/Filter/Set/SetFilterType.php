@@ -19,6 +19,14 @@ class SetFilterType extends AbstractType
             'label' => 'filter.part.search',
         ]);
 
+        $builder->add('partCount', Filters\NumberRangeFilterType::class, [
+            'label' => 'filter.part.partCount',
+        ]);
+
+        $builder->add('year', Filters\NumberRangeFilterType::class, [
+            'label' => 'filter.part.year',
+        ]);
+
         $builder->add('theme', ThemeFilterType::class, [
             'add_shared' => function (FilterBuilderExecuterInterface $builderExecuter) {
                 $builderExecuter->addOnce($builderExecuter->getAlias().'.theme', 'c', function (QueryBuilder $filterBuilder, $alias, $joinAlias, $expr) {
@@ -26,6 +34,7 @@ class SetFilterType extends AbstractType
                 });
             },
         ]);
+
     }
 
     public function getBlockPrefix()

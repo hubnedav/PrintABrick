@@ -1,36 +1,60 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ 'page.set.index' | trans }}{% endblock %}
+
+{% block header %}{{ 'page.set.index' | trans }}{% endblock %}
+
 {% block content %}
 
-    <form method="get" action="" class="ui form">
-        {{ form_start(form) }}
-
-        {{ form_row(form.search) }}
-        <div class="field fluid search selection">
-            {{ form_label(form.theme.id) }}
-            {{ form_widget(form.theme.id) }}
-        </div>
-        <div class="field">
-            <input class="ui submit button" type="submit" value="filter"/>
-        </div>
-        {{ form_rest(form) }}
-        {{ form_end(form) }}
-    </form>
-
-    <div class="ui seven column grid">
+    <div class="ui container divided stackable grid">
         <div class="row">
-            {% for set in sets %}
-                <div class="column">
-                   <a href="{{ url('set_detail', {'number': set.number, 'name' : set.name|escape('url') }) }}">
-                       <img class="ui bordered image medium" src="{{ set.number|setImage|imagine_filter('rebrickable_set_min') }}">
-                       <p>{{ set.number }} - {{ set.name }}</p>
-                   </a>
+            <div class="column four wide">
+                <form method="get" action="" class="ui form">
+                    {{ form_start(form) }}
+
+                    {{ form_row(form.search) }}
+                    <div class="field fluid search selection">
+                        {{ form_label(form.theme.id) }}
+                        {{ form_widget(form.theme.id) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(form.partCount) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(form.year) }}
+                    </div>
+
+                    <div class="field">
+                        <input class="ui submit button" type="submit" value="filter"/>
+                    </div>
+                    {{ form_rest(form) }}
+                    {{ form_end(form) }}
+                </form>
+            </div>
+            <div class="column twelve wide">
+                <div class="ui six column doubling grid">
+                    <div class="row">
+                        {% for set in sets %}
+                            <div class="column">
+                                <a href="{{ url('set_detail', {'number': set.number}) }}">
+                                    <img class="ui bordered image medium" src="{{ set.number|setImage|imagine_filter('rebrickable_set_min') }}">
+                                    <p>{{ set.number }} - {{ set.name }}</p>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            {% endfor %}
+
+
+                <p>{{ sets.getTotalItemCount }}</p>
+
+                {{ knp_pagination_render(sets) }}
+            </div>
         </div>
     </div>
+{% endblock %}
 
-    <p>{{ sets.getTotalItemCount }}</p>
+{% block javascripts %}
+    {{ parent() }}
 
-    {{ knp_pagination_render(sets) }}
 {% endblock %}

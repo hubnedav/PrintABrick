@@ -1,5 +1,5 @@
 <div class="ui comments">
-    {% for review in reviews %}
+    {% for review in reviews|slice(0, 3) %}
         <div class="comment">
             <a class="avatar">
                 {#<img src="/images/avatar/small/matt.jpg">#}
@@ -18,7 +18,8 @@
                 </div>
                 <div>
                     Overall rating <div class="ui star rating" data-rating="{{ review.overallRating }}" data-max-rating="5"></div>
-                    {#Value for money <div class="ui star rating" data-rating="{{ review.valueForMoney }}" data-max-rating="5"></div>#}
+                    Value for money <div class="ui star rating" data-rating="{{ review.valueForMoney }}" data-max-rating="5"></div>
+                    Playability <div class="ui star rating" data-rating="{{ review.playability }}" data-max-rating="5"></div>
                 </div>
             </div>
         </div>

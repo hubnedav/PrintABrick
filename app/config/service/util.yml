@@ -6,3 +6,10 @@ services:
         class: AppBundle\Util\RelationMapper
         arguments:
             - ['%kernel.root_dir%/Resources/relations']
+
+    app.twig_extension:
+        class: AppBundle\Twig\AppExtension
+        public: false
+        arguments: ['@api.manager.rebrickable', '@app.transformer.format']
+        tags:
+            - { name: twig.extension }

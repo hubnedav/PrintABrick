@@ -79,14 +79,12 @@ abstract class BaseLoader
 
     protected function progressCallback($notification_code, $severity, $message, $message_code, $bytes_transferred, $bytes_max)
     {
-        $this->logger->info($notification_code);
-
         switch ($notification_code) {
             case STREAM_NOTIFY_FILE_SIZE_IS:
                 $this->initProgressBar($bytes_max);
                 $this->progressBar->setFormat('download');
                 $this->progressBar->setMessage($this->formatTransformer->bytesToSize($bytes_max),'size');
-                $this->progressBar->setRedrawFrequency($bytes_max/20);
+                $this->progressBar->setRedrawFrequency(1024*1024);
                 break;
             case STREAM_NOTIFY_PROGRESS:
                 $this->progressBar->setProgress($bytes_transferred);

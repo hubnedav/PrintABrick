@@ -16,11 +16,10 @@ class Inventory_PartRepository extends BaseRepository
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
 
         $queryBuilder = $this->createQueryBuilder('inventory_part')
-            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = inventory')
+            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = :inventory')
             ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part.number')
             ->where('part.category != 17')
-            ->andWhere('inventory.id = :inventoryId')
-            ->setParameter('inventoryId', $inventory->getId())
+            ->setParameter('inventory', $inventory)
             ->andWhere('inventory_part.spare = FALSE')
             ->distinct(true);
 
@@ -32,12 +31,28 @@ class Inventory_PartRepository extends BaseRepository
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
 
         $queryBuilder = $this->createQueryBuilder('inventory_part')
+            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = :inventory')
+            ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part.number')
+            ->where('part.category != 17')
+            ->setParameter('inventory', $inventory)
+            ->andWhere('inventory_part.spare = TRUE')
+            ->distinct(true);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function findAllBySetNumberAndColor($number, $color)
+    {
+        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
+
+        $queryBuilder = $this->createQueryBuilder('inventory_part')
             ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = inventory')
             ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part.number')
             ->where('part.category != 17')
             ->andWhere('inventory.id = :inventoryId')
             ->setParameter('inventoryId', $inventory->getId())
-            ->andWhere('inventory_part.spare = TRUE')
+            ->andWhere('inventory_part.color = :color')
+            ->setParameter('color', $color)
             ->distinct(true);
 
         return $queryBuilder->getQuery()->getResult();

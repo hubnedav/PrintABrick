@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Rebrickable;
 
+use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Color;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Entity\Rebrickable\Inventory_Set;
@@ -28,17 +29,45 @@ class SetController extends Controller
 
         $regularParts = $em->getRepository(Inventory_Part::class)->findAllRegularBySetNumber($set->getNumber());
         $spareParts = $em->getRepository(Inventory_Part::class)->findAllSpareBySetNumber($set->getNumber());
+        $models = $em->getRepository(Model::class)->findAllBySetNumber($set->getNumber());
 
-        $template = $this->render('rebrickable/set/parts.html.twig', [
+        $template = $this->render('rebrickable/set/inventory.html.twig', [
             'regularParts' => $regularParts,
             'spareParts' => $spareParts,
+            'models' => $models,
         ]);
 
-        $json = json_encode($template->getContent());
-        $response = new Response($json, 200);
-        $response->headers->set('Content-Type', 'application/json');
+//        $json = json_encode($template->getContent());
+//        $response = new Response($json, 200);
+//        $response->headers->set('Content-Type', 'application/json');
+//
+//        return $response;
 
-        return $response;
+        return $template;
+    }
+
+    /**
+     * @Route("/{number}/models", name="rebrickable_set_models")
+     */
+    public function modelsAction(Set $set)
+    {
+        $models = null;
+
+        try {
+            $this->get('repository.ldraw.model')->findAllBySetNumber($set->getNumber());
+            $models = $this->get('service.set')->getModels($set);
+            $spareModels = $this->get('service.set')->getSpareModels($set);
+
+//            $models = $this->get('repository.ldraw.model')->findAllRegularBySetNumber($set->getNumber());
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        return $this->render('rebrickable/set/models.html.twig', [
+            'set' => $set,
+            'models' => $models,
+            'spareModels' => $spareModels
+        ]);
     }
 
     /**

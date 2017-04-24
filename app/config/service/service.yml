@@ -10,3 +10,7 @@ services:
     service.ldview:
         class: AppBundle\Service\LDViewService
         arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
+
+    service.set:
+        class: AppBundle\Service\SetService
+        arguments: ['@repository.rebrickable.inventorypart']

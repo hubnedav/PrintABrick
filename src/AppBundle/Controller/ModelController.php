@@ -6,10 +6,12 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Form\Filter\Model\ModelFilterType;
+use Doctrine\ORM\Query\AST\ConditionalTerm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Part controller.
@@ -52,7 +54,7 @@ class ModelController extends Controller
     }
 
     /**
-     * Finds and displays a part entity.
+     * Finds and displays a model entity.
      *
      * @Route("/{number}", name="model_detail")
      * @Method("GET")
@@ -61,6 +63,7 @@ class ModelController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var Model $model */
         if ($model = $this->get('repository.ldraw.model')->findOneByNumber($number)) {
             try {
                 $rbParts = $model != null ? $em->getRepository(Part::class)->findAllByModel($model) : null;
@@ -80,5 +83,23 @@ class ModelController extends Controller
         }
 
         return $this->render('error/error.html.twig');
+    }
+
+    /**
+     * @Route("/{number}/download", name="model_download")
+     * @Method("GET")
+     */
+    public function downloadAction(Model $model)
+    {
+        $zip = $this->get('service.zip')->create($model);
+
+        dump($zip);
+
+        $response = new Response(file_get_contents($zip));
+        $response->headers->set('Content-Type', 'application/zip');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . basename($zip) . '"');
+        $response->headers->set('Content-length', filesize($zip));
+
+        return $response;
     }
 }

@@ -85,7 +85,7 @@ class StlRendererService
      *
      * Generated file is saved to tmp directory specifed in constructor of this class and path to file is returned
      *
-     * stl2pov (version 3.3.0) - https://rsmith.home.xs4all.nl/software/py-stl-stl2pov.html
+     * stl2pov (version 3.3.0) - https://github.com/rsmith-nl/stltools/releases/tag/3.3
      *
      * @param string $file The full path to stl file
      * @return string Return the full path to the generated pov scene

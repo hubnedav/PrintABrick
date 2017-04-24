@@ -38,7 +38,6 @@ class RebrickableLoader extends BaseLoader
                 'Loading CSV files into database...',
             ]);
 
-            $this->loadColorTable($this->csvFile['colors']);
             $this->loadCategoryTable($this->csvFile['part_categories']);
             $this->loadPartTable($this->csvFile['parts']);
             $this->loadThemeTable($this->csvFile['themes']);
@@ -87,7 +86,6 @@ class RebrickableLoader extends BaseLoader
             TRUNCATE TABLE rebrickable_theme;
             TRUNCATE TABLE rebrickable_part;
             TRUNCATE TABLE rebrickable_category;
-            TRUNCATE TABLE rebrickable_color;
            ';
 
         return $this->em->getConnection()->prepare($query)->execute();
@@ -97,6 +95,7 @@ class RebrickableLoader extends BaseLoader
     {
         $query = sprintf("LOAD DATA LOCAL INFILE '%s' 
             REPLACE INTO TABLE %s
+            CHARACTER SET UTF8
             FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
             LINES TERMINATED BY '\\n'
             IGNORE 1 LINES %s", addslashes($file), $table, $columns);
@@ -158,6 +157,6 @@ class RebrickableLoader extends BaseLoader
 
     private function loadColorTable($csv)
     {
-        return $this->loadCsvFile($csv, 'rebrickable_color', '(`id`,`name`,`rgb`, @var) SET transparent = IF(@var=\'t\',1,0)');
+        return $this->loadCsvFile($csv, 'color', '(`id`,`name`,`rgb`, @var) SET transparent = IF(@var=\'t\',1,0)');
     }
 }

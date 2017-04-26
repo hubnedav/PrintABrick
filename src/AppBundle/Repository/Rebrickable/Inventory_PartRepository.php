@@ -3,6 +3,7 @@
 namespace AppBundle\Repository\Rebrickable;
 
 use AppBundle\Entity\LDraw\Category;
+use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Entity\Rebrickable\Part;
@@ -11,32 +12,38 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class Inventory_PartRepository extends BaseRepository
 {
-    public function findAllRegularBySetNumber($number)
+    /**
+     * Finds all inventoty_parts in newest inventory of set.
+     *
+     * @param string $number Unique number identifier of set
+     * @param bool $spare If true - find all spare parts, false - find all regular parts, null - spare and regular parts
+     * @param bool $model If true - find all parts with model relation, false - find all parts without model relation, null - all parts
+     * @return array
+     */
+    public function findAllBySetNumber($number, $spare = null, $model = null)
     {
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
 
         $queryBuilder = $this->createQueryBuilder('inventory_part')
-            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = :inventory')
-            ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part.number')
-            ->where('part.category != 17')
-            ->setParameter('inventory', $inventory)
-            ->andWhere('inventory_part.spare = FALSE')
-            ->distinct(true);
+            ->where('inventory_part.inventory = :inventory')
+            ->setParameter('inventory', $inventory);
 
-        return $queryBuilder->getQuery()->getResult();
-    }
 
-    public function findAllSpareBySetNumber($number)
-    {
-        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
+        if($spare !== null) {
+            $queryBuilder
+                ->andWhere('inventory_part.spare = :spare')
+                ->setParameter('spare', $spare);
+        }
 
-        $queryBuilder = $this->createQueryBuilder('inventory_part')
-            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = :inventory')
-            ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part.number')
-            ->where('part.category != 17')
-            ->setParameter('inventory', $inventory)
-            ->andWhere('inventory_part.spare = TRUE')
-            ->distinct(true);
+        if($model !== null) {
+            $queryBuilder
+                ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part');
+            if($model === true) {
+                $queryBuilder->andWhere('part.model IS NOT NULL');
+            } else {
+                $queryBuilder->andWhere('part.model IS NULL');
+            }
+        }
 
         return $queryBuilder->getQuery()->getResult();
     }
@@ -46,14 +53,10 @@ class Inventory_PartRepository extends BaseRepository
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
 
         $queryBuilder = $this->createQueryBuilder('inventory_part')
-            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = inventory')
-            ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part.number')
-            ->where('part.category != 17')
-            ->andWhere('inventory.id = :inventoryId')
-            ->setParameter('inventoryId', $inventory->getId())
+            ->where('inventory_part.inventory = :inventory')
+            ->setParameter('inventory', $inventory)
             ->andWhere('inventory_part.color = :color')
-            ->setParameter('color', $color)
-            ->distinct(true);
+            ->setParameter('color', $color);
 
         return $queryBuilder->getQuery()->getResult();
     }

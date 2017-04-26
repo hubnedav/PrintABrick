@@ -3,7 +3,6 @@
 namespace AppBundle\Repository\Rebrickable;
 
 use AppBundle\Entity\LDraw\Model;
-use AppBundle\Entity\LDraw\Part;
 use AppBundle\Entity\Rebrickable\Category;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
@@ -40,12 +39,12 @@ class PartRepository extends BaseRepository
     {
         $queryBuilder = $this->createQueryBuilder('part');
 
+        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
+
         $queryBuilder
             ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'part.number = inventory_part.part')
-            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory_part.inventory = inventory.id')
-            ->join(Set::class, 's', Join::WITH, 'inventory.set = s.number')
-            ->where('s.number LIKE :number')
-            ->setParameter('number', $number)
+            ->where('inventory_part.inventory = :inventory')
+            ->setParameter('inventory', $inventory)
             ->distinct(true);
 
         return $queryBuilder->getQuery()->getResult();

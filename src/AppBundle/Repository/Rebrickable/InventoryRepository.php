@@ -4,6 +4,7 @@ namespace AppBundle\Repository\Rebrickable;
 
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Repository\BaseRepository;
+use Doctrine\ORM\Query;
 
 class InventoryRepository extends BaseRepository
 {
@@ -13,8 +14,9 @@ class InventoryRepository extends BaseRepository
             ->where('inventory.set = :setNumber')
             ->setParameter('setNumber', $number)
             ->orderBy('inventory.version', 'DESC')
-            ->setMaxResults(1);
+            ->setMaxResults(1)
+            ->select('inventory.id');
 
-        return $queryBuilder->getQuery()->getOneOrNullResult();
+        return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }

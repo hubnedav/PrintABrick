@@ -30,7 +30,7 @@
         {
             $models = [];
 
-            $inventoryParts = $this->inventoryPartRepository->findAllRegularBySetNumber($set->getNumber());
+            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getNumber(), $spare, true);
 
             /** @var Inventory_Part $inventoryPart */
             foreach ($inventoryParts as $inventoryPart) {
@@ -58,7 +58,7 @@
         {
             $models = [];
 
-            $inventoryParts = $this->inventoryPartRepository->findAllSpareBySetNumber($set->getNumber());
+            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getNumber(), $spare, true);
 
             /** @var Inventory_Part $inventoryPart */
             foreach ($inventoryParts as $inventoryPart) {

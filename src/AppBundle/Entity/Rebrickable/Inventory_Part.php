@@ -23,7 +23,7 @@ class Inventory_Part
     /**
      * @var Color
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Color", inversedBy="inventoryParts")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Color", inversedBy="inventoryParts", fetch="EAGER")
      */
     protected $color;
 
@@ -37,7 +37,7 @@ class Inventory_Part
     /**
      * @var Part
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Part", inversedBy="inventoryParts")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Rebrickable\Part", inversedBy="inventoryParts", fetch="EAGER")
      */
     protected $part;
 

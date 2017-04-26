@@ -15,8 +15,6 @@ class SetRepository extends BaseRepository
 {
     public function findAllByTheme(Theme $theme)
     {
-        dump($this->getEntityManager()->getRepository(Theme::class)->findAllSubthemes($theme));
-
         $queryBuilder = $this->createQueryBuilder('s')
             ->join(Theme::class, 'theme', Join::WITH, 's.theme = theme')
             ->where('theme.id = :id')

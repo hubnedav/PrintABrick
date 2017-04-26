@@ -37,7 +37,7 @@ class Part
     /**
      * @var Model
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="parts")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Model", inversedBy="parts", fetch="EAGER")
      */
     private $model;
 

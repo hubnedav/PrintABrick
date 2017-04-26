@@ -18,9 +18,8 @@ class ModelRepository extends BaseRepository
     public function getFilteredQueryBuilder()
     {
         $queryBuilder = $this->createQueryBuilder('model')
-//            ->where('model.name NOT LIKE :obsolete')
-//            ->setParameter('obsolete','~%')
-        ;
+            ->where('model.name NOT LIKE :obsolete')
+            ->setParameter('obsolete','~%');
 
         return $queryBuilder;
     }
@@ -62,7 +61,7 @@ class ModelRepository extends BaseRepository
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
 
         $queryBuilder = $this->createQueryBuilder('model');
-        
+
         $queryBuilder
             ->join(Part::class, 'part', JOIN::WITH, 'part.model = model')
             ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'part.number = inventory_part.part')

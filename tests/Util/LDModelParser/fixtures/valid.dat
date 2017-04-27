@@ -1,0 +1,31 @@
+0 Category Name
+0 Name: 1234.dat
+0 Author: Author [nickname]
+0 !LDRAW_ORG Part UPDATE 2017-04
+0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt
+
+0 BFC CERTIFY CCW
+
+0 !CATEGORY Category!
+
+0 !KEYWORDS keyword1, keyword 2, keyword3
+0 !KEYWORDS keyword4,
+
+0 !HISTORY 2017-04-01 [nickname] Official Update 2017-04
+
+
+0 // comment
+
+ 1 1 0 -72 0 1 0 0 0 1 0 0 0 1 submodel.dat
+  1 1 0 -34 0 1 0 0 0 1  0 0 0 1   submodel.DAT
+
+  4 0 7.47 9.26 -10.343 7.59 8.99 -10.263 7.45 8.7 -10.356 6.708 8.556 -10.853
+  4 0 7.19 9.36 -10.53 7.47 9.26 -10.343 6.708 8.556 -10.853 6.56 9.32 -10.951
+  4 0 7.19 9.36 -10.53 6.56 9.32 -10.951 6.59 9.57 -10.931 7 9.988 -10.657
+  4 0 7 9.988 -10.657 6.59 9.57 -10.931 6.25 9.91 -11.158 6.47 10.51 -11.011
+  4 0 6.47 10.51 -11.011 6.25 9.91 -11.158 5.81 10.14 -11.453 5.74 10.85 -11.499
+  4 0 5.74 10.85 -11.499 5.81 10.14 -11.453 5.34 10.31 -11.767 4.975 11.08 -12.0111
+  4 0 4.975 11.08 -12.0111 5.34 10.31 -11.767 5.2 9 -11.86 4.975 8.24 -12.0111
+
+0 BFC INVERTNEXT
+1     16 0 -34 0 1 0 0 0 1  0 0 0 1   submodel.Dat

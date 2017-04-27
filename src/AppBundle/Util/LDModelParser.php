@@ -58,7 +58,7 @@ class LDModelParser
                 if (!$firstLine) {
                     $array = explode(' ', ltrim(trim($line, 2), '=_~'));
                     $model['category'] = isset($array[0]) ? $array[0] : '';
-                    $model['name'] = preg_replace('/ {2,}/', ' ', ltrim($line, '=_'));
+                    $model['name'] = preg_replace('/ {2,}/', ' ', ltrim($line, '_'));
 
                     $firstLine = true;
                 }
@@ -68,7 +68,13 @@ class LDModelParser
                 }
                 // 0 !KEYWORDS <first keyword>, <second keyword>, ..., <last keyword>
                 elseif (strpos($line, '!KEYWORDS ') === 0) {
-                    $model['keywords'] = explode(', ', preg_replace('/^!KEYWORDS /', '', $line));
+                    $keywords = explode(',', preg_replace('/^!KEYWORDS /', '', $line));
+                    foreach ($keywords as $keyword) {
+                        $keyword = trim($keyword);
+                        if($keyword) {
+                            $model['keywords'][] = $keyword;
+                        }
+                    }
                 }
                 // 0 Name: <Filename>.dat
                 elseif (strpos($line, 'Name: ') === 0 && !isset($header['id'])) {
@@ -100,7 +106,7 @@ class LDModelParser
                 $id = strtolower($reference['id']);
                 $color = strtolower($reference['color']);
 
-                // group subparts by color and id 
+                // group subparts by color and id
                 if (isset($model['subparts'][$id][$color])) {
                     $model['subparts'][$id][$color] = $model['subparts'][$id][$color] + 1;
                 } else {

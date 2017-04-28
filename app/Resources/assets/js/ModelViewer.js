@@ -1,3 +1,7 @@
+$.fn.ModelViewer = function ( opts ) {
+    return new ModelViewer(this,opts);
+};
+
 var ModelViewer = function($dom_element, model_url) {
     var $this = this;
     this.container = document.createElement('div');
@@ -11,7 +15,12 @@ var ModelViewer = function($dom_element, model_url) {
     this.controls = null;
     this.width  = parseFloat($dom_element.width());
     this.height = parseFloat($dom_element.height());
-    this.scale = 1;
+
+    if( this.height < 30 ) {
+        this.height = this.width/9*6;
+        $dom_element.height(this.height);
+    }
+
     this.wireframe = false;
     this.rendering = false;
     this.container.style.display = "none";
@@ -52,6 +61,7 @@ var ModelViewer = function($dom_element, model_url) {
     renderLoop();
 };
 
+// Initialize model viewer dom element - add buttons
 ModelViewer.prototype.initHtml = function () {
     $this = this;
 
@@ -74,6 +84,7 @@ ModelViewer.prototype.initHtml = function () {
     this.dom_element.append(buttons);
 };
 
+// Initialize camera - set default position and angles
 ModelViewer.prototype.initCamera = function () {
     this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, .1, 300);
     this.camera.position.z = 80;
@@ -153,7 +164,7 @@ ModelViewer.prototype.addModel = function(geometry) {
     geometry.center();
     var mesh = new THREE.Mesh(geometry, material);
 
-    mesh.scale.set(this.scale, this.scale, this.scale);
+    // mesh.scale.set(1);
 
     mesh.geometry.computeFaceNormals();
     mesh.geometry.computeVertexNormals();
@@ -167,12 +178,12 @@ ModelViewer.prototype.addModel = function(geometry) {
 
     maxDim = Math.max(Math.max(dims.x, dims.y), dims.z);
 
-    mesh.position.x = -(mesh.geometry.boundingBox.min.x + mesh.geometry.boundingBox.max.x) / 2 * this.scale;
-    mesh.position.z = -(mesh.geometry.boundingBox.min.y + mesh.geometry.boundingBox.max.y) / 2 * this.scale;
-    mesh.position.y = -mesh.geometry.boundingBox.min.z * this.scale;
+    mesh.position.x = -(mesh.geometry.boundingBox.min.x + mesh.geometry.boundingBox.max.x) / 2;
+    mesh.position.z = -(mesh.geometry.boundingBox.min.y + mesh.geometry.boundingBox.max.y) / 2;
+    mesh.position.y = -mesh.geometry.boundingBox.min.z;
 
-    var positionY = (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z)/2 * this.scale;
-    var positionZ = (mesh.geometry.boundingBox.max.y - mesh.geometry.boundingBox.min.y)/2 * this.scale;
+    var positionY = (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z)/2;
+    var positionZ = (mesh.geometry.boundingBox.max.y - mesh.geometry.boundingBox.min.y)/2;
 
     mesh.position.set(0, positionY, positionZ);
 
@@ -187,28 +198,24 @@ ModelViewer.prototype.loadStl = function(model) {
     var self = this;
 
     var loader = new THREE.STLLoader();
-
-        loader.load(model, function (geometry) {
-                self.addModel(geometry);
-        }
-        );
+    loader.load(model, function (geometry) {
+        self.addModel(geometry);
+    });
 };
 
 ModelViewer.prototype.centerCamera = function(mesh) {
-
     var boxHelper =  new THREE.BoxHelper( mesh );
 
     var sceneCenter = this.objectCenter(mesh);
 
     var geometry = mesh.geometry;
 
-
     var distanceX = ((geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2) / Math.tan(this.camera.fov * this.camera.aspect * Math.PI / 360);
     var distanceY = (geometry.boundingBox.max.y - geometry.boundingBox.min.y) / 2 / Math.tan(this.camera.fov * this.camera.aspect * Math.PI / 360);
     var distanceZ = (geometry.boundingBox.max.z - geometry.boundingBox.min.z) / 2 / Math.tan(this.camera.fov * Math.PI / 360);
 
     var maxDistance = Math.max(Math.max(distanceX, distanceY), distanceZ);
-    maxDistance *= 1.9 * this.scale;
+    maxDistance *= 1.9;
 
     var cameraPosition = this.camera.position.normalize().multiplyScalar(maxDistance);
 

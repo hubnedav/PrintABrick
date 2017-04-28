@@ -6,27 +6,54 @@
 
 {% block content %}
 
-    <table class="ui celled small padded table">
-        <thead>
+<h4 class="ui horizontal divider header">Solid</h4>
+
+<table class="ui celled small padded table">
+    <thead>
+    <tr>
+        <th></th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>RGB</th>
+        <th>Material</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for color in colors if not color.transparent%}
+    <tr>
+        <td style="background-color: #{{ color.rgb }}"></td>
+        <td>{{ color.id }}</td>
+        <td>{{ color.name }}</td>
+        <td>#{{ color.rgb }}</td>
+        <td>{{ color.transparent ? 'Transparent' : 'Solid' }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="ui horizontal divider header">Transparent</h4>
+
+<table class="ui celled small padded table">
+    <thead>
+    <tr>
+        <th></th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>RGB</th>
+        <th>Material</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for color in colors if color.transparent%}
         <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Name</th>
-            <th>RGB</th>
-            <th>Material</th>
+            <td style="background-color: #{{ color.rgb }}"></td>
+            <td>{{ color.id }}</td>
+            <td>{{ color.name }}</td>
+            <td>#{{ color.rgb }}</td>
+            <td>{{ color.transparent ? 'Transparent' : 'Solid' }}</td>
         </tr>
-        </thead>
-        <tbody>
-        {% for color in colors %}
-            <tr>
-                <td style="background-color: #{{ color.rgb }}"></td>
-                <td>{{ color.id }}</td>
-                <td>{{ color.name }}</td>
-                <td>#{{ color.rgb }}</td>
-                <td>{{ color.transparent ? 'Transparent' : 'Solid' }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}

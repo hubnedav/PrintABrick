@@ -1,7 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% import 'macros/elements.html.twig' as elements %}
-
 {% block title %}{{ 'page.model.index' | trans }}{% endblock %}
 
 {% block header %}{{ 'page.model.index' | trans }}{% endblock %}
@@ -30,9 +28,7 @@
                         <div class="column">
                             <div class="ui bordered fluid image">
                                 <a href="{{ url('model_detail', {'number': model.number})}}">
-                                    <div class="image load">
-                                        <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/-1/'~model.number~'.png') | imagine_filter('model_min') }}" class="transition visible">
-                                    </div>
+                                    {{ blocks.modelImageMin(model,-1) }}
                                     <div class="ui bottom attached label {%  if model.parts|length == 0 %}black{% endif %}">{{ model.number }}</div>
                                 </a>
                             </div>

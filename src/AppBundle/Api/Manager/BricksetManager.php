@@ -29,9 +29,8 @@ class BricksetManager
 
     public function getThemes()
     {
-        if(!$data = unserialize($this->cache->fetch('themes')))
-        {
-            $data =  $this->bricksetClient->getThemes();
+        if (!$data = unserialize($this->cache->fetch('themes'))) {
+            $data = $this->bricksetClient->getThemes();
             $this->cache->save('themes', serialize($data), self::CACHE_LIFETIME);
         }
 
@@ -40,11 +39,10 @@ class BricksetManager
 
     public function getSubthemesByTheme($theme)
     {
-        $key = "subthemes-".$theme;
+        $key = 'subthemes-'.$theme;
 
-        if(!$data = unserialize($this->cache->fetch($key)))
-        {
-            $data =  $this->bricksetClient->getSubthemes($theme);
+        if (!$data = unserialize($this->cache->fetch($key))) {
+            $data = $this->bricksetClient->getSubthemes($theme);
             $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
         }
 
@@ -53,11 +51,10 @@ class BricksetManager
 
     public function getYearsByTheme($theme)
     {
-        $key = "years-".$theme;
+        $key = 'years-'.$theme;
 
-        if(!$data = unserialize($this->cache->fetch($key)))
-        {
-            $data =  $this->bricksetClient->getYears($theme);
+        if (!$data = unserialize($this->cache->fetch($key))) {
+            $data = $this->bricksetClient->getYears($theme);
             $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
         }
 
@@ -66,9 +63,9 @@ class BricksetManager
 
     public function getSetById($id)
     {
-        $key = "set-".$id;
+        $key = 'set-'.$id;
 
-        if(!$data = unserialize($this->cache->fetch($key))) {
+        if (!$data = unserialize($this->cache->fetch($key))) {
             $data = $this->bricksetClient->getSet($id);
             $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
         }
@@ -78,10 +75,9 @@ class BricksetManager
 
     public function getSetByNumber($number)
     {
-        $key = "set-".$number;
+        $key = 'set-'.$number;
 
-        if(!$data = unserialize($this->cache->fetch($key)))
-        {
+        if (!$data = unserialize($this->cache->fetch($key))) {
             $sets = $this->bricksetClient->getSets(['setNumber' => $number]);
             $data = isset($sets[0]) ? $sets[0] : null;
 
@@ -93,10 +89,9 @@ class BricksetManager
 
     public function getSetInstructions($id)
     {
-        $key = "instructions-".$id;
+        $key = 'instructions-'.$id;
 
-        if(!$data = unserialize($this->cache->fetch($key)))
-        {
+        if (!$data = unserialize($this->cache->fetch($key))) {
             $data = $this->bricksetClient->getInstructions($id);
             $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
         }
@@ -106,10 +101,9 @@ class BricksetManager
 
     public function getSetReviews($id)
     {
-        $key = "reviews-".$id;
+        $key = 'reviews-'.$id;
 
-        if(!$data = unserialize($this->cache->fetch($key)))
-        {
+        if (!$data = unserialize($this->cache->fetch($key))) {
             $data = $this->bricksetClient->getReviews($id);
             $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
         }
@@ -119,11 +113,10 @@ class BricksetManager
 
     public function getAdditionalImages($id)
     {
-        $key = "images-".$id;
+        $key = 'images-'.$id;
 
-        if(!$data = unserialize($this->cache->fetch($key)))
-        {
-            $data =  $this->bricksetClient->getAdditionalImages($id);
+        if (!$data = unserialize($this->cache->fetch($key))) {
+            $data = $this->bricksetClient->getAdditionalImages($id);
             $this->cache->save($key, serialize($data), self::CACHE_LIFETIME);
         }
 

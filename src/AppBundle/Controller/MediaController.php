@@ -19,7 +19,7 @@ class MediaController extends Controller
      *
      * @return Response
      */
-    public function stlAction($path)
+    public function fileAction($path)
     {
         $mediaFilesystem = $this->get('oneup_flysystem.media_filesystem');
 

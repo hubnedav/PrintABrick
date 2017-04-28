@@ -34,7 +34,6 @@ class SetFilterType extends AbstractType
                 });
             },
         ]);
-
     }
 
     public function getBlockPrefix()

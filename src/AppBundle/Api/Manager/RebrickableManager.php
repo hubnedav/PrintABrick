@@ -157,25 +157,27 @@ class RebrickableManager
         return $this->serializer->denormalize($data, Set::class.'[]', self::FORMAT);
     }
 
-//    /**
-//     * Get a list of all parts (normal + spare) used in a set.
-//     *
-//     * @param $setId
-//     * @param $page
-//     *
-//     * @return
-//     */
-//    public function getSetParts($setId, $page = null)
-//    {
-//        $options = [
-//            'query' => [
-//                'page' => $page,
-//            ],
-//        ];
-//
-//        $response = $this->rebrickableClient->call('GET', 'lego/sets/'.$setId.'/parts', $options);
-//        $data = json_decode($response, true)['results'];
-//
-//        return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
-//    }
+    /**
+     * Get a list of all parts (normal + spare) used in a set.
+     *
+     * @param $setId
+     * @param $page
+     *
+     * @return
+     */
+    public function getSetParts($setId, $page = null)
+    {
+        $options = [
+            'query' => [
+                'page' => $page,
+            ],
+        ];
+
+        $response = $this->rebrickableClient->call('GET', 'lego/sets/'.$setId.'/parts', $options);
+        $data = json_decode($response, true)['results'];
+
+        dump($data);
+
+        return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
+    }
 }

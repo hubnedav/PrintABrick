@@ -26,6 +26,7 @@ class LoadRebrickableDataCommand extends ContainerAwareCommand
             $rebrickableLoader->loadAll();
         } catch (Exception $exception) {
             $output->writeln("<error>{$exception->getMessage()}</error>");
+
             return 1;
         }
     }

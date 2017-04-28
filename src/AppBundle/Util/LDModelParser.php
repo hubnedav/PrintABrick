@@ -47,7 +47,7 @@ class LDModelParser
         ];
 
         $firstLine = false;
-        foreach(explode("\n", $string) as $line) {
+        foreach (explode("\n", $string) as $line) {
             $line = trim($line);
 
             // Comments or META Commands
@@ -71,7 +71,7 @@ class LDModelParser
                     $keywords = explode(',', preg_replace('/^!KEYWORDS /', '', $line));
                     foreach ($keywords as $keyword) {
                         $keyword = trim($keyword);
-                        if($keyword) {
+                        if ($keyword) {
                             $model['keywords'][] = $keyword;
                         }
                     }
@@ -113,7 +113,7 @@ class LDModelParser
                     $model['subparts'][$id][$color] = 1;
                 }
             } elseif (!empty($line) && !in_array($line[0], ['2', '3', '4', '5'])) {
-                throw new ErrorParsingLineException($model['id'],$line);
+                throw new ErrorParsingLineException($model['id'], $line);
             }
         }
 

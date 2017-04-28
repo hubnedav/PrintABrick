@@ -39,25 +39,25 @@ class SearchController extends Controller
     {
         $query = trim(strip_tags($request->get('query')));
 
-        $modelsResult = $this->get('repository.ldraw.model')->findByQuery($query,7);
+        $modelsResult = $this->get('repository.ldraw.model')->findByQuery($query, 7);
 
         $models = [];
         /** @var Model $model */
         foreach ($modelsResult as $model) {
             $models[] = [
                 'title' => $model->getNumber().' '.$model->getName(),
-                'url' => $this->generateUrl('model_detail',['number' => $model->getNumber()]),
+                'url' => $this->generateUrl('model_detail', ['number' => $model->getNumber()]),
             ];
         }
 
-        $setsResult = $this->get('repository.rebrickable.set')->findByQuery($query,7);
+        $setsResult = $this->get('repository.rebrickable.set')->findByQuery($query, 7);
 
         $sets = [];
         /** @var Set $set */
         foreach ($setsResult as $set) {
             $sets[] = [
                 'title' => $set->getNumber().' '.$set->getName(),
-                'url' => $this->generateUrl('set_detail',['number' => $set->getNumber()]),
+                'url' => $this->generateUrl('set_detail', ['number' => $set->getNumber()]),
             ];
         }
 
@@ -71,10 +71,9 @@ class SearchController extends Controller
                 'category1' => [
                     'name' => 'Models',
                     'results' => $models,
-                ]
-            ]
+                ],
+            ],
         ]);
-
 
         return $response;
     }

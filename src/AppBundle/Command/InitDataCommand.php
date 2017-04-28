@@ -31,37 +31,38 @@ class InitDataCommand extends ContainerAwareCommand
         $returnCode = $loadModelsCommand->run(new ArrayInput([
             'command' => 'app:load:models',
             'ldraw' => $input->getArgument('ldraw'),
-            '--all' => true
-        ]),$output);
+            '--all' => true,
+        ]), $output);
 
-        if($returnCode) {
+        if ($returnCode) {
             return 1;
         }
 
         $loadRebrickableCommad = $this->getApplication()->find('app:load:rebrickable');
         $returnCode = $loadRebrickableCommad->run(new ArrayInput([
-            'command' => 'app:load:rebrickable']),$output);
+            'command' => 'app:load:rebrickable', ]), $output);
 
-        if($returnCode) {
+        if ($returnCode) {
             return 1;
         }
 
         $loadRelationsCommand = $this->getApplication()->find('app:load:relations');
 
         $returnCode = $loadRelationsCommand->run(new ArrayInput([
-            'command' => 'app:load:relations']),$output);
+            'command' => 'app:load:relations', ]), $output);
 
-        if($returnCode) {
+        if ($returnCode) {
             return 1;
         }
 
         $loadImagesCommand = $this->getApplication()->find('app:load:images');
-
         $returnCode = $loadImagesCommand->run(new ArrayInput([
-                'command' => 'app:load:images',
-                '--color' => -1,
-                '--rebrickable' => true,
-                '--models' => true
-            ]),$output);
+            'command' => 'app:load:images',
+            '--color' => -1,
+            '--rebrickable' => true,
+            '--models' => true,
+        ]), $output);
+
+        return 0;
     }
 }

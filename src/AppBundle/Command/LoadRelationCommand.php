@@ -21,10 +21,9 @@ class LoadRelationCommand extends ContainerAwareCommand
         $relationLoader = $this->getContainer()->get('service.loader.relation');
         $relationLoader->setOutput($output);
 
-
         $output->writeln([
             '<fg=cyan>------------------------------------------------------------------------------</>',
-            "<fg=cyan>Loading relations between parts and models...</>",
+            '<fg=cyan>Loading relations between parts and models...</>',
             '<fg=cyan>------------------------------------------------------------------------------</>',
         ]);
 

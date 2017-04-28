@@ -39,7 +39,8 @@ class RelationLoader extends BaseLoader
         $this->load($parts);
     }
 
-    private function load($parts) {
+    private function load($parts)
+    {
         $this->initProgressBar(count($parts));
         /** @var Part $part */
         foreach ($parts as $part) {

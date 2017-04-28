@@ -113,7 +113,7 @@ class Brickset extends \SoapClient
 
         $response = $this->call('getSets', $parameters)->sets;
 
-        return is_array($response) ? $response : [$this->getSet($response->getSetID())];
+        return is_array($response) ? $response : [$response];
     }
 
     /**

@@ -30,16 +30,16 @@ class ImageLoader extends BaseLoader
      */
     public function loadColorFromRebrickable($color, $path = null)
     {
-        if(!$path) {
+        if (!$path) {
             $path = $this->rebrickableDownloadUrl."ldraw/parts_{$color}.zip";
         }
 
         $file = $this->downloadFile($path);
         $zip = new \ZipArchive($file);
 
-        if ($zip->open($file) === TRUE) {
+        if ($zip->open($file) === true) {
             $this->output->writeln([
-                "Extracting ZIP file into {$this->mediaFilesystem->getAdapter()->getPathPrefix()}images/{$color}"
+                "Extracting ZIP file into {$this->mediaFilesystem->getAdapter()->getPathPrefix()}images/{$color}",
             ]);
             $zip->extractTo($this->mediaFilesystem->getAdapter()->getPathPrefix().'images'.DIRECTORY_SEPARATOR.$color);
             $zip->close();
@@ -49,18 +49,17 @@ class ImageLoader extends BaseLoader
         }
     }
 
-
     /**
-     * Load images of models
-     *
+     * Load images of models.
      */
-    public function loadMissingModelImages() {
+    public function loadMissingModelImages()
+    {
         $models = $this->em->getRepository(Model::class)->findAll();
 
         $this->initProgressBar(count($models));
         foreach ($models as $model) {
             $this->progressBar->setMessage($model->getNumber());
-            if(!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR.$model->getNumber().'.png')) {
+            if (!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR.$model->getNumber().'.png')) {
                 try {
                     $this->loadModelImage($this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath());
                 } catch (\Exception $e) {
@@ -73,11 +72,12 @@ class ImageLoader extends BaseLoader
     }
 
     /**
-     * Render model and save image into co
+     * Render model and save image into co.
      *
      * @param $file
      */
-    public function loadModelImage($file) {
+    public function loadModelImage($file)
+    {
         $this->stlRendererService->render(
             $file,
             $this->mediaFilesystem->getAdapter()->getPathPrefix().'images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR

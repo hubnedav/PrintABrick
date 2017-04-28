@@ -2,10 +2,7 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Utils\RenderSTL;
-use Libre3d\Render3d\Render3d;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,11 +34,11 @@ class LoadModelImagesCommand extends ContainerAwareCommand
         $color = $input->getOption('color');
         $url = $input->getOption('url');
 
-        if($color !== null && $input->getOption('rebrickable')) {
+        if ($color !== null && $input->getOption('rebrickable')) {
             $imageLoaderService->loadColorFromRebrickable($color, $url);
         }
 
-        if($input->getOption('models')) {
+        if ($input->getOption('models')) {
             $imageLoaderService->loadMissingModelImages();
         }
     }

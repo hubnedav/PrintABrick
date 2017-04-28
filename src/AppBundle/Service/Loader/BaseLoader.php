@@ -69,8 +69,8 @@ abstract class BaseLoader
     protected function initProgressBar($total, $format = 'loader')
     {
         $this->progressBar = new ProgressBar($this->output, $total);
-        ProgressBar::setFormatDefinition('loader', '[%current% / %max%] [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%) (%message%)' . PHP_EOL);
-        ProgressBar::setFormatDefinition('download', '[%progress% / %size%] [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%)' . PHP_EOL);
+        ProgressBar::setFormatDefinition('loader', '[%current% / %max%] [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%) (%message%)'.PHP_EOL);
+        ProgressBar::setFormatDefinition('download', '[%progress% / %size%] [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%)'.PHP_EOL);
         $this->progressBar->setFormat($format);
         $this->progressBar->setBarWidth(70);
 
@@ -83,12 +83,12 @@ abstract class BaseLoader
             case STREAM_NOTIFY_FILE_SIZE_IS:
                 $this->initProgressBar($bytes_max);
                 $this->progressBar->setFormat('download');
-                $this->progressBar->setMessage($this->formatTransformer->bytesToSize($bytes_max),'size');
-                $this->progressBar->setRedrawFrequency(1024*1024);
+                $this->progressBar->setMessage($this->formatTransformer->bytesToSize($bytes_max), 'size');
+                $this->progressBar->setRedrawFrequency(1024 * 1024);
                 break;
             case STREAM_NOTIFY_PROGRESS:
                 $this->progressBar->setProgress($bytes_transferred);
-                $this->progressBar->setMessage($this->formatTransformer->bytesToSize($bytes_transferred),'progress');
+                $this->progressBar->setMessage($this->formatTransformer->bytesToSize($bytes_transferred), 'progress');
                 break;
             case STREAM_NOTIFY_COMPLETED:
                 $this->progressBar->finish();
@@ -128,8 +128,10 @@ abstract class BaseLoader
         return $temp;
     }
 
-    protected function writeOutput(array $lines) {
-        if($this->output)
+    protected function writeOutput(array $lines)
+    {
+        if ($this->output) {
             $this->output->writeln($lines);
+        }
     }
 }

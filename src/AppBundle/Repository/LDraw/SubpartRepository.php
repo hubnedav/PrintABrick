@@ -28,7 +28,7 @@ class SubpartRepository extends BaseRepository
             $subpart = new Subpart();
 
             $colorRepository = $this->getEntityManager()->getRepository(Color::class);
-            if(!($color = $colorRepository->find($colorId))) {
+            if (!($color = $colorRepository->find($colorId))) {
                 $color = $colorRepository->find(-1);
             }
 

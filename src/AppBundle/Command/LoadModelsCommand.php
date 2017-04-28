@@ -34,6 +34,7 @@ class LoadModelsCommand extends ContainerAwareCommand
     {
         if (!$this->lock()) {
             $output->writeln('The command is already running in another process.');
+
             return 1;
         }
 
@@ -43,8 +44,9 @@ class LoadModelsCommand extends ContainerAwareCommand
 
         $ldraw = $input->getArgument('ldraw');
 
-        if(!$input->getOption('file') && !$input->getOption('all')){
+        if (!$input->getOption('file') && !$input->getOption('all')) {
             $output->writeln('Either the --all or --file option is required');
+
             return 1;
         }
 
@@ -86,6 +88,7 @@ class LoadModelsCommand extends ContainerAwareCommand
         } else {
             $output->writeln("<error>{$ldraw} is not a valid path!</error>");
             $this->release();
+
             return 1;
         }
 

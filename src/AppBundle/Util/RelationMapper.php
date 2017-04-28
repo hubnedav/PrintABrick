@@ -58,6 +58,7 @@ class RelationMapper
     private function loadResource($file, $domain)
     {
         try {
+            $this->relations[$domain] = [];
             $this->relations[$domain] = Yaml::parse(file_get_contents($file->getPathname()));
         } catch (ParseException $e) {
             throw new InvalidResourceException(sprintf('Error parsing YAML, invalid file "%s"', $file->getPathname()), 0, $e);

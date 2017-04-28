@@ -3,13 +3,10 @@
 namespace AppBundle\Controller\Rebrickable;
 
 use AppBundle\Api\Exception\EmptyResponseException;
-use AppBundle\Entity\Rebrickable\Category;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Part controller.
@@ -22,7 +19,6 @@ class PartController extends Controller
      * Finds and displays a part entity.
      *
      * @Route("/{number}", name="reb_part_detail")
-     * @Method("GET")
      */
     public function detailAction(Part $part)
     {

@@ -19,7 +19,7 @@ class ModelRepository extends BaseRepository
     {
         $queryBuilder = $this->createQueryBuilder('model')
             ->where('model.name NOT LIKE :obsolete')
-            ->setParameter('obsolete','~%');
+            ->setParameter('obsolete', '~%');
 
         return $queryBuilder;
     }
@@ -70,7 +70,7 @@ class ModelRepository extends BaseRepository
             ->addSelect('inventory_part')
             ->distinct(true);
 
-        return ($queryBuilder->getQuery()->getScalarResult());
+        return $queryBuilder->getQuery()->getScalarResult();
     }
 
     public function findAllBySetNumber($number)
@@ -106,9 +106,9 @@ class ModelRepository extends BaseRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findByQuery($query, $limit = null) {
+    public function findByQuery($query, $limit = null)
+    {
         $queryBuilder = $this->createQueryBuilder('model');
-
 
         $queryBuilder->where(
             $queryBuilder->expr()->orX(
@@ -118,7 +118,7 @@ class ModelRepository extends BaseRepository
             ->setParameter('name', '%'.$query.'%')
             ->setParameter('number', $query.'%');
 
-        if($limit) {
+        if ($limit) {
             $queryBuilder->setMaxResults($limit);
         }
 

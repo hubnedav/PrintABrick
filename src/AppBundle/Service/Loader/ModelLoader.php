@@ -127,7 +127,7 @@ class ModelLoader extends BaseLoader
 
     /**
      * Load model entity and all related submodels into database while generating stl file of model.
-     * Uses LDView to convert LDraw .dat to .stl
+     * Uses LDView to convert LDraw .dat to .stl.
      *
      * @param $file
      *
@@ -219,6 +219,7 @@ class ModelLoader extends BaseLoader
                 }
             } catch (ConvertingFailedException $e) {
                 $this->logger->error($e->getMessage());
+
                 return null;
             }
 
@@ -273,8 +274,8 @@ class ModelLoader extends BaseLoader
             return $context->getAdapter()->getPathPrefix().$filename;
         }
         // Try to find model in current LDRAW\PARTS sub-directory
-        elseif($this->ldrawLibraryContext) {
-            if($this->ldrawLibraryContext->has('parts/'.$filename)) {
+        elseif ($this->ldrawLibraryContext) {
+            if ($this->ldrawLibraryContext->has('parts/'.$filename)) {
                 return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'parts'.DIRECTORY_SEPARATOR.$filename;
             }
             // Try to find model in current LDRAW\P sub-directory
@@ -301,6 +302,7 @@ class ModelLoader extends BaseLoader
             return new Filesystem($adapter);
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
+
             return null;
         }
     }
@@ -327,6 +329,7 @@ class ModelLoader extends BaseLoader
         // Do not include models without permission to redistribute
         elseif ($modelArray['license'] != 'Redistributable under CCAL version 2.0') {
             $this->logger->info('Model skipped.', ['number' => $modelArray['id'], 'license' => $modelArray['license']]);
+
             return false;
         }
 

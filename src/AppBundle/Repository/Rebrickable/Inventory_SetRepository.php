@@ -14,7 +14,7 @@ class Inventory_SetRepository extends BaseRepository
         if ($inventory) {
             $queryBuilder = $this->createQueryBuilder('inventory_set')
                 ->where('inventory_set.inventory = :inventory')
-                ->setParameter('inventory', $inventory->getId());
+                ->setParameter('inventory', $inventory);
 
             return $queryBuilder->getQuery()->getResult();
         }

@@ -2,10 +2,12 @@
 
 namespace AppBundle\Controller\Brickset;
 
+use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Exception\EmptyResponseException;
 use AppBundle\Entity\Rebrickable\Set;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,14 +18,15 @@ class SetController extends Controller
 {
     /**
      * @Route("/{id}/instructions", name="brickset_instructions")
+     * @Method("GET")
      */
     public function instructionsAction(Request $request, $id)
     {
         $instructions = [];
         try {
             $instructions = $this->get('api.manager.brickset')->getSetInstructions($id);
-        } catch (EmptyResponseException $e) {
-            //            $this->addFlash('warning', 'No instruction found on Brickset.com');
+        } catch (ApiException $e) {
+            $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -45,14 +48,15 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/reviews", name="brickset_reviews")
+     * @Method("GET")
      */
     public function reviewsAction(Request $request, $id)
     {
         $reviews = [];
         try {
             $reviews = $this->get('api.manager.brickset')->getSetReviews($id);
-        } catch (EmptyResponseException $e) {
-            //            $this->addFlash('warning', 'No review found on Brickset.com');
+        } catch (ApiException $e) {
+            $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -74,14 +78,15 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/images", name="brickset_images")
+     * @Method("GET")
      */
     public function imagesAction(Request $request, $id)
     {
         $images = [];
         try {
             $images = $this->get('api.manager.brickset')->getAdditionalImages($id);
-        } catch (EmptyResponseException $e) {
-            //            $this->addFlash('warning', 'No images found on Brickset.com');
+        } catch (ApiException $e) {
+            $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -103,14 +108,15 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/description", name="brickset_description")
+     * @Method("GET")
      */
     public function descriptionAction(Request $request, $id)
     {
         $desription = null;
         try {
             $desription = $this->get('api.manager.brickset')->getSetById($id)->getDescription();
-        } catch (EmptyResponseException $e) {
-            //            $this->addFlash('warning', 'No description found on Brickset.com');
+        } catch (ApiException $e) {
+            $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }

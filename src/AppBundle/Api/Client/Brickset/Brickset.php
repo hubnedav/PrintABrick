@@ -40,6 +40,8 @@ class Brickset extends \SoapClient
      * @param string $apikey  Brickset API key
      * @param array  $options A array of config values
      * @param string $wsdl    The wsdl file to use
+     *
+     * @throws ApiException
      */
     public function __construct($apikey, $wsdl = null, array $options = [])
     {
@@ -72,21 +74,34 @@ class Brickset extends \SoapClient
         $this->apiKey = $apiKey;
     }
 
-    public function call($method, $parameters)
+    private function call($method, $parameters)
     {
         $parameters['apiKey'] = $this->apiKey;
 
         try {
             $this->checkApiKey();
 
-            return $this->__soapCall($method, [$parameters])->{$method.'Result'};
+            $result = $this->__soapCall($method, [$parameters]);
+
+            if(property_exists($result, $method.'Result')) {
+                return $result->{$method.'Result'};
+            } else {
+                return null;
+            }
         } catch (\SoapFault $e) {
             throw new CallFailedException(ApiException::BRICKSET);
-        } catch (ContextErrorException $e) {
-            throw new EmptyResponseException(ApiException::BRICKSET);
         } catch (\Exception $e) {
+            dump($e);
             throw new ApiException(ApiException::BRICKSET);
         }
+    }
+
+    private function getArrayResult($response, $method) {
+        if($response && $result = $response->{$method}) {
+            return is_array($result) ? $result : [$result];
+        }
+
+        return null;
     }
 
     /**
@@ -111,9 +126,9 @@ class Brickset extends \SoapClient
             }
         }
 
-        $response = $this->call('getSets', $parameters)->sets;
+        $response = $this->call('getSets', $parameters);
 
-        return is_array($response) ? $response : [$response];
+        return $this->getArrayResult($response, 'sets');
     }
 
     /**
@@ -139,9 +154,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['minutesAgo' => $minutesAgo];
 
-        $response = $this->call('getRecentlyUpdatedSets', $parameters)->sets;
+        $response = $this->call('getRecentlyUpdatedSets', $parameters);
 
-        return is_array($response) ? $response : [$response];
+        return $this->getArrayResult($response, 'sets');
     }
 
     /**
@@ -154,10 +169,9 @@ class Brickset extends \SoapClient
     public function getAdditionalImages($setID)
     {
         $parameters = ['setID' => $setID];
+        $response = $this->call('getAdditionalImages', $parameters);
 
-        $response = $this->call('getAdditionalImages', $parameters)->additionalImages;
-
-        return is_array($response) ? $response : [$response];
+        return $this->getArrayResult($response, 'additionalImages');
     }
 
     /**
@@ -171,9 +185,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['setID' => $setID];
 
-        $response = $this->call('getReviews', $parameters)->reviews;
+        $response = $this->call('getReviews', $parameters);
 
-        return is_array($response) ? $response : [$response];
+        return $this->getArrayResult($response, 'reviews');
     }
 
     /**
@@ -187,9 +201,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['setID' => $setID];
 
-        $response = $this->call('getInstructions', $parameters)->instructions;
+        $response = $this->call('getInstructions', $parameters);
 
-        return is_array($response) ? $response : [$response];
+        return $this->getArrayResult($response, 'instructions');
     }
 
     /**
@@ -213,9 +227,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['theme' => $theme];
 
-        $response = $this->call('getSubthemes', $parameters)->subthemes;
+        $response = $this->call('getSubthemes', $parameters);
 
-        return is_array($response) ? $response : [$response];
+        return $this->getArrayResult($response, 'subthemes');
     }
 
     /**
@@ -229,9 +243,9 @@ class Brickset extends \SoapClient
     {
         $parameters = ['theme' => $theme];
 
-        $response = $this->call('getYears', $parameters)->years;
+        $response = $this->call('getYears', $parameters);
 
-        return is_array($response) ? $response : [$response];
+        return $this->getArrayResult($response, 'years');
     }
 
     /**

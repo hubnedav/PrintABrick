@@ -1,15 +1,19 @@
 {% extends 'ajax.html.twig' %}
 
 {% block content %}
+    <p>{{ 'set.models.text' | trans | nl2br }}</p>
+
     {% if models|length > 0 %}
         <h4 class="ui horizontal divider header">
             Regular parts
         </h4>
         <div class="ui segment vertical">
-            <div class="ui ten column grid">
-                {% for model in models %}
-                    {{ blocks.model(model['model'],model['quantity']) }}
-                {% endfor %}
+            <div class="ui grid">
+                <div class="doubling ten column row">
+                    {% for model in models %}
+                        {{ blocks.model(model['model'],model['quantity']) }}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     {% endif %}

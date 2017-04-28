@@ -2,9 +2,8 @@
 
 {% block content %}
     {% if instructions|length != 0 %}
-        <p>
-            {{ 'set.instructions.text' | trans }}
-        </p>
+        <p><cite>{{ 'set.instructions.text' | trans | raw | nl2br }}</cite></p>
+        <p class="ui text right">Text and data obtained from <a href="https://brickset.com/" title="Brickset">Brickset</a></p>
 
         <table class="ui celled padded table">
             <thead>

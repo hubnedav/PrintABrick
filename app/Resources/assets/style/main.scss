@@ -45,3 +45,14 @@
   }
 
 }
+
+@each $i in 5 10 15 20 25 30 40 50 60 {
+  .ui.spacing.#{$i} {
+    margin-bottom: #{$i}px;
+    margin-top: #{$i}px;
+  }
+}
+
+.ui.text.right {
+  text-align: right;
+}

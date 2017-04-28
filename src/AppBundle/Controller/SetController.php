@@ -59,8 +59,6 @@ class SetController extends Controller
 
         try {
             $bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($set->getNumber());
-        } catch (EmptyResponseException $e) {
-            $this->addFlash('warning', 'Set not found in Brickset database');
         } catch (ApiException $e) {
             $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {

@@ -12,13 +12,17 @@
                         <div class="header">
                             <h2>{{ review.title }}</h2>
                         </div>
-                        <span class="author">{{ review.author }}</span> {{ review.hTML }}
+                        <span class="author">{{ review.author }}</span>
                         <div class="metadata">
                             <span class="date">{{ review.datePosted|date("Y.m.d H:m:i")}}</span>
 
                         </div>
                         <div class="text">
-                            {{ review.review|raw }}
+                            {% if review.hTML %}
+                                {{ review.review|raw }}
+                            {% else %}
+                                <p>{{ review.review }}</p>
+                            {% endif %}
                         </div>
                         <div>
                             Overall rating <div class="ui star rating" data-rating="{{ review.overallRating }}" data-max-rating="5"></div>

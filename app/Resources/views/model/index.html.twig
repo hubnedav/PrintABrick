@@ -23,17 +23,12 @@
                 </form>
             </div>
             <div class="column twelve wide">
-                <div class="ui eight column doubling grid">
-                    {% for model in models %}
-                        <div class="column">
-                            <div class="ui bordered fluid image">
-                                <a href="{{ url('model_detail', {'number': model.number})}}">
-                                    {{ blocks.modelImageMin(model,-1) }}
-                                    <div class="ui bottom attached label {%  if model.parts|length == 0 %}black{% endif %}">{{ model.number }}</div>
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
+                <div class="ui spacing 20">
+                    <div class="ui eight column doubling grid">
+                        {% for model in models %}
+                            {{ blocks.model(model) }}
+                        {% endfor %}
+                    </div>
                 </div>
 
                 {{ knp_pagination_render(models) }}

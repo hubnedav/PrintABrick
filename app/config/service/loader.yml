@@ -7,7 +7,7 @@ services:
 
     service.loader.rebrickable:
         class: AppBundle\Service\Loader\RebrickableLoader
-        arguments: ['%rebrickable_downloads_url%']
+        arguments: ['%app.rebrickable_downloads_url%']
         parent: service.loader.base
 
     service.loader.model:
@@ -22,5 +22,5 @@ services:
 
     service.loader.image:
         class: AppBundle\Service\Loader\ImageLoader
-        arguments: ['@oneup_flysystem.media_filesystem', '%rebrickable_downloads_url%','@service.renderer.stl']
+        arguments: ['@oneup_flysystem.media_filesystem', '%app.rebrickable_downloads_url%','@service.renderer.stl']
         parent: service.loader.base

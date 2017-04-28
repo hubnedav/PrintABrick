@@ -1,6 +1,6 @@
 {% macro modelImageMin(model, color) %}
     <div class="image load">
-        <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/'~color~'/'~model.number~'.png') | imagine_filter('media_min') }}" class="transition visible">
+        <img src="{{ asset('/images/'~color~'/'~model.number~'.png') | imagine_filter('media_min') }}">
     </div>
 {% endmacro %}
 
@@ -10,13 +10,13 @@
     </div>
 {% endmacro %}
 
-{% macro model(model, quantity) %}
+{% macro model(model, quantity = null) %}
     <div class="column">
         <div class="ui bordered fluid image">
             <a href="{{ url('model_detail', {'number': model.number})}}">
                     {% import _self as blocks %}
                     {{ blocks.modelImageMin(model, -1) }}
-                <div class="ui bottom attached label">{{ quantity }}x {{ model.number }}</div>
+                <div class="ui bottom attached label">{% if quantity %}{{ quantity }}x{% endif %} {{ model.number }}</div>
             </a>
         </div>
     </div>

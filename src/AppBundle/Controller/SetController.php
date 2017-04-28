@@ -85,7 +85,7 @@ class SetController extends Controller
 
         $missing = $inventoryPartRepository->findAllBySetNumber($set->getNumber(), false, false);
 
-        $template = $this->render('set/inventory.html.twig', [
+        $template = $this->render('set/tabs/inventory.html.twig', [
             'regularParts' => $regularParts,
             'missing' => $missing,
             'spareParts' => $spareParts,
@@ -121,7 +121,7 @@ class SetController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        $template = $this->render('set/models.html.twig', [
+        $template = $this->render('set/tabs/models.html.twig', [
             'set' => $set,
             'missing' => $missing,
             'models' => $models,
@@ -153,7 +153,7 @@ class SetController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        $template = $this->render('set/colors.html.twig', [
+        $template = $this->render('set/tabs/colors.html.twig', [
             'set' => $set,
             'colors' => $colors,
         ]);
@@ -178,7 +178,7 @@ class SetController extends Controller
 
         $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getNumber());
 
-        $template = $this->render('set/sets.html.twig', [
+        $template = $this->render('set/tabs/sets.html.twig', [
             'inventorySets' => $inventorySets,
         ]);
 

@@ -32,21 +32,20 @@
                 </form>
             </div>
             <div class="column twelve wide">
-                <div class="ui six column doubling grid">
-                    <div class="row">
-                        {% for set in sets %}
-                            <div class="column">
-                                <a href="{{ url('set_detail', {'number': set.number}) }}">
-                                    <img class="ui bordered image medium" src="{{ set.number|setImage|imagine_filter('rebrickable_set_min') }}">
-                                    <p>{{ set.number }} - {{ set.name }}</p>
-                                </a>
-                            </div>
-                        {% endfor %}
+                <div class="segment vertical">
+                    <div class="ui six column doubling grid">
+                        <div class="row">
+                            {% for set in sets %}
+                                <div class="column">
+                                    <a href="{{ url('set_detail', {'number': set.number}) }}">
+                                        <img class="ui bordered image medium" src="{{ set.number|setImage|imagine_filter('rebrickable_min') }}">
+                                        <p>{{ set.number }} - {{ set.name }}</p>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-
-
-                <p>{{ sets.getTotalItemCount }}</p>
 
                 {{ knp_pagination_render(sets) }}
             </div>
@@ -56,5 +55,7 @@
 
 {% block javascripts %}
     {{ parent() }}
+
+
 
 {% endblock %}

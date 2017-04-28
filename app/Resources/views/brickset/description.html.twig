@@ -1,0 +1,9 @@
+{% extends 'ajax.html.twig' %}
+
+{% block content %}
+    {% if description|length %}
+        {{ description|raw }}
+    {% else %}
+        {{ blocks.empty('empty.description'|trans) }}
+    {% endif %}
+{% endblock %}

@@ -4,49 +4,16 @@ namespace AppBundle\Controller\Brickset;
 
 use AppBundle\Api\Exception\EmptyResponseException;
 use AppBundle\Entity\Rebrickable\Set;
-use AppBundle\Entity\Rebrickable\Theme;
-use AppBundle\Form\FilterSetType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/brickset/sets")
  */
 class SetController extends Controller
 {
-    /**
-     * @Route("/", name="brickset_browse")
-     */
-    public function browseAction(Request $request)
-    {
-        $form = $this->createForm(FilterSetType::class);
-
-        $form->handleRequest($request);
-
-        $sets = [];
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            try {
-                $sets = $this->get('api.client.brickset')->getSets([
-                    'theme' => $data['theme'] ? $data['theme']->getTheme() : '',
-                    'subtheme' => $data['subtheme'] ? $data['subtheme']->getSubtheme() : '',
-                    'year' => $data['years'] ? $data['years']->getYear() : '',
-                ]);
-            } catch (EmptyResponseException $e) {
-                $this->addFlash('warning', 'No set found on '.$e->getService());
-            } catch (\Exception $e) {
-                $this->addFlash('error', $e->getMessage());
-            }
-        }
-
-        return $this->render('brickset/browse.html.twig', [
-            'form' => $form->createView(),
-            'sets' => $sets,
-        ]);
-    }
-
     /**
      * @Route("/{id}/instructions", name="brickset_instructions")
      */
@@ -61,9 +28,19 @@ class SetController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->render('brickset/instructions.html.twig', [
+        $template = $this->render('brickset/instructions.html.twig', [
             'instructions' => $instructions,
         ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
     }
 
     /**
@@ -80,9 +57,19 @@ class SetController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->render('brickset/reviews.html.twig', [
+        $template = $this->render('brickset/reviews.html.twig', [
             'reviews' => $reviews,
         ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
     }
 
     /**
@@ -99,8 +86,47 @@ class SetController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->render('brickset/images.html.twig', [
+        $template = $this->render('brickset/images.html.twig', [
             'images' => $images,
         ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
+    }
+
+    /**
+     * @Route("/{id}/description", name="brickset_description")
+     */
+    public function descriptionAction(Request $request, $id)
+    {
+        $desription = null;
+        try {
+            $desription = $this->get('api.manager.brickset')->getSetById($id)->getDescription();
+        } catch (EmptyResponseException $e) {
+            //            $this->addFlash('warning', 'No description found on Brickset.com');
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        $template = $this->render('brickset/description.html.twig', [
+            'description' => $desription,
+        ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
     }
 }

@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).bind('ready ajaxComplete', function(){
     $('.ui.dropdown')
         .dropdown()
     ;

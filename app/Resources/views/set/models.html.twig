@@ -1,0 +1,56 @@
+{% extends 'ajax.html.twig' %}
+
+{% block content %}
+    {% if models|length > 0 %}
+        <h4 class="ui horizontal divider header">
+            Regular parts
+        </h4>
+        <div class="ui segment vertical">
+            <div class="ui ten column grid">
+                {% for model in models %}
+                    {{ blocks.model(model['model'],model['quantity']) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if missing|length > 0 %}
+        <h4 class="ui horizontal divider header">
+            Missing regular models
+        </h4>
+        <div class="ui segment vertical">
+            <div class="ui ten column grid">
+                {% for inventoryPart in missing %}
+                    {{ blocks.part(inventoryPart.part,inventoryPart.quantity) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if spareModels|length > 0 %}
+        <h4 class="ui horizontal divider header">
+            Spare parts
+        </h4>
+
+        <div class="ui segment vertical">
+            <div class="ui ten column grid">
+                {% for model in spareModels %}
+                    {{ blocks.model(model['model'],model['quantity']) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if missingSpare|length > 0 %}
+        <h4 class="ui horizontal divider header">
+            Missing spare models
+        </h4>
+        <div class="ui segment vertical">
+            <div class="ui ten column grid segment">
+                {% for inventoryPart in missingSpare %}
+                    {{ blocks.part(inventoryPart.part,inventoryPart.quantity) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

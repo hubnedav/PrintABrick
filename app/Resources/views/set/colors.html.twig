@@ -1,0 +1,20 @@
+{% extends 'ajax.html.twig' %}
+
+{% block content %}
+    {% if colors|length > 0 %}
+        {% for color in colors %}
+            <h5 style="color: #{{ color['color'].rgb }}" class="ui horizontal divider header">
+                {{ color['color'].name }} ({{ color['quantity'] }})
+            </h5>
+            <div class="segment vertical">
+
+                <div class="ui ten column grid">
+                    {% for model in color['models'] %}
+                        {{ blocks.model(model['model'],model['quantity']) }}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

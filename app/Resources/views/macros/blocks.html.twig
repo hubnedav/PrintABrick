@@ -1,0 +1,43 @@
+{% macro modelImageMin(model, color) %}
+    <div class="image load">
+        <img src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ asset('/images/'~color~'/'~model.number~'.png') | imagine_filter('media_min') }}" class="transition visible">
+    </div>
+{% endmacro %}
+
+{% macro modelImageLarge(model, color) %}
+    <div class="image">
+        <img src="{{ asset('/images/'~color~'/'~model.number~'.png')|imagine_filter('media_large') }}">
+    </div>
+{% endmacro %}
+
+{% macro model(model, quantity) %}
+    <div class="column">
+        <div class="ui bordered fluid image">
+            <a href="{{ url('model_detail', {'number': model.number})}}">
+                    {% import _self as blocks %}
+                    {{ blocks.modelImageMin(model, -1) }}
+                <div class="ui bottom attached label">{{ quantity }}x {{ model.number }}</div>
+            </a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro part(part, quantity, color = -1) %}
+    <div class="column">
+        <div class="ui bordered fluid image">
+            <a href="{{ url('reb_part_detail', {'number': part.number})}}">
+                {% import _self as blocks %}
+                {#{{ blocks.partImage(part.number, -1) }}#}
+                <div class="ui bottom attached label">{{ quantity }}x {{ part.number }}</div>
+            </a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro empty(message) %}
+    <p class="ui center aligned icon header"><i class="circular frown icon"></i>{{ message }}</p>
+{% endmacro %}
+
+{% macro ccal2_license(title,author) %}
+    "{{ title }}" by {{ author }}, used under <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a> / Converted to stl from original
+{% endmacro %}

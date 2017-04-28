@@ -1,9 +1,17 @@
-<div class="ui six doubling cards">
-    {% for image in images %}
-        <div class="card">
-            <a class="ui bordered fluid image" href="{{ image.imageURL }}" data-lightbox="setImages">
-                <img src="{{ image.thumbnailURL }}">
-            </a>
+{% extends 'ajax.html.twig' %}
+
+{% block content %}
+    {% if images|length %}
+        <div class="ui six doubling cards">
+            {% for image in images %}
+                <div class="card">
+                    <a class="ui bordered fluid image" href="{{ image.imageURL }}" data-lightbox="setImages">
+                        <img src="{{ image.thumbnailURL }}">
+                    </a>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
+    {% else %}
+        {{ blocks.empty('empty.images') }}
+    {% endif %}
+{% endblock %}

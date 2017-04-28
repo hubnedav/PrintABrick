@@ -1,0 +1,37 @@
+{% extends 'ajax.html.twig' %}
+
+{% block content %}
+    {% if regularParts|length > 0 %}
+        <h4 class="ui horizontal divider header">
+            Regular parts
+        </h4>
+
+        <div class="ui ten column grid">
+            {% for inventoryPart in regularParts %}
+                {{ blocks.part(inventoryPart.part,inventoryPart.quantity, inventoryPart.color) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if missing|length > 0 %}
+        <h4 class="ui horizontal divider header">
+            Missing models
+        </h4>
+        <div class="ui ten column grid">
+            {% for inventoryPart in missing %}
+                {{ blocks.part(inventoryPart.part,inventoryPart.quantity, inventoryPart.color) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if spareParts|length > 0 %}
+        <h4 class="ui horizontal divider header">
+            Spare parts
+        </h4>
+        <div class="ui ten column grid">
+            {% for inventoryPart in spareParts %}
+                {{ blocks.part(inventoryPart.part,inventoryPart.quantity, inventoryPart.color) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

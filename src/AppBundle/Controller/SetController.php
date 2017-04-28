@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Exception\EmptyResponseException;
-use AppBundle\Entity\Rebrickable\Inventory_Part;
+use AppBundle\Entity\Rebrickable\Inventory_Set;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Form\Filter\Set\SetFilterType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -26,7 +26,7 @@ class SetController extends Controller
 
         $filterBuilder = $this->get('repository.rebrickable.set')
             ->createQueryBuilder('s')
-            ->orderBy('s.year','DESC');
+            ->orderBy('s.year', 'DESC');
 
         if ($request->query->has($form->getName())) {
             // manually bind values from the request
@@ -52,19 +52,13 @@ class SetController extends Controller
     /**
      * @Route("/{number}", name="set_detail")
      */
-    public function detailAction(Request $request, $number)
+    public function detailAction(Request $request, Set $set)
     {
-        $rebrickableSet = null;
         $bricksetSet = null;
         $colors = null;
 
         try {
-            if (($rebrickableSet = $this->get('repository.rebrickable.set')->find($number)) == null) {
-                $this->addFlash('warning', 'Set not found in Rebrickable database');
-            }
-
-            $bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($number);
-
+            $bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($set->getNumber());
         } catch (EmptyResponseException $e) {
             $this->addFlash('warning', 'Set not found in Brickset database');
         } catch (ApiException $e) {
@@ -73,13 +67,138 @@ class SetController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        if (!$rebrickableSet && !$bricksetSet) {
-            return $this->render('error/error.html.twig');
-        }
-
         return $this->render('set/detail.html.twig', [
-            'rbset' => $rebrickableSet,
+            'set' => $set,
             'brset' => $bricksetSet,
         ]);
+    }
+
+    /**
+     * @Route("/{number}/parts", name="set_parts")
+     */
+    public function partsAction(Request $request, Set $set)
+    {
+        $inventoryPartRepository = $this->get('repository.rebrickable.inventorypart');
+
+        $regularParts = $inventoryPartRepository->findAllBySetNumber($set->getNumber(), false, true);
+        $spareParts = $inventoryPartRepository->findAllBySetNumber($set->getNumber(), true);
+
+        $missing = $inventoryPartRepository->findAllBySetNumber($set->getNumber(), false, false);
+
+        $template = $this->render('set/inventory.html.twig', [
+            'regularParts' => $regularParts,
+            'missing' => $missing,
+            'spareParts' => $spareParts,
+        ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
+    }
+
+    /**
+     * @Route("/{number}/models", name="set_models")
+     */
+    public function modelsAction(Request $request, Set $set)
+    {
+        $models = null;
+        $spareModels = null;
+        $missing = null;
+        $missingSpare = null;
+
+        try {
+            $models = $this->get('service.set')->getModels($set, false);
+            $spareModels = $this->get('service.set')->getModels($set, true);
+            $missing = $this->get('repository.rebrickable.inventorypart')->findAllBySetNumber($set->getNumber(), false, false);
+            $missingSpare = $this->get('repository.rebrickable.inventorypart')->findAllBySetNumber($set->getNumber(), true, false);
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        $template = $this->render('set/models.html.twig', [
+            'set' => $set,
+            'missing' => $missing,
+            'models' => $models,
+            'spareModels' => $spareModels,
+            'missingSpare' => $missingSpare,
+        ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
+    }
+
+    /**
+     * @Route("/{number}/colors", name="set_colors")
+     */
+    public function colorsAction(Request $request, Set $set)
+    {
+        $colors = null;
+
+        try {
+            $colors = $this->get('service.set')->getModelsGroupedByColor($set, false);
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        $template = $this->render('set/colors.html.twig', [
+            'set' => $set,
+            'colors' => $colors,
+        ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
+    }
+
+    /**
+     * @Route("/{number}/sets", name="set_sets")
+     */
+    public function setsAction(Request $request, Set $set)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getNumber());
+
+        $template = $this->render('set/sets.html.twig', [
+            'inventorySets' => $inventorySets,
+        ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
+    }
+
+    /**
+     * @Route("/{number}/zip", name="set_zip")
+     */
+    public function zipAction(Request $request, Set $set)
+    {
+        $sorted = $request->query->get('sorted') == 1 ? true : false;
+        $this->get('service.zip')->createFromSet($set, $sorted);
     }
 }

@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ rbset ? rbset.number }}  {{ rbset ? rbset.name }}{% endblock %}
+{% block title %}{{ set ? set.number }}  {{ set ? set.name }}{% endblock %}
 
-{% block header %}{{ rbset ? rbset.number }}  {{ rbset ? rbset.name | escape('html') }}{% endblock %}
+{% block header %}{{ set ? set.number }}  {{ set ? set.name | escape('html') }}{% endblock %}
 
 {% block content %}
 
@@ -11,66 +11,66 @@
             <div class="image bordered ui big">
                 {% if brset %}
                     <img class="big" src="{{ ('/sets/images/'~brset.legoSetID~'.jpg')|imagine_filter('brickset_large') }}">
-                {% elseif rbset %}
-                    <img class="big" src="{{ rbset.number|setImage|imagine_filter('rebrickable_large') }}">
+                {% else %}
+                    <img class="big" src="{{ set.number|setImage|imagine_filter('rebrickable_large') }}">
                 {% endif %}
             </div>
         </div>
         <div class="column seven wide">
-            <div class="item-info black ui">
+            <div class="item-info ui">
                 <table class="ui very basic table">
                     <tr>
-                        <td>number</td><td>{{ brset ? brset.legoSetID :  rbset ? rbset.number : null}}</td>
+                        <td>{{ 'set.number' | trans }}</td><td>{{ brset ? brset.legoSetID :  set ? set.number : null}}</td>
                     </tr>
                     <tr>
-                        <td>name</td><td>{{ brset ? brset.name :  rbset ? rbset.name : null}}</td>
+                        <td>{{ 'set.name' | trans }}</td><td>{{ brset ? brset.name :  set ? set.name : null}}</td>
                     </tr>
                     <tr>
-                        <td>year</td><td>{{ brset ? brset.year :  rbset ? rbset.year : null}}</td>
+                        <td>{{ 'set.year' | trans }}</td><td>{{ brset ? brset.year :  set ? set.year : null}}</td>
                     </tr>
                     <tr>
-                        <td>theme</td>
-                        {% if rbset %}
-                            <td><a href="#">{{ rbset.theme.parent ? rbset.theme.parent.name }}</a>  <a href="#">{{ rbset.theme.name }}</a> </td>
+                        <td>{{ 'set.theme' | trans }}</td>
+                        {% if set %}
+                            <td><a href="#">{{ set.theme.parent ? set.theme.parent.name }}</a>  <a href="#">{{ set.theme.name }}</a> </td>
                         {% elseif brset %}
                             <td>{{ brset.theme }}</td>
                         {% endif %}
                     </tr>
                     <tr>
-                        <td>parts</td><td>
-                            {{  rbset ? rbset.partCount }} {{ brset ? '('~brset.pieces~')' }}
+                        <td>{{ 'set.parts' | trans }}</td><td>
+                            {{  set ? set.partCount }} {{ brset ? '('~brset.pieces~')' }}
                         </td>
                     </tr>
                     {% if brset %}
                         <tr>
-                            <td></td>
-                            <td><a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a></td>
+                            <td>{{ 'set.minifigs' | trans }}</td>
+                            <td>{{ brset.minifigs }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'set.rating' | trans }}</td>
+                            <td>
+                                {{ brset.rating }}/5
+                            </td>
                         </tr>
                     {% endif %}
-                    {% if rbset %}
                         <tr>
                             <td></td>
-                            <td><a class="rebrickable link" href="http://rebrickable.com/sets/{{ rbset ? rbset.number }}">Rebrickable</a></td>
+                            <td>
+                                <a class="rebrickable link" href="http://rebrickable.com/sets/{{ set ? set.number }}">Rebrickable</a>
+                                {% if brset %}
+                                <a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a>
+                                {% endif %}
+                            </td>
                         </tr>
-                    {% endif %}
                 </table>
 
-                {#{% if brset is not null %}#}
-                    {#<dl>#}
-                        {#<dt>themegroup:</dt><dd>{{ brset.themeGroup }}</dd>#}
-                        {#<dt>theme:</dt><dd>{{ brset.theme }}</dd>#}
-                        {#<dt>subtheme:</dt><dd>{{ brset.subtheme }}</dd>#}
-                        {#<dt>count of parts:</dt><dd>{{ brset.pieces }}</dd>#}
-                        {#<dt>minifigs:</dt><dd>{{ brset.minifigs }}</dd>#}
-                    {#</dl>#}
-                {#{% endif %}#}
             </div>
         </div>
     </div>
 
     <div class="ui segment vertical item-info">
         <div class="ui tabular pointing secondary menu">
-            <a class="item active" data-tab="parts"><i class="cubes icon"></i> Parts ({{ rbset ? rbset.partCount : 0}})</a>
+            <a class="item active" data-tab="parts"><i class="cubes icon"></i> Inventory ({{ set ? set.partCount : 0}})</a>
             {% if brset %}
                 <a class="item" data-tab="description"><i class="info icon"></i> Description</a>
                 <a class="item" data-tab="images"> <i class="image icon"></i> Images ({{ brset.additionalImageCount }})</a>
@@ -80,61 +80,26 @@
         </div>
         <div class="ui vertical segment">
             <div class="ui tab active" data-tab="parts">
-                {% if rbset %}
+                <div class="ajax-load" data-src="{{ path('set_models', { 'number': set.number }) }}">
+                    <div class="ui active centered inline loader"></div>
+                </div>
 
-                    {#<div class="ajax-load" id="parts" data-src="{{ path('rebrickable_set_parts', { 'number': rbset.number }) }}"></div>#}
-
-                    {{ render(controller('AppBundle:Rebrickable/Set:parts', { 'number': rbset.number })) }}
-
-                {% endif %}
+                {#{{ render(path('set_colors', {number: set.number})) }}#}
             </div>
             {% if brset %}
-                <div class="ui tab" data-tab="images">
-                    {#<div class="ajax-load" id="images" data-src="{{ path('brickset_images', { 'id': brset.setID }) }}"></div>#}
-
-                    {{ render(controller('AppBundle:Brickset/Set:images', { 'id': brset.setID })) }}
+                <div class="ui tab ajax-load" data-tab="description" data-src="{{ path('brickset_description', { 'id': brset.setID }) }}">
+                    <div class="ui active centered inline loader"></div>
                 </div>
-                <div class="ui tab" data-tab="instructions">
-                    {#<div class="ajax-load" id="instructions" data-src="{{ path('brickset_instructions', { 'id': brset.setID }) }}"></div>#}
-
-                    {{ render(controller('AppBundle:Brickset/Set:instructions', { 'id': brset.setID })) }}
+                <div class="ui tab ajax-load" data-tab="images" data-src="{{ path('brickset_images', { 'id': brset.setID }) }}">
+                    <div class="ui active centered inline loader"></div>
                 </div>
-                <div class="ui tab" data-tab="reviews">
-                    {#<div class="ajax-load" id="reviews" data-src="{{ path('brickset_reviews', { 'id': brset.setID }) }}"></div>#}
-
-                    {{ render(controller('AppBundle:Brickset/Set:reviews', { 'id': brset.setID })) }}
+                <div class="ui tab ajax-load" data-tab="instructions" data-src="{{ path('brickset_instructions', { 'id': brset.setID }) }}">
+                    <div class="ui active centered inline loader"></div>
                 </div>
-                <div class="ui tab" data-tab="description">
-                    {{ brset.description|raw }}
+                <div class="ui tab ajax-load" data-tab="reviews" data-src="{{ path('brickset_reviews', { 'id': brset.setID }) }}">
+                    <div class="ui active centered inline loader"></div>
                 </div>
             {% endif %}
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            
-//            $('.ajax-load').each(function () {
-//                $self = $(this);
-//
-//
-//                $.ajax({
-//                    type: "POST",
-//                    dataType: 'json',
-//                    url: $self.data('src'),
-//                    async: true, //you won't need that if nothing in your following code is dependend of the result
-//                    success: function(response){
-//                        $self.html(response); //Change the html of the div with the id = "your_div"
-//                    }
-//                })
-//            })
-
-        })
-
-    </script>
 {% endblock %}

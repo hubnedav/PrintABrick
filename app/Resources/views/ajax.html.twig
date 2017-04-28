@@ -1,0 +1,10 @@
+{% import 'macros/blocks.html.twig' as blocks %}
+{% import 'macros/elements.html.twig' as elements %}
+
+{% for label, flashes in app.session.flashbag.all %}
+    {% for flash in flashes %}
+        {{ elements.flash(label,flash) }}
+    {% endfor %}
+{% endfor %}
+
+{% block content %}{% endblock %}

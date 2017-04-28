@@ -64,6 +64,23 @@
                         </tr>
                 </table>
 
+                <a class="ui download primary button">{{ 'set.download'|trans }}</a>
+                <div class="ui download flowing popup bottom center transition hidden">
+                    <div class="ui two column divided center aligned grid">
+                        <div class="column">
+                            <h4 class="ui header">{{ 'set.download.sorted' }}</h4>
+                            <p>{{ 'set.download.sorted.text' | trans }}</p>
+                            <a class="ui button" href="{{ path('set_zip', {number: set.number, sorted: true }) }}" download>Download ZIP</a>
+                        </div>
+                        <div class="column">
+                            <h4 class="ui header">{{ 'set.download.unsorted' }}</h4>
+                            <p>{{ 'set.download.unsorted.text' | trans }}</p>
+                            <a class="ui button" href="{{ path('set_zip', {number: set.number, sorted: false }) }}" download>Download ZIP</a>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>

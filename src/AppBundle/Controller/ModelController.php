@@ -6,12 +6,10 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Form\Filter\Model\ModelFilterType;
-use Doctrine\ORM\Query\AST\ConditionalTerm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Part controller.
@@ -66,10 +64,10 @@ class ModelController extends Controller
         /** @var Model $model */
         if ($model = $this->get('repository.ldraw.model')->findOneByNumber($number)) {
             try {
-                $rbParts = $model != null ? $em->getRepository(Part::class)->findAllByModel($model) : null;
-                $sets = $model != null ? $em->getRepository(Set::class)->findAllByModel($model) : null;
+                $rbParts = $model != null ? $this->get('repository.rebrickable.part')->findAllByModel($model) : null;
+                $sets = $model != null ? $this->get('repository.rebrickable.set')->findAllByModel($model) : null;
 
-                $related = $em->getRepository(Model::class)->findAllRelatedModels($model->getNumber());
+                $related = $this->get('repository.ldraw.model')->findAllRelatedModels($model->getNumber());
 
                 return $this->render('model/detail.html.twig', [
                     'model' => $model,
@@ -86,20 +84,11 @@ class ModelController extends Controller
     }
 
     /**
-     * @Route("/{number}/download", name="model_download")
+     * @Route("/{number}/zip", name="model_zip")
      * @Method("GET")
      */
-    public function downloadAction(Model $model)
+    public function zipAction(Model $model)
     {
-        $zip = $this->get('service.zip')->create($model);
-
-        dump($zip);
-
-        $response = new Response(file_get_contents($zip));
-        $response->headers->set('Content-Type', 'application/zip');
-        $response->headers->set('Content-Disposition', 'attachment;filename="' . basename($zip) . '"');
-        $response->headers->set('Content-length', filesize($zip));
-
-        return $response;
+        $zip = $this->get('service.zip')->createFromModel($model);
     }
 }

@@ -25,4 +25,12 @@ $(document).bind('ready ajaxComplete', function(){
             ;
         })
     ;
+
+    $('.item-info .download')
+        .popup({
+            popup : $('.download.popup'),
+            on: 'click',
+            inline: true
+        })
+    ;
 });

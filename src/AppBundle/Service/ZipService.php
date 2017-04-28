@@ -40,9 +40,9 @@ class ZipService
         $this->archive = new ZipStream($filename);
 
         if ($sorted) {
-            $this->addSet($set);
-        } else {
             $this->addSetGroupedByColor($set);
+        } else {
+            $this->addSet($set);
         }
 
         $this->archive->finish();

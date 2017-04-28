@@ -80,6 +80,16 @@ doctrine_migrations:
 #    password:  "%mailer_password%"
 #    spool:     { type: memory }
 
+monolog:
+    channels: ['loader']
+    handlers:
+        loader:
+            type: rotating_file
+            path: "%kernel.logs_dir%/loader.log"
+            level: debug
+            channels: 'loader'
+            max_files: 10
+
 knp_menu:
     twig:
         template: menu/knp_menu.html.twig

@@ -11,6 +11,10 @@ services:
         class: AppBundle\Service\LDViewService
         arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
 
+    service.zip:
+          class: AppBundle\Service\ZipService
+          arguments: ['@oneup_flysystem.media_filesystem', '@service.set']
+
     service.set:
         class: AppBundle\Service\SetService
         arguments: ['@repository.rebrickable.inventorypart']

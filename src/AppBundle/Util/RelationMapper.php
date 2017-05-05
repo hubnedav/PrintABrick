@@ -2,10 +2,10 @@
 
 namespace AppBundle\Util;
 
-use Symfony\Component\Finder\Finder;
+use AppBundle\Exception\RelationMapper\InvalidResourceException;
+use AppBundle\Exception\RelationMapper\ResourceNotFoundException;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
-use Symfony\Component\Translation\Exception\InvalidResourceException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -17,17 +17,24 @@ class RelationMapper
     private $relations;
 
     /**
-     * RelationMapper constructor.
+     * Adds a Resource.
      *
-     * @param $resourcesDir
+     * @param $file
+     * @param $domain
+     *
+     * @throws InvalidResourceException|ResourceNotFoundException
      */
-    public function __construct($resourcesDir)
+    public function loadResource($file, $domain)
     {
-        $finder = new Finder();
-        $files = $finder->files()->name('*.yml')->in($resourcesDir);
-        foreach ($files as $file) {
-            $domain = substr($file->getFilename(), 0, -1 * strlen('yml') - 1);
-            $this->loadResource($file, $domain);
+        if (!file_exists($file)) {
+            throw new ResourceNotFoundException($file);
+        }
+
+        try {
+            $this->relations[$domain] = [];
+            $this->relations[$domain] = Yaml::parse(file_get_contents($file));
+        } catch (ParseException $e) {
+            throw new InvalidResourceException(sprintf('Error parsing YAML, invalid file "%s"', $file), 0, $e);
         }
     }
 
@@ -47,21 +54,5 @@ class RelationMapper
             return isset($this->relations[$domain][$number]) ? $this->relations[$domain][$number] : $number;
         }
         throw new InvalidOptionsException();
-    }
-
-    /**
-     * Adds a Resource.
-     *
-     * @param $file
-     * @param $domain
-     */
-    private function loadResource($file, $domain)
-    {
-        try {
-            $this->relations[$domain] = [];
-            $this->relations[$domain] = Yaml::parse(file_get_contents($file->getPathname()));
-        } catch (ParseException $e) {
-            throw new InvalidResourceException(sprintf('Error parsing YAML, invalid file "%s"', $file->getPathname()), 0, $e);
-        }
     }
 }

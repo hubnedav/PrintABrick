@@ -11,46 +11,30 @@ class RelationMapperTest extends TestCase
 {
     public function testLoad()
     {
-        $mapper = new RelationMapper(__DIR__.'/fixtures/');
+        $mapper = new RelationMapper();
+        $mapper->loadResource(__DIR__.'/fixtures/resources.yml', 'resources');
 
         $this->assertEquals('bar', $mapper->find('foo','resources'));
+        $this->assertEquals('bar', $mapper->find('bar','resources'));
     }
 
-//    public function testLoadDoesNothingIfEmpty()
-//    {
-//        $resource = __DIR__.'/fixtures/empty.yml';
-//        $catalogue = Yaml::parse(file_get_contents($resource));
-//
-//        $this->assertEquals(array(), $catalogue);
-//    }
-//
-//    /**
-//     * @expectedException \Symfony\Component\Translation\Exception\NotFoundResourceException
-//     */
-//    public function testLoadNonExistingResource()
-//    {
-//        $loader = new YamlFileLoader();
-//        $resource = __DIR__.'/../fixtures/non-existing.yml';
-//        $loader->load($resource, 'en', 'domain1');
-//    }
-//
-//    /**
-//     * @expectedException \Symfony\Component\Translation\Exception\InvalidResourceException
-//     */
-//    public function testLoadThrowsAnExceptionIfFileNotLocal()
-//    {
-//        $loader = new YamlFileLoader();
-//        $resource = 'http://example.com/resources.yml';
-//        $loader->load($resource, 'en', 'domain1');
-//    }
-//
-//    /**
-//     * @expectedException \Symfony\Component\Translation\Exception\InvalidResourceException
-//     */
-//    public function testLoadThrowsAnExceptionIfNotAnArray()
-//    {
-//        $loader = new YamlFileLoader();
-//        $resource = __DIR__.'/../fixtures/non-valid.yml';
-//        $loader->load($resource, 'en', 'domain1');
-//    }
+    /**
+     * @expectedException AppBundle\Exception\RelationMapper\ResourceNotFoundException
+     */
+    public function testLoadNonExistingResource()
+    {
+        $mapper = new RelationMapper();
+        $resource = __DIR__.'/fixtures/non-existing.yml';
+        $mapper->loadResource($resource, 'resources');
+    }
+
+    /**
+     * @expectedException AppBundle\Exception\RelationMapper\InvalidResourceException
+     */
+    public function testLoadInvalidResource()
+    {
+        $mapper = new RelationMapper();
+        $resource = __DIR__.'/fixtures/invalid.yml';
+        $mapper->loadResource($resource, 'resources');
+    }
 }

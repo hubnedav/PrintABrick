@@ -2,40 +2,46 @@
 
 namespace AppBundle\Service\Loader;
 
-use AppBundle\Api\Manager\RebrickableManager;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Part;
-use AppBundle\Utils\RelationMapper;
+use AppBundle\Repository\LDraw\ModelRepository;
+use AppBundle\Repository\Rebrickable\PartRepository;
+use AppBundle\Util\RelationMapper;
 
 class RelationLoader extends BaseLoader
 {
     /** @var RelationMapper */
     private $relationMapper;
 
-    /** @var RebrickableManager */
-    private $rebrickableAPIManager;
+    /** @var ModelRepository */
+    private $modelRepository;
+
+    /** @var PartRepository */
+    private $partRepository;
 
     /**
      * RelationLoader constructor.
      *
-     * @param RebrickableManager $rebrickableApiManager
-     * @param RelationMapper     $relationMapper
+     * @param RelationMapper  $relationMapper
+     * @param ModelRepository $modelRepository
+     * @param PartRepository  $partRepository
      */
-    public function __construct($rebrickableApiManager, $relationMapper)
+    public function __construct($relationMapper, $modelRepository, $partRepository)
     {
-        $this->rebrickableAPIManager = $rebrickableApiManager;
         $this->relationMapper = $relationMapper;
+        $this->modelRepository = $modelRepository;
+        $this->partRepository = $partRepository;
     }
 
     public function loadAll()
     {
-        $parts = $this->em->getRepository(Part::class)->findAll();
+        $parts = $this->partRepository->findAll();
         $this->load($parts);
     }
 
     public function loadNotPaired($parts)
     {
-        $parts = $this->em->getRepository(Part::class)->findAllNotPaired();
+        $parts = $this->partRepository->findAllNotPaired();
         $this->load($parts);
     }
 
@@ -44,7 +50,13 @@ class RelationLoader extends BaseLoader
         $this->initProgressBar(count($parts));
         /** @var Part $part */
         foreach ($parts as $part) {
-            $this->loadPartRelation($part);
+            $model = $this->loadPartRelation($part);
+
+            if ($model) {
+                $part->setModel($model);
+                $this->partRepository->save($part);
+            }
+
             $this->progressBar->setMessage($part->getNumber());
             $this->progressBar->advance();
         }
@@ -56,33 +68,28 @@ class RelationLoader extends BaseLoader
      *
      * @param Part $part
      *
-     * @return Model $m
+     * @return Model|null
      */
     private function loadPartRelation(Part $part)
     {
-        $modelRepository = $this->em->getRepository(Model::class);
-
         $number = $part->getNumber();
-        $model = $modelRepository->findOneByNumber($number);
+        $model = $this->modelRepository->findOneByNumber($number);
         if (!$model) {
             $number = $this->relationMapper->find($this->getPrintedParentId($number), 'part_model');
-            $model = $modelRepository->findOneByNumber($number);
+            $model = $this->modelRepository->findOneByNumber($number);
 
             if (!$model) {
-                $model = $modelRepository->findOneByName($part->getName());
+                $model = $this->modelRepository->findOneByName($part->getName());
             }
         }
 
-        if ($model) {
-            $part->setModel($model);
-            $this->em->getRepository(Part::class)->save($part);
-        }
+        return $model;
     }
 
     /**
-     * Get printed part parent number.
+     * Get id of parent for printed parts form part id.
      *
-     * @param $id
+     * @param $number
      *
      * @return string|null LDraw number of printed part parent
      */

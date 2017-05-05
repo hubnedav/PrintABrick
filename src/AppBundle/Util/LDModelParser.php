@@ -101,16 +101,16 @@ class LDModelParser
                     $model['license'] = preg_replace('/(^!LICENSE )(.*) : (.*)$/', '$2', $line);
                 }
             } elseif (strpos($line, '1 ') === 0) {
-                $reference = $this->getReferencedModelNumber($line);
+                if ($reference = $this->getReferencedModelNumber($line)) {
+                    $id = strtolower($reference['id']);
+                    $color = strtolower($reference['color']);
 
-                $id = strtolower($reference['id']);
-                $color = strtolower($reference['color']);
-
-                // group subparts by color and id
-                if (isset($model['subparts'][$id][$color])) {
-                    $model['subparts'][$id][$color] = $model['subparts'][$id][$color] + 1;
-                } else {
-                    $model['subparts'][$id][$color] = 1;
+                    // group subparts by color and id
+                    if (isset($model['subparts'][$id][$color])) {
+                        $model['subparts'][$id][$color] = $model['subparts'][$id][$color] + 1;
+                    } else {
+                        $model['subparts'][$id][$color] = 1;
+                    }
                 }
             } elseif (!empty($line) && !in_array($line[0], ['2', '3', '4', '5'])) {
                 throw new ErrorParsingLineException($model['id'], $line);
@@ -141,13 +141,16 @@ class LDModelParser
      *
      * @param $line
      *
-     * @return string|null Filename of referenced part
+     * @return array|null Filename of referenced part
      */
     public function getReferencedModelNumber($line)
     {
         $line = strtolower(preg_replace('!\s+!', ' ', $line));
 
-        if (preg_match('/^1 ([0-9]{1,3}) (.*) (.*)\.dat$/', $line, $matches)) {
+        // Do not load inverse part as subpart of model
+        if (preg_match('/^1 ([0-9]{1,3}) (0 0 0 -1 0 0 0 1 0 0 0 1) (.*)\.dat$/', $line, $matches)) {
+            return null;
+        } elseif (preg_match('/^1 ([0-9]{1,3}) (.*) (.*)\.dat$/', $line, $matches)) {
             $id = str_replace('\\', DIRECTORY_SEPARATOR, $matches[3]);
             $color = $matches[1];
 

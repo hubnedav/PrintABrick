@@ -17,7 +17,7 @@ services:
 
     service.loader.relation:
         class: AppBundle\Service\Loader\RelationLoader
-        arguments: ['@api.manager.rebrickable', '@app.relation.mapper']
+        arguments: ['@app.relation.mapper','@repository.ldraw.model', '@repository.rebrickable.part']
         parent: service.loader.base
 
     service.loader.image:

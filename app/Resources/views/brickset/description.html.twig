@@ -1,5 +1,8 @@
 {% extends 'ajax.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+{% import 'macros/elements.html.twig' as elements %}
+
 {% block content %}
     {% if description|length %}
         {{ description|raw }}

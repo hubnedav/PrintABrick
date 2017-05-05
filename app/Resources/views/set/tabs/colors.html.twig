@@ -10,7 +10,7 @@
 
                 <div class="ui ten column grid">
                     {% for model in color['models'] %}
-                        {{ blocks.model(model['model'],model['quantity']) }}
+                        {{ blocks.model(model['model'],model['quantity'], color['color'].id) }}
                     {% endfor %}
                 </div>
             </div>

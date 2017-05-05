@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+
 {% block title %}{{ 'page.model.index' | trans }}{% endblock %}
 
 {% block header %}{{ 'page.model.index' | trans }}{% endblock %}
@@ -14,7 +16,7 @@
                     {{ form_row(form.search) }}
                     <div class="field fluid search selection">
                         {{ form_label(form.category.id) }}
-                        {{ form_widget(form.category.id) }}
+                        {{ form_widget(form.category.id)}}
                     </div>
                     <div class="field">
                         <input class="ui submit button" type="submit" value="filter"/>
@@ -23,16 +25,15 @@
                 </form>
             </div>
             <div class="column twelve wide">
-                <div class="ui spacing 20">
-                    <div class="ui eight column doubling grid">
-                        {% for model in models %}
-                            {{ blocks.model(model) }}
-                        {% endfor %}
-                    </div>
+                <div class="ui six column doubling grid">
+                    {% for model in models %}
+                        {{ blocks.model(model) }}
+                    {% endfor %}
                 </div>
 
-                {{ knp_pagination_render(models) }}
-                <p>{{ models.getTotalItemCount }}</p>
+                <div class="ui column vertical segment noborder">
+                    {{ knp_pagination_render(models) }}
+                </div>
             </div>
         </div>
     </div>

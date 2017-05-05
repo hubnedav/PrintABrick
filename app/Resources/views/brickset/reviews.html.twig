@@ -1,35 +1,59 @@
 {% extends 'ajax.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+{% import 'macros/elements.html.twig' as elements %}
+
 {% block content %}
     {% if reviews|length != 0 %}
         <div class="ui comments">
             {% for review in reviews %}
-                <div class="comment">
-                    <a class="avatar">
+                <div class="ui segment vertical">
+                    <div class="ui container divided stackable grid comment">
+                        <div class="row">
+                            <div class="column four wide ratings">
+                                <dl>
+                                    {% if review.overallRating %}
+                                        <dt>Overall rating</dt>
+                                        <dd><span class="ui star rating" data-rating="{{ review.overallRating }}" data-max-rating="5"></span></dd>
+                                    {% endif %}
+                                    {% if review.valueForMoney %}
+                                        <dt>Value for money</dt>
+                                        <dd><span class="ui star rating" data-rating="{{ review.valueForMoney }}" data-max-rating="5"></span></dd>
+                                    {% endif %}
+                                    {% if review.playability %}
+                                        <dt>Playability</dt>
+                                        <dd><span class="ui star rating" data-rating="{{ review.playability }}" data-max-rating="5"></span></dd>
+                                    {% endif %}
+                                    {% if review.parts %}
+                                        <dt>Parts</dt>
+                                        <dd><span class="ui star rating" data-rating="{{ review.parts }}" data-max-rating="5"></span></dd>
+                                    {% endif %}
+                                    {% if review.buildingExperience %}
+                                        <dt>Building experience</dt>
+                                        <dd><span class="ui star rating" data-rating="{{ review.buildingExperience }}" data-max-rating="5"></span></dd>
+                                    {% endif %}
+                                </dl>
+                            </div>
 
-                    </a>
-                    <div class="content">
-                        <div class="header">
-                            <h2>{{ review.title }}</h2>
-                        </div>
-                        <span class="author">{{ review.author }}</span>
-                        <div class="metadata">
-                            <span class="date">{{ review.datePosted|date("Y.m.d H:m:i")}}</span>
+                            <div class="column twelve wide comment">
+                                <div class="content">
+                                    <div class="header">
+                                        <h2>{{ review.title }}</h2>
+                                    </div>
+                                    <span class="author">{{ review.author }}</span>
+                                    <div class="metadata">
+                                        <span class="date">{{ review.datePosted|date("Y.m.d H:m:i")}}</span>
 
-                        </div>
-                        <div class="text">
-                            {% if review.hTML %}
-                                {{ review.review|raw }}
-                            {% else %}
-                                <p>{{ review.review }}</p>
-                            {% endif %}
-                        </div>
-                        <div>
-                            Overall rating <div class="ui star rating" data-rating="{{ review.overallRating }}" data-max-rating="5"></div>
-                            Value for money <div class="ui star rating" data-rating="{{ review.valueForMoney }}" data-max-rating="5"></div>
-                            Playability <div class="ui star rating" data-rating="{{ review.playability }}" data-max-rating="5"></div>
-                            Parts <div class="ui star rating" data-rating="{{ review.parts }}" data-max-rating="5"></div>
-                            Building experience <div class="ui star rating" data-rating="{{ review.buildingExperience }}" data-max-rating="5"></div>
+                                    </div>
+                                    <div class="text">
+                                        {% if review.hTML %}
+                                            {{ review.review|raw }}
+                                        {% else %}
+                                            <p>{{ review.review }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

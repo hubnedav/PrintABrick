@@ -8,7 +8,8 @@
 
         <div class="ui ten column grid">
             {% for inventoryPart in regularParts %}
-                {{ blocks.part(inventoryPart.part,inventoryPart.quantity, inventoryPart.color) }}
+                {{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}
+                {{ inventoryPart.color.id }}
             {% endfor %}
         </div>
     {% endif %}
@@ -19,7 +20,7 @@
         </h4>
         <div class="ui ten column grid">
             {% for inventoryPart in missing %}
-                {{ blocks.part(inventoryPart.part,inventoryPart.quantity, inventoryPart.color) }}
+                {{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -30,7 +31,7 @@
         </h4>
         <div class="ui ten column grid">
             {% for inventoryPart in spareParts %}
-                {{ blocks.part(inventoryPart.part,inventoryPart.quantity, inventoryPart.color) }}
+                {{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}
             {% endfor %}
         </div>
     {% endif %}

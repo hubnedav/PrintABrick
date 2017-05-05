@@ -111,9 +111,6 @@ knp_paginator:
 
 liip_imagine:
     loaders:
-        media:
-            flysystem:
-                filesystem_service: oneup_flysystem.media_filesystem
         rebrickable:
             stream:
                 wrapper: 'http://rebrickable.com/media/'
@@ -121,49 +118,11 @@ liip_imagine:
             stream:
                 wrapper: 'https://images.brickset.com/'
 
-
     resolvers:
         default:
             web_path: ~
 
     filter_sets:
-        media:
-            data_loader: media
-        media_min:
-            data_loader: media
-            cache: ~
-            quality: 80
-            filters:
-                thumbnail: { size: [200, 200], mode: inset }
-                background: { size: [250, 250], position: center, color: '#FFFFFF' }
-        media_large:
-              data_loader: media
-              cache: ~
-              quality: 92
-              filters:
-                  thumbnail: { size: [840, 580], mode: inset }
-                  background: { size: [900, 600], position: center, color: '#FFFFFF' }
-
-        rebrickable:
-              data_loader: rebrickable
-        rebrickable_min:
-              quality: 80
-              data_loader: rebrickable
-              default_image: '/resources/images/unknown_image.png'
-              cache: ~
-              filters:
-                  thumbnail: { size: [200, 200], mode: inset }
-                  background: { size: [250, 250], position: center, color: '#FFFFFF' }
-        rebrickable_large:
-              data_loader: rebrickable
-              cache: ~
-              quality: 92
-              filters:
-                  thumbnail: { size: [840, 580], mode: inset }
-                  background: { size: [900, 600], position: center, color: '#FFFFFF' }
-
-        brickset:
-              data_loader: brickset
         brickset_large:
               data_loader: brickset
               cache: ~
@@ -171,6 +130,37 @@ liip_imagine:
               filters:
                   thumbnail: { size: [840, 580], mode: inset }
                   background: { size: [900, 600], position: center, color: '#FFFFFF' }
+
+
+        set_min:
+              quality: 80
+              data_loader: rebrickable
+              cache: ~
+              filters:
+                  thumbnail: { size: [200, 200], mode: inset }
+                  background: { size: [250, 250], position: center, color: '#FFFFFF' }
+        set_large:
+              data_loader: rebrickable
+              cache: ~
+              quality: 92
+              filters:
+                  thumbnail: { size: [840, 580], mode: inset }
+                  background: { size: [900, 600], position: center, color: '#FFFFFF' }
+        part_large:
+              data_loader: part_image_loader
+              cache: ~
+              quality: 92
+              filters:
+                  thumbnail: { size: [840, 580], mode: inset }
+                  background: { size: [900, 600], position: center, color: '#FFFFFF' }
+        part_min:
+              quality: 80
+              data_loader: part_image_loader
+              default_image: "noimage.png"
+              cache: ~
+              filters:
+                  thumbnail: { size: [200, 200], mode: inset }
+                  background: { size: [250, 250], position: center, color: '#FFFFFF' }
 oneup_flysystem:
     adapters:
         media:

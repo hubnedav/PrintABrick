@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+
 {% block title %}#{{ model.number }} - {{ model.name }}{% endblock %}
 
 {% block header %}#{{ model.number }} - {{ model.name }}{% endblock %}
@@ -9,16 +11,15 @@
     <div class="ui grid">
         <div class="column ten wide">
             <div id="model-viewer" class="model-container">
-                {{ blocks.modelImageLarge(model, -1) }}
+                {{ blocks.partImage(model.number,'part_large') }}
             </div>
         </div>
         <div class="column six wide">
             <div class="item-info ui">
-                <a class="ui download primary button" href="{{ path('model_zip', {number: model.number}) }}">{{ 'model.download'|trans }}</a>
-
                 <table class="ui very basic table">
                     <tr>
-                        <td>{{ 'model.category' | trans }}</td><td>{{ model.category ? model.category.name }}</td>
+                        <td>{{ 'model.category' | trans }}</td>
+                        <td><a href="{{ path('model_index',{}) }}">{{ model.category ? model.category.name }}</a></td>
                     </tr>
                     <tr>
                         <td>{{ 'model.author' | trans }}</td><td>{{ model.author.name }}</td>
@@ -41,16 +42,19 @@
                         </td>
                     </tr>
                     {% if model.aliases|length %}
-                    <tr>
-                        <td>{{ 'model.aliases' | trans }}</td>
-                        <td>
-                        {% for alias in model.aliases | slice(0,10)%}
-                            <span>{{ alias.number }}</span>{%  if not loop.last %},{% endif %}
-                        {% endfor %}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>{{ 'model.aliases' | trans }}</td>
+                            <td>
+                                {% for alias in model.aliases | slice(0,10)%}
+                                    <span>{{ alias.number }}</span>{%  if not loop.last %},{% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
                     {% endif %}
                 </table>
+
+                <a class="ui download primary button" href="{{ path('model_zip', {number: model.number}) }}">{{ 'model.download'|trans }}</a>
+
             </div>
         </div>
     </div>
@@ -66,12 +70,8 @@
 
             <div class="ui tab active" data-tab="subparts">
                 <div class="ui eight column grid">
-                    {% for subpart in model.subparts  %}
-                        <div class="column">
-                            {{ blocks.part(subpart.subpart) }}
-                            <p>{{ subpart.count }}</p>
-                            <p style="border-bottom: 2px solid #{{ subpart.color.rgb }}">color: {{ subpart.color.name }}</p>
-                        </div>
+                    {% for subpart in subparts %}
+                        {{ blocks.model(subpart['model'], subpart['quantity']) }}
                     {% endfor %}
                 </div>
             </div>
@@ -80,7 +80,7 @@
                 <div class="ui eight column grid">
                     {% for subpart in related  %}
                         <div class="column">
-                            {{ blocks.part(subpart) }}
+                            {{ blocks.model(subpart) }}
                         </div>
                     {% endfor %}
                 </div>
@@ -90,16 +90,25 @@
                 <div class="ui eight column grid">
                     {% for subpart in model.parents  %}
                         <div class="column">
-                            {{ blocks.part(subpart.parent) }}
+                            {{ blocks.model(subpart.parent) }}
                         </div>
                     {% endfor %}
                 </div>
             </div>
 
             <div class="ui tab" data-tab="sets">
-                {% for set in sets %}
-                    <span style="margin: 5px"><a href="{{ url('set_detail', {number:set.number}) }}">{{ set.number }}</a></span>
-                {% endfor %}
+                <div class="ui six column doubling grid">
+                    <div class="row">
+                        {#{% for set in sets %}#}
+                            {#<div class="column">#}
+                                {#<a href="{{ url('set_detail', {number:set.number}) }}">#}
+                                    {#{{ blocks.setImage(set.number,'set_min') }}#}
+                                    {#<h5>{{ set.number }}</h5>#}
+                                {#</a>#}
+                            {#</div>#}
+                        {#{% endfor %}#}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

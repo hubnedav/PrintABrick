@@ -1,36 +1,67 @@
-{% macro modelImageMin(model, color) %}
+{% macro partImage(number, filter, color = -1) %}
+    {% if filter == 'part_large' %}
+        {% set placeholder = asset("resources/images/unknown_large.png") %}
+    {% else %}
+        {% set placeholder = asset("resources/images/unknown.png") %}
+    {% endif %}
+
     <div class="image load">
-        <img src="{{ asset('/images/'~color~'/'~model.number~'.png') | imagine_filter('media_min') }}">
+        <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter)}}">
     </div>
 {% endmacro %}
 
-{% macro modelImageLarge(model, color) %}
-    <div class="image">
-        <img src="{{ asset('/images/'~color~'/'~model.number~'.png')|imagine_filter('media_large') }}">
+{% macro setImage(number, filter) %}
+    <div class="image load">
+        {% if filter == 'set_large' %}
+            {% set placeholder = asset("resources/images/unknown_large.png") %}
+        {% else %}
+            {% set placeholder = asset("resources/images/unknown.png") %}
+        {% endif %}
+
+        <img src="{{ placeholder }}" data-src="{{ asset('/sets/'~number|lower~'.jpg')|imagine_filter(filter) }}">
     </div>
 {% endmacro %}
 
-{% macro model(model, quantity = null) %}
+{% macro model(model, quantity = null, color = -1) %}
+    <div class="column model">
+        <a href="{{ url('model_detail', {'number': model.number})}}">
+            <div class="ui bordered fluid image">
+                {% import _self as blocks %}
+                {{ blocks.partImage(model.number, 'part_min', color) }}
+            </div>
+            <div class="model-meta">
+                <span class="quantity"></span> {% if quantity %}{{ quantity }}x{% endif %}<span class="number">{{ model.number }}</span>
+                {#<span class="name">{{ model.name }}</span>#}
+            </div>
+        </a>
+    </div>
+{% endmacro %}
+
+{% macro part(part, quantity = null, color = -1) %}
     <div class="column">
-        <div class="ui bordered fluid image">
-            <a href="{{ url('model_detail', {'number': model.number})}}">
-                    {% import _self as blocks %}
-                    {{ blocks.modelImageMin(model, -1) }}
-                <div class="ui bottom attached label">{% if quantity %}{{ quantity }}x{% endif %} {{ model.number }}</div>
-            </a>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro part(part, quantity, color = -1) %}
-    <div class="column">
-        <div class="ui bordered fluid image">
+        <div class="ui color-{{ color }} bordered fluid image">
             <a href="{{ url('reb_part_detail', {'number': part.number})}}">
                 {% import _self as blocks %}
-                {#{{ blocks.partImage(part.number, -1) }}#}
-                <div class="ui bottom attached label">{{ quantity }}x {{ part.number }}</div>
+                {{ blocks.partImage(part.number,'part_min', color) }}
+                <div class="part-meta">
+                    <span class="quantity"></span> {% if quantity %}{{ quantity }}x{% endif %}<span class="number">{{ part.number }}</span>
+                </div>
             </a>
         </div>
+    </div>
+{% endmacro %}
+
+{% macro set(set) %}
+    <div class="column">
+        <a href="{{ url('set_detail', {'number': set.number}) }}">
+            <div class="ui bordered fluid image">
+                {{ blocks.setImage(set.number,'set_min') }}
+            </div>
+            <div class="set-meta">
+                <p>{{ set.number }}</p>
+                <p>{{ set.name }}</p>
+            </div>
+        </a>
     </div>
 {% endmacro %}
 
@@ -41,3 +72,4 @@
 {% macro ccal2_license(title,author) %}
     "{{ title }}" by {{ author }}, used under <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a> / Converted to stl from original
 {% endmacro %}
+

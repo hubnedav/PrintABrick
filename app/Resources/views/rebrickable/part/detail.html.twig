@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% import 'macros/elements.html.twig' as elements %}
+{% import 'macros/blocks.html.twig' as blocks %}
 
 {% block header %}#{{ part.number }} - {{ part.name }}{% endblock %}
 
@@ -8,7 +8,7 @@
     <div class="ui grid">
         <div class="column ten wide">
             <div id="model-viewer" class="model-container">
-                <img src="{{ apiPart.imgUrl }}">
+                {{ blocks.partImage(part.number,'part_large') }}
             </div>
         </div>
         <div class="column six wide">
@@ -21,7 +21,7 @@
                         <td>{{ 'part.name' | trans }}</td><td>{{ part.name}}</td>
                     </tr>
                     <tr>
-                        <td>{{ 'part.category' | trans }}</td><td>{{ part.category.name }}</td>
+                        <td>{{ 'part.category' | trans }}</td><td>{{ part.category ? part.category.name }}</td>
                     </tr>
                     <tr>
                         <td>{{ 'part.model' | trans }}</td>
@@ -48,6 +48,13 @@
                                 {% endfor %}
                             </td>
                         </tr>
+                        <tr>
+                            <td></td>
+                            <td><a href="{{ apiPart.url }}">Rebrickable</a></td>
+                        </tr>
+                        <tr>
+                            {{ dump(apiPart.externalIds, apiPart) }}
+                        </tr>
                     {% endif %}
                 </table>
             </div>
@@ -63,9 +70,7 @@
             <div class="column">
                 <div class="ui fluid bordered image">
                     <a href="{{ url('set_detail', {number:set.number}) }}">
-                        <div class="image load">
-                            <img class="ui bordered" src="{{ asset('resources/images/unknown_image.png') }}" data-src="{{ set.number|setImage|imagine_filter('rebrickable_min') }}">
-                        </div>
+                        {{ blocks.setImage(set.number,'set_min') }}
                         <div class="ui bottom attached label">{{ set.number }}<br></div>
                     </a>
                 </div>

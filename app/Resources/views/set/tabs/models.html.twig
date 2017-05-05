@@ -1,13 +1,14 @@
 {% extends 'ajax.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+
 {% block content %}
-    <p>{{ 'set.models.text' | trans | nl2br }}</p>
 
     {% if models|length > 0 %}
         <h4 class="ui horizontal divider header">
-            Regular parts
+            Models
         </h4>
-        <div class="ui segment vertical">
+        <div class="ui segment vertical noborder">
             <div class="ui grid">
                 <div class="doubling ten column row">
                     {% for model in models %}
@@ -17,44 +18,43 @@
             </div>
         </div>
     {% endif %}
-
     {% if missing|length > 0 %}
         <h4 class="ui horizontal divider header">
-            Missing regular models
+            Missing models
         </h4>
-        <div class="ui segment vertical">
+        <div class="ui segment vertical noborder">
             <div class="ui ten column grid">
-                {% for inventoryPart in missing %}
-                    {{ blocks.part(inventoryPart.part,inventoryPart.quantity) }}
+                {% for part in missing %}
+                    {{ blocks.part(part['part'],part['quantity']) }}
                 {% endfor %}
             </div>
         </div>
     {% endif %}
 
-    {% if spareModels|length > 0 %}
-        <h4 class="ui horizontal divider header">
-            Spare parts
-        </h4>
+    {#{% if spareModels|length > 0 %}#}
+        {#<h4 class="ui horizontal divider header">#}
+            {#Spare parts#}
+        {#</h4>#}
 
-        <div class="ui segment vertical">
-            <div class="ui ten column grid">
-                {% for model in spareModels %}
-                    {{ blocks.model(model['model'],model['quantity']) }}
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
+        {#<div class="ui segment vertical">#}
+            {#<div class="ui ten column grid">#}
+                {#{% for model in spareModels %}#}
+                    {#{{ blocks.model(model['model'],model['quantity']) }}#}
+                {#{% endfor %}#}
+            {#</div>#}
+        {#</div>#}
+    {#{% endif %}#}
 
-    {% if missingSpare|length > 0 %}
-        <h4 class="ui horizontal divider header">
-            Missing spare models
-        </h4>
-        <div class="ui segment vertical">
-            <div class="ui ten column grid segment">
-                {% for inventoryPart in missingSpare %}
-                    {{ blocks.part(inventoryPart.part,inventoryPart.quantity) }}
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
+    {#{% if missingSpare|length > 0 %}#}
+        {#<h4 class="ui horizontal divider header">#}
+            {#Missing spare models#}
+        {#</h4>#}
+        {#<div class="ui segment vertical">#}
+            {#<div class="ui ten column grid segment">#}
+                {#{% for inventoryPart in missingSpare %}#}
+                    {#{{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}#}
+                {#{% endfor %}#}
+            {#</div>#}
+        {#</div>#}
+    {#{% endif %}#}
 {% endblock %}

@@ -79,6 +79,35 @@ class ModelLoader extends BaseLoader
         }
     }
 
+    public function downloadLibrary()
+    {
+        $this->writeOutput([
+            '<fg=cyan>------------------------------------------------------------------------------</>',
+            '<fg=cyan>Downloading LDraw library</>',
+            '<fg=cyan>------------------------------------------------------------------------------</>',
+        ]);
+
+        $libraryZip = $this->downloadFile($this->LDLibraryUrl);
+
+        $temp_dir = tempnam(sys_get_temp_dir(), 'printabrick.');
+        if (file_exists($temp_dir)) {
+            unlink($temp_dir);
+        }
+        mkdir($temp_dir);
+
+        $zip = new \ZipArchive();
+        if ($zip->open($libraryZip) != 'true') {
+            echo 'Error :- Unable to open the Zip File';
+        }
+        $zip->extractTo($temp_dir);
+        $zip->close();
+        unlink($libraryZip);
+
+        $this->writeOutput(['<info>LDraw libary downloaded</info>']);
+
+        return $temp_dir;
+    }
+
     public function loadOne($file)
     {
         $connection = $this->em->getConnection();

@@ -22,7 +22,7 @@ class LoadModelsCommand extends ContainerAwareCommand
             ->setHelp('This command allows you to load LDraw library models into database while converting .dat files to .stl format.')
             ->setDefinition(
                 new InputDefinition([
-                    new InputArgument('ldraw', InputArgument::REQUIRED, 'Path to LDraw library directory'),
+                    new InputArgument('ldraw', InputArgument::OPTIONAL, 'Path to LDraw library directory'),
                     new InputOption('all', 'a', InputOption::VALUE_NONE, 'Load all models from LDraw libary folder (/parts directory)'),
                     new InputOption('file', 'f', InputOption::VALUE_REQUIRED, 'Load single modle into database'),
                     new InputOption('update', 'u', InputOption::VALUE_NONE, 'Overwrite already loaded models'),
@@ -42,7 +42,9 @@ class LoadModelsCommand extends ContainerAwareCommand
         $modelLoader->setOutput($output);
         $modelLoader->setRewite($input->getOption('update'));
 
-        $ldraw = $input->getArgument('ldraw');
+        if (!($ldraw = $input->getArgument('ldraw'))) {
+            $ldraw = $modelLoader->downloadLibrary();
+        }
 
         if (!$input->getOption('file') && !$input->getOption('all')) {
             $output->writeln('Either the --all or --file option is required');

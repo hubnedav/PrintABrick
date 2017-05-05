@@ -12,7 +12,7 @@ services:
 
     service.loader.model:
         class: AppBundle\Service\Loader\ModelLoader
-        arguments: ['@service.ldview', '@app.relation.mapper']
+        arguments: ['@service.stl.converter', '@app.relation.mapper', '%app.ld_library_download_url%']
         parent: service.loader.base
 
     service.loader.relation:

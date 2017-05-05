@@ -19,7 +19,7 @@ class InitDataCommand extends ContainerAwareCommand
             ->setHelp('This command allows you to load relation between models and parts into database.')
             ->setDefinition(
                 new InputDefinition([
-                    new InputArgument('ldraw', InputArgument::REQUIRED, 'Path to LDraw library directory'),
+                    new InputArgument('ldraw', InputArgument::OPTIONAL, 'Path to LDraw library directory'),
                 ])
             );
     }
@@ -39,8 +39,7 @@ class InitDataCommand extends ContainerAwareCommand
         }
 
         $loadRebrickableCommad = $this->getApplication()->find('app:load:rebrickable');
-        $returnCode = $loadRebrickableCommad->run(new ArrayInput([
-            'command' => 'app:load:rebrickable', ]), $output);
+        $returnCode = $loadRebrickableCommad->run(new ArrayInput(['command' => 'app:load:rebrickable']), $output);
 
         if ($returnCode) {
             return 1;
@@ -48,8 +47,7 @@ class InitDataCommand extends ContainerAwareCommand
 
         $loadRelationsCommand = $this->getApplication()->find('app:load:relations');
 
-        $returnCode = $loadRelationsCommand->run(new ArrayInput([
-            'command' => 'app:load:relations', ]), $output);
+        $returnCode = $loadRelationsCommand->run(new ArrayInput(['command' => 'app:load:relations']), $output);
 
         if ($returnCode) {
             return 1;

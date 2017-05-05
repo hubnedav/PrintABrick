@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Stl;
 
 use AppBundle\Exception\ConvertingFailedException;
 use AppBundle\Exception\FileNotFoundException;
@@ -8,6 +8,7 @@ use AppBundle\Exception\RenderFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
+// TODO create images/{color} directory
 class StlRendererService
 {
     /**

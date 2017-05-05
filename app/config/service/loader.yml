@@ -22,5 +22,5 @@ services:
 
     service.loader.image:
         class: AppBundle\Service\Loader\ImageLoader
-        arguments: ['@oneup_flysystem.media_filesystem', '%app.rebrickable_downloads_url%','@service.renderer.stl']
+        arguments: ['@oneup_flysystem.media_filesystem', '%app.rebrickable_downloads_url%','@service.stl.renderer']
         parent: service.loader.base

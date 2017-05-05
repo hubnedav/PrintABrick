@@ -3,13 +3,17 @@ services:
           class: Doctrine\Common\Cache\PhpFileCache
           arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
 
-    service.renderer.stl:
-        class: AppBundle\Service\StlRendererService
+    service.stl.renderer:
+        class: AppBundle\Service\Stl\StlRendererService
         arguments: ['%kernel.root_dir%/Resources/povray_layout/layout.tmpl', '%povray_bin%','%stl2pov_bin%']
 
-    service.ldview:
-        class: AppBundle\Service\LDViewService
-        arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem']
+    service.stl.converter:
+        class: AppBundle\Service\Stl\StlConverterService
+        arguments: ['%ldview_bin%', '@oneup_flysystem.media_filesystem', '@service.stl.fixer']
+
+    service.stl.fixer:
+        class: AppBundle\Service\Stl\StlFixerService
+        arguments: ['%admesh_bin%']
 
     service.zip:
           class: AppBundle\Service\ZipService

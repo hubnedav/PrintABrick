@@ -11,7 +11,7 @@ use AppBundle\Entity\LDraw\Subpart;
 use AppBundle\Exception\ConvertingFailedException;
 use AppBundle\Exception\FileException;
 use AppBundle\Exception\ParseErrorException;
-use AppBundle\Service\LDViewService;
+use AppBundle\Service\Stl\StlConverterService;
 use AppBundle\Util\LDModelParser;
 use AppBundle\Util\RelationMapper;
 use League\Flysystem\Adapter\Local;
@@ -28,9 +28,9 @@ class ModelLoader extends BaseLoader
     private $ldrawLibraryContext;
 
     /**
-     * @var LDViewService
+     * @var StlConverterService
      */
-    private $LDViewService;
+    private $stlConverter;
 
     /** @var LDModelParser */
     private $ldModelParser;
@@ -41,18 +41,22 @@ class ModelLoader extends BaseLoader
     /** @var Finder */
     private $finder;
 
+    /** @var string */
+    private $LDLibraryUrl;
+
     private $rewite = false;
 
     /**
      * LDrawLoaderService constructor.
      *
-     * @param LDViewService  $LDViewService
-     * @param RelationMapper $relationMapper
+     * @param StlConverterService $stlConverter
+     * @param RelationMapper      $relationMapper
      */
-    public function __construct($LDViewService, $relationMapper)
+    public function __construct($stlConverter, $relationMapper, $LDLibraryUrl)
     {
-        $this->LDViewService = $LDViewService;
+        $this->stlConverter = $stlConverter;
         $this->relationMapper = $relationMapper;
+        $this->LDLibraryUrl = $LDLibraryUrl;
         $this->ldModelParser = new LDModelParser();
         $this->finder = new Finder();
     }
@@ -73,7 +77,7 @@ class ModelLoader extends BaseLoader
         try {
             $adapter = new Local($ldrawLibrary);
             $this->ldrawLibraryContext = new Filesystem($adapter);
-            $this->LDViewService->setLDrawLibraryContext($this->ldrawLibraryContext);
+            $this->stlConverter->setLDrawLibraryContext($this->ldrawLibraryContext);
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
         }
@@ -235,7 +239,7 @@ class ModelLoader extends BaseLoader
             try {
                 // update model only if newer version
                 if (!$model->getModified() || ($model->getModified() < $modelArray['modified'])) {
-                    $stl = $this->LDViewService->datToStl($file, $this->rewite)->getPath();
+                    $stl = $this->stlConverter->datToStl($file, $this->rewite)->getPath();
                     $model->setPath($stl);
 
                     $model
@@ -347,6 +351,10 @@ class ModelLoader extends BaseLoader
     {
         // Do not include part primitives and subparts
         if (in_array($modelArray['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
+            return false;
+        }
+        // Do not include Pov-RAY file
+        elseif ($modelArray['category'] == 'Pov-RAY') {
             return false;
         }
         // Do not include sticker models

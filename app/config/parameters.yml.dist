@@ -4,7 +4,7 @@
 parameters:
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     symfony
+    database_name:     printabrick
     database_user:     root
     database_password: ~
     # You should uncomment this if you want use pdo_sqlite
@@ -24,5 +24,9 @@ parameters:
 
     # Path to POV-Ray binary - http://www.povray.org/
     povray_bin: /usr/bin/povray
+
     # Path to stl2pov (version 3.3.0) - https://github.com/rsmith-nl/stltools/releases/tag/3.3
     stl2pov_bin: /usr/bin/stl2pov
+
+    # Path to admesh
+    admesh_bin: /usr/bin/admesh

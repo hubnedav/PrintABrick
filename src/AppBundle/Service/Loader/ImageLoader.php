@@ -3,7 +3,7 @@
 namespace AppBundle\Service\Loader;
 
 use AppBundle\Entity\LDraw\Model;
-use AppBundle\Service\StlRendererService;
+use AppBundle\Service\Stl\StlRendererService;
 use League\Flysystem\Filesystem;
 
 class ImageLoader extends BaseLoader

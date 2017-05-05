@@ -1,20 +1,23 @@
 <?php
 
-namespace AppBundle\Service;
+namespace AppBundle\Service\Stl;
 
 use AppBundle\Exception\ConvertingFailedException;
+use AppBundle\Exception\LDView\LDLibraryMissingException;
 use League\Flysystem\File;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ProcessBuilder;
 
-//TODO enable file overwrite
-class LDViewService
+class StlConverterService
 {
     /**
      * @var string LDView binary file path
      */
     private $ldview;
+
+    /** @var StlFixerService */
+    private $stlFixer;
 
     /**
      * @var Filesystem
@@ -27,15 +30,21 @@ class LDViewService
     private $ldrawLibraryContext;
 
     /**
-     * LDViewService constructor.
+     * @var bool
+     */
+    private $rewrite = false;
+
+    /**
+     * StlConverterService constructor.
      *
      * @param string     $ldview          Path to LDView OSMesa binary file
      * @param Filesystem $mediaFilesystem Filesystem for generated web assets
      */
-    public function __construct($ldview, $mediaFilesystem)
+    public function __construct($ldview, $mediaFilesystem, $stlFixer)
     {
         $this->ldview = $ldview;
         $this->mediaFilesystem = $mediaFilesystem;
+        $this->stlFixer = $stlFixer;
     }
 
     /**
@@ -56,15 +65,19 @@ class LDViewService
      *
      * @return File
      */
-    public function datToStl($file, $rewrite = false)
+    public function datToStl($file)
     {
+        if (!$this->ldrawLibraryContext) {
+            throw new LDLibraryMissingException();
+        }
+
         if (!$this->mediaFilesystem->has('models')) {
             $this->mediaFilesystem->createDir('models');
         }
 
         $newFile = 'models'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.stl';
 
-        if (!$this->mediaFilesystem->has($newFile) || $rewrite) {
+        if (!$this->mediaFilesystem->has($newFile) || $this->rewrite) {
             $this->runLDView([
                 $file,
                 '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
@@ -75,6 +88,8 @@ class LDViewService
 
             // Check if file created successfully
             if ($this->mediaFilesystem->has($newFile)) {
+                $this->stlFixer->fix($this->mediaFilesystem->getAdapter()->getPathPrefix().$newFile);
+
                 return $this->mediaFilesystem->get($newFile);
             }
         } else {
@@ -94,8 +109,12 @@ class LDViewService
      *
      * @return File
      */
-    public function datToPng($file, $rewrite = false)
+    public function datToPng($file)
     {
+        if (!$this->ldrawLibraryContext) {
+            throw new LDLibraryMissingException();
+        }
+
         if (!$this->mediaFilesystem->has('images')) {
             $this->mediaFilesystem->createDir('images');
         }
@@ -149,7 +168,7 @@ class LDViewService
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process); //TODO
+            throw new ProcessFailedException($process);
         }
     }
 }

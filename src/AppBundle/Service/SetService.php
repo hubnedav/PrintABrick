@@ -3,13 +3,13 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\LDraw\Model;
-    use AppBundle\Entity\Rebrickable\Inventory_Part;
-    use AppBundle\Entity\Rebrickable\Set;
-    use AppBundle\Repository\Rebrickable\Inventory_PartRepository;
+use AppBundle\Entity\Rebrickable\Inventory_Part;
+use AppBundle\Entity\Rebrickable\Set;
+use AppBundle\Repository\Rebrickable\Inventory_PartRepository;
 
-    class SetService
-    {
-        /** @var Inventory_PartRepository */
+class SetService
+{
+    /** @var Inventory_PartRepository */
         private $inventoryPartRepository;
 
         /**
@@ -110,7 +110,6 @@ use AppBundle\Entity\LDraw\Model;
             return $models;
         }
 
-
         /**
          * Get array models grouped by color.
          * [
@@ -163,4 +162,31 @@ use AppBundle\Entity\LDraw\Model;
 
             return $colors;
         }
-    }
+
+        /*
+         * @param Set  $set
+         * @param bool $spare If true - add only spare parts, false - add only regular parts, null - add all parts
+         *
+         * @return array
+         */
+        public function getParts(Set $set, $spare = null, $model = false)
+        {
+            $parts = [];
+
+            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getNumber(), $spare, $model);
+
+            /** @var Inventory_Part $inventoryPart */
+            foreach ($inventoryParts as $inventoryPart) {
+                if (isset($parts[$inventoryPart->getPart()->getNumber()])) {
+                    $parts[$inventoryPart->getPart()->getNumber()]['quantity'] += $inventoryPart->getQuantity();
+                } else {
+                    $parts[$inventoryPart->getPart()->getNumber()] = [
+                        'part' => $inventoryPart->getPart(),
+                        'quantity' => $inventoryPart->getQuantity(),
+                    ];
+                }
+            }
+
+            return $parts;
+        }
+}

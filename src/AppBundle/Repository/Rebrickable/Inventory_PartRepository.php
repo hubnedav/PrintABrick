@@ -26,7 +26,9 @@ class Inventory_PartRepository extends BaseRepository
 
         $queryBuilder = $this->createQueryBuilder('inventory_part')
             ->where('inventory_part.inventory = :inventory')
-            ->setParameter('inventory', $inventory);
+            ->setParameter('inventory', $inventory)
+            ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part')
+            ->andWhere('part.category != 17');
 
         if ($spare !== null) {
             $queryBuilder
@@ -35,8 +37,6 @@ class Inventory_PartRepository extends BaseRepository
         }
 
         if ($model !== null) {
-            $queryBuilder
-                ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part');
             if ($model === true) {
                 $queryBuilder->andWhere('part.model IS NOT NULL');
             } else {
@@ -58,5 +58,33 @@ class Inventory_PartRepository extends BaseRepository
             ->setParameter('color', $color);
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function getPartCount($number, $spare = null, $model = null)
+    {
+        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
+
+        $queryBuilder = $this->createQueryBuilder('inventory_part')
+            ->where('inventory_part.inventory = :inventory')
+            ->setParameter('inventory', $inventory)
+            ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part')
+            ->andWhere('part.category != 17')
+            ->select('SUM(inventory_part.quantity) as parts');
+
+        if ($spare !== null) {
+            $queryBuilder
+                ->andWhere('inventory_part.spare = :spare')
+                ->setParameter('spare', $spare);
+        }
+
+        if ($model !== null) {
+            if ($model === true) {
+                $queryBuilder->andWhere('part.model IS NOT NULL');
+            } else {
+                $queryBuilder->andWhere('part.model IS NULL');
+            }
+        }
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }

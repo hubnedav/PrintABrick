@@ -17,11 +17,15 @@ services:
 
     service.zip:
           class: AppBundle\Service\ZipService
-          arguments: ['@oneup_flysystem.media_filesystem', '@service.set']
+          arguments: ['@oneup_flysystem.media_filesystem', '@service.set', '@service.model']
 
     service.set:
         class: AppBundle\Service\SetService
-        arguments: ['@repository.rebrickable.inventorypart']        arguments: ['@repository.rebrickable.inventorypart']    app.part_image_loader:
+        arguments: ['@repository.rebrickable.inventorypart']
+
+    service.model:
+        class: AppBundle\Service\ModelService
+
     app.part_image_loader:
         class: AppBundle\Imagine\PartImageLoader
         arguments: ['@api.manager.rebrickable', '@oneup_flysystem.media_filesystem']

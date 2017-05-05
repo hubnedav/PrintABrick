@@ -19,4 +19,12 @@ class ThemeRepository extends BaseRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function findAllMain()
+    {
+        $queryBuilder = $this->createQueryBuilder('theme')
+             ->where('theme.parent IS NULL');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

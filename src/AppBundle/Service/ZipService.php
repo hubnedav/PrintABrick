@@ -5,11 +5,10 @@ namespace AppBundle\Service;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Set;
 use League\Flysystem\Filesystem;
-use ZipStream\ZipStream;
 
 class ZipService
 {
-    /** @var ZipStream */
+    /** @var \ZipArchive */
     private $archive;
 
     /** @var Filesystem */
@@ -18,26 +17,41 @@ class ZipService
     /** @var SetService */
     private $setService;
 
+    /** @var ModelService */
+    private $modelService;
+
+    private $zipName;
+
+    private $models;
+
     /**
      * ZipService constructor.
      *
      * @param $mediaFilesystem
      * @param $setService
      */
-    public function __construct($mediaFilesystem, $setService)
+    public function __construct($mediaFilesystem, $setService, $modelService)
     {
         $this->mediaFilesystem = $mediaFilesystem;
         $this->setService = $setService;
+        $this->modelService = $modelService;
+    }
+
+    private function createZip($path)
+    {
+        $archive = new \ZipArchive();
+        $archive->open($path, \ZipArchive::CREATE);
+
+        return $archive;
     }
 
     public function createFromSet(Set $set, $sorted = false)
     {
         $sort = $sorted ? 'sorted' : 'unsorted';
+        $this->zipName = "set_{$set->getNumber()}_{$set->getName()}({$sort})";
 
-        $filename = "set_{$set->getNumber()}_{$set->getName()}({$sort}).zip";
-
-        // Initialize zip stream
-        $this->archive = new ZipStream($filename);
+        $zipPath = tempnam(sys_get_temp_dir(), 'printabrick');
+        $this->archive = $this->createZip($zipPath);
 
         if ($sorted) {
             $this->addSetGroupedByColor($set);
@@ -45,23 +59,35 @@ class ZipService
             $this->addSet($set);
         }
 
-        $this->archive->finish();
+        $this->addLicense();
+        $this->archive->close();
 
-        return $this->archive;
+        return $zipPath;
     }
 
     public function createFromModel(Model $model, $subparts = false)
     {
-        $filename = "model_{$model->getNumber()}.zip";
+        $this->zipName = "model_{$model->getNumber()}";
 
-        // Initialize zip stream
-        $this->archive = new ZipStream($filename);
+        $zipPath = tempnam(sys_get_temp_dir(), 'printabrick');
+        $this->archive = $this->createZip($zipPath);
 
-        $this->addModel($model);
+        $filename = "{$this->zipName}/{$model->getNumber()}.stl";
+        $this->addModel($filename, $model);
 
-        $this->archive->finish();
+        if ($subparts) {
+            foreach ($this->modelService->getAllSubparts($model) as $subpart) {
+                $submodel = $subpart['model'];
+                $filename = "{$this->zipName}/submodels/{$submodel->getNumber()}_({$subpart['quantity']}x).stl";
 
-        return $this->archive;
+                $this->addModel($filename, $submodel);
+            }
+        }
+
+        $this->addLicense();
+        $this->archive->close();
+
+        return $zipPath;
     }
 
     /**
@@ -81,9 +107,9 @@ class ZipService
                 $model = $modelArray['model'];
                 $quantity = $modelArray['quantity'];
 
-                $filename = "{$color->getName()}/{$model->getNumber()}_({$quantity}x).stl";
+                $filename = "{$this->zipName}/{$color->getName()}/{$model->getNumber()}_({$quantity}x).stl";
 
-                $this->archive->addFile($filename, $this->mediaFilesystem->read($model->getPath()));
+                $this->addModel($filename, $model);
             }
         }
     }
@@ -99,26 +125,33 @@ class ZipService
         $models = $this->setService->getModels($set, $spare);
 
         foreach ($models as $number => $array) {
+            $model = $array['model'];
             $quantity = $array['quantity'];
-            $filename = $number."_({$quantity}x).stl";
+            $filename = "{$this->zipName}/{$number}_({$quantity}x).stl";
+            $this->models[$number] = $array['model'];
 
-            $this->archive->addFile($filename, $this->mediaFilesystem->read($array['model']->getPath()));
+            $this->addModel($filename, $model);
         }
     }
 
-    public function addModel(Model $model, $count = 1, $folder = '')
+    private function addModel($path, $model)
     {
-        $filename = $folder.$model->getNumber()."_({$count}x).stl";
-
-        $this->archive->addFile($filename, $this->mediaFilesystem->read($model->getPath()));
-
-        foreach ($model->getSubparts() as $subpart) {
-            $this->addModel($subpart->getSubpart(), $subpart->getCount(), $folder.$model->getNumber().'_subparts/');
-        }
+        $this->archive->addFromString($path, $this->mediaFilesystem->read($model->getPath()));
+        $this->models[$model->getNumber()] = $model;
     }
 
-    // TODO add licence file and information to zip file
-    public function addLicence()
+    private function addLicense()
     {
+        $text = sprintf('All stl files in this archive were converted by LDView from LDraw Library http://www.ldraw.org/'."\n\n");
+        $text .= sprintf('Files are licensed under the Creative Commons - Attribution license.'."\n");
+        $text .= sprintf('http://creativecommons.org/licenses/by/2.0/'."\n\n");
+
+        $text .= sprintf('Attribution:'."\n"."\n");
+
+        foreach ($this->models as $model) {
+            $text .= sprintf('%s - "%s" by %s'."\n", $model->getNumber(), $model->getName(), $model->getAuthor()->getName());
+        }
+
+        $this->archive->addFromString("{$this->zipName}/LICENSE.txt", $text);
     }
 }

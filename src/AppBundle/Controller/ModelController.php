@@ -9,7 +9,9 @@ use AppBundle\Form\Filter\Model\ModelFilterType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
  * Part controller.
@@ -59,11 +61,11 @@ class ModelController extends Controller
      */
     public function detailAction($number)
     {
-        $em = $this->getDoctrine()->getManager();
-
         /** @var Model $model */
         if ($model = $this->get('repository.ldraw.model')->findOneByNumber($number)) {
             try {
+                $subparts = $this->get('service.model')->getAllSubparts($model);
+
                 $rbParts = $model != null ? $this->get('repository.rebrickable.part')->findAllByModel($model) : null;
                 $sets = $model != null ? $this->get('repository.rebrickable.set')->findAllByModel($model) : null;
 
@@ -74,6 +76,7 @@ class ModelController extends Controller
                     'rbParts' => $rbParts,
                     'sets' => $sets,
                     'related' => $related,
+                    'subparts' => $subparts,
                 ]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
@@ -87,8 +90,21 @@ class ModelController extends Controller
      * @Route("/{number}/zip", name="model_zip")
      * @Method("GET")
      */
-    public function zipAction(Model $model)
+    public function zipAction(Request $request, Model $model)
     {
-        $zip = $this->get('service.zip')->createFromModel($model);
+        $zip = $this->get('service.zip')->createFromModel($model, true);
+
+        $response = new BinaryFileResponse($zip);
+        $response->headers->set('Content-Type', 'application/zip');
+
+        // Create the disposition of the file
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            "model_{$model->getNumber()}_{$model->getName()}.zip"
+        );
+
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 }

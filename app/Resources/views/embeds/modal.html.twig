@@ -1,0 +1,19 @@
+<div class="ui modal">
+    <i class="close icon"></i>
+
+    {% if block('title') is not empty %}
+        <div class="header">
+            {% block title %}{% endblock %}
+        </div>
+    {% endif %}
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% if block('actions') is not empty %}
+        <div class="actions">
+            {% block actions %}{% endblock %}
+        </div>
+    {% endif %}
+</div>

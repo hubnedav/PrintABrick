@@ -9,6 +9,7 @@ class FormatTransformer
      *
      * @param $bytes
      * @param int $precision
+     *
      * @return string
      */
     public function bytesToSize($bytes, $precision = 2)

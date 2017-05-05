@@ -6,7 +6,6 @@ set:
   parts: Count of parts
   minifigs: Minifig count
   rating: Rating
-  download: Download
   models:
     text: |
       This set inventory has been obtained from Rebrickable.
@@ -19,3 +18,25 @@ set:
       The table below lists all instructions for this set that have been available at <a href="http://service.lego.com/en-gb/buildinginstructions" title="LEGO Customer Service" rel="nofollow">LEGO Customer Services</a>. Those that are no longer listed there may still be available to download.
 
       'NA' or 'V39' indicates the US/Canadian version. 'IN' or 'V29' indicates the international version.
+
+  download:
+    title: Download - %set%
+    sorted:
+      title: Multi-Color
+      text:
+
+    unsorted:
+      title: Uni-Color
+      text:
+
+    warning:
+      title:
+      text: Models of some parts could not be found in LDraw library
+
+page:
+  model.index: Browse models
+
+filter:
+  model:
+   search: Search Model
+   category: Category

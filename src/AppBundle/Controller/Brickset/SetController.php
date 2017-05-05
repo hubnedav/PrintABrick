@@ -3,11 +3,9 @@
 namespace AppBundle\Controller\Brickset;
 
 use AppBundle\Api\Exception\ApiException;
-use AppBundle\Api\Exception\EmptyResponseException;
-use AppBundle\Entity\Rebrickable\Set;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

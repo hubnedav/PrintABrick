@@ -1,4 +1,4 @@
-$alpha = 0.7;
+$alpha: 0.7;
 
 $colors: (
         -1: #0033B2,
@@ -137,3 +137,9 @@ $colors: (
         1007: #8E5597,
         9999: #05131D,
 );
+
+@each $number, $color in $colors {
+  .color-#{$number} {
+    border-bottom: 2px solid $color;
+  }
+}

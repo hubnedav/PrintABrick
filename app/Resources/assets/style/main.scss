@@ -1,5 +1,25 @@
 .default-theme {
 
+  .ui.main {
+    padding-top: 40px;
+    min-height: calc(100% - 67px);
+  }
+
+  .ui.masthead {
+    position: relative;
+
+    .header {
+      margin-bottom: 0;
+    }
+
+    .breadcrumb {
+      right: 0;
+      top: 0;
+      position: absolute;
+      padding: 20px 0;
+    }
+  }
+
   .ui.fixed + .ui.grid {
     border-radius: 0;
     border: 0;
@@ -55,4 +75,8 @@
 
 .ui.text.right {
   text-align: right;
+}
+
+.ui.segment.vertical.noborder {
+  border-bottom: 0;
 }

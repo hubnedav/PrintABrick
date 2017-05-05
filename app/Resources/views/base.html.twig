@@ -1,7 +1,6 @@
 {% extends 'html.html.twig' %}
 
 {% import 'macros/elements.html.twig' as elements %}
-{% import 'macros/blocks.html.twig' as blocks %}
 
 {% block body %}
     <div class="ui fixed inverted menu">
@@ -23,18 +22,17 @@
         <div class="ui main">
             <div class="ui container">
                 <div class="ui masthead vertical segment">
-                    <div class="introduction">
-                        <div class="ui small breadcrumb">
-                            {% for breadcrumb_item in knp_menu_get_breadcrumbs_array(knp_menu_get_current_item('mainMenu')) %}
-                                {% if not loop.last %}
-                                    <a class="section" href="{{ breadcrumb_item.uri }}">{{ breadcrumb_item.label }}</a>
-                                    <i class="right chevron icon divider"></i>
-                                {% else %}
-                                    <a class="active section">{{ breadcrumb_item.label }}</a>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        <h1 class="ui header">{% block header %}{% endblock %}</h1>
+                    <h1 class="ui header">{% block header %}{% endblock %}</h1>
+
+                    <div class="ui small breadcrumb">
+                        {% for breadcrumb_item in knp_menu_get_breadcrumbs_array(knp_menu_get_current_item('mainMenu')) %}
+                            {% if not loop.last %}
+                                <a class="section" href="{{ breadcrumb_item.uri }}">{{ breadcrumb_item.label }}</a>
+                                <i class="right chevron icon divider"></i>
+                            {% else %}
+                                <a class="active section">{{ breadcrumb_item.label }}</a>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="ui vertical segment content">
@@ -53,8 +51,8 @@
     {% endblock page %}
     <div class="ui black inverted vertical footer segment stripe">
         {% block footer %}
-            <div class="ui center aligned container">
-
+            <div class="ui aligned container">
+                <p>LEGO®, the LEGO logo, the Minifigure, and the Brick and Knob configurations are trademarks of the LEGO Group of Companies which does not sponsor, authorize, or endorse this site.</p>
             </div>
         {% endblock  %}
     </div>

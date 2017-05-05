@@ -28,22 +28,24 @@ class Builder
     public function mainMenu(array $options)
     {
         $request = $this->requestStack->getCurrentRequest();
-        $menu = $this->factory->createItem('root');
-
-        $menu->addChild('Home', [
+        $menu = $this->factory->createItem('root', [
             'route' => 'homepage',
         ]);
 
-        $menu->addChild('Models', [
+        $menu->addChild('homepage', [
+            'route' => 'homepage',
+        ]);
+
+        $models = $menu->addChild('Models', [
             'route' => 'model_index',
+        ]);
+
+        $models->addChild('Colors', [
+            'route' => 'color_index',
         ]);
 
         $menu->addChild('Sets', [
             'route' => 'set_index',
-        ]);
-
-        $menu->addChild('Colors', [
-            'route' => 'color_index',
         ]);
 
         return $menu;

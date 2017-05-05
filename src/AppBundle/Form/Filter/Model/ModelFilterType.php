@@ -16,7 +16,7 @@ class ModelFilterType extends AbstractType
     {
         $builder->add('search', Filters\TextFilterType::class, [
             'apply_filter' => [$this, 'modelSearchCallback'],
-            'label' => 'filter.part.search',
+            'label' => 'filter.model.search',
         ]);
 
         $builder->add('category', CategoryFilterType::class, [
@@ -30,7 +30,7 @@ class ModelFilterType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'model_filter';
+        return 'filter';
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -43,14 +43,16 @@ class ModelFilterType extends AbstractType
 
     public function modelSearchCallback(QueryInterface $filterQuery, $field, $values)
     {
-        if (empty($values['value'])) {
+        if (empty($values['value']) || $values['value'] === '') {
             return null;
         }
 
+        $expr = $filterQuery->getExpr();
+
         // expression that represent the condition
-        $expression = $filterQuery->getExpr()->orX(
-            $filterQuery->getExpr()->like('model.number', ':value'),
-            $filterQuery->getExpr()->like('model.name', ':value')
+        $expression = $expr->orX(
+            $expr->like('model.number', ':value'),
+            $expr->like('model.name', ':value')
             //TODO filter by keywords
         );
 

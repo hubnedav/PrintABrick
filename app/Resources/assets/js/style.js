@@ -1,6 +1,6 @@
-$(document).bind('ready ajaxComplete', function(){
+$(document).ready(function(){
     $('.ui.dropdown')
-        .dropdown()
+        .dropdown('restore defaults')
     ;
 
     $('.image.load img')
@@ -32,5 +32,9 @@ $(document).bind('ready ajaxComplete', function(){
             on: 'click',
             inline: true
         })
+    ;
+
+    $('.ui.modal')
+        .modal('attach events', '.ui.open-modal.button', 'show')
     ;
 });

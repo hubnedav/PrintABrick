@@ -29,7 +29,7 @@ class SetFilterType extends AbstractType
 
         $builder->add('theme', ThemeFilterType::class, [
             'add_shared' => function (FilterBuilderExecuterInterface $builderExecuter) {
-                $builderExecuter->addOnce($builderExecuter->getAlias().'.theme', 'c', function (QueryBuilder $filterBuilder, $alias, $joinAlias, $expr) {
+                $builderExecuter->addOnce($builderExecuter->getAlias().'.theme', 't', function (QueryBuilder $filterBuilder, $alias, $joinAlias, $expr) {
                     $filterBuilder->leftJoin($alias.'.theme', $joinAlias);
                 });
             },

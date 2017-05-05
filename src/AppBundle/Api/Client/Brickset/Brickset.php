@@ -12,8 +12,6 @@ use AppBundle\Api\Client\Brickset\Entity\Year;
 use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Exception\AuthenticationFailedException;
 use AppBundle\Api\Exception\CallFailedException;
-use AppBundle\Api\Exception\EmptyResponseException;
-use Symfony\Component\Debug\Exception\ContextErrorException;
 
 class Brickset extends \SoapClient
 {
@@ -83,11 +81,11 @@ class Brickset extends \SoapClient
 
             $result = $this->__soapCall($method, [$parameters]);
 
-            if(property_exists($result, $method.'Result')) {
+            if (property_exists($result, $method.'Result')) {
                 return $result->{$method.'Result'};
-            } else {
-                return null;
             }
+
+            return null;
         } catch (\SoapFault $e) {
             throw new CallFailedException(ApiException::BRICKSET);
         } catch (\Exception $e) {
@@ -96,8 +94,9 @@ class Brickset extends \SoapClient
         }
     }
 
-    private function getArrayResult($response, $method) {
-        if($response && $result = $response->{$method}) {
+    private function getArrayResult($response, $method)
+    {
+        if ($response && $result = $response->{$method}) {
             return is_array($result) ? $result : [$result];
         }
 

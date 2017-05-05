@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SearchController extends Controller
 {
     /**
-     * @Route("/", name="search_result")
+     * @Route("/", name="search_results")
      */
     public function searchAction(Request $request)
     {

@@ -11,3 +11,17 @@ $(document).ready(function () {
        });
    })
 });
+
+$(document).ajaxComplete(function () {
+    $('.image.load img')
+        .visibility({
+            type       : 'image',
+            transition : 'fade in',
+            duration   : 1000
+        })
+    ;
+
+    $('.ui.rating')
+        .rating("disable")
+    ;
+});

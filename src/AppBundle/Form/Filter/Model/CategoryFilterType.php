@@ -23,7 +23,10 @@ class CategoryFilterType extends AbstractType
         $builder->add('id', Filters\ChoiceFilterType::class, [
             'choices' => $this->categoryRepository->findAll(),
             'choice_label' => 'name',
-            'label' => 'filter.part.category',
+            'label' => 'filter.model.category',
+//            'attr' => [
+//                'class' => 'ui dropdown search selection'
+//            ]
         ]);
     }
 

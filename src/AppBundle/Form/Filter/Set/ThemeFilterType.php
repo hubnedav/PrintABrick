@@ -21,7 +21,7 @@ class ThemeFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('id', Filters\ChoiceFilterType::class, [
-            'choices' => $this->themeRepository->findAll(),
+            'choices' => $this->themeRepository->findAllMain(),
             'choice_label' => function ($theme, $currentChoiceKey) {
                 if ($parent = $theme->getParent()) {
                     if ($parentParent = $parent->getParent()) {
@@ -38,6 +38,9 @@ class ThemeFilterType extends AbstractType
                 return $theme->getName();
             },
             'label' => 'filter.set.theme',
+//            'attr' => [
+//                'class' => 'ui dropdown search selection'
+//            ]
         ]);
     }
 

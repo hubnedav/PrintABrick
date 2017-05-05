@@ -25,7 +25,7 @@ global_settings {
 );
 
 // Calculate camera distace factor - if object is large on Y axis and Z axis move the camera further
-#declare cameraDistance = (((Max.x-Min.x)*(1/MaxLength) > 0.3) & ((Max.y-Min.y)*(1/MaxLength) > 0.95) ? 1: 0.9);
+#declare cameraDistance = (((Max.y-Min.y)*(1/MaxLength) > 0.3) & ((Max.z-Min.z)*(1/MaxLength) > 0.95) ? 1: 0.9);
 
 camera
 {
@@ -42,9 +42,6 @@ object
     main_mesh
     Center_Trans(main_mesh, x+y+z)
 
-//    rotate <-90,0,0>
-    rotate <0,90,0>
-    
     texture
     {
         pigment{ color rgb<0, 0.34, 0.6> }

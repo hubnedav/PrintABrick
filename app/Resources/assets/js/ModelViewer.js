@@ -31,6 +31,8 @@ var ModelViewer = function($dom_element, model_url) {
 
     this.object = null;
 
+    if ( ! Detector.webgl ) { Detector.addGetWebGLMessage(); }
+
     this.initHtml();
     this.initScene();
 
@@ -86,10 +88,10 @@ ModelViewer.prototype.initHtml = function () {
 
 // Initialize camera - set default position and angles
 ModelViewer.prototype.initCamera = function () {
-    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, .1, 300);
-    this.camera.position.z = 80;
-    this.camera.position.y = -45;
-    this.camera.position.x = 35;
+    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, .1, 3000);
+    this.camera.position.z = 800;
+    this.camera.position.y = -450;
+    this.camera.position.x = 350;
     this.camera.up = new THREE.Vector3(0, 0, 1);
 };
 
@@ -97,7 +99,7 @@ ModelViewer.prototype.initScene = function() {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color( this.background );
 
-    this.scene.fog = new THREE.FogExp2(this.background, 0.06);
+    this.scene.fog = new THREE.FogExp2(this.background, 0.012);
 
     this.initLights();
     this.initCamera();
@@ -112,11 +114,11 @@ ModelViewer.prototype.initScene = function() {
         shininess: 100
     });
 
-    this.plane = new THREE.Mesh(new THREE.PlaneGeometry(80,80), groundPlaneMaterial);
+    this.plane = new THREE.Mesh(new THREE.PlaneGeometry(800,800), groundPlaneMaterial);
     this.plane.receiveShadow = true;
     this.scene.add(this.plane);
 
-    this.grid = new THREE.GridHelper( 80, 100, 0x000000, 0xAAAAAA);
+    this.grid = new THREE.GridHelper( 800, 100, 0x000000, 0xAAAAAA);
     this.grid.rotation.x = Math.PI/2;
     this.scene.add(this.grid);
 
@@ -132,12 +134,12 @@ ModelViewer.prototype.initScene = function() {
 
 ModelViewer.prototype.initLights = function () {
     this.spotLight = new THREE.SpotLight(0xffffff, 0.8, 0);
-    this.spotLight.position.set(-100, 100, 100);
+    this.spotLight.position.set(-1000, 1000, 1000);
     this.spotLight.castShadow = false;
     this.scene.add(this.spotLight);
 
     this.bottomSpotLight = new THREE.SpotLight(0xffffff, 0.8, 0);
-    this.bottomSpotLight.position.set(0, -10, -100);
+    this.bottomSpotLight.position.set(0, -100, -1000);
     this.bottomSpotLight.castShadow = false;
     this.scene.add(this.bottomSpotLight);
 
@@ -145,7 +147,7 @@ ModelViewer.prototype.initLights = function () {
     this.scene.add(this.ambientLight);
 
     this.pointLight = new THREE.PointLight(0xfdfdfd, 1, 0);
-    this.pointLight.position.set(32, -39, 35);
+    this.pointLight.position.set(320, -390, 350);
     this.pointLight.castShadow = true;
     this.scene.add(this.pointLight);
 };
@@ -164,11 +166,8 @@ ModelViewer.prototype.addModel = function(geometry) {
     geometry.center();
     var mesh = new THREE.Mesh(geometry, material);
 
-    // mesh.scale.set(1);
-
     mesh.geometry.computeFaceNormals();
     mesh.geometry.computeVertexNormals();
-    mesh.rotation.set(-Math.PI/2,0, 0);
     mesh.geometry.computeBoundingBox();
 
     mesh.castShadow = true;
@@ -179,13 +178,10 @@ ModelViewer.prototype.addModel = function(geometry) {
     maxDim = Math.max(Math.max(dims.x, dims.y), dims.z);
 
     mesh.position.x = -(mesh.geometry.boundingBox.min.x + mesh.geometry.boundingBox.max.x) / 2;
-    mesh.position.z = -(mesh.geometry.boundingBox.min.y + mesh.geometry.boundingBox.max.y) / 2;
-    mesh.position.y = -mesh.geometry.boundingBox.min.z;
+    mesh.position.y = -(mesh.geometry.boundingBox.min.y + mesh.geometry.boundingBox.max.y) / 2;
+    mesh.position.z = -mesh.geometry.boundingBox.min.z;
 
-    var positionY = (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z)/2;
-    var positionZ = (mesh.geometry.boundingBox.max.y - mesh.geometry.boundingBox.min.y)/2;
-
-    mesh.position.set(0, positionY, positionZ);
+    // mesh.position.set(0, mesh.position.x,  mesh.position.z);
 
     this.object = mesh;
 
@@ -198,9 +194,28 @@ ModelViewer.prototype.loadStl = function(model) {
     var self = this;
 
     var loader = new THREE.STLLoader();
-    loader.load(model, function (geometry) {
-        self.addModel(geometry);
-    });
+
+    loader.load(model,
+        function (geometry) {
+            self.addModel(geometry);
+        },
+        function(progress) {
+
+        },
+        function(error) {
+
+            var wrapper = $('<div/>', {
+                'class': 'modelviewer-wrapper'
+            });
+
+            var errorText = $('<p/>', {
+                'class': 'ui center aligned icon header',
+                'html': '<i class="warning icon"/> Model could not be loaded!',
+            }).appendTo(wrapper);
+
+            self.dom_element.append(wrapper);
+        }
+    );
 };
 
 ModelViewer.prototype.centerCamera = function(mesh) {

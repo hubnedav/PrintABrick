@@ -17,6 +17,7 @@ gulp.task('three', function() {
         'node_modules/three/build/three.js',
         'node_modules/three/examples/js/libs/stats.min.js',
         'node_modules/three/examples/js/loaders/STLLoader.js',
+        'node_modules/three/examples/js/Detector.js',
     ])
         .pipe(plugins.concat('three.js'))
         .pipe(gulp.dest('web/resources/js'));

@@ -18,43 +18,40 @@
             {% set placeholder = asset("resources/images/unknown.png") %}
         {% endif %}
 
-        <img src="{{ placeholder }}" data-src="{{ asset('/sets/'~number|lower~'.jpg')|imagine_filter(filter) }}">
+        <img src="{{ placeholder }}" data-src="{{ asset(number|lower~'.jpg')|imagine_filter(filter) }}">
     </div>
 {% endmacro %}
 
 {% macro model(model, quantity = null, color = -1) %}
-    <div class="column model">
-        <a href="{{ url('model_detail', {'number': model.number})}}">
-            <div class="ui bordered fluid image">
-                {% import _self as blocks %}
-                {{ blocks.partImage(model.number, 'part_min', color) }}
-            </div>
-            <div class="model-meta">
+    <a class="column part" href="{{ url('model_detail', {'number': model.number})}}">
+        <div class="ui bordered fluid image">
+            {% import _self as blocks %}
+            {{ blocks.partImage(model.number, 'part_min', color) }}
+            <div class="part-meta">
                 <span class="quantity"></span> {% if quantity %}{{ quantity }}x{% endif %}<span class="number">{{ model.number }}</span>
                 {#<span class="name">{{ model.name }}</span>#}
             </div>
-        </a>
-    </div>
+        </div>
+    </a>
 {% endmacro %}
 
 {% macro part(part, quantity = null, color = -1) %}
-    <div class="column">
-        <div class="ui color-{{ color }} bordered fluid image">
-            <a href="{{ url('reb_part_detail', {'number': part.number})}}">
-                {% import _self as blocks %}
-                {{ blocks.partImage(part.number,'part_min', color) }}
-                <div class="part-meta">
-                    <span class="quantity"></span> {% if quantity %}{{ quantity }}x{% endif %}<span class="number">{{ part.number }}</span>
-                </div>
-            </a>
+    <a class="column part" href="{{ url('reb_part_detail', {'number': part.number})}}">
+        <div class="ui bordered fluid image">
+            {% import _self as blocks %}
+            {{ blocks.partImage(part.number,'part_min', color) }}
+            <div class="part-meta">
+                <span class="quantity"></span> {% if quantity %}{{ quantity }}x{% endif %}<span class="number">{{ part.number }}</span>
+            </div>
         </div>
-    </div>
+    </a>
 {% endmacro %}
 
 {% macro set(set) %}
     <div class="column">
         <a href="{{ url('set_detail', {'number': set.number}) }}">
             <div class="ui bordered fluid image">
+                {% import _self as blocks %}
                 {{ blocks.setImage(set.number,'set_min') }}
             </div>
             <div class="set-meta">

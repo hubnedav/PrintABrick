@@ -2,39 +2,33 @@
 
 namespace AppBundle\Imagine;
 
-use AppBundle\Api\Manager\RebrickableManager;
+use AppBundle\Api\Manager\BricksetManager;
 use League\Flysystem\Filesystem;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 
-class PartImageLoader extends BaseImageLoader
+class SetImageLoader extends BaseImageLoader
 {
+    /** @var BricksetManager */
+    private $bricksetManager;
+
+    private $rebrickableContext = 'http://rebrickable.com/media/sets/';
+
     /** @var Filesystem */
     private $mediaFilesystem;
 
-    /** @var RebrickableManager */
-    private $rebrickableManager;
-
-    private $rebrickableContext = 'http://rebrickable.com/media/parts/ldraw/';
-
     /**
-     * PartImageLoader constructor.
+     * SetImageLoader constructor.
      *
-     * @param $rebrickableManager
-     * @param $mediaFilesystem
+     * @param $bricksetManager
      */
-    public function __construct($rebrickableManager, $mediaFilesystem)
+    public function __construct($bricksetManager, $mediaFilesystem)
     {
+        $this->bricksetManager = $bricksetManager;
         $this->mediaFilesystem = $mediaFilesystem;
-        $this->rebrickableManager = $rebrickableManager;
     }
 
     public function find($path)
     {
-        // try to load image from local mediaFilesystem
-        if ($this->mediaFilesystem->has('/images/'.$path)) {
-            return $this->mediaFilesystem->read('/images/'.$path);
-        }
-
         // try to load image from rebrickable website
         try {
             if ($this->remoteFileExists($this->rebrickableContext.$path)) {
@@ -46,11 +40,11 @@ class PartImageLoader extends BaseImageLoader
 
         // Load part entity form rebrickable api and get image path from response
         try {
-            if (preg_match('/^(.*)\/(.*).png$/', $path, $match)) {
-                $part = $this->rebrickableManager->getPart($match[2]);
+            if (preg_match('/^(.*)[.png|.jpg]$/', $path, $match)) {
+                $set = $this->bricksetManager->getSetByNumber($match[1]);
 
-                if ($part && $part->getImgUrl()) {
-                    return file_get_contents($part->getImgUrl());
+                if ($set && $set->getImage()) {
+                    return file_get_contents($set->getImageURL());
                 }
             }
         } catch (\Exception $e) {

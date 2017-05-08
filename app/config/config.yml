@@ -110,37 +110,20 @@ knp_paginator:
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
 
 liip_imagine:
-    loaders:
-        rebrickable:
-            stream:
-                wrapper: 'http://rebrickable.com/media/'
-        brickset:
-            stream:
-                wrapper: 'https://images.brickset.com/'
-
     resolvers:
         default:
             web_path: ~
 
     filter_sets:
-        brickset_large:
-              data_loader: brickset
-              cache: ~
-              quality: 92
-              filters:
-                  thumbnail: { size: [840, 580], mode: inset }
-                  background: { size: [900, 600], position: center, color: '#FFFFFF' }
-
-
         set_min:
               quality: 80
-              data_loader: rebrickable
+              data_loader: set_image_loader
               cache: ~
               filters:
                   thumbnail: { size: [200, 200], mode: inset }
                   background: { size: [250, 250], position: center, color: '#FFFFFF' }
         set_large:
-              data_loader: rebrickable
+              data_loader: set_image_loader
               cache: ~
               quality: 92
               filters:
@@ -156,7 +139,6 @@ liip_imagine:
         part_min:
               quality: 80
               data_loader: part_image_loader
-              default_image: "noimage.png"
               cache: ~
               filters:
                   thumbnail: { size: [200, 200], mode: inset }

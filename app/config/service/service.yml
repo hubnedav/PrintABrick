@@ -31,3 +31,8 @@ services:
         arguments: ['@api.manager.rebrickable', '@oneup_flysystem.media_filesystem']
         tags:
             - { name: liip_imagine.binary.loader, loader: part_image_loader }
+    app.set_image_loader:
+        class: AppBundle\Imagine\SetImageLoader
+        arguments: ['@api.manager.brickset', '@oneup_flysystem.media_filesystem']
+        tags:
+            - { name: liip_imagine.binary.loader, loader: set_image_loader }

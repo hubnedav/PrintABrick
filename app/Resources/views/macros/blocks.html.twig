@@ -1,65 +1,84 @@
 {% macro partImage(number, filter, color = -1) %}
-    {% if filter == 'part_large' %}
-        {% set placeholder = asset("resources/images/unknown_large.png") %}
-    {% else %}
-        {% set placeholder = asset("resources/images/unknown.png") %}
-    {% endif %}
-
-    <div class="image load">
+    <div class="ui image load">
+        {% if filter == 'part_large' %}
+            {% set placeholder = asset("resources/images/unknown_large.png") %}
+        {% else %}
+            {% set placeholder = asset("resources/images/oval.svg") %}
+        {% endif %}
+        {#<img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter)}}">#}
         <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter)}}">
     </div>
 {% endmacro %}
 
 {% macro setImage(number, filter) %}
-    <div class="image load">
+    <div class="ui image load">
         {% if filter == 'set_large' %}
             {% set placeholder = asset("resources/images/unknown_large.png") %}
         {% else %}
-            {% set placeholder = asset("resources/images/unknown.png") %}
+            {% set placeholder = asset("resources/images/oval.svg") %}
         {% endif %}
-
-        <img src="{{ placeholder }}" data-src="{{ asset(number|lower~'.jpg')|imagine_filter(filter) }}">
+        <img src="{{ placeholder }}" data-src="{{ asset(number~'.jpg')|imagine_filter(filter) }}">
     </div>
 {% endmacro %}
 
 {% macro model(model, quantity = null, color = -1) %}
-    <a class="column part" href="{{ url('model_detail', {'number': model.number})}}">
-        <div class="ui bordered fluid image">
+    <a class="column part" href="{{ url('model_detail', {'id': model.id})}}">
+        <div class="ui card">
             {% import _self as blocks %}
-            {{ blocks.partImage(model.number, 'part_min', color) }}
-            <div class="part-meta">
-                <span class="quantity"></span> {% if quantity %}{{ quantity }}x{% endif %}<span class="number">{{ model.number }}</span>
-                {#<span class="name">{{ model.name }}</span>#}
+            {{ blocks.partImage(model.id, 'part_min', color) }}
+            <div class="content">
+                <h3 class="header">{{ model.id }}</h3>
+                <div class="description">
+                    {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
+                </div>
             </div>
         </div>
     </a>
 {% endmacro %}
 
 {% macro part(part, quantity = null, color = -1) %}
-    <a class="column part" href="{{ url('reb_part_detail', {'number': part.number})}}">
-        <div class="ui bordered fluid image">
+    <a class="column part" href="{{ url('reb_part_detail', {'id': part.id})}}">
+        <div class="ui card">
             {% import _self as blocks %}
-            {{ blocks.partImage(part.number,'part_min', color) }}
-            <div class="part-meta">
-                <span class="quantity"></span> {% if quantity %}{{ quantity }}x{% endif %}<span class="number">{{ part.number }}</span>
+            {{ blocks.partImage(part.id,'part_min', color) }}
+            <div class="content">
+                <h3 class="header">{{ part.id }}</h3>
+                <div class="description">
+                    {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
+                </div>
             </div>
         </div>
     </a>
 {% endmacro %}
 
-{% macro set(set) %}
-    <div class="column">
-        <a href="{{ url('set_detail', {'number': set.number}) }}">
-            <div class="ui bordered fluid image">
-                {% import _self as blocks %}
-                {{ blocks.setImage(set.number,'set_min') }}
+{% macro set(set, quantity = null) %}
+    <a class="set column" href="{{ url('set_detail', {'id': set.id}) }}">
+        <div class="ui card">
+            {% import _self as blocks %}
+            {{ blocks.setImage(set.id,'set_min') }}
+            <div class="content">
+                <h3 class="header">
+                    {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
+                    {% if set.name|length > 17 %}
+                        {{ set.name | slice(0,17) }} &hellip;
+                    {% else %}
+                        {{ set.name }}
+                    {% endif %}
+                </h3>
+                <div class="meta">
+                    <span class="left floated">{{ set.id }}</span>
+                    <br>
+                    <span class="left floated"><small>{{ set.theme.fullName | slice(0,27) }} &hellip;</small></span>
+                </div>
+                <div class="description">
+                    <small>
+                        <span class="right floated">{{ set.year }}</span>
+                        <span>{{ set.partCount }} parts</span>
+                    </small>
+                </div>
             </div>
-            <div class="set-meta">
-                <p>{{ set.number }}</p>
-                <p>{{ set.name }}</p>
-            </div>
-        </a>
-    </div>
+        </div>
+    </a>
 {% endmacro %}
 
 {% macro empty(message) %}

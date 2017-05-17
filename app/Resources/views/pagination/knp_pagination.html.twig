@@ -1,5 +1,5 @@
 {% if pageCount > 1 %}
-    <div class="ui pagination menu spacing 20">
+    <div class="ui pagination menu">
         {% if first is defined and current != first %}
             <a class="icon item" href="{{ path(route, query|merge({(pageParameterName): first})) }}">
                 <i class="angle double left icon"></i>

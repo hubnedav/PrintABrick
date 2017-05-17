@@ -5,6 +5,9 @@ gulp.task('css', function() {
     return gulp.src([
         'node_modules/semantic-ui/dist/semantic.css',
         'node_modules/lightbox2/dist/css/lightbox.css',
+        'bower_components/jquery-ui/themes/base/jquery-ui.css',
+        'bower_components/jQuery-ui-Slider-Pips/dist/jquery-ui-slider-pips.css',
+        'bower_components/select2/dist/css/select2.css',
         'app/Resources/assets/style/style.scss',
     ])
         .pipe(plugins.sass().on('error', plugins.sass.logError))
@@ -31,7 +34,10 @@ gulp.task('three', function() {
 
 gulp.task('js', function() {
     return gulp.src([
-        'node_modules/jquery/dist/jquery.js',
+        'bower_components/jquery/dist/jquery.js',
+        'bower_components/jquery-ui/jquery-ui.js',
+        'bower_components/jQuery-ui-Slider-Pips/dist/jquery-ui-slider-pips.js',
+        'bower_components/select2/dist/js/select2.full.js',
         'node_modules/semantic-ui/dist/semantic.js',
         'node_modules/lightbox2/dist/js/lightbox.js',
         'app/Resources/assets/js/**.js',

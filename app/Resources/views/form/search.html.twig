@@ -1,0 +1,9 @@
+{% block number_range_widget %}
+    <div id="{{ form.vars.id }}" class="number-range">
+        <p id="{{ form.vars.id }}_value"></p>
+        <div id="{{ form.vars.id }}_slider" class="slider" min="{{ form.vars.attr.min }}" max="{{ form.vars.attr.max }}"></div>
+
+        {{ form_widget(form.from) }}
+        {{ form_widget(form.to) }}
+    </div>
+{% endblock %}

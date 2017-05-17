@@ -1,8 +1,10 @@
 @import "variables";
+@import "mixins";
 
 @import "main";
 @import "modelviewer";
 
-@import "model";
+@import "part";
+@import "set";
 @import "colors";
 @import "reviews";

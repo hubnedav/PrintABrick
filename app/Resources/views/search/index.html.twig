@@ -1,18 +1,28 @@
 {% extends 'base.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+
 {% block title %}{% endblock %}
 
 {% block header %}{% endblock %}
 
 {% block content %}
-    <div class="ui seven column grid">
+    <h4 class="ui horizontal divider header">Sets</h4>
+
+    <div class="ui eight column doubling grid">
         <div class="row">
             {% for set in sets %}
-                <div class="column">
-                    <a href="{{ url('set_detail', {'number': set.number}) }}">
-                        <p>{{ set.number }} - {{ set.name }}</p>
-                    </a>
-                </div>
+                {{ blocks.set(set) }}
+            {% endfor %}
+        </div>
+    </div>
+
+    <h4 class="ui horizontal divider header">Models</h4>
+
+    <div class="ui eight column doubling grid">
+        <div class="row">
+            {% for model in models %}
+                {{ blocks.model(model) }}
             {% endfor %}
         </div>
     </div>

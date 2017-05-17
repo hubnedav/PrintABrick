@@ -7,51 +7,54 @@
 {% block header %}{{ 'page.set.index' | trans }}{% endblock %}
 
 {% block content %}
-
     <div class="ui container divided stackable grid">
-        <div class="row">
-            <div class="column four wide">
-                <form method="get" action="" class="ui form">
-                    {{ form_start(form) }}
+    <div class="row">
+        <div class="column four wide">
+            <h3>{{ 'set.filter.title' | trans }}</h3>
+            {{ form_start(form) }}
 
-                    {{ form_row(form.search) }}
-                    <div class="field fluid search selection">
-                        {{ form_label(form.theme.id) }}
-                        {{ form_widget(form.theme.id) }}
-                    </div>
-                    <div class="field">
-                        <div id="slider"></div>
-                        {{ form_row(form.partCount) }}
-                    </div>
-                    <div class="field">
-                        {{ form_row(form.year) }}
-                    </div>
+            {{ form_row(form.query) }}
+            {{ form_row(form.theme) }}
+            {{ form_row(form.year) }}
+            {{ form_row(form.partCount) }}
 
-                    <div class="field">
-                        <input class="ui submit button" type="submit" value="filter"/>
-                    </div>
-                    {{ form_rest(form) }}
-                    {{ form_end(form) }}
-                </form>
+            {{ form_rest(form) }}
+
+            <div class="field">
+                <input class="ui fluid submit button" type="submit" value="Filter"/>
             </div>
-            <div class="column twelve wide">
-                <div class="segment vertical">
-                    <div class="ui five column doubling grid">
-                        <div class="row">
-                            {% for set in sets %}
-                               {{ set(set) }}
-                            {% endfor %}
-                        </div>
+            {{ form_end(form) }}
+        </div>
+        <div class="column twelve wide">
+
+            <div class="segment vertical">
+                <div class="ui text menu right floated">
+                    <div class="header item">Sort By</div>
+                    {{ knp_pagination_sortable(sets, 'Number', 's.id', {'class':'item'}) }}
+                    {{ knp_pagination_sortable(sets, 'Year', 's.year', {'class':'item'}) }}
+                    {{ knp_pagination_sortable(sets, 'Name', ['s.name'], {'class':'item'}) }}
+                    {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount'], {'class':'item'}) }}
+                </div>
+                <div class="ui text menu">
+                    <div class="header item">Found</div>
+                    <span class="item">{{ sets.getTotalItemCount }}</span>
+                </div>
+            </div>
+
+            <div class="segment vertical">
+                <div class="ui divided items">
+                    <div class="ui four column doubling grid">
+                        {% for set in sets %}
+                            {{ blocks.set(set) }}
+                        {% else %}
+                            {{ blocks.empty('empty.sets') }}
+                        {% endfor %}
                     </div>
                 </div>
-
+            </div>
+            <div class="segment vertical">
                 {{ knp_pagination_render(sets) }}
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

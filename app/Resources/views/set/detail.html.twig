@@ -2,33 +2,33 @@
 
 {% import 'macros/blocks.html.twig' as blocks %}
 
-{% block title %}{{ set.number }} {{ set.name }}{% endblock %}
+{% block title %}{{ set.id }} {{ set.name }}{% endblock %}
 
-{% block header %}{{ set.number }}  {{ set.name | escape('html') }}{% endblock %}
+{% block header %}{{ set.name | escape('html') }}{% endblock %}
 
 {% block content %}
 
     <div class="ui stackable grid">
         <div class="column nine wide">
             <div class="ui bordered fluid image">
-                {{ blocks.setImage(set.number,'set_large') }}
+                {{ blocks.setImage(set.id,'set_large') }}
             </div>
         </div>
         <div class="column seven wide">
             <div class="item-info ui">
                 <table class="ui very basic table">
                     <tr>
-                        <td>{{ 'set.number' | trans }}</td><td>{{ set.number }}</td>
+                        <td>{{ 'set.id' | trans }}</td><td><h2>{{ set.id }}</h2></td>
                     </tr>
                     <tr>
                         <td>{{ 'set.name' | trans }}</td><td>{{ set.name }}</td>
                     </tr>
                     <tr>
-                        <td>{{ 'set.year' | trans }}</td><td>{{ set.year }}</td>
+                        <td>{{ 'set.year' | trans }}</td><td><a href="{{ path('set_index',{'s[year][from]':set.year, 's[year][to]':set.year}) }}">{{ set.year }}</a></td>
                     </tr>
                     <tr>
                         <td>{{ 'set.theme' | trans }}</td>
-                        <td><a href="#">{{ set.theme.parent ? set.theme.parent.name }}</a> &gt; <a href="#">{{ set.theme ? set.theme.name }}</a> </td>
+                        <td><a href="{{ path('set_index',{'s[theme]' : set.theme.id }) }}">{{ set.theme ? set.theme.name }}</a></td>
                     </tr>
                     <tr>
                         <td>{{ 'set.parts' | trans }}</td><td>
@@ -50,7 +50,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            <a class="rebrickable link" href="http://rebrickable.com/sets/{{ set ? set.number }}">Rebrickable</a>
+                            <a class="rebrickable link" href="http://rebrickable.com/sets/{{ set ? set.id }}">Rebrickable</a>
                             {% if brset %}
                                 <a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a>
                             {% endif %}
@@ -59,46 +59,47 @@
                 </table>
 
 
-                <div class="ui primary open-modal button">{{ 'set.download' | trans }}</div>
+                <div class="ui primary fluid open-modal button">{{ 'set.download.button' | trans }}</div>
 
                 {% embed 'embeds/modal.html.twig' %}
                     {% block title %}
-                        {{ 'set.download.title' | trans({'%set%': set.number~' '~set.name}) }}
+                        {{ 'set.download.title' | trans({'%set%': set.id~' '~set.name}) }}
                     {% endblock %}
                     {% block content %}
-                        {#<div class="ui icon message">#}
-                            {#<i class="warning icon"></i>#}
-                            {#<div class="content">#}
-                                {#<div class="header">#}
-                                    {#{{ 'set.download.warning.title' | trans }}#}
-                                {#</div>#}
-                                {#<p> {{ 'set.download.warning.text' | trans }}</p>#}
-                            {#</div>#}
-                        {#</div>#}
+                        {% if missingCount > 0 %}
+                            <div class="ui warning icon message">
+                                <i class="warning icon"></i>
+                                <div class="content">
+                                    <div class="header">
+                                        {{ 'set.download.warning.title' | trans }}
+                                    </div>
+                                    <p> {{ 'set.download.warning.text' | trans({'%percent%':((1 - missingCount/partCount)*100)|number_format(2, '.', ','), '%total%':partCount, '%missing%': missingCount, '%unique%': uniqueMissing|length}) | raw | nl2br }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endblock %}
                     {% block actions %}
                         <div class="ui two column divided center aligned grid">
                             <div class="column">
                                 <h4 class="ui header">{{ 'set.download.sorted.title' | trans }}</h4>
                                 <p>{{ 'set.download.sorted.text' | trans }}</p>
-                                <a class="ui download button" href="{{ path('set_zip', {number: set.number, sorted: true }) }}" download>Download ZIP</a>
+                                <a class="ui download button" href="{{ path('set_zip', {id: set.id, sorted: true }) }}" download>Download ZIP</a>
                             </div>
                             <div class="column">
                                 <h4 class="ui header">{{ 'set.download.unsorted.title' | trans }}</h4>
                                 <p>{{ 'set.download.unsorted.text' | trans }}</p>
-                                <a class="ui download button" href="{{ path('set_zip', {number: set.number, sorted: false }) }}" download>Download ZIP</a>
+                                <a class="ui download button" href="{{ path('set_zip', {id: set.id, sorted: false }) }}" download>Download ZIP</a>
                             </div>
                         </div>
                     {% endblock %}
                 {% endembed %}
-
             </div>
         </div>
     </div>
 
     <div class="ui segment vertical item-info">
         <div class="ui tabular pointing secondary menu">
-            <a class="item active" data-tab="parts"><i class="cubes icon"></i> Inventory ({{ set ? set.partCount : 0}})</a>
+            <a class="item active" data-tab="inventory"><i class="cubes icon"></i> Inventory ({{ set ? set.partCount : 0}})</a>
             {% if brset %}
                 <a class="item" data-tab="description"><i class="info icon"></i> Description</a>
                 <a class="item" data-tab="images"> <i class="image icon"></i> Images ({{ brset.additionalImageCount }})</a>
@@ -107,20 +108,28 @@
             {% endif %}
         </div>
         <div class="ui vertical segment">
-            <div class="ui tab active" data-tab="parts">
-                {#<div class="ui icon buttons right floated">#}
-                    {#<button class="ui button"><i class="grid layout icon"></i></button>#}
-                    {#<button class="ui button"><i class="list layout icon"></i></button>#}
+            <div class="ui tab active" data-tab="inventory">
+
+                <div class="ui tabular icon buttons right floated submenu">
+                    <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
+                    <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
+                </div>
+                <p>{{ 'set.models.text' | trans({'%rebrickable%' : partCount, '%brickset%' : brset ? brset.pieces }) | nl2br }}</p>
+
+                {#<div class="ui tab active ajax-load" data-tab="inventory/models" data-src="{{ path('set_models', { 'id': set.id }) }}">#}
+                {#<div class="ui active centered inline loader"></div>#}
+                {#</div>#}
+                {#<div class="ui tab ajax-load" data-tab="inventory/colors" data-src="{{ path('set_colors', { 'id': set.id }) }}">#}
+                {#<div class="ui active centered inline loader"></div>#}
                 {#</div>#}
 
-                <p>{{ 'set.models.text' | trans({'%rebrickable%' : partCount, '%brickset%' : brset ?     brset.pieces }) | nl2br }}</p>
-
-                <div class="ajax-load" data-src="{{ path('set_models', { 'number': set.number }) }}">
-                    <div class="ui active centered inline loader"></div>
+                <div class="ui tab active" data-tab="inventory/models">
+                    {{ render(path('set_models', {id: set.id})) }}
+                    {{ render(path('set_sets', {id: set.id})) }}
                 </div>
-
-                {#{{ render(path('set_models', {number: set.number})) }}#}
-                {{ render(path('set_sets', {number: set.number})) }}
+                <div class="ui tab" data-tab="inventory/colors">
+                    {{ render(path('set_colors', {id: set.id})) }}
+                </div>
             </div>
             {% if brset %}
                 <div class="ui tab ajax-load" data-tab="description" data-src="{{ path('brickset_description', { 'id': brset.setID }) }}">

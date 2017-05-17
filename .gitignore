@@ -16,6 +16,7 @@
 /web/bundles/
 .idea/
 /node_modules/
+/bower_components/
 /app/Resources/libs/semantic/dist
 /web/resources/
 /var/media/

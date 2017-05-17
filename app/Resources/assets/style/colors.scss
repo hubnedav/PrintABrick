@@ -1,4 +1,4 @@
-$alpha: 0.7;
+$alpha: 0.2;
 
 $colors: (
         -1: #0033B2,
@@ -139,7 +139,12 @@ $colors: (
 );
 
 @each $number, $color in $colors {
-  .color-#{$number} {
+  .border.color-#{$number} {
     border-bottom: 2px solid $color;
+  }
+
+  .text.color-#{$number} {
+      color: $color;
+      //background: color-contrast($color,#000,#FFF);
   }
 }

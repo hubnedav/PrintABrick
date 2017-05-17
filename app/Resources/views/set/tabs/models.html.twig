@@ -9,12 +9,10 @@
             Models
         </h4>
         <div class="ui segment vertical noborder">
-            <div class="ui grid">
-                <div class="doubling ten column row">
-                    {% for model in models %}
-                        {{ blocks.model(model['model'],model['quantity']) }}
-                    {% endfor %}
-                </div>
+            <div class="ui grid doubling ten column row">
+                {% for model in models %}
+                    {{ blocks.model(model['model'],model['quantity']) }}
+                {% endfor %}
             </div>
         </div>
     {% endif %}
@@ -23,7 +21,7 @@
             Missing models
         </h4>
         <div class="ui segment vertical noborder">
-            <div class="ui ten column grid">
+            <div class="ui grid doubling ten column row">
                 {% for part in missing %}
                     {{ blocks.part(part['part'],part['quantity']) }}
                 {% endfor %}
@@ -32,29 +30,29 @@
     {% endif %}
 
     {#{% if spareModels|length > 0 %}#}
-        {#<h4 class="ui horizontal divider header">#}
-            {#Spare parts#}
-        {#</h4>#}
+    {#<h4 class="ui horizontal divider header">#}
+    {#Spare parts#}
+    {#</h4>#}
 
-        {#<div class="ui segment vertical">#}
-            {#<div class="ui ten column grid">#}
-                {#{% for model in spareModels %}#}
-                    {#{{ blocks.model(model['model'],model['quantity']) }}#}
-                {#{% endfor %}#}
-            {#</div>#}
-        {#</div>#}
+    {#<div class="ui segment vertical">#}
+    {#<div class="ui ten column grid">#}
+    {#{% for model in spareModels %}#}
+    {#{{ blocks.model(model['model'],model['quantity']) }}#}
+    {#{% endfor %}#}
+    {#</div>#}
+    {#</div>#}
     {#{% endif %}#}
 
     {#{% if missingSpare|length > 0 %}#}
-        {#<h4 class="ui horizontal divider header">#}
-            {#Missing spare models#}
-        {#</h4>#}
-        {#<div class="ui segment vertical">#}
-            {#<div class="ui ten column grid segment">#}
-                {#{% for inventoryPart in missingSpare %}#}
-                    {#{{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}#}
-                {#{% endfor %}#}
-            {#</div>#}
-        {#</div>#}
+    {#<h4 class="ui horizontal divider header">#}
+    {#Missing spare models#}
+    {#</h4>#}
+    {#<div class="ui segment vertical">#}
+    {#<div class="ui ten column grid segment">#}
+    {#{% for inventoryPart in missingSpare %}#}
+    {#{{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}#}
+    {#{% endfor %}#}
+    {#</div>#}
+    {#</div>#}
     {#{% endif %}#}
 {% endblock %}

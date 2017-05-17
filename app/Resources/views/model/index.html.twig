@@ -10,24 +10,23 @@
     <div class="ui container divided stackable grid">
         <div class="row">
             <div class="column four wide">
-                <form method="get" action="" class="ui form">
+                <h3>{{ 'model.filter.title' | trans }}</h3>
+                {#<form method="get" action="" class="ui form">#}
                     {{ form_start(form) }}
 
-                    {{ form_row(form.search) }}
-                    <div class="field fluid search selection">
-                        {{ form_label(form.category.id) }}
-                        {{ form_widget(form.category.id)}}
-                    </div>
+                    {{ form_rest(form) }}
                     <div class="field">
-                        <input class="ui submit button" type="submit" value="filter"/>
+                        <input class="ui fluid submit button" type="submit" value="Filter"/>
                     </div>
                     {{ form_end(form) }}
-                </form>
+                {#</form>#}
             </div>
             <div class="column twelve wide">
                 <div class="ui six column doubling grid">
                     {% for model in models %}
                         {{ blocks.model(model) }}
+                    {% else %}
+                        {{ blocks.empty('empty.models') }}
                     {% endfor %}
                 </div>
 

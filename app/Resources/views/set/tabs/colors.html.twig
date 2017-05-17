@@ -1,9 +1,11 @@
 {% extends 'ajax.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+
 {% block content %}
     {% if colors|length > 0 %}
         {% for color in colors %}
-            <h5 style="color: #{{ color['color'].rgb }}" class="ui horizontal divider header">
+            <h5 class="ui horizontal divider header text color-{{ color['color'].id }}">
                 {{ color['color'].name }} ({{ color['quantity'] }})
             </h5>
             <div class="segment vertical">

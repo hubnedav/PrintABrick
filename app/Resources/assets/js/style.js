@@ -17,6 +17,9 @@ $(document).ready(function(){
 
     $('.tabular.menu .item').tab();
 
+    $('.tabular.submenu .item').tab({
+    });
+
     $('.message .close')
         .on('click', function() {
             $(this)

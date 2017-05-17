@@ -1,5 +1,7 @@
 {% extends 'ajax.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+
 {% block content %}
     {% if regularParts|length > 0 %}
         <h4 class="ui horizontal divider header">
@@ -8,7 +10,7 @@
 
         <div class="ui ten column grid">
             {% for inventoryPart in regularParts %}
-                {{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}
+                {{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}
                 {{ inventoryPart.color.id }}
             {% endfor %}
         </div>
@@ -20,7 +22,7 @@
         </h4>
         <div class="ui ten column grid">
             {% for inventoryPart in missing %}
-                {{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}
+                {{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -31,7 +33,7 @@
         </h4>
         <div class="ui ten column grid">
             {% for inventoryPart in spareParts %}
-                {{ blocks.part(inventoryPart.part.number,inventoryPart.quantity, inventoryPart.color.id) }}
+                {{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}
             {% endfor %}
         </div>
     {% endif %}

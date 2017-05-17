@@ -1,14 +1,14 @@
-.model-meta {
-  background: #E0E1E2;
-  text-align: center;
+.part {
+  .content {
+    padding: 7px !important;
 
-  .quantity {
-    font-weight: 700;
-    color: #444444;
-  }
-  .number {
-    margin: 0.2em;
-    display: inline-block;
-    color: #000000;
+    .header {
+      font-size: 14px !important;
+      margin: 0;
+    }
+    .description {
+      font-size: 12px;
+      margin: 0 !important;
+    }
   }
 }

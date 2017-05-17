@@ -1,20 +1,21 @@
 services:
-    form.filter.category:
-        class: AppBundle\Form\Filter\Model\CategoryFilterType
-        arguments:
-            - '@repository.ldraw.category'
-        tags:
-            - { name: form.type }
-
     form.filter.brickset:
         class: AppBundle\Form\FilterSetType
         arguments: ['@api.manager.brickset']
         tags:
             - { name: form.type }
 
-    form.filter.theme:
-        class: AppBundle\Form\Filter\Set\ThemeFilterType
+    form.search.model:
+        class: AppBundle\Form\Search\ModelSearchType
+        arguments:
+            - '@repository.ldraw.category'
+        tags:
+            - { name: form.type }
+
+    form.search.set:
+        class: AppBundle\Form\Search\SetSearchType
         arguments:
             - '@repository.rebrickable.theme'
+            - '@repository.rebrickable.set'
         tags:
             - { name: form.type }

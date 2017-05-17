@@ -10,6 +10,10 @@ parameters:
     # You should uncomment this if you want use pdo_sqlite
     # database_path: "%kernel.root_dir%/data.db3"
 
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html
+    elastica_host : localhost
+    elastica_port : 9200
+
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
 

@@ -1,0 +1,47 @@
+fos_elastica:
+    clients:
+        default: { host: '%elastica_host%', port: '%elastica_port%', logger: false }
+    indexes:
+        app:
+            index_name: app_%kernel.environment%
+            types:
+                set:
+                    mappings:
+                        id: ~
+                        name: { type: string }
+                        year: { type: integer }
+                        partCount: { type: integer }
+                        theme:
+                            type: "object"
+                            properties:
+                                id: ~
+                                name: { type: string }
+                    persistence:
+                        driver: orm
+                        model: AppBundle\Entity\Rebrickable\Set
+                        provider: ~
+                        finder: ~
+                        repository: AppBundle\Repository\Search\SetRepository
+                model:
+                    mappings:
+                        id: ~
+                        name: { type: string }
+                        aliases:
+                            type: "object"
+                            properties:
+                                id: ~
+                        category:
+                            type: "object"
+                            properties:
+                                id: ~
+                                name: { type: string }
+                        keywords:
+                            type: "object"
+                            properties:
+                                name: ~
+                    persistence:
+                        driver: orm
+                        model: AppBundle\Entity\LDraw\Model
+                        provider: ~
+                        finder: ~
+                        repository: AppBundle\Repository\Search\ModelRepository

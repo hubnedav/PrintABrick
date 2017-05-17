@@ -26,10 +26,10 @@ class SetRepository extends BaseRepository
     public function findAllByPartNumber($number)
     {
         $queryBuilder = $this->createQueryBuilder('s')
-            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory.set = s.number')
+            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory.set = s.id')
             ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'inventory.id = inventory_part.inventory')
-            ->join(Part::class, 'part', Join::WITH, 'inventory_part.part = part.number')
-            ->where('part.number LIKE :number')
+            ->join(Part::class, 'part', Join::WITH, 'inventory_part.part = part.id')
+            ->where('part.id LIKE :number')
             ->setParameter('number', $number)
             ->distinct(true);
 
@@ -39,28 +39,45 @@ class SetRepository extends BaseRepository
     public function findAllByModel(Model $model)
     {
         $queryBuilder = $this->createQueryBuilder('s')
-            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory.set = s.number')
+            ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory.set = s.id')
             ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'inventory.id = inventory_part.inventory')
-            ->join(Part::class, 'part', Join::WITH, 'inventory_part.part = part.number')
+            ->join(Part::class, 'part', Join::WITH, 'inventory_part.part = part.id')
             ->where('part.model = :model')
-            ->setParameter('model', $model->getNumber())
+            ->setParameter('model', $model->getId())
             ->distinct(true);
 
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findByQuery($query, $limit = null)
+    public function getMinPartCount()
     {
         $queryBuilder = $this->createQueryBuilder('s')
-            ->where('s.name LIKE :name')
-            ->orWhere('s.number LIKE :number')
-            ->setParameter('name', '%'.$query.'%')
-            ->setParameter('number', $query.'%');
+            ->select('MIN(s.partCount)');
 
-        if ($limit) {
-            $queryBuilder->setMaxResults($limit);
-        }
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
 
-        return $queryBuilder->getQuery()->getResult();
+    public function getMaxPartCount()
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('MAX(s.partCount)');
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+    public function getMinYear()
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('MIN(s.year)');
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+    public function getMaxYear()
+    {
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->select('MAX(s.year)');
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }

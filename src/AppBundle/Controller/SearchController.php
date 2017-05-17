@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Set;
+use FOS\ElasticaBundle\Repository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,12 +24,22 @@ class SearchController extends Controller
     {
         $query = trim(strip_tags($request->get('query')));
 
-        $modelsResult = $this->get('repository.ldraw.model')->findByQuery($query);
-        $setsResult = $this->get('repository.rebrickable.set')->findByQuery($query);
+        /** var FOS\ElasticaBundle\Manager\RepositoryManager */
+        $repositoryManager = $this->get('fos_elastica.manager');
+
+        /** @var Repository $setRepository */
+        $setRepository = $repositoryManager->getRepository(Set::class);
+        /** @var Repository $modelRepository */
+        $modelRepository = $repositoryManager->getRepository(Model::class);
+
+        // Option 1. Returns all users who have example.net in any of their mapped fields
+        $setsResult = $setRepository->find($query, 5000);
+        $modelResult = $modelRepository->find($query, 5000);
 
         return $this->render('search/index.html.twig', [
             'sets' => $setsResult,
-            'models' => $modelsResult,
+            'models' => $modelResult,
+            'query' => $query,
         ]);
     }
 
@@ -39,25 +50,33 @@ class SearchController extends Controller
     {
         $query = trim(strip_tags($request->get('query')));
 
-        $modelsResult = $this->get('repository.ldraw.model')->findByQuery($query, 7);
+        /** var FOS\ElasticaBundle\Manager\RepositoryManager */
+        $repositoryManager = $this->get('fos_elastica.manager');
+
+        /** @var Repository $setRepository */
+        $setRepository = $repositoryManager->getRepository(Set::class);
+        /** @var Repository $modelRepository */
+        $modelRepository = $repositoryManager->getRepository(Model::class);
+
+        // Option 1. Returns all users who have example.net in any of their mapped fields
+        $setsResult = $setRepository->find($query, 5);
+        $modelResult = $modelRepository->find($query, 5);
 
         $models = [];
         /** @var Model $model */
-        foreach ($modelsResult as $model) {
+        foreach ($modelResult as $model) {
             $models[] = [
-                'title' => $model->getNumber().' '.$model->getName(),
-                'url' => $this->generateUrl('model_detail', ['number' => $model->getNumber()]),
+                'title' => $model->getId().' '.$model->getName(),
+                'url' => $this->generateUrl('model_detail', ['id' => $model->getId()]),
             ];
         }
-
-        $setsResult = $this->get('repository.rebrickable.set')->findByQuery($query, 7);
 
         $sets = [];
         /** @var Set $set */
         foreach ($setsResult as $set) {
             $sets[] = [
-                'title' => $set->getNumber().' '.$set->getName(),
-                'url' => $this->generateUrl('set_detail', ['number' => $set->getNumber()]),
+                'title' => $set->getId().' '.$set->getName(),
+                'url' => $this->generateUrl('set_detail', ['id' => $set->getId()]),
             ];
         }
 
@@ -72,6 +91,11 @@ class SearchController extends Controller
                     'name' => 'Models',
                     'results' => $models,
                 ],
+            ],
+            // optional action below results
+            'action' => [
+                'url' => $this->generateUrl('search_results', ['query' => $query]),
+                'text' => 'View results',
             ],
         ]);
 

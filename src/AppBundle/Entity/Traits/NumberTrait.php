@@ -10,24 +10,24 @@ trait NumberTrait
      * @ORM\Id
      * @ORM\Column(name="id", type="string", length=255, unique=true)
      */
-    protected $number;
+    protected $id;
 
     /**
      * @return string
      */
-    public function getNumber()
+    public function getId()
     {
-        return $this->number;
+        return $this->id;
     }
 
     /**
-     * @param string $number
+     * @param string $id
      *
      * @return mixed
      */
-    public function setNumber($number)
+    public function setId($id)
     {
-        $this->number = $number;
+        $this->id = $id;
 
         return $this;
     }

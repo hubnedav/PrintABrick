@@ -3,9 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Model;
-use AppBundle\Entity\Rebrickable\Part;
-use AppBundle\Entity\Rebrickable\Set;
-use AppBundle\Form\Filter\Model\ModelFilterType;
+use AppBundle\Form\Search\ModelSearchType;
+use AppBundle\Model\ModelSearch;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,27 +23,29 @@ class ModelController extends Controller
      * Lists all part entities.
      *
      * @Route("/", name="model_index")
-     * @Method("GET")
      */
     public function indexAction(Request $request)
     {
-        $form = $this->get('form.factory')->create(ModelFilterType::class);
+        $modelSearch = new ModelSearch();
 
-        $filterBuilder = $this->get('repository.ldraw.model')->getFilteredQueryBuilder();
+        $form = $this->get('form.factory')->createNamedBuilder('m', ModelSearchType::class, $modelSearch)->getForm();
+        $form->handleRequest($request);
 
-        if ($request->query->has($form->getName())) {
-            // manually bind values from the request
-            $form->submit($request->query->get($form->getName()));
+        $elasticaManager = $this->get('fos_elastica.manager');
+        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch);
 
-            // build the query from the given form object
-            $this->get('lexik_form_filter.query_builder_updater')->addFilterConditions($form, $filterBuilder);
-        }
+        $paginator = $this->get('knp_paginator');
+        $sets = $paginator->paginate(
+            $results,
+            $request->query->getInt('page', 1)/*page number*/,
+            $request->query->getInt('limit', 30)/*limit per page*/
+        );
 
         $paginator = $this->get('knp_paginator');
         $models = $paginator->paginate(
-            $filterBuilder->getQuery(),
+            $results,
             $request->query->getInt('page', 1)/*page number*/,
-            $request->query->getInt('limit', 40)/*limit per page*/
+            $request->query->getInt('limit', 30)/*limit per page*/
         );
 
         return $this->render('model/index.html.twig', [
@@ -56,20 +57,20 @@ class ModelController extends Controller
     /**
      * Finds and displays a model entity.
      *
-     * @Route("/{number}", name="model_detail")
+     * @Route("/{id}", name="model_detail")
      * @Method("GET")
      */
-    public function detailAction($number)
+    public function detailAction($id)
     {
         /** @var Model $model */
-        if ($model = $this->get('repository.ldraw.model')->findOneByNumber($number)) {
+        if ($model = $this->get('repository.ldraw.model')->findOneByNumber($id)) {
             try {
                 $subparts = $this->get('service.model')->getAllSubparts($model);
 
                 $rbParts = $model != null ? $this->get('repository.rebrickable.part')->findAllByModel($model) : null;
                 $sets = $model != null ? $this->get('repository.rebrickable.set')->findAllByModel($model) : null;
 
-                $related = $this->get('repository.ldraw.model')->findAllRelatedModels($model->getNumber());
+                $related = $this->get('repository.ldraw.model')->findAllRelatedModels($model->getId());
 
                 return $this->render('model/detail.html.twig', [
                     'model' => $model,
@@ -87,7 +88,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @Route("/{number}/zip", name="model_zip")
+     * @Route("/{id}/zip", name="model_zip")
      * @Method("GET")
      */
     public function zipAction(Request $request, Model $model)
@@ -100,7 +101,7 @@ class ModelController extends Controller
         // Create the disposition of the file
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            "model_{$model->getNumber()}_{$model->getName()}.zip"
+            "model_{$model->getId()}_{$model->getName()}.zip"
         );
 
         $response->headers->set('Content-Disposition', $disposition);

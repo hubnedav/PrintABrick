@@ -5,7 +5,10 @@ namespace AppBundle\Controller;
 use AppBundle\Api\Exception\ApiException;
 use AppBundle\Entity\Rebrickable\Inventory_Set;
 use AppBundle\Entity\Rebrickable\Set;
-use AppBundle\Form\Filter\Set\SetFilterType;
+use AppBundle\Form\Search\SetSearchType;
+use AppBundle\Model\SetSearch;
+use AppBundle\Repository\Rebrickable\Inventory_PartRepository;
+use AppBundle\Service\SetService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -23,25 +26,19 @@ class SetController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $form = $this->get('form.factory')->create(SetFilterType::class);
+        $setSearch = new SetSearch();
 
-        $filterBuilder = $this->get('repository.rebrickable.set')
-            ->createQueryBuilder('s')
-            ->orderBy('s.year', 'DESC');
+        $form = $this->get('form.factory')->createNamedBuilder('s', SetSearchType::class, $setSearch)->getForm();
+        $form->handleRequest($request);
 
-        if ($request->query->has($form->getName())) {
-            // manually bind values from the request
-            $form->submit($request->query->get($form->getName()));
-
-            // build the query from the given form object
-            $this->get('lexik_form_filter.query_builder_updater')->addFilterConditions($form, $filterBuilder);
-        }
+        $elasticaManager = $this->get('fos_elastica.manager');
+        $results = $elasticaManager->getRepository(Set::class)->search($setSearch);
 
         $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
-            $filterBuilder->getQuery(),
+            $results,
             $request->query->getInt('page', 1)/*page number*/,
-            $request->query->getInt('limit', 30)/*limit per page*/
+            $request->query->getInt('limit', 24)/*limit per page*/
         );
 
         return $this->render('set/index.html.twig', [
@@ -51,16 +48,23 @@ class SetController extends Controller
     }
 
     /**
-     * @Route("/{number}", name="set_detail")
+     * @Route("/{id}", name="set_detail")
      */
     public function detailAction(Request $request, Set $set)
     {
+        /** @var Inventory_PartRepository $inventoryPartRepository */
+        $inventoryPartRepository = $this->get('repository.rebrickable.inventoryPart');
+        /** @var SetService $setService */
+        $setService = $this->get('service.set');
+
         $bricksetSet = null;
-        $partCount = $this->get('repository.rebrickable.inventoryPart')->getPartCount($set->getNumber(), false);
+        $partCount = $inventoryPartRepository->getPartCount($set, false);
+        $missingCount = $inventoryPartRepository->getPartCount($set, false, false);
+        $uniqueMissing = $setService->getParts($set, false, false);
 
         try {
-            if (!($bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($set->getNumber()))) {
-                $this->addFlash('warning', "{$set->getNumber()} not found in Brickset database");
+            if (!($bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($set->getId()))) {
+                $this->addFlash('warning', "{$set->getId()} not found in Brickset database");
             }
         } catch (ApiException $e) {
             $this->addFlash('error', $e->getService());
@@ -72,20 +76,22 @@ class SetController extends Controller
             'set' => $set,
             'brset' => $bricksetSet,
             'partCount' => $partCount,
+            'missingCount' => $missingCount,
+            'uniqueMissing' => $uniqueMissing,
         ]);
     }
 
     /**
-     * @Route("/{number}/parts", name="set_parts")
+     * @Route("/{id}/parts", name="set_parts")
      */
     public function partsAction(Request $request, Set $set)
     {
         $inventoryPartRepository = $this->get('repository.rebrickable.inventorypart');
 
-        $regularParts = $inventoryPartRepository->findAllBySetNumber($set->getNumber(), false, true);
-        $spareParts = $inventoryPartRepository->findAllBySetNumber($set->getNumber(), true);
+        $regularParts = $inventoryPartRepository->findAllBySetNumber($set->getId(), false, true);
+        $spareParts = $inventoryPartRepository->findAllBySetNumber($set->getId(), true);
 
-        $missing = $inventoryPartRepository->findAllBySetNumber($set->getNumber(), false, false);
+        $missing = $inventoryPartRepository->findAllBySetNumber($set->getId(), false, false);
 
         $template = $this->render('set/tabs/inventory.html.twig', [
             'regularParts' => $regularParts,
@@ -105,7 +111,7 @@ class SetController extends Controller
     }
 
     /**
-     * @Route("/{number}/models", name="set_models")
+     * @Route("/{id}/models", name="set_models")
      */
     public function modelsAction(Request $request, Set $set)
     {
@@ -118,8 +124,7 @@ class SetController extends Controller
             $models = $this->get('service.set')->getModels($set, false);
             $spareModels = $this->get('service.set')->getModels($set, true);
             $missing = $this->get('service.set')->getParts($set, false, false);
-//            $missing = $this->get('repository.rebrickable.inventorypart')->findAllBySetNumber($set->getNumber(), false, false);
-            $missingSpare = $this->get('repository.rebrickable.inventorypart')->findAllBySetNumber($set->getNumber(), true, false);
+            $missingSpare = $this->get('repository.rebrickable.inventorypart')->findAllBySetNumber($set->getId(), true, false);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -144,7 +149,7 @@ class SetController extends Controller
     }
 
     /**
-     * @Route("/{number}/colors", name="set_colors")
+     * @Route("/{id}/colors", name="set_colors")
      */
     public function colorsAction(Request $request, Set $set)
     {
@@ -173,13 +178,13 @@ class SetController extends Controller
     }
 
     /**
-     * @Route("/{number}/sets", name="set_sets")
+     * @Route("/{id}/sets", name="set_sets")
      */
     public function setsAction(Request $request, Set $set)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getNumber());
+        $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getId());
 
         $template = $this->render('set/tabs/sets.html.twig', [
             'inventorySets' => $inventorySets,
@@ -197,13 +202,13 @@ class SetController extends Controller
     }
 
     /**
-     * @Route("/{number}/zip", name="set_zip")
+     * @Route("/{id}/zip", name="set_zip")
      */
     public function zipAction(Request $request, Set $set)
     {
         $sorted = $request->query->get('sorted') == 1 ? true : false;
 
-        $sort = $sorted ? 'sorted' : 'unsorted';
+        $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
 
         $zip = $this->get('service.zip')->createFromSet($set, $sorted);
 
@@ -213,7 +218,7 @@ class SetController extends Controller
         // Create the disposition of the file
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            "set_{$set->getNumber()}_{$set->getName()}({$sort}).zip"
+            "set_{$set->getId()}_{$set->getName()}({$sort}).zip"
         );
 
         $response->headers->set('Content-Disposition', $disposition);

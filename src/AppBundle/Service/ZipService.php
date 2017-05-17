@@ -47,8 +47,8 @@ class ZipService
 
     public function createFromSet(Set $set, $sorted = false)
     {
-        $sort = $sorted ? 'sorted' : 'unsorted';
-        $this->zipName = "set_{$set->getNumber()}_{$set->getName()}({$sort})";
+        $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
+        $this->zipName = "set_{$set->getId()}_{$set->getName()}({$sort})";
 
         $zipPath = tempnam(sys_get_temp_dir(), 'printabrick');
         $this->archive = $this->createZip($zipPath);
@@ -67,18 +67,18 @@ class ZipService
 
     public function createFromModel(Model $model, $subparts = false)
     {
-        $this->zipName = "model_{$model->getNumber()}";
+        $this->zipName = "model_{$model->getId()}";
 
         $zipPath = tempnam(sys_get_temp_dir(), 'printabrick');
         $this->archive = $this->createZip($zipPath);
 
-        $filename = "{$this->zipName}/{$model->getNumber()}.stl";
+        $filename = "{$this->zipName}/{$model->getId()}.stl";
         $this->addModel($filename, $model);
 
         if ($subparts) {
             foreach ($this->modelService->getAllSubparts($model) as $subpart) {
                 $submodel = $subpart['model'];
-                $filename = "{$this->zipName}/submodels/{$submodel->getNumber()}_({$subpart['quantity']}x).stl";
+                $filename = "{$this->zipName}/submodels/{$submodel->getId()}_({$subpart['quantity']}x).stl";
 
                 $this->addModel($filename, $submodel);
             }
@@ -107,7 +107,7 @@ class ZipService
                 $model = $modelArray['model'];
                 $quantity = $modelArray['quantity'];
 
-                $filename = "{$this->zipName}/{$color->getName()}/{$model->getNumber()}_({$quantity}x).stl";
+                $filename = "{$this->zipName}/{$color->getName()}/{$model->getId()}_({$quantity}x).stl";
 
                 $this->addModel($filename, $model);
             }
@@ -137,7 +137,7 @@ class ZipService
     private function addModel($path, $model)
     {
         $this->archive->addFromString($path, $this->mediaFilesystem->read($model->getPath()));
-        $this->models[$model->getNumber()] = $model;
+        $this->models[$model->getId()] = $model;
     }
 
     private function addLicense()
@@ -149,7 +149,7 @@ class ZipService
         $text .= sprintf('Attribution:'."\n"."\n");
 
         foreach ($this->models as $model) {
-            $text .= sprintf('%s - "%s" by %s'."\n", $model->getNumber(), $model->getName(), $model->getAuthor()->getName());
+            $text .= sprintf('%s - "%s" by %s'."\n", $model->getId(), $model->getName(), $model->getAuthor()->getName());
         }
 
         $this->archive->addFromString("{$this->zipName}/LICENSE.txt", $text);

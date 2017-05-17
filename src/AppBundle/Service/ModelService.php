@@ -24,9 +24,9 @@ class ModelService
                 $this->resursiveLoadModels($subpart->getSubpart(), $subpart->getCount());
             }
         } else {
-            $q = isset($this->models[$model->getNumber()]['quantity']) ? $this->models[$model->getNumber()]['quantity'] : 0;
+            $q = isset($this->models[$model->getId()]['quantity']) ? $this->models[$model->getId()]['quantity'] : 0;
 
-            $this->models[$model->getNumber()] = [
+            $this->models[$model->getId()] = [
                 'quantity' => $q + $quantity,
                 'model' => $model,
             ];

@@ -80,4 +80,15 @@ class Theme
 
         return $this;
     }
+
+    public function getFullName() {
+        $theme = $this;
+        $name = [];
+
+        do {
+            $name[] = $theme->getName();
+        } while (($theme = $theme->getParent()) !== null);
+
+        return implode(' > ', array_reverse($name));
+    }
 }

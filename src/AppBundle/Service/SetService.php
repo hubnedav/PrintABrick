@@ -41,15 +41,15 @@ class SetService
         {
             $models = [];
 
-            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getNumber(), $spare, true);
+            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, true);
 
             /** @var Inventory_Part $inventoryPart */
             foreach ($inventoryParts as $inventoryPart) {
                 if ($model = $inventoryPart->getPart()->getModel()) {
-                    if (isset($models[$model->getNumber()])) {
-                        $models[$model->getNumber()]['quantity'] += $inventoryPart->getQuantity();
+                    if (isset($models[$model->getId()])) {
+                        $models[$model->getId()]['quantity'] += $inventoryPart->getQuantity();
                     } else {
-                        $models[$model->getNumber()] = [
+                        $models[$model->getId()] = [
                             'model' => $model,
                             'quantity' => $inventoryPart->getQuantity(),
                         ];
@@ -85,21 +85,21 @@ class SetService
         {
             $models = [];
 
-            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getNumber(), $spare, true);
+            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, true);
 
             /** @var Inventory_Part $inventoryPart */
             foreach ($inventoryParts as $inventoryPart) {
                 if ($model = $inventoryPart->getPart()->getModel()) {
                     $color = $inventoryPart->getColor();
 
-                    if (!isset($models[$model->getNumber()]['model'])) {
-                        $models[$model->getNumber()]['model'] = $model;
+                    if (!isset($models[$model->getId()]['model'])) {
+                        $models[$model->getId()]['model'] = $model;
                     }
 
-                    if (isset($models[$model->getNumber()]['colors'][$color->getId()])) {
-                        $models[$model->getNumber()]['colors'][$color->getId()]['quantity'] += $inventoryPart->getQuantity();
+                    if (isset($models[$model->getId()]['colors'][$color->getId()])) {
+                        $models[$model->getId()]['colors'][$color->getId()]['quantity'] += $inventoryPart->getQuantity();
                     } else {
-                        $models[$model->getNumber()]['colors'][$color->getId()] = [
+                        $models[$model->getId()]['colors'][$color->getId()] = [
                             'color' => $color,
                             'quantity' => $inventoryPart->getQuantity(),
                         ];
@@ -135,7 +135,7 @@ class SetService
         {
             $colors = [];
 
-            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getNumber(), $spare, true);
+            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, true);
 
             /** @var Inventory_Part $inventoryPart */
             foreach ($inventoryParts as $inventoryPart) {
@@ -149,10 +149,10 @@ class SetService
 
                     $colors[$color->getId()]['quantity'] += $inventoryPart->getQuantity();
 
-                    if (isset($colors[$color->getId()]['models'][$model->getNumber()])) {
-                        $colors[$color->getId()]['models'][$model->getNumber()]['quantity'] += $inventoryPart->getQuantity();
+                    if (isset($colors[$color->getId()]['models'][$model->getId()])) {
+                        $colors[$color->getId()]['models'][$model->getId()]['quantity'] += $inventoryPart->getQuantity();
                     } else {
-                        $colors[$color->getId()]['models'][$model->getNumber()] = [
+                        $colors[$color->getId()]['models'][$model->getId()] = [
                             'model' => $model,
                             'quantity' => $inventoryPart->getQuantity(),
                         ];
@@ -173,14 +173,14 @@ class SetService
         {
             $parts = [];
 
-            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getNumber(), $spare, $model);
+            $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, $model);
 
             /** @var Inventory_Part $inventoryPart */
             foreach ($inventoryParts as $inventoryPart) {
-                if (isset($parts[$inventoryPart->getPart()->getNumber()])) {
-                    $parts[$inventoryPart->getPart()->getNumber()]['quantity'] += $inventoryPart->getQuantity();
+                if (isset($parts[$inventoryPart->getPart()->getId()])) {
+                    $parts[$inventoryPart->getPart()->getId()]['quantity'] += $inventoryPart->getQuantity();
                 } else {
-                    $parts[$inventoryPart->getPart()->getNumber()] = [
+                    $parts[$inventoryPart->getPart()->getId()] = [
                         'part' => $inventoryPart->getPart(),
                         'quantity' => $inventoryPart->getQuantity(),
                     ];

@@ -115,7 +115,7 @@ class RebrickableLoader extends BaseLoader
 
         foreach ($foreignKeys as $foreignKey) {
             $part = new Part();
-            $part->setNumber($foreignKey['part_id']);
+            $part->setId($foreignKey['part_id']);
             $this->em->getRepository(Part::class)->save($part);
         }
     }

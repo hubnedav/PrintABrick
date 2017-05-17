@@ -18,10 +18,10 @@ class AliasRepository extends BaseRepository
      */
     public function getOrCreate($number, $model)
     {
-        if (($alias = $this->findOneBy(['number' => $number, 'model' => $model])) == null) {
+        if (($alias = $this->findOneBy(['id' => $number, 'model' => $model])) == null) {
             $alias = new Alias();
             $alias->setModel($model);
-            $alias->setNumber($number);
+            $alias->setId($number);
         }
 
         return $alias;

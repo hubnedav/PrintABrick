@@ -10,11 +10,9 @@ class ThemeRepository extends BaseRepository
 {
     public function findAllSubthemes(Theme $theme)
     {
-        $subQueryBuilder = $this->createQueryBuilder('subtheme');
-
-        $queryBuilder = $this->createQueryBuilder('subtheme')
-            ->leftJoin(Theme::class, 'theme', Join::WITH, 'subtheme.parent = theme.id')
-            ->where('subtheme.parent = :id')
+        $queryBuilder = $this->createQueryBuilder('theme')
+//            ->leftJoin(Theme::class, 'theme', Join::WITH, 'subtheme.parent = theme.id')
+            ->where('theme.parent = :id')
             ->setParameter('id', $theme->getId());
 
         return $queryBuilder->getQuery()->getResult();
@@ -23,7 +21,8 @@ class ThemeRepository extends BaseRepository
     public function findAllMain()
     {
         $queryBuilder = $this->createQueryBuilder('theme')
-             ->where('theme.parent IS NULL');
+            ->where('theme.parent IS NULL')
+            ->orderBy('theme.name', 'ASC');
 
         return $queryBuilder->getQuery()->getResult();
     }

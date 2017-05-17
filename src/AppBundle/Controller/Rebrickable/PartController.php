@@ -18,7 +18,7 @@ class PartController extends Controller
     /**
      * Finds and displays a part entity.
      *
-     * @Route("/{number}", name="reb_part_detail")
+     * @Route("/{id}", name="reb_part_detail")
      */
     public function detailAction(Part $part)
     {
@@ -28,14 +28,14 @@ class PartController extends Controller
 
         if ($part) {
             try {
-                $apiPart = $this->get('api.manager.rebrickable')->getPart($part->getNumber());
+                $apiPart = $this->get('api.manager.rebrickable')->getPart($part->getId());
             } catch (EmptyResponseException $e) {
                 $this->addFlash('warning', 'Part not found');
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
             }
 
-            $sets = $part != null ? $em->getRepository(Set::class)->findAllByPartNumber($part->getNumber()) : null;
+            $sets = $part != null ? $em->getRepository(Set::class)->findAllByPartNumber($part->getId()) : null;
 
             return $this->render('rebrickable/part/detail.html.twig', [
                 'part' => $part,

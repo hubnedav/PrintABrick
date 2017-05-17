@@ -57,7 +57,7 @@ class RelationLoader extends BaseLoader
                 $this->partRepository->save($part);
             }
 
-            $this->progressBar->setMessage($part->getNumber());
+            $this->progressBar->setMessage($part->getId());
             $this->progressBar->advance();
         }
         $this->progressBar->finish();
@@ -72,7 +72,7 @@ class RelationLoader extends BaseLoader
      */
     private function loadPartRelation(Part $part)
     {
-        $number = $part->getNumber();
+        $number = $part->getId();
         $model = $this->modelRepository->findOneByNumber($number);
         if (!$model) {
             $number = $this->relationMapper->find($this->getPrintedParentId($number), 'part_model');

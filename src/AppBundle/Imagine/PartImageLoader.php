@@ -57,6 +57,7 @@ class PartImageLoader extends BaseImageLoader
             throw new NotLoadableException(sprintf('Source image %s could not be loaded.', $path), $e->getCode(), $e);
         }
 
-        return $this->mediaFilesystem->read('noimage.png');
+        throw new NotLoadableException(sprintf('Source image %s not found.', $path));
+//        return $this->mediaFilesystem->read('noimage.png');
     }
 }

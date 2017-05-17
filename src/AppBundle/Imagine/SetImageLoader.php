@@ -31,16 +31,16 @@ class SetImageLoader extends BaseImageLoader
     {
         // try to load image from rebrickable website
         try {
-            if ($this->remoteFileExists($this->rebrickableContext.$path)) {
-                return file_get_contents($this->rebrickableContext.$path);
+            if ($this->remoteFileExists($this->rebrickableContext.strtolower($path))) {
+                return file_get_contents($this->rebrickableContext.strtolower($path));
             }
         } catch (\Exception $e) {
             throw new NotLoadableException(sprintf('Source image %s could not be loaded.', $path), $e->getCode(), $e);
         }
 
-        // Load part entity form rebrickable api and get image path from response
+        // Load part entity form brickset api and get image path from response
         try {
-            if (preg_match('/^(.*)[.png|.jpg]$/', $path, $match)) {
+            if (preg_match('/^(.*)(.png|.jpg)$/', $path, $match)) {
                 $set = $this->bricksetManager->getSetByNumber($match[1]);
 
                 if ($set && $set->getImage()) {
@@ -51,6 +51,7 @@ class SetImageLoader extends BaseImageLoader
             throw new NotLoadableException(sprintf('Source image %s could not be loaded.', $path), $e->getCode(), $e);
         }
 
-        return $this->mediaFilesystem->read('noimage.png');
+        throw new NotLoadableException(sprintf('Source image %s not found.', $path));
+//        return $this->mediaFilesystem->read('noimage.png');
     }
 }

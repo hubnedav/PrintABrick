@@ -2,7 +2,6 @@
 
 namespace AppBundle\Imagine;
 
-
 use Liip\ImagineBundle\Binary\Loader\LoaderInterface;
 
 abstract class BaseImageLoader implements LoaderInterface

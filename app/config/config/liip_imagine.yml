@@ -10,7 +10,7 @@ liip_imagine:
               cache: ~
               default_image: "/resources/images/noimage_min.png"
               filters:
-                  thumbnail: { size: [200, 200], mode: inset }
+                  thumbnail: { size: [200, 200], mode: inset, allow_upscale: true }
                   background: { size: [250, 250], position: center, color: '#FFFFFF' }
         set_large:
               data_loader: set_image_loader
@@ -18,7 +18,7 @@ liip_imagine:
               quality: 90
               default_image: "/resources/images/noimage_large.png"
               filters:
-                  thumbnail: { size: [840, 580], mode: inset }
+                  thumbnail: { size: [840, 580], mode: inset, allow_upscale: true }
                   background: { size: [900, 600], position: center, color: '#FFFFFF' }
         part_min:
               quality: 90
@@ -26,7 +26,7 @@ liip_imagine:
               cache: ~
               default_image: "/resources/images/noimage_min.png"
               filters:
-                  thumbnail: { size: [200, 200], mode: inset }
+                  thumbnail: { size: [200, 200], mode: inset, allow_upscale: true }
                   background: { size: [250, 250], position: center, color: '#FFFFFF' }
         part_large:
               data_loader: part_image_loader
@@ -34,5 +34,5 @@ liip_imagine:
               quality: 90
               default_image: "/resources/images/noimage_large.png"
               filters:
-                  thumbnail: { size: [840, 580], mode: inset }
+                  thumbnail: { size: [840, 580], mode: inset, allow_upscale: true }
                   background: { size: [900, 600], position: center, color: '#FFFFFF' }

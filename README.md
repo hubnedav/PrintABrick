@@ -8,6 +8,7 @@ A Symfony project
 * PHP Extensions
     * FTP 
     * SOAP 
+    * GD
     * PDO 
     * Zip 
 * *date.timezone* setting set in *php.ini*

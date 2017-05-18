@@ -1,11 +1,13 @@
 set:
-  number: Set number
+  filter.title: Filter
+  id: Set number
   name: Name
-  year: Year released
+  year: Released
   theme: Theme
-  parts: Count of parts
-  minifigs: Minifig count
+  parts: Parts
+  minifigs: Minifigs
   rating: Rating
+  reviews.link: View all reviews on Brickset.com
   models:
     text: |
       This set inventory has been obtained from Rebrickable.
@@ -19,7 +21,15 @@ set:
 
       'NA' or 'V39' indicates the US/Canadian version. 'IN' or 'V29' indicates the international version.
 
+  form:
+    search: Search
+    year: Year of release
+    partCount: Count of parts
+    theme: Theme
+    theme.all: All Themes
+
   download:
+    button: Download set
     title: Download - %set%
     sorted:
       title: Multi-Color
@@ -30,11 +40,21 @@ set:
       text:
 
     warning:
-      title:
-      text: Models of some parts could not be found in LDraw library
+      title:  Models of some parts could not be found in LDraw library!
+      text: |
+       This set is <strong>%percent%%</strong> complete
+       <strong>%unique%</strong> unique models missing (<strong>%missing%</strong> parts total)
+
+model:
+  filter.title: Filter
+  form:
+    search: Search
+    category: Category
+    category.all: All Categories
 
 page:
   model.index: Browse models
+  set.index: Browse sets
 
 filter:
   model:

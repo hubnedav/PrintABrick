@@ -1,13 +1,14 @@
-{% extends 'ajax.html.twig' %}
-
 {% import 'macros/blocks.html.twig' as blocks %}
+{% import 'macros/elements.html.twig' as elements %}
 
 {% block content %}
+    {% for label, flashes in app.session.flashbag.all %}
+        {% for flash in flashes %}
+            {{ elements.flash(label,flash) }}
+        {% endfor %}
+    {% endfor %}
 
     {% if models|length > 0 %}
-        <h4 class="ui horizontal divider header">
-            Models
-        </h4>
         <div class="ui segment vertical noborder">
             <div class="ui grid doubling ten column row">
                 {% for model in models %}
@@ -17,9 +18,6 @@
         </div>
     {% endif %}
     {% if missing|length > 0 %}
-        <h4 class="ui horizontal divider header">
-            Missing models
-        </h4>
         <div class="ui segment vertical noborder">
             <div class="ui grid doubling ten column row">
                 {% for part in missing %}
@@ -28,31 +26,4 @@
             </div>
         </div>
     {% endif %}
-
-    {#{% if spareModels|length > 0 %}#}
-    {#<h4 class="ui horizontal divider header">#}
-    {#Spare parts#}
-    {#</h4>#}
-
-    {#<div class="ui segment vertical">#}
-    {#<div class="ui ten column grid">#}
-    {#{% for model in spareModels %}#}
-    {#{{ blocks.model(model['model'],model['quantity']) }}#}
-    {#{% endfor %}#}
-    {#</div>#}
-    {#</div>#}
-    {#{% endif %}#}
-
-    {#{% if missingSpare|length > 0 %}#}
-    {#<h4 class="ui horizontal divider header">#}
-    {#Missing spare models#}
-    {#</h4>#}
-    {#<div class="ui segment vertical">#}
-    {#<div class="ui ten column grid segment">#}
-    {#{% for inventoryPart in missingSpare %}#}
-    {#{{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}#}
-    {#{% endfor %}#}
-    {#</div>#}
-    {#</div>#}
-    {#{% endif %}#}
 {% endblock %}

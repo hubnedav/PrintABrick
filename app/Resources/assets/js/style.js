@@ -1,7 +1,12 @@
 $(document).ready(function(){
-    $('.ui.dropdown')
-        .dropdown('restore defaults')
-    ;
+    // $('.ui.dropdown')
+    //     .dropdown('restore defaults')
+    // ;
+
+    // $('.select2.dropdown').select2({
+    //     placeholder: 'Select theme',
+    //     allowClear: true
+    // });
 
     $('.image.load img')
         .visibility({
@@ -19,6 +24,7 @@ $(document).ready(function(){
 
     $('.tabular.submenu .item').tab({
     });
+
 
     $('.message .close')
         .on('click', function() {

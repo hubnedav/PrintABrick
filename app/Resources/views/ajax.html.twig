@@ -1,7 +1,0 @@
-{% for label, flashes in app.session.flashbag.all %}
-    {% for flash in flashes %}
-        {{ elements.flash(label,flash) }}
-    {% endfor %}
-{% endfor %}
-
-{% block content %}{% endblock %}

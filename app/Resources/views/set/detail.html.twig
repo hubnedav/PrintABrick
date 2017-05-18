@@ -7,7 +7,6 @@
 {% block header %}{{ set.name | escape('html') }}{% endblock %}
 
 {% block content %}
-
     <div class="ui stackable grid">
         <div class="column nine wide">
             <div class="ui bordered fluid image">
@@ -110,25 +109,23 @@
         <div class="ui vertical segment">
             <div class="ui tab active" data-tab="inventory">
 
-                <div class="ui tabular icon buttons right floated submenu">
-                    <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
-                    <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
+                <div class="ui vertical segment">
+                    <p>{{ 'set.models.text' | trans({'%rebrickable%' : partCount, '%brickset%' : brset ? brset.pieces }) | nl2br }}</p>
                 </div>
-                <p>{{ 'set.models.text' | trans({'%rebrickable%' : partCount, '%brickset%' : brset ? brset.pieces }) | nl2br }}</p>
 
-                {#<div class="ui tab active ajax-load" data-tab="inventory/models" data-src="{{ path('set_models', { 'id': set.id }) }}">#}
-                {#<div class="ui active centered inline loader"></div>#}
-                {#</div>#}
-                {#<div class="ui tab ajax-load" data-tab="inventory/colors" data-src="{{ path('set_colors', { 'id': set.id }) }}">#}
-                {#<div class="ui active centered inline loader"></div>#}
-                {#</div>#}
+                <div class="ui vertical segment">
+                    <div class="ui tabular icon buttons submenu">
+                        <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
+                        <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
+                    </div>
 
-                <div class="ui tab active" data-tab="inventory/models">
-                    {{ render(path('set_models', {id: set.id})) }}
+                    <div class="ui tab active" data-tab="inventory/models">
+                        {{ render(path('set_models', {id: set.id})) }}
+                    </div>
+                    <div class="ui tab" data-tab="inventory/colors">
+                        {{ render(path('set_colors', {id: set.id})) }}
+                    </div>
                     {{ render(path('set_sets', {id: set.id})) }}
-                </div>
-                <div class="ui tab" data-tab="inventory/colors">
-                    {{ render(path('set_colors', {id: set.id})) }}
                 </div>
             </div>
             {% if brset %}

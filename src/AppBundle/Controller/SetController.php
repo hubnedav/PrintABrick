@@ -156,7 +156,11 @@ class SetController extends Controller
         $colors = null;
 
         try {
-            $colors = $this->get('service.set')->getModelsGroupedByColor($set, false);
+            /** @var SetService $setService */
+            $setService = $this->get('service.set');
+            $colors = $setService->getModelsGroupedByColor($set, false);
+            $missing = $setService->getParts($set,false,false);
+
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -164,6 +168,7 @@ class SetController extends Controller
         $template = $this->render('set/tabs/colors.html.twig', [
             'set' => $set,
             'colors' => $colors,
+            'missing' => $missing,
         ]);
 
         if ($request->isXmlHttpRequest()) {

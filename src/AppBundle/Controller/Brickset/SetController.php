@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Brickset;
 
 use AppBundle\Api\Exception\ApiException;
+use AppBundle\Api\Manager\BricksetManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -51,8 +52,12 @@ class SetController extends Controller
     public function reviewsAction(Request $request, $id)
     {
         $reviews = [];
+        $number = null;
         try {
-            $reviews = $this->get('api.manager.brickset')->getSetReviews($id);
+            /** @var BricksetManager $bricksetManager */
+            $bricksetManager = $this->get('api.manager.brickset');
+            $reviews = $bricksetManager->getSetReviews($id);
+            $number = $bricksetManager->getSetById($id)->getLegoSetID();
         } catch (ApiException $e) {
             $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
@@ -61,6 +66,7 @@ class SetController extends Controller
 
         $template = $this->render('brickset/reviews.html.twig', [
             'reviews' => $reviews,
+            'id' => $number,
         ]);
 
         if ($request->isXmlHttpRequest()) {

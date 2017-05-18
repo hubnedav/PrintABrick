@@ -59,6 +59,7 @@ class SetSearchType extends AbstractType
                 'label' => 'set.form.theme',
                 'choices' => $this->themeRepository->findAll(),
                 'choice_label' => 'fullName',
+                'choice_translation_domain' => false,
                 'choice_value' => 'id',
                 'placeholder' => 'set.form.theme.all',
                 'required' => false,

@@ -21,8 +21,8 @@
     }
   }
 
-  .ui.card {
-    border-radius: 0;
+  .ui.card , .ui.card > :first-child {
+    border-radius: 0 !important;
   }
 
   .ui.fixed + .ui.grid {
@@ -78,6 +78,11 @@
   }
   .pull-right {
     float: right;
+  }
+  
+  .ui.image.load {
+      background: url("/resources/images/oval.svg") no-repeat center;
+      background-color: lightgrey;
   }
 }
 

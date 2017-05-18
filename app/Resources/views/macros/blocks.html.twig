@@ -1,23 +1,23 @@
 {% macro partImage(number, filter, color = -1) %}
     <div class="ui image load">
-        {% if filter == 'part_large' %}
-            {% set placeholder = asset("resources/images/unknown_large.png") %}
+        {% if 'large' in filter %}
+            {% set placeholder = asset("resources/images/transparent_large.png") %}
         {% else %}
-            {% set placeholder = asset("resources/images/oval.svg") %}
+            {% set placeholder = asset("resources/images/transparent_min.png") %}
         {% endif %}
-        {#<img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter)}}">#}
         <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter)}}">
     </div>
 {% endmacro %}
 
 {% macro setImage(number, filter) %}
     <div class="ui image load">
-        {% if filter == 'set_large' %}
-            {% set placeholder = asset("resources/images/unknown_large.png") %}
+        {% if 'large' in filter %}
+            {% set placeholder = asset("resources/images/transparent_large.png") %}
         {% else %}
-            {% set placeholder = asset("resources/images/oval.svg") %}
+            {% set placeholder = asset("resources/images/transparent_min.png") %}
         {% endif %}
-        <img src="{{ placeholder }}" data-src="{{ asset(number~'.jpg')|imagine_filter(filter) }}">
+
+        <img src="{{ placeholder }}"  data-src="{{ asset(number~'.jpg')|imagine_filter(filter) }}">
     </div>
 {% endmacro %}
 
@@ -88,4 +88,3 @@
 {% macro ccal2_license(title,author) %}
     "{{ title }}" by {{ author }}, used under <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a> / Converted to stl from original
 {% endmacro %}
-

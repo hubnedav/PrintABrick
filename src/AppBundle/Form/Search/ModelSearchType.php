@@ -36,6 +36,7 @@ class ModelSearchType extends AbstractType
                 'choices' => $this->categoryRepository->findAll(),
                 'placeholder' => 'model.form.category.all',
                 'choice_label' => 'name',
+                'choice_translation_domain' => false,
                 'choice_value' => 'id',
                 'required' => false,
                 'attr' => [

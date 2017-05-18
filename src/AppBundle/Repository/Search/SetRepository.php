@@ -54,7 +54,6 @@ class SetRepository extends Repository
         return $boolQuery;
     }
 
-
     public function search(SetSearch $setSearch)
     {
         $query = $this->getSearchQuery($setSearch);

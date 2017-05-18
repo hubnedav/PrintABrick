@@ -1,8 +1,13 @@
-{% extends 'ajax.html.twig' %}
-
 {% import 'macros/blocks.html.twig' as blocks %}
+{% import 'macros/elements.html.twig' as elements %}
 
 {% block content %}
+    {% for label, flashes in app.session.flashbag.all %}
+        {% for flash in flashes %}
+            {{ elements.flash(label,flash) }}
+        {% endfor %}
+    {% endfor %}
+
     {% if colors|length > 0 %}
         {% for color in colors %}
             <h5 class="ui horizontal divider header text color-{{ color['color'].id }}">
@@ -19,4 +24,13 @@
         {% endfor %}
     {% endif %}
 
+    {% if missing|length > 0 %}
+        <div class="ui segment vertical noborder">
+            <div class="ui grid doubling ten column row">
+                {% for part in missing %}
+                    {{ blocks.part(part['part'],part['quantity']) }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

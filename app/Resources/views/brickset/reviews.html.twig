@@ -1,12 +1,16 @@
-{% extends 'ajax.html.twig' %}
-
 {% import 'macros/blocks.html.twig' as blocks %}
 {% import 'macros/elements.html.twig' as elements %}
 
 {% block content %}
+    {% for label, flashes in app.session.flashbag.all %}
+        {% for flash in flashes %}
+            {{ elements.flash(label,flash) }}
+        {% endfor %}
+    {% endfor %}
+
     {% if reviews|length != 0 %}
         <div class="ui comments">
-            {% for review in reviews %}
+            {% for review in reviews | slice(0,4) %}
                 <div class="ui segment vertical">
                     <div class="ui container divided stackable grid comment">
                         <div class="row">
@@ -59,6 +63,8 @@
                 </div>
             {% endfor %}
         </div>
+
+        <a class="fluid ui button" href="https://brickset.com/reviews/set-{{ id }}">{{ 'set.reviews.link' | trans }}</a>
     {% else %}
         {{ blocks.empty('empty.reviews') }}
     {% endif %}

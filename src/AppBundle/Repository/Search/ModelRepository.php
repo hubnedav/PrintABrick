@@ -13,23 +13,25 @@ class ModelRepository extends Repository
      * @return \Elastica\Query
      */
     public function getSearchQuery(ModelSearch $modelSearch) {
-        $boolQuery = new \Elastica\Query\BoolQuery();
+        $boolQuery = new Query\BoolQuery();
 
         if ($searchQuery = $modelSearch->getQuery()) {
-            $query = new \Elastica\Query\MultiMatch();
+            $query = new Query\MultiMatch();
 
             $query->setFields(['name', 'id', 'aliases.id', 'keywords.name']);
             $query->setQuery($searchQuery);
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
+            $query->setOperator('and');
+
         } else {
-            $query = new \Elastica\Query\MatchAll();
+            $query = new Query\MatchAll();
         }
 
         $boolQuery->addMust($query);
 
         if ($modelSearch->getCategory()) {
-            $categoryQuery = new \Elastica\Query\Match();
+            $categoryQuery = new Query\Match();
             $categoryQuery->setField('category.id', $modelSearch->getCategory()->getId());
             $boolQuery->addFilter($categoryQuery);
         }

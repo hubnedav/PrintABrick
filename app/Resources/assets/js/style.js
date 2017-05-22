@@ -20,9 +20,16 @@ $(document).ready(function(){
         .rating("disable")
     ;
 
-    $('.tabular.menu .item').tab();
+    $('.tabular.menu .item').tab({
+        onVisible: function() {
+            $('.image img').visibility('refresh');
+        }
+    });
 
     $('.tabular.submenu .item').tab({
+        onVisible: function() {
+            $('.image img').visibility('refresh');
+        }
     });
 
 

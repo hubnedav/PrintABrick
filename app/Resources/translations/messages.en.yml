@@ -47,6 +47,14 @@ set:
 
 model:
   filter.title: Filter
+  id: Model number
+  category: Category
+  author: Author
+  set.count:
+  license: License
+  keywords: Keywords
+  aliases: Aliases
+  download: Download model
   form:
     search: Search
     category: Category
@@ -55,6 +63,7 @@ model:
 page:
   model.index: Browse models
   set.index: Browse sets
+  search: "Search: \"%query%\""
 
 filter:
   model:

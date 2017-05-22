@@ -27,18 +27,20 @@
                     </tr>
                     <tr>
                         <td>{{ 'set.theme' | trans }}</td>
-                        <td><a href="{{ path('set_index',{'s[theme]' : set.theme.id }) }}">{{ set.theme ? set.theme.name }}</a></td>
+                        <td><a href="{{ path('set_index',{'s[theme]' : set.theme.id }) }}">{{ set.theme ? set.theme.fullName }}</a></td>
                     </tr>
                     <tr>
                         <td>{{ 'set.parts' | trans }}</td><td>
-                            {{ set.partCount }} {{ brset ? '('~brset.pieces~')' }}
+                            {{ set.partCount~' (Rebrickable)' }}{{ brset and brset.pieces ? ' / '~brset.pieces~' (Brickset)' }}
                         </td>
                     </tr>
                     {% if brset %}
-                        <tr>
-                            <td>{{ 'set.minifigs' | trans }}</td>
-                            <td>{{ brset.minifigs }}</td>
-                        </tr>
+                        {% if brset.minifigs %}
+                            <tr>
+                                <td>{{ 'set.minifigs' | trans }}</td>
+                                <td>{{ brset.minifigs }}</td>
+                            </tr>
+                        {% endif %}
                         <tr>
                             <td>{{ 'set.rating' | trans }}</td>
                             <td>
@@ -109,9 +111,9 @@
         <div class="ui vertical segment">
             <div class="ui tab active" data-tab="inventory">
 
-                <div class="ui vertical segment">
-                    <p>{{ 'set.models.text' | trans({'%rebrickable%' : partCount, '%brickset%' : brset ? brset.pieces }) | nl2br }}</p>
-                </div>
+                {#<div class="ui vertical segment">#}
+                {#<p>{{ 'set.models.text' | trans({'%rebrickable%' : partCount, '%brickset%' : brset ? brset.pieces }) | nl2br }}</p>#}
+                {#</div>#}
 
                 <div class="ui vertical segment">
                     <div class="ui tabular icon buttons submenu">

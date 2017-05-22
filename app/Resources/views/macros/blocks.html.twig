@@ -27,7 +27,10 @@
             {% import _self as blocks %}
             {{ blocks.partImage(model.id, 'part_min', color) }}
             <div class="content">
-                <h3 class="header">{{ model.id }}</h3>
+                <h3 class="header truncate">{{ model.id }}</h3>
+                <div class="meta">
+                    <span class="truncate-multiline"><small>{{ model.name }}</small></span>
+                </div>
                 <div class="description">
                     {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
                 </div>
@@ -42,7 +45,10 @@
             {% import _self as blocks %}
             {{ blocks.partImage(part.id,'part_min', color) }}
             <div class="content">
-                <h3 class="header">{{ part.id }}</h3>
+                <h3 class="header truncate">{{ part.id }}</h3>
+                <div class="meta">
+                    <span class="truncate-multiline"><small>{{ part.name }}</small></span>
+                </div>
                 <div class="description">
                     {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
                 </div>
@@ -57,18 +63,13 @@
             {% import _self as blocks %}
             {{ blocks.setImage(set.id,'set_min') }}
             <div class="content">
-                <h3 class="header">
-                    {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
-                    {% if set.name|length > 17 %}
-                        {{ set.name | slice(0,17) }} &hellip;
-                    {% else %}
-                        {{ set.name }}
-                    {% endif %}
+                <h3 class="header truncate">
+                    {{ set.name }}
                 </h3>
                 <div class="meta">
                     <span class="left floated">{{ set.id }}</span>
                     <br>
-                    <span class="left floated"><small>{{ set.theme.fullName | slice(0,27) }} &hellip;</small></span>
+                    <span class="left floated truncate"><small>{{ set.theme.fullName }}</small></span>
                 </div>
                 <div class="description">
                     <small>

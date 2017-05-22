@@ -1,5 +1,12 @@
+.sets {
+  margin: 0 -0.3em !important;
+
+  .set {
+    padding: 0.3em !important;
+  }
+}
+
 .set {
-  padding: 10px !important;
   .content .header {
     font-size: 14px !important;
     margin-bottom: 3px;

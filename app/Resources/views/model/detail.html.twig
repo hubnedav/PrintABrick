@@ -7,7 +7,7 @@
 {% block header %}{{ model.name }}{% endblock %}
 
 {% block content %}
-    <div class="ui grid">
+    <div class="ui stackable grid">
         <div class="column ten wide">
             <div id="model-viewer" class="model-container">
                 {{ blocks.partImage(model.id,'part_large') }}
@@ -17,7 +17,7 @@
             <div class="item-info ui">
                 <table class="ui very basic table">
                     <tr>
-                        <td>{{ 'model.number' | trans }}</td>
+                        <td>{{ 'model.id' | trans }}</td>
                         <td><h2>{{ model.id }}</h2></td>
                     </tr>
                     <tr>
@@ -39,18 +39,21 @@
                     <tr>
                         <td>{{ 'model.keywords' | trans }}</td>
                         <td>
-                            {% for keyword in model.keywords %}
-                                <span class="ui label">{{ keyword.name }}</span>
-                            {% endfor %}
+                            <div class="ui grey labels">
+                                {% for keyword in model.keywords %}
+                                    <span class="ui label">{{ keyword.name }}</span>
+                                {% endfor %}
+                            </div>
                         </td>
                     </tr>
                     {% if model.aliases|length %}
                         <tr>
                             <td>{{ 'model.aliases' | trans }}</td>
                             <td>
-                                {% for alias in model.aliases | slice(0,10)%}
+                                {% for alias in model.aliases | slice(0,20)%}
                                     <span>{{ alias.id }}</span>{%  if not loop.last %},{% endif %}
                                 {% endfor %}
+                                {% if model.aliases|length > 20 %}&hellip;{% endif %}
                             </td>
                         </tr>
                     {% endif %}

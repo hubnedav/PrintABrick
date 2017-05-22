@@ -10,7 +10,8 @@
 
     {% if models|length > 0 %}
         <div class="ui segment vertical noborder">
-            <div class="ui grid doubling ten column row">
+            <h3 class="ui horizontal divider header">Models</h3>
+            <div class="ui grid doubling ten column row parts">
                 {% for model in models %}
                     {{ blocks.model(model['model'],model['quantity']) }}
                 {% endfor %}
@@ -19,7 +20,8 @@
     {% endif %}
     {% if missing|length > 0 %}
         <div class="ui segment vertical noborder">
-            <div class="ui grid doubling ten column row">
+            <h3 class="ui horizontal divider header">Missing</h3>
+            <div class="ui grid doubling ten column row parts">
                 {% for part in missing %}
                     {{ blocks.part(part['part'],part['quantity']) }}
                 {% endfor %}

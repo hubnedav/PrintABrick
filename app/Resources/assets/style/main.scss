@@ -84,6 +84,29 @@
       background: url("/resources/images/spinner.svg") no-repeat center;
       background-color: lightgrey;
   }
+
+  .found-count {
+    margin: 0 !important;
+  }
+
+  .truncate {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ui.search > .results .result {
+    .title {
+      font-weight: normal;
+    }
+
+    em {
+      font-weight: 700;
+    }
+
+    padding: 0.5em 1em !important;
+  }
 }
 
 @each $i in 5 10 15 20 25 30 40 50 60 {

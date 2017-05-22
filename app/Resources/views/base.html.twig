@@ -35,7 +35,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="ui vertical segment content">
+                <div class="ui basic segment content">
                     {% for label, flashes in app.session.flashbag.all %}
                         {% for flash in flashes %}
                             {{ elements.flash(label,flash) }}
@@ -71,7 +71,8 @@
                 },
                 minCharacters : 3,
                 fields: {
-                    title: 'title',
+                    title: 'name',
+                    description: 'id',
                     url: 'url'
                 }
             });

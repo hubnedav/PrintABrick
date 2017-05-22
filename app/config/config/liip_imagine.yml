@@ -26,6 +26,7 @@ liip_imagine:
               cache: ~
               default_image: "/resources/images/noimage_min.png"
               filters:
+                  upscale: {min: [200, 200]}
                   thumbnail: { size: [200, 200], mode: inset, allow_upscale: true }
                   background: { size: [250, 250], position: center, color: '#FFFFFF' }
         part_large:

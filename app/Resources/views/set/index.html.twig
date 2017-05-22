@@ -26,8 +26,7 @@
             {{ form_end(form) }}
         </div>
         <div class="column twelve wide">
-
-            <div class="segment vertical">
+            <div class="ui header vertical noborder">
                 <div class="ui text menu right floated">
                     <div class="header item">Sort By</div>
                     {{ knp_pagination_sortable(sets, 'Number', 's.id', {'class':'item'}) }}
@@ -35,24 +34,22 @@
                     {{ knp_pagination_sortable(sets, 'Name', ['s.name'], {'class':'item'}) }}
                     {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount'], {'class':'item'}) }}
                 </div>
-                <div class="ui text menu">
+                <div class="found-count ui text menu">
                     <div class="header item">Showing</div>
                     <span class="item">{{ sets.getTotalItemCount }}</span>
                 </div>
             </div>
 
-            <div class="segment vertical">
-                <div class="ui divided items">
-                    <div class="ui four column doubling grid">
-                        {% for set in sets %}
-                            {{ blocks.set(set) }}
-                        {% else %}
-                            {{ blocks.empty('empty.sets') }}
-                        {% endfor %}
-                    </div>
+            <div class="ui segment vertical noborder">
+                <div class="ui four column doubling grid sets">
+                    {% for set in sets %}
+                        {{ blocks.set(set) }}
+                    {% else %}
+                        {{ blocks.empty('empty.sets') }}
+                    {% endfor %}
                 </div>
             </div>
-            <div class="segment vertical">
+            <div class="ui segment vertical noborder">
                 {{ knp_pagination_render(sets) }}
             </div>
         </div>

@@ -3,7 +3,7 @@
 namespace AppBundle\Service\Stl;
 
 use AppBundle\Exception\ConvertingFailedException;
-use AppBundle\Exception\LDView\LDLibraryMissingException;
+use AppBundle\Exception\Stl\LDLibraryMissingException;
 use League\Flysystem\File;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;

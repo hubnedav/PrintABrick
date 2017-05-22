@@ -75,7 +75,7 @@
         <div class="ui vertical segment">
 
             <div class="ui tab active" data-tab="subparts">
-                <div class="ui eight column grid">
+                <div class="ui eight column grid parts">
                     {% for subpart in subparts %}
                         {{ blocks.model(subpart['model'], subpart['quantity']) }}
                     {% endfor %}
@@ -83,7 +83,7 @@
             </div>
 
             <div class="ui tab" data-tab="related">
-                <div class="ui eight column grid">
+                <div class="ui eight column grid parts">
                     {% for subpart in related  %}
                         <div class="column">
                             {{ blocks.model(subpart) }}
@@ -93,7 +93,7 @@
             </div>
 
             <div class="ui tab" data-tab="parents">
-                <div class="ui eight column grid">
+                <div class="ui eight column grid parts">
                     {% for subpart in model.parents  %}
                         <div class="column">
                             {{ blocks.model(subpart.parent) }}

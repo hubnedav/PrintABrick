@@ -7,26 +7,27 @@
 {% block header %}{{ 'page.search' | trans({'%query%':query}) }}{% endblock %}
 
 {% block content %}
-
-
     <div class="ui vertical segment noborder">
-        <h3 class="ui dividing header">Sets</h3>
+        <h2 class="ui dividing header">Sets</h2>
         <div class="ui eight column doubling grid sets">
             {% for set in sets %}
                 {{ blocks.set(set) }}
             {% endfor %}
         </div>
-        <a href="{{ path('set_index',{'s[query]':query}) }}">Show more</a>
+        <div class="spacing top">
+            <a class="show all" href="{{ path('set_index',{'s[query]':query}) }}">{{ 'view.all.sets' | trans }}</a>
+        </div>
     </div>
 
-
     <div class="ui vertical segment noborder">
-        <h3 class="ui dividing header">Models</h3>
+        <h2 class="ui dividing header">Models</h2>
         <div class="ui eight column doubling grid parts">
             {% for model in models %}
                 {{ blocks.model(model) }}
             {% endfor %}
         </div>
-        <a href="{{ path('model_index',{'m[query]':query}) }}">Show more</a>
+        <div class="spacing top">
+            <a class="show all" href="{{ path('model_index',{'m[query]':query}) }}">{{ 'view.all.models' | trans }}</a>
+        </div>
     </div>
 {% endblock %}

@@ -79,3 +79,7 @@ homepage:
     title: %count% sets
     text:
     browse: Browse sets
+
+view.all:
+  sets: View all matched sets
+  models: View all matched models

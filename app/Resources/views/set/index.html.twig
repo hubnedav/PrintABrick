@@ -29,10 +29,12 @@
             <div class="ui header vertical noborder">
                 <div class="ui text menu right floated">
                     <div class="header item">Sort By</div>
-                    {{ knp_pagination_sortable(sets, 'Number', 's.id', {'class':'item'}) }}
-                    {{ knp_pagination_sortable(sets, 'Year', 's.year', {'class':'item'}) }}
-                    {{ knp_pagination_sortable(sets, 'Name', ['s.name'], {'class':'item'}) }}
-                    {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount'], {'class':'item'}) }}
+
+                    {{ knp_pagination_sortable(sets, 'Number', ['s.id']) }}
+                    {{ knp_pagination_sortable(sets, 'Year', ['s.year']) }}
+                    {{ knp_pagination_sortable(sets, 'Name', ['s.name']) }}
+                    {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount']) }}
+
                 </div>
                 <div class="found-count ui text menu">
                     <div class="header item">Showing</div>

@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Form\Search\ModelSearchType;
 use AppBundle\Model\ModelSearch;
+use Knp\Component\Pager\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -32,15 +33,9 @@ class ModelController extends Controller
         $form->handleRequest($request);
 
         $elasticaManager = $this->get('fos_elastica.manager');
-        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch);
+        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch,5000);
 
-        $paginator = $this->get('knp_paginator');
-        $sets = $paginator->paginate(
-            $results,
-            $request->query->getInt('page', 1)/*page number*/,
-            $request->query->getInt('limit', 30)/*limit per page*/
-        );
-
+        /** @var Paginator $paginator */
         $paginator = $this->get('knp_paginator');
         $models = $paginator->paginate(
             $results,

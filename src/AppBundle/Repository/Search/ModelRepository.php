@@ -37,13 +37,13 @@ class ModelRepository extends Repository
         return new Query($boolQuery);
     }
 
-    public function search(ModelSearch $modelSearch)
+    public function search(ModelSearch $modelSearch, $limit = 500)
     {
        $query = $this->getSearchQuery($modelSearch);
-        return $this->find($query, 500);
+        return $this->find($query, $limit);
     }
 
-    public function findHighlighted($query, $limit = null) {
+    public function findHighlighted($query, $limit = 500) {
         $modelSearch = new ModelSearch();
         $modelSearch->setQuery($query);
 

@@ -25,8 +25,8 @@
                 <div class="ui header vertical noborder">
                     <div class="ui text menu right floated">
                         <div class="header item">Sort By</div>
-                        {{ knp_pagination_sortable(models, 'Number', 'm.id', {'class':'item'}) }}
-                        {{ knp_pagination_sortable(models, 'Name', ['m.name'], {'class':'item'}) }}
+                        {{ knp_pagination_sortable(models, 'Number', 'm.id') }}
+                        {{ knp_pagination_sortable(models, 'Name', 'm.name') }}
                     </div>
                     <div class="found-count ui text menu">
                         <div class="header item">Showing</div>

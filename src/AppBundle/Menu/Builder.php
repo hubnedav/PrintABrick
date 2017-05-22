@@ -32,7 +32,7 @@ class Builder
             'route' => 'homepage',
         ]);
 
-        $menu->addChild('homepage', [
+        $menu->addChild('Home', [
             'route' => 'homepage',
         ]);
 

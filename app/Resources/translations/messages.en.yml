@@ -69,3 +69,13 @@ filter:
   model:
    search: Search Model
    category: Category
+
+homepage:
+  models:
+    title: %count% models
+    text:
+    browse: Browse models
+  sets:
+    title: %count% sets
+    text:
+    browse: Browse sets

@@ -78,13 +78,19 @@ doctrine_migrations:
 
 monolog:
     channels: ['loader']
+    use_microseconds: false
     handlers:
+        elasticsearch:
+            type: stream
+            level: error
         loader:
             type: rotating_file
             path: "%kernel.logs_dir%/loader.log"
-            level: debug
+            level: error
             channels: 'loader'
-            max_files: 10
+            max_files: 5
+            stop_buffering:       true
+            buffer_size:          0
 
 knp_menu:
     twig:

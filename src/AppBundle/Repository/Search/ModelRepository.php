@@ -3,10 +3,15 @@
 namespace AppBundle\Repository\Search;
 
 use AppBundle\Model\ModelSearch;
+use Elastica\Query;
 use FOS\ElasticaBundle\Repository;
 
 class ModelRepository extends Repository
 {
+    /**
+     * @param ModelSearch $modelSearch
+     * @return \Elastica\Query
+     */
     public function getSearchQuery(ModelSearch $modelSearch) {
         $boolQuery = new \Elastica\Query\BoolQuery();
 
@@ -29,12 +34,31 @@ class ModelRepository extends Repository
             $boolQuery->addFilter($categoryQuery);
         }
 
-        return $boolQuery;
+        return new Query($boolQuery);
     }
 
     public function search(ModelSearch $modelSearch)
     {
        $query = $this->getSearchQuery($modelSearch);
         return $this->find($query, 500);
+    }
+
+    public function findHighlighted($query, $limit = null) {
+        $modelSearch = new ModelSearch();
+        $modelSearch->setQuery($query);
+
+        /** @var Query $query */
+        $query = $this->getSearchQuery($modelSearch);
+
+        $query->setHighlight([
+            'pre_tags' => ['<em>'],
+            'post_tags' => ['</em>'],
+            "fields" => [
+                "name" => new \stdClass(),
+                "id" => new \stdClass()
+            ]
+        ]);
+
+        return $this->findHybrid($query, $limit);
     }
 }

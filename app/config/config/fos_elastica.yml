@@ -1,21 +1,37 @@
 fos_elastica:
     clients:
-        default: { host: '%elastica_host%', port: '%elastica_port%', logger: false }
+        default: { host: '%elastica_host%', port: '%elastica_port%', logger: true }
     indexes:
         app:
-            index_name: app_%kernel.environment%
+            settings:
+                index:
+                    analysis:
+                        analyzer:
+                            custom_analyzer:
+                                type: custom
+                                tokenizer: nGram
+                                filter:  [lowercase, snowball]
+                        tokenizer:
+                            nGram:
+                                type:     nGram
+                                min_gram: 3
+                                max_gram: 10
+                        filter:
+                            snowball:
+                                type: snowball
+                                language: English
             types:
                 set:
                     mappings:
-                        id: ~
-                        name: { type: string }
+                        id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                        name: { analyzer: custom_analyzer, search_analyzer: "standard" }
                         year: { type: integer }
                         partCount: { type: integer }
                         theme:
                             type: "object"
                             properties:
-                                id: ~
-                                name: { type: string }
+                                id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\Rebrickable\Set
@@ -24,21 +40,21 @@ fos_elastica:
                         repository: AppBundle\Repository\Search\SetRepository
                 model:
                     mappings:
-                        id: ~
-                        name: { type: string }
+                        id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                        name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                         aliases:
                             type: "object"
                             properties:
-                                id: ~
+                                id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                         category:
                             type: "object"
                             properties:
-                                id: ~
-                                name: { type: string }
+                                id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                         keywords:
                             type: "object"
                             properties:
-                                name: ~
+                                name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\LDraw\Model

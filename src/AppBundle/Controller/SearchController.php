@@ -4,6 +4,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Set;
+use AppBundle\Repository\Search\ModelRepository;
+use AppBundle\Repository\Search\SetRepository;
+use FOS\ElasticaBundle\HybridResult;
 use FOS\ElasticaBundle\Repository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,14 +30,14 @@ class SearchController extends Controller
         /** var FOS\ElasticaBundle\Manager\RepositoryManager */
         $repositoryManager = $this->get('fos_elastica.manager');
 
-        /** @var Repository $setRepository */
+        /** @var SetRepository $setRepository */
         $setRepository = $repositoryManager->getRepository(Set::class);
         /** @var Repository $modelRepository */
         $modelRepository = $repositoryManager->getRepository(Model::class);
 
         // Option 1. Returns all users who have example.net in any of their mapped fields
-        $setsResult = $setRepository->find($query, 5000);
-        $modelResult = $modelRepository->find($query, 5000);
+        $setsResult = $setRepository->find($query, 8);
+        $modelResult = $modelRepository->find($query, 8);
 
         return $this->render('search/index.html.twig', [
             'sets' => $setsResult,
@@ -53,30 +56,38 @@ class SearchController extends Controller
         /** var FOS\ElasticaBundle\Manager\RepositoryManager */
         $repositoryManager = $this->get('fos_elastica.manager');
 
-        /** @var Repository $setRepository */
+        /** @var SetRepository $setRepository */
         $setRepository = $repositoryManager->getRepository(Set::class);
-        /** @var Repository $modelRepository */
+        /** @var ModelRepository $modelRepository */
         $modelRepository = $repositoryManager->getRepository(Model::class);
 
         // Option 1. Returns all users who have example.net in any of their mapped fields
-        $setsResult = $setRepository->find($query, 5);
-        $modelResult = $modelRepository->find($query, 5);
+        $setsResult = $setRepository->findHighlighted($query, 5);
+        $modelResult = $modelRepository->findHighlighted($query, 5);
 
         $models = [];
-        /** @var Model $model */
+        /** @var HybridResult $model */
         foreach ($modelResult as $model) {
+            $id = isset($model->getResult()->getHighlights()['id']) ? $model->getResult()->getHighlights()['id'][0] : $model->getTransformed()->getId();
+            $name = isset($model->getResult()->getHighlights()['name']) ? $model->getResult()->getHighlights()['name'][0] : $model->getTransformed()->getName();
+
             $models[] = [
-                'title' => $model->getId().' '.$model->getName(),
-                'url' => $this->generateUrl('model_detail', ['id' => $model->getId()]),
+                'id' => $id,
+                'name' => $name,
+                'url' => $this->generateUrl('model_detail', ['id' => $model->getTransformed()->getId()]),
             ];
         }
 
         $sets = [];
-        /** @var Set $set */
+        /** @var HybridResult $set */
         foreach ($setsResult as $set) {
+            $id = isset($set->getResult()->getHighlights()['id']) ? $set->getResult()->getHighlights()['id'][0] : $set->getTransformed()->getId();
+            $name = isset($set->getResult()->getHighlights()['name']) ? $set->getResult()->getHighlights()['name'][0] : $set->getTransformed()->getName();
+            
             $sets[] = [
-                'title' => $set->getId().' '.$set->getName(),
-                'url' => $this->generateUrl('set_detail', ['id' => $set->getId()]),
+                'id' => $id,
+                'name' => $name,
+                'url' => $this->generateUrl('set_detail', ['id' => $set->getTransformed()->getId()]),
             ];
         }
 

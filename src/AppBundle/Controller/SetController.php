@@ -8,6 +8,7 @@ use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Form\Search\SetSearchType;
 use AppBundle\Model\SetSearch;
 use AppBundle\Repository\Rebrickable\Inventory_PartRepository;
+use AppBundle\Repository\Search\SetRepository;
 use AppBundle\Service\SetService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -31,8 +32,9 @@ class SetController extends Controller
         $form = $this->get('form.factory')->createNamedBuilder('s', SetSearchType::class, $setSearch)->getForm();
         $form->handleRequest($request);
 
-        $elasticaManager = $this->get('fos_elastica.manager');
-        $results = $elasticaManager->getRepository(Set::class)->search($setSearch);
+        /** @var SetRepository $setRepository */
+        $setRepository = $this->get('fos_elastica.manager')->getRepository(Set::class);
+        $results = $setRepository->search($setSearch,5000);
 
         $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(

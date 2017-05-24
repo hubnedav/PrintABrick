@@ -73,6 +73,13 @@ class SetRepository extends BaseRepository
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
+    public function count() {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->select('count(s)');
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
     public function getMaxYear()
     {
         $queryBuilder = $this->createQueryBuilder('s')

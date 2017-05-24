@@ -1,6 +1,7 @@
 {% extends 'html.html.twig' %}
 
 {% import 'macros/elements.html.twig' as elements %}
+{% import 'macros/blocks.html.twig' as blocks %}
 
 {% block body %}
     <div class="ui fixed inverted menu">
@@ -21,7 +22,7 @@
     {% block page %}
         <div class="ui main">
             <div class="ui container">
-                <div class="ui masthead vertical segment">
+                <div class="ui head vertical segment">
                     <h1 class="ui header">{% block header %}{% endblock %}</h1>
 
                     <div class="ui small breadcrumb">
@@ -73,7 +74,8 @@
                 fields: {
                     title: 'name',
                     description: 'id',
-                    url: 'url'
+                    url: 'url',
+                    image: 'img'
                 }
             });
     </script>

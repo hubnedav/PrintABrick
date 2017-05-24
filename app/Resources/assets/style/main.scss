@@ -1,12 +1,11 @@
 .default-theme {
 
   .ui.main {
-    padding-top: 10px;
-    margin-top: 40px;
+    padding-top: 50px;
     min-height: calc(100% - 67px);
   }
 
-  .ui.masthead {
+  .ui.head {
     position: relative;
 
     .header {
@@ -105,7 +104,28 @@
       font-weight: 700;
     }
 
+    .image {
+      width: 4em;
+      height: 4em;
+    }
     padding: 0.5em 1em !important;
+  }
+
+  .spacing.top {
+    margin-top: 1em;
+  }
+
+  .show.all {
+    font-size: 1.5em;
+
+    &:after {
+      content: ' »';
+    }
+  }
+
+  .ajax-load > .loader, .empty{
+    margin-top: 100px !important;
+    margin-bottom: 100px !important;
   }
 }
 

@@ -1,16 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block page %}
-    <div class="ui main">
-        <div class="ui grid massive message vertical">
+{% block body %}
+    <!-- Page Contents -->
+    <div class="pusher">
+        <div class="ui inverted vertical masthead center aligned segment">
+
             <div class="ui container">
-                <div class="row">
-                    <div class="h1 ui huge header">
-                        Hello, world!
+                <div class="ui large secondary inverted pointing menu">
+                    {{ knp_menu_render('mainMenu') }}
+
+                    <div class="right menu">
+                        <div class="ui search item category right aligned">
+                            <div class="ui icon input transparent inverted">
+                                <input class="prompt" type="text" placeholder="Search..." >
+                                <i class="search icon"></i>
+                            </div>
+                            <div class="results transition"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui text container">
+                <h1 class="ui inverted header">
+                    PrintABrick
+                </h1>
+                <h2>{{ 'page.home.title.text' | trans }}</h2>
+            </div>
+        </div>
+
+        <div class="ui vertical stripe quote segment">
+            <div class="ui equal width stackable internally celled grid">
+                <div class="center aligned row">
+                    <div class="column">
+                        <h3>{{ 'homepage.models.title' | trans({'%count%' : models})}}</h3>
+                        <p>{{ 'homepage.models.text' | trans }}</p>
+                        <a class="ui button big primary" href="{{ path('model_index') }}">{{ 'homepage.models.browse' | trans }}</a>
+                    </div>
+                    <div class="column">
+                        <h3>{{ 'homepage.sets.title' | trans({'%count%' : sets}) }}</h3>
+                        <p>{{ 'homepage.sets.text' | trans }}</p>
+                        <a class="ui button big primary" href="{{ path('set_index') }}">{{ 'homepage.sets.browse' | trans }}</a>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 {% endblock %}
 

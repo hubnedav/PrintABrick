@@ -27,9 +27,9 @@ class SetRepository extends Repository
             $query->setQuery($searchQuery);
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
-
+            $query->setOperator('and');
+            
             $boolQuery->addMust($query);
-
         } else {
             $query = new \Elastica\Query\MatchAll();
             $boolQuery->addMust($query);
@@ -69,7 +69,7 @@ class SetRepository extends Repository
         return $this->find($query, $limit);
     }
 
-    public function findHighlighted($query, $limit = null) {
+    public function findHighlighted($query, $limit = 500) {
         $setSearch = new SetSearch();
         $setSearch->setQuery($query);
 

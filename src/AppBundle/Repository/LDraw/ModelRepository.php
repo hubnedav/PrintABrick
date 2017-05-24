@@ -106,6 +106,13 @@ class ModelRepository extends BaseRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+    public function count() {
+        $queryBuilder = $this->createQueryBuilder('model');
+        $queryBuilder->select('count(model)');
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
     /**
      * Create new Model entity with $number or retrieve one.
      *

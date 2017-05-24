@@ -9,9 +9,9 @@
 {% block content %}
     <div class="ui stackable grid">
         <div class="column nine wide">
-            <div class="ui bordered fluid image">
+            <a class="ui bordered fluid image" href="{{ asset(set.id~'.jpg')|imagine_filter('set_large') }}" data-lightbox="setImages">
                 {{ blocks.setImage(set.id,'set_large') }}
-            </div>
+            </a>
         </div>
         <div class="column seven wide">
             <div class="item-info ui">

@@ -10,27 +10,31 @@ fos_elastica:
                             custom_analyzer:
                                 type: custom
                                 tokenizer: nGram
-                                filter:  [lowercase, snowball]
+                                filter:  [lowercase,stopwords]
                         tokenizer:
                             nGram:
                                 type:     nGram
                                 min_gram: 3
-                                max_gram: 10
+                                max_gram: 20
                         filter:
                             snowball:
                                 type: snowball
                                 language: English
+                            stopwords:
+                                type:      stop
+                                stopwords: [_english_]
+                                ignore_case : true
             types:
                 set:
                     mappings:
-                        id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                        id: ~
                         name: { analyzer: custom_analyzer, search_analyzer: "standard" }
                         year: { type: integer }
                         partCount: { type: integer }
                         theme:
                             type: "object"
                             properties:
-                                id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                id: ~
                                 name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                     persistence:
                         driver: orm
@@ -40,16 +44,16 @@ fos_elastica:
                         repository: AppBundle\Repository\Search\SetRepository
                 model:
                     mappings:
-                        id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                        id: ~
                         name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                         aliases:
                             type: "object"
                             properties:
-                                id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                id: ~
                         category:
                             type: "object"
                             properties:
-                                id: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                id: ~
                                 name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
                         keywords:
                             type: "object"

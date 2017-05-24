@@ -8,6 +8,8 @@ use AppBundle\Repository\Search\ModelRepository;
 use AppBundle\Repository\Search\SetRepository;
 use FOS\ElasticaBundle\HybridResult;
 use FOS\ElasticaBundle\Repository;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Liip\ImagineBundle\Imagine\Cache\Resolver\CacheResolver;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -53,6 +55,9 @@ class SearchController extends Controller
     {
         $query = trim(strip_tags($request->get('query')));
 
+        /** @var CacheManager $liip */
+        $liip = $this->get('liip_imagine.cache.manager');
+
         /** var FOS\ElasticaBundle\Manager\RepositoryManager */
         $repositoryManager = $this->get('fos_elastica.manager');
 
@@ -75,6 +80,7 @@ class SearchController extends Controller
                 'id' => $id,
                 'name' => $name,
                 'url' => $this->generateUrl('model_detail', ['id' => $model->getTransformed()->getId()]),
+                'img' =>  $liip->getBrowserPath('-1/'.$model->getTransformed()->getId().'.png','part_min'),
             ];
         }
 
@@ -83,11 +89,12 @@ class SearchController extends Controller
         foreach ($setsResult as $set) {
             $id = isset($set->getResult()->getHighlights()['id']) ? $set->getResult()->getHighlights()['id'][0] : $set->getTransformed()->getId();
             $name = isset($set->getResult()->getHighlights()['name']) ? $set->getResult()->getHighlights()['name'][0] : $set->getTransformed()->getName();
-            
+
             $sets[] = [
                 'id' => $id,
                 'name' => $name,
                 'url' => $this->generateUrl('set_detail', ['id' => $set->getTransformed()->getId()]),
+                'img' =>  $liip->getBrowserPath($set->getTransformed()->getId().'.jpg','set_min'),
             ];
         }
 

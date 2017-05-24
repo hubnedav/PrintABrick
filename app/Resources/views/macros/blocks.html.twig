@@ -5,6 +5,7 @@
         {% else %}
             {% set placeholder = asset("resources/images/transparent_min.png") %}
         {% endif %}
+
         <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter)}}">
     </div>
 {% endmacro %}
@@ -63,13 +64,13 @@
             {% import _self as blocks %}
             {{ blocks.setImage(set.id,'set_min') }}
             <div class="content">
-                <h3 class="header truncate">
+                <h3 title="{{ set.name }}" class="header truncate">
                     {{ set.name }}
                 </h3>
                 <div class="meta">
                     <span class="left floated">{{ set.id }}</span>
                     <br>
-                    <span class="left floated truncate"><small>{{ set.theme.fullName }}</small></span>
+                    <span title="{{ set.theme.fullName }}" class="left floated truncate"><small>{{ set.theme.fullName }}</small></span>
                 </div>
                 <div class="description">
                     <small>
@@ -83,7 +84,9 @@
 {% endmacro %}
 
 {% macro empty(message) %}
-    <p class="ui center aligned icon header"><i class="circular frown icon"></i>{{ message }}</p>
+    <div class="ui center aligned icon header empty">
+        <p><i class="circular frown icon"></i>{{ message }}</p>
+    </div>
 {% endmacro %}
 
 {% macro ccal2_license(title,author) %}

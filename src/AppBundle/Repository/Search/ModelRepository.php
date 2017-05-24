@@ -13,23 +13,25 @@ class ModelRepository extends Repository
      * @return \Elastica\Query
      */
     public function getSearchQuery(ModelSearch $modelSearch) {
-        $boolQuery = new \Elastica\Query\BoolQuery();
+        $boolQuery = new Query\BoolQuery();
 
         if ($searchQuery = $modelSearch->getQuery()) {
-            $query = new \Elastica\Query\MultiMatch();
+            $query = new Query\MultiMatch();
 
             $query->setFields(['name', 'id', 'aliases.id', 'keywords.name']);
             $query->setQuery($searchQuery);
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
+            $query->setOperator('and');
+
         } else {
-            $query = new \Elastica\Query\MatchAll();
+            $query = new Query\MatchAll();
         }
 
         $boolQuery->addMust($query);
 
         if ($modelSearch->getCategory()) {
-            $categoryQuery = new \Elastica\Query\Match();
+            $categoryQuery = new Query\Match();
             $categoryQuery->setField('category.id', $modelSearch->getCategory()->getId());
             $boolQuery->addFilter($categoryQuery);
         }
@@ -37,13 +39,13 @@ class ModelRepository extends Repository
         return new Query($boolQuery);
     }
 
-    public function search(ModelSearch $modelSearch)
+    public function search(ModelSearch $modelSearch, $limit = 500)
     {
        $query = $this->getSearchQuery($modelSearch);
-        return $this->find($query, 500);
+        return $this->find($query, $limit);
     }
 
-    public function findHighlighted($query, $limit = null) {
+    public function findHighlighted($query, $limit = 500) {
         $modelSearch = new ModelSearch();
         $modelSearch->setQuery($query);
 

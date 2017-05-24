@@ -11,31 +11,29 @@
         <div class="row">
             <div class="column four wide">
                 <h3>{{ 'model.filter.title' | trans }}</h3>
-                {#<form method="get" action="" class="ui form">#}
                 {{ form_start(form) }}
-
-                {{ form_rest(form) }}
+                {{ form_row(form.query) }}
+                {{ form_row(form.category) }}
                 <div class="field">
                     <input class="ui fluid submit button" type="submit" value="Filter"/>
                 </div>
                 {{ form_end(form) }}
-                {#</form>#}
             </div>
             <div class="column twelve wide">
                 <div class="ui header vertical noborder">
                     <div class="ui text menu right floated">
                         <div class="header item">Sort By</div>
-                        {{ knp_pagination_sortable(models, 'Number', 'm.id', {'class':'item'}) }}
-                        {{ knp_pagination_sortable(models, 'Name', ['m.name'], {'class':'item'}) }}
+                        {{ knp_pagination_sortable(models, 'Number', 'm.id') }}
+                        {{ knp_pagination_sortable(models, 'Name', 'm.name') }}
                     </div>
+
                     <div class="found-count ui text menu">
                         <div class="header item">Showing</div>
                         <span class="item">{{ models.getTotalItemCount }}</span>
                     </div>
                 </div>
-
                 <div class="ui segment vertical noborder">
-                    <div class="ui six column doubling grid">
+                    <div class="ui six column doubling grid parts">
                         {% for model in models %}
                             {{ blocks.model(model) }}
                         {% else %}

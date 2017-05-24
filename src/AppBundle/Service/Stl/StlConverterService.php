@@ -6,6 +6,7 @@ use AppBundle\Exception\ConvertingFailedException;
 use AppBundle\Exception\Stl\LDLibraryMissingException;
 use League\Flysystem\File;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -38,7 +39,8 @@ class StlConverterService
      * StlConverterService constructor.
      *
      * @param string     $ldview          Path to LDView OSMesa binary file
-     * @param Filesystem $mediaFilesystem Filesystem for generated web assets
+     * @param FilesystemInterface $mediaFilesystem Filesystem for generated web assets
+     * @param StlFixerService $stlFixer
      */
     public function __construct($ldview, $mediaFilesystem, $stlFixer)
     {

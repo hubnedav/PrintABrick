@@ -21,4 +21,18 @@ doctrine:
         connections:
             default:
                 driver:   pdo_sqlite
-                path:     "%kernel.cache_dir%/test.db"
+                path:   "%kernel.cache_dir%/test.db"
+
+liip_functional_test:
+    cache_sqlite_db: true
+
+oneup_flysystem:
+    adapters:
+        myadapter:
+            local:
+                directory: "%kernel.cache_dir%/filesystem"
+
+    filesystems:
+        myfilesystem:
+            adapter: myadapter
+            mount:   prefix

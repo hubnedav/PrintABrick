@@ -23,22 +23,25 @@ class StlFixerService
     /**
      * Rotate, scale stl file and save in binary format.
      *
-     * @param $file
+     * @param $input
+     * @param $output
      *
      * @throws FileNotFoundException
      */
-    public function fix($file)
+    public function fix($input, $output = null)
     {
-        if (file_exists($file)) {
+        $output = $output ? $output : $input;
+
+        if (file_exists($input)) {
             $this->runADMesh([
-                $file,
+                $input,
                 '--x-rotate=-90',
                 '--scale=10',
                 '--no-check',
-                "--write-binary-stl={$file}",
+                "--write-binary-stl={$output}",
             ]);
         } else {
-            throw new FileNotFoundException($file);
+            throw new FileNotFoundException($input);
         }
     }
 

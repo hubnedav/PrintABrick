@@ -5,10 +5,6 @@ namespace Tests\AppBundle\Service\Stl;
 use AppBundle\Service\Stl\StlConverterService;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemInterface;
-use org\bovigo\vfs\vfsStreamDirectory;
-use org\bovigo\vfs\vfsStreamWrapper;
-use PHPUnit\Framework\TestCase;
 use Tests\AppBundle\Service\BaseTest;
 
 class StlConvertorTest extends BaseTest
@@ -20,8 +16,9 @@ class StlConvertorTest extends BaseTest
     public function setUp()
     {
         $ldview = $this->_container->getParameter('ldview_bin');
+        $stlFixer = $this->get('service.stl.fixer');
 
-        $this->stlConverter = new StlConverterService($ldview, $this->filesystem );
+        $this->stlConverter = new StlConverterService($ldview, $this->filesystem, $stlFixer);
 
         $adapter = new Local(__DIR__.'/fixtures/ldraw');
         $ldrawLibraryContext = new Filesystem($adapter);

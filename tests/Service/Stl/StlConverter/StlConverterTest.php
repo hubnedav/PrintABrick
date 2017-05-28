@@ -7,7 +7,7 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Tests\AppBundle\Service\BaseTest;
 
-class StlConvertorTest extends BaseTest
+class StlConverterTest extends BaseTest
 {
     /** @var StlConverterService */
     private $stlConverter;
@@ -15,10 +15,7 @@ class StlConvertorTest extends BaseTest
 
     public function setUp()
     {
-        $ldview = $this->_container->getParameter('ldview_bin');
-        $stlFixer = $this->get('service.stl.fixer');
-
-        $this->stlConverter = new StlConverterService($ldview, $this->filesystem, $stlFixer);
+        $this->stlConverter = $this->get('service.stl.converter');
 
         $adapter = new Local(__DIR__.'/fixtures/ldraw');
         $ldrawLibraryContext = new Filesystem($adapter);

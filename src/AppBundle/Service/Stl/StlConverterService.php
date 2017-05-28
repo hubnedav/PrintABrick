@@ -17,7 +17,9 @@ class StlConverterService
      */
     private $ldview;
 
-    /** @var StlFixerService */
+    /**
+     * @var StlFixerService
+     */
     private $stlFixer;
 
     /**
@@ -29,11 +31,6 @@ class StlConverterService
      * @var Filesystem
      */
     private $ldrawLibraryContext;
-
-    /**
-     * @var bool
-     */
-    private $rewrite = false;
 
     /**
      * StlConverterService constructor.
@@ -61,13 +58,14 @@ class StlConverterService
      * Convert LDraw model from .dat format to .stl by using LDView
      * stores created file to $stlStorage filesystem.
      *
-     * @param $file
+     * @param string $file
+     * @param bool $rewrite
      *
      * @throws ConvertingFailedException
      *
      * @return File
      */
-    public function datToStl($file)
+    public function datToStl($file, $rewrite = false)
     {
         if (!$this->ldrawLibraryContext) {
             throw new LDLibraryMissingException();
@@ -79,7 +77,7 @@ class StlConverterService
 
         $newFile = 'models'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.stl';
 
-        if (!$this->mediaFilesystem->has($newFile) || $this->rewrite) {
+        if (!$this->mediaFilesystem->has($newFile) || $rewrite) {
             $this->runLDView([
                 $file,
                 '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
@@ -105,13 +103,14 @@ class StlConverterService
      * Convert LDraw model from .dat format to .stl by using LDView
      * stores created file to $stlStorage filesystem.
      *
-     * @param $file
+     * @param string $file
+     * @param bool $rewrite
      *
      * @throws ConvertingFailedException
      *
      * @return File
      */
-    public function datToPng($file)
+    public function datToPng($file, $rewrite = false)
     {
         if (!$this->ldrawLibraryContext) {
             throw new LDLibraryMissingException();
@@ -123,7 +122,7 @@ class StlConverterService
 
         $newFile = 'images'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.png';
 
-        if (!$this->mediaFilesystem->has($newFile) || $this->rewrite) {
+        if (!$this->mediaFilesystem->has($newFile) || $rewrite) {
             $this->runLDView([
                 $file,
                 '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),

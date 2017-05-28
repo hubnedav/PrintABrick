@@ -1,6 +1,6 @@
 set:
   filter.title: Filter
-  id: Set number
+  id: Number
   name: Name
   year: Released
   theme: Theme
@@ -12,6 +12,12 @@ set:
     text: |
       This set inventory has been obtained from Rebrickable.
       According to the Brickset, this set has %brickset% parts. The inventory from Rebrickable contains %rebrickable% parts.
+  rebrickable:
+    credit: |
+      This set inventory and model images has been obtained from Rebrickable. To view more information about set visit <a href="https://rebrickable.com/" title="Rebrickable">Rebrickable.com</a>.
+  brickset:
+    credit: |
+      This data has been obtained from <a href="https://brickset.com/" title="Brickset">Brickset</a>
   instructions:
     description: Description
     filesize: Filesize
@@ -49,10 +55,11 @@ set:
 
 model:
   filter.title: Filter
-  id: Model number
+  id: Number
+  name: Name
   category: Category
   author: Author
-  set.count:
+  set.count: In sets
   license: License
   keywords: Keywords
   aliases: Aliases
@@ -66,6 +73,7 @@ page:
   model.index: Browse models
   set.index: Browse sets
   search: "Search: \"%query%\""
+  color: Colors
 
 filter:
   model:

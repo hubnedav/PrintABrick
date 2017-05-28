@@ -8,36 +8,42 @@
         {% endfor %}
     {% endfor %}
 
-    {% if inventorySets %}
-        <h3 class="ui horizontal divider header">Sets</h3>
-        <div class="ui eight column doubling grid sets">
-            {% for inventorySet in inventorySets %}
-                {{ blocks.set(inventorySet.set, inventorySet.quantity) }}
-            {% endfor %}
-        </div>
-    {% else %}
-        {% if missingCount > 0 %}
-            <div class="ui warning icon message">
-                <i class="warning icon"></i>
-                <div class="content">
-                    <div class="header">
-                        {{ 'set.download.warning.title' | trans }}
+    <div class="ui segment vertical">
+        {% if inventorySets %}
+            <h3 class="ui horizontal divider header">Sets</h3>
+            <div class="ui eight column doubling grid sets">
+                {% for inventorySet in inventorySets %}
+                    {{ blocks.set(inventorySet.set, inventorySet.quantity) }}
+                {% endfor %}
+            </div>
+        {% else %}
+            {% if missingCount > 0 %}
+                <div class="ui warning icon message">
+                    <i class="warning icon"></i>
+                    <div class="content">
+                        <div class="header">
+                            {{ 'set.download.warning.title' | trans }}
+                        </div>
+                        <p> {{ 'set.download.warning.text' | trans({'%percent%':((1 - missingCount/partCount)*100)|number_format(2, '.', ','), '%total%':partCount, '%missing%': missingCount, '%unique%': missing|length}) | raw | nl2br }}</p>
                     </div>
-                    <p> {{ 'set.download.warning.text' | trans({'%percent%':((1 - missingCount/partCount)*100)|number_format(2, '.', ','), '%total%':partCount, '%missing%': missingCount, '%unique%': missing|length}) | raw | nl2br }}</p>
                 </div>
+            {% endif %}
+
+            <div class="ui tabular icon pointing secondary menu submenu">
+                <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
+                <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
+            </div>
+
+            <div class="ui tab active" data-tab="inventory/models">
+                {{ render(path('set_models', {id: set.id})) }}
+            </div>
+            <div class="ui tab" data-tab="inventory/colors">
+                {{ render(path('set_colors', {id: set.id})) }}
             </div>
         {% endif %}
 
-        <div class="ui tabular icon pointing secondary menu submenu">
-            <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
-            <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
-        </div>
-
-        <div class="ui tab active" data-tab="inventory/models">
-            {{ render(path('set_models', {id: set.id})) }}
-        </div>
-        <div class="ui tab" data-tab="inventory/colors">
-            {{ render(path('set_colors', {id: set.id})) }}
-        </div>
-    {% endif %}
+    </div>
+    <div class="ui segment vertical">
+        <p class="ui text right">{{ 'set.rebrickable.credit' | trans | raw }}</p>
+    </div>
 {% endblock %}

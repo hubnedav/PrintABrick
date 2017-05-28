@@ -21,6 +21,10 @@
                         <td><h2>{{ model.id }}</h2></td>
                     </tr>
                     <tr>
+                        <td>{{ 'model.name' | trans }}</td>
+                        <td>{{ model.name }}</td>
+                    </tr>
+                    <tr>
                         <td>{{ 'model.category' | trans }}</td>
                         <td><a href="{{ path('model_index',{'m[category]':model.category.id}) }}">{{ model.category ? model.category.name }}</a></td>
                     </tr>
@@ -58,7 +62,6 @@
                         </tr>
                     {% endif %}
                 </table>
-
                 <a class="ui download fluid primary button" href="{{ path('model_zip', {id: model.id}) }}">{{ 'model.download'|trans }}</a>
             </div>
         </div>

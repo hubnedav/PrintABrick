@@ -2,7 +2,7 @@
 
 {% import 'macros/blocks.html.twig' as blocks %}
 
-{% block header %}#{{ part.id }} - {{ part.name }}{% endblock %}
+{% block header %}{{ part.name }}{% endblock %}
 
 {% block content %}
     <div class="ui grid">
@@ -15,7 +15,7 @@
             <div class="item-info ui">
                 <table class="ui very basic table">
                     <tr>
-                        <td>{{ 'part.id' | trans }}</td><td>{{ part.id}}</td>
+                        <td>{{ 'part.id' | trans }}</td><td><h2>{{ part.id}}</h2></td>
                     </tr>
                     <tr>
                         <td>{{ 'part.name' | trans }}</td><td>{{ part.name}}</td>
@@ -49,11 +49,16 @@
                             </td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td><a href="{{ apiPart.url }}">Rebrickable</a></td>
+                            <td>{{ 'part.prints' | trans }}</td>
+                            <td>
+                                {% for mold in apiPart.prints %}
+                                    <a href="{{ url('reb_part_detail', {'id': mold})}}">{{ mold }}</a>
+                                {% endfor %}
+                            </td>
                         </tr>
                         <tr>
-                            {#{{ dump(apiPart.externalIds, apiPart) }}#}
+                            <td></td>
+                            <td><a class="rebrickable link" href="{{ apiPart.url }}">Rebrickable</a></td>
                         </tr>
                     {% endif %}
                 </table>
@@ -61,21 +66,16 @@
         </div>
     </div>
 
-    <h4 class="ui horizontal divider header">
-        <i class="puzzle icon"></i> Sets
-    </h4>
+    {#<div class="segment ui vertical">#}
+        {#<h4 class="ui horizontal divider header">#}
+            {#<i class="puzzle icon"></i> Sets#}
+        {#</h4>#}
 
-    <div class="ui eight column grid">
-        {% for set in sets %}
-            <div class="column">
-                <div class="ui fluid bordered image">
-                    <a href="{{ url('set_detail', {id:set.id}) }}">
-                        {{ blocks.setImage(set.id,'set_min') }}
-                        <div class="ui bottom attached label">{{ set.id }}<br></div>
-                    </a>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+        {#<div class="ui eight column grid">#}
+            {#{% for set in sets %}#}
+                {#{{ blocks.set(set) }}#}
+            {#{% endfor %}#}
+        {#</div>#}
+    {#</div>#}
 
 {% endblock %}

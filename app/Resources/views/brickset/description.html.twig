@@ -9,7 +9,12 @@
     {% endfor %}
 
     {% if description|length %}
-        {{ description|raw }}
+        <div class="ui segment vertical">
+            {{ description|raw }}
+        </div>
+        <div class="ui segment vertical">
+            <p class="ui text right">{{ 'set.brickset.credit' | trans | raw }}</p>
+        </div>
     {% else %}
         {{ blocks.empty('empty.description'|trans) }}
     {% endif %}

@@ -9,62 +9,68 @@
     {% endfor %}
 
     {% if reviews|length != 0 %}
-        <div class="ui comments">
-            {% for review in reviews | slice(0,4) %}
-                <div class="ui segment vertical">
-                    <div class="ui container divided stackable grid comment">
-                        <div class="row">
-                            <div class="column four wide ratings">
-                                <dl>
-                                    {% if review.overallRating %}
-                                        <dt>Overall rating</dt>
-                                        <dd><span class="ui star rating" data-rating="{{ review.overallRating }}" data-max-rating="5"></span></dd>
-                                    {% endif %}
-                                    {% if review.valueForMoney %}
-                                        <dt>Value for money</dt>
-                                        <dd><span class="ui star rating" data-rating="{{ review.valueForMoney }}" data-max-rating="5"></span></dd>
-                                    {% endif %}
-                                    {% if review.playability %}
-                                        <dt>Playability</dt>
-                                        <dd><span class="ui star rating" data-rating="{{ review.playability }}" data-max-rating="5"></span></dd>
-                                    {% endif %}
-                                    {% if review.parts %}
-                                        <dt>Parts</dt>
-                                        <dd><span class="ui star rating" data-rating="{{ review.parts }}" data-max-rating="5"></span></dd>
-                                    {% endif %}
-                                    {% if review.buildingExperience %}
-                                        <dt>Building experience</dt>
-                                        <dd><span class="ui star rating" data-rating="{{ review.buildingExperience }}" data-max-rating="5"></span></dd>
-                                    {% endif %}
-                                </dl>
-                            </div>
-
-                            <div class="column twelve wide comment">
-                                <div class="content">
-                                    <div class="header">
-                                        <h2>{{ review.title }}</h2>
-                                    </div>
-                                    <span class="author">{{ review.author }}</span>
-                                    <div class="metadata">
-                                        <span class="date">{{ review.datePosted|date("Y.m.d H:m:i")}}</span>
-
-                                    </div>
-                                    <div class="text">
-                                        {% if review.hTML %}
-                                            {{ review.review|raw }}
-                                        {% else %}
-                                            <p>{{ review.review }}</p>
+        <div class="ui segment vertical">
+            <div class="ui comments">
+                {% for review in reviews | slice(0,4) %}
+                    <div class="ui segment vertical">
+                        <div class="ui container divided stackable grid comment">
+                            <div class="row">
+                                <div class="column four wide ratings">
+                                    <dl>
+                                        {% if review.overallRating %}
+                                            <dt>Overall rating</dt>
+                                            <dd><span class="ui star rating" data-rating="{{ review.overallRating }}" data-max-rating="5"></span></dd>
                                         {% endif %}
+                                        {% if review.valueForMoney %}
+                                            <dt>Value for money</dt>
+                                            <dd><span class="ui star rating" data-rating="{{ review.valueForMoney }}" data-max-rating="5"></span></dd>
+                                        {% endif %}
+                                        {% if review.playability %}
+                                            <dt>Playability</dt>
+                                            <dd><span class="ui star rating" data-rating="{{ review.playability }}" data-max-rating="5"></span></dd>
+                                        {% endif %}
+                                        {% if review.parts %}
+                                            <dt>Parts</dt>
+                                            <dd><span class="ui star rating" data-rating="{{ review.parts }}" data-max-rating="5"></span></dd>
+                                        {% endif %}
+                                        {% if review.buildingExperience %}
+                                            <dt>Building experience</dt>
+                                            <dd><span class="ui star rating" data-rating="{{ review.buildingExperience }}" data-max-rating="5"></span></dd>
+                                        {% endif %}
+                                    </dl>
+                                </div>
+
+                                <div class="column twelve wide comment">
+                                    <div class="content">
+                                        <div class="header">
+                                            <h2>{{ review.title }}</h2>
+                                        </div>
+                                        <span class="author">{{ review.author }}</span>
+                                        <div class="metadata">
+                                            <span class="date">{{ review.datePosted|date("Y.m.d H:m:i")}}</span>
+
+                                        </div>
+                                        <div class="text">
+                                            {% if review.hTML %}
+                                                {{ review.review|raw }}
+                                            {% else %}
+                                                <p>{{ review.review }}</p>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
 
-        <a class="fluid ui button" href="https://brickset.com/reviews/set-{{ id }}">{{ 'set.reviews.link' | trans }}</a>
+            <a class="fluid ui button" href="https://brickset.com/reviews/set-{{ id }}">{{ 'set.reviews.link' | trans }}</a>
+
+        </div>
+        <div class="ui segment vertical">
+            <p class="ui text right">{{ 'set.brickset.credit' | trans | raw }}</p>
+        </div>
     {% else %}
         {{ blocks.empty('empty.reviews') }}
     {% endif %}

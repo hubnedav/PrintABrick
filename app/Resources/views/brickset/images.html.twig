@@ -9,14 +9,19 @@
     {% endfor %}
 
     {% if images|length %}
-        <div class="ui six doubling cards">
-            {% for image in images %}
-                <div class="card">
-                    <a class="ui bordered fluid image" href="{{ image.imageURL }}" data-lightbox="setImages">
-                        <img src="{{ image.thumbnailURL }}">
-                    </a>
-                </div>
-            {% endfor %}
+        <div class="ui segment vertical">
+            <div class="ui six doubling cards">
+                {% for image in images %}
+                    <div class="card">
+                        <a class="ui bordered fluid image" href="{{ image.imageURL }}" data-lightbox="setImages">
+                            <img src="{{ image.thumbnailURL }}">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="ui segment vertical">
+            <p class="ui text right">{{ 'set.brickset.credit' | trans | raw }}</p>
         </div>
     {% else %}
         {{ blocks.empty('empty.images') }}

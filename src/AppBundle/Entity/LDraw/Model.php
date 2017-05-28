@@ -34,7 +34,7 @@ class Model
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Alias", mappedBy="model", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\LDraw\Alias", mappedBy="model", cascade={"persist","remove"})
      */
     private $aliases;
 

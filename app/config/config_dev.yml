@@ -12,7 +12,6 @@ web_profiler:
     intercept_redirects: false
 
 monolog:
-    channels: ['loader']
     handlers:
         main:
             type: stream

@@ -10,6 +10,7 @@ use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
@@ -44,7 +45,8 @@ abstract class BaseLoader
      * Loader constructor.
      *
      * @param EntityManager $em
-     * @param Translator    $translator
+     * @param Logger $logger
+     * @param Translator    $formatTransformer
      */
     public function setArguments(EntityManager $em, $logger, $formatTransformer)
     {
@@ -118,7 +120,6 @@ abstract class BaseLoader
             if (false === file_put_contents($temp, fopen($url, 'r', 0, $ctx))) {
                 throw new WriteErrorException($temp);
             }
-            $this->progressBar->finish();
         } catch (ContextErrorException $e) {
             throw new FileNotFoundException($url);
         } catch (\Exception $e) {

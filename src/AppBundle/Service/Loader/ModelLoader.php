@@ -10,7 +10,9 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\LDraw\Subpart;
 use AppBundle\Exception\ConvertingFailedException;
 use AppBundle\Exception\FileException;
+use AppBundle\Exception\MissingContextException;
 use AppBundle\Exception\ParseErrorException;
+use AppBundle\Repository\LDraw\ModelRepository;
 use AppBundle\Service\Stl\StlConverterService;
 use AppBundle\Util\LDModelParser;
 use AppBundle\Util\RelationMapper;
@@ -28,6 +30,11 @@ class ModelLoader extends BaseLoader
     private $ldrawLibraryContext;
 
     /**
+     * @var Filesystem
+     */
+    private $fileContext;
+
+    /**
      * @var StlConverterService
      */
     private $stlConverter;
@@ -38,13 +45,11 @@ class ModelLoader extends BaseLoader
     /** @var RelationMapper */
     private $relationMapper;
 
-    /** @var Finder */
-    private $finder;
-
     /** @var string */
     private $LDLibraryUrl;
 
-    private $rewite = false;
+    /** @var bool */
+    private $rewrite = false;
 
     /**
      * LDrawLoaderService constructor.
@@ -52,21 +57,19 @@ class ModelLoader extends BaseLoader
      * @param StlConverterService $stlConverter
      * @param RelationMapper      $relationMapper
      */
-    public function __construct($stlConverter, $relationMapper, $LDLibraryUrl)
+    public function __construct($stlConverter, $relationMapper)
     {
         $this->stlConverter = $stlConverter;
         $this->relationMapper = $relationMapper;
-        $this->LDLibraryUrl = $LDLibraryUrl;
         $this->ldModelParser = new LDModelParser();
-        $this->finder = new Finder();
     }
 
     /**
-     * @param bool $rewite
+     * @param bool $rewrite
      */
-    public function setRewite($rewite)
+    public function setRewrite($rewrite)
     {
-        $this->rewite = $rewite;
+        $this->rewrite = $rewrite;
     }
 
     /**
@@ -83,7 +86,7 @@ class ModelLoader extends BaseLoader
         }
     }
 
-    public function downloadLibrary()
+    public function downloadLibrary($url)
     {
         $this->writeOutput([
             '<fg=cyan>------------------------------------------------------------------------------</>',
@@ -91,7 +94,7 @@ class ModelLoader extends BaseLoader
             '<fg=cyan>------------------------------------------------------------------------------</>',
         ]);
 
-        $libraryZip = $this->downloadFile($this->LDLibraryUrl);
+        $libraryZip = $this->downloadFile($url);
 
         $temp_dir = tempnam(sys_get_temp_dir(), 'printabrick.');
         if (file_exists($temp_dir)) {
@@ -112,12 +115,22 @@ class ModelLoader extends BaseLoader
         return $temp_dir;
     }
 
+    /**
+     * Load one model into database
+     *
+     * @param string $file Absolute filepath of model to load
+     */
     public function loadOne($file)
     {
+        if(!$this->ldrawLibraryContext) {
+            throw new MissingContextException('LDrawLibrary');
+        }
+
         $connection = $this->em->getConnection();
         try {
             $connection->beginTransaction();
 
+            $this->getFileContext($file);
             $this->loadModel($file);
 
             $connection->commit();
@@ -127,31 +140,41 @@ class ModelLoader extends BaseLoader
         }
     }
 
+
+    /**
+     * Load all models from ldraw library context into database
+     */
     public function loadAll()
     {
-        $files = $this->finder->in([
-            $this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
-        ])->path('parts/')->name('*.dat')->depth(1)->files();
+        if(!$this->ldrawLibraryContext) {
+            throw new MissingContextException('LDrawLibrary');
+        }
 
-        $this->initProgressBar($files->count());
+        $this->writeOutput([
+            '<fg=cyan>------------------------------------------------------------------------------</>',
+            "<fg=cyan>Loading models from LDraw library:</> <comment>{$this->ldrawLibraryContext->getAdapter()->getPathPrefix()}</comment>",
+            '<fg=cyan>------------------------------------------------------------------------------</>',
+        ]);
 
-        /** @var SplFileInfo $file */
+        $files = $this->ldrawLibraryContext->listContents('parts', false);
+        $this->initProgressBar(count($files));
+
         foreach ($files as $file) {
-            $connection = $this->em->getConnection();
-            $connection->beginTransaction();
+            $this->progressBar->setMessage($file['basename']);
 
-            try {
-                $this->progressBar->setMessage($file->getFilename());
+            if($file['type'] == 'file' && $file['extension'] == 'dat') {
+                $connection = $this->em->getConnection();
+                $connection->beginTransaction();
 
-                $this->loadModel($file->getRealPath());
-
-                $connection->commit();
-            } catch (\Exception $exception) {
-                $connection->rollBack();
-                $this->logger->error($exception->getMessage());
+                try {
+                    $this->loadModel($this->ldrawLibraryContext->getAdapter()->getPathPrefix().$file['path']);
+                    $connection->commit();
+                } catch (\Exception $exception) {
+                    $connection->rollBack();
+                    $this->logger->error($exception->getMessage());
+                }
+                $connection->close();
             }
-
-            $connection->close();
 
             $this->progressBar->advance();
         }
@@ -168,17 +191,16 @@ class ModelLoader extends BaseLoader
      */
     public function loadModel($file)
     {
-        $fileContext = $this->getFileContext($file);
+        /** @var ModelRepository $modelRepository */
+        $modelRepository = $this->em->getRepository(Model::class);
 
         // Return model from database if rewrite is not enabled
-        if (!$this->rewite && $model = $this->em->getRepository(Model::class)->findOneByNumber(basename($file, '.dat'))) {
+        if (!$this->rewrite && $model = $modelRepository->find(basename($file, '.dat'))) {
             return $model;
         }
 
-        // Parse model file save data to $modelArray
         try {
-            $content = file_get_contents($file);
-            $modelArray = $this->ldModelParser->parse($content);
+            $modelArray = $this->ldModelParser->parse(file_get_contents($file));
         } catch (ParseErrorException $e) {
             $this->logger->error($e->getMessage(), [$file]);
 
@@ -192,14 +214,17 @@ class ModelLoader extends BaseLoader
         // Check if model fulfills rules and should be loaded
         if ($this->isModelIncluded($modelArray)) {
             // Recursively load model parent (if any) and add model id as alias of parent
-            if (($parentId = $this->getParentId($modelArray)) && ($parentModelFile = $this->findSubmodelFile($parentId, $fileContext)) !== null) {
-                $parentModel = $this->loadModel($parentModelFile);
+            if (($parentId = $this->getParentId($modelArray)) && ($parentModelFile = $this->findSubmodelFile($parentId)) !== null) {
+                if ($parentModel = $this->loadModel($parentModelFile)) {
+                    // Remove old model if ~moved to
+                    if($this->rewrite && ($old = $modelRepository->find($modelArray['id'])) != null) {
+                        $modelRepository->delete($old);
+                    }
 
-                if ($parentModel) {
                     $alias = $this->em->getRepository(Alias::class)->getOrCreate($modelArray['id'], $parentModel);
                     $parentModel->addAlias($alias);
 
-                    $this->em->getRepository(Model::class)->save($parentModel);
+                    $modelRepository->save($parentModel);
                 } else {
                     $this->logger->info('Model skipped. ', ['number' => $modelArray['id'], 'parent' => $modelArray['parent']]);
                 }
@@ -208,14 +233,14 @@ class ModelLoader extends BaseLoader
             }
 
             // Load model
-            $model = $this->em->getRepository(Model::class)->getOrCreate($modelArray['id']);
+            $model = $modelRepository->getOrCreate($modelArray['id']);
 
             // Recursively load models of subparts
             if (isset($modelArray['subparts'])) {
                 foreach ($modelArray['subparts'] as $subpartId => $colors) {
                     foreach ($colors as $color => $count) {
                         // Try to find model of subpart
-                        if (($subpartFile = $this->findSubmodelFile($subpartId, $fileContext)) !== null) {
+                        if (($subpartFile = $this->findSubmodelFile($subpartId)) !== null) {
                             $subModel = $this->loadModel($subpartFile);
                             if ($subModel) {
                                 $subpart = $this->em->getRepository(Subpart::class)->getOrCreate($model, $subModel, $count, $color);
@@ -239,7 +264,8 @@ class ModelLoader extends BaseLoader
             try {
                 // update model only if newer version
                 if (!$model->getModified() || ($model->getModified() < $modelArray['modified'])) {
-                    $stl = $this->stlConverter->datToStl($file, $this->rewite)->getPath();
+                    $stl = $this->stlConverter->datToStl($file, $this->rewrite)->getPath();
+
                     $model->setPath($stl);
 
                     $model
@@ -248,7 +274,7 @@ class ModelLoader extends BaseLoader
                         ->setAuthor($this->em->getRepository(Author::class)->getOrCreate($modelArray['author']))
                         ->setModified($modelArray['modified']);
 
-                    $this->em->getRepository(Model::class)->save($model);
+                    $modelRepository->save($model);
                 }
             } catch (ConvertingFailedException $e) {
                 $this->logger->error($e->getMessage());
@@ -297,18 +323,18 @@ class ModelLoader extends BaseLoader
      *
      * @return string
      */
-    private function findSubmodelFile($id, $context)
+    private function findSubmodelFile($id)
     {
-        // Replace "\" directory separator used inside ldraw model files with system directoru separator
+        // Replace "\" directory separator used inside ldraw model files with system directory separator
         $filename = str_replace('\\', DIRECTORY_SEPARATOR, strtolower($id).'.dat');
 
         // Try to find model in current file's directory
-        if ($context->has($filename)) {
-            return $context->getAdapter()->getPathPrefix().$filename;
+        if ($this->fileContext && $this->fileContext->has($filename)) {
+            return $this->fileContext->getAdapter()->getPathPrefix().$filename;
         }
-        // Try to find model in current LDRAW\PARTS sub-directory
         elseif ($this->ldrawLibraryContext) {
-            if ($this->ldrawLibraryContext->has('parts/'.$filename)) {
+            // Try to find model in current LDRAW\PARTS sub-directory
+            if ($this->ldrawLibraryContext->has('parts'.DIRECTORY_SEPARATOR.$filename)) {
                 return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'parts'.DIRECTORY_SEPARATOR.$filename;
             }
             // Try to find model in current LDRAW\P sub-directory
@@ -331,8 +357,7 @@ class ModelLoader extends BaseLoader
     {
         try {
             $adapter = new Local(dirname($file));
-
-            return new Filesystem($adapter);
+            $this->fileContext =  new Filesystem($adapter);
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
 

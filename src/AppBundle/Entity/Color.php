@@ -75,6 +75,14 @@ class Color
     }
 
     /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
      * Set rgb.
      *
      * @param string $rgb

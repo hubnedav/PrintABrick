@@ -19,6 +19,15 @@ class SetSearch
     protected $theme;
 
     /**
+     * SetSearch constructor.
+     * @param string $query
+     */
+    public function __construct($query = '')
+    {
+        $this->query = $query;
+    }
+
+    /**
      * @return string
      */
     public function getQuery()

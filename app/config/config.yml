@@ -80,11 +80,11 @@ monolog:
         loader:
             type: rotating_file
             path: "%kernel.logs_dir%/loader.log"
-            level: error
+            level: debug
             channels: 'loader'
             max_files: 5
-            stop_buffering:       true
-            buffer_size:          0
+#            stop_buffering:       true
+#            buffer_size:          0
 
 knp_menu:
     twig:

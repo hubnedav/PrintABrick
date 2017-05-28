@@ -7,15 +7,22 @@ fos_elastica:
                 index:
                     analysis:
                         analyzer:
-                            custom_analyzer:
+                            name_analyzer:
                                 type: custom
                                 tokenizer: nGram
                                 filter:  [lowercase,stopwords]
+                            id_analyzer:
+                                type: custom
+                                tokenizer: edge_ngram
                         tokenizer:
                             nGram:
                                 type:     nGram
                                 min_gram: 3
                                 max_gram: 20
+                            edge_ngram:
+                                type:     edge_ngram
+                                min:gram: 3
+                                max_gram: 10
                         filter:
                             snowball:
                                 type: snowball
@@ -27,41 +34,49 @@ fos_elastica:
             types:
                 set:
                     mappings:
-                        id: ~
-                        name: { analyzer: custom_analyzer, search_analyzer: "standard" }
+                        id: { analyzer: id_analyzer, search_analyzer: "standard" }
+                        name: { analyzer: name_analyzer, search_analyzer: "standard" }
                         year: { type: integer }
                         partCount: { type: integer }
                         theme:
                             type: "object"
                             properties:
-                                id: ~
-                                name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                id: { analyzer: id_analyzer, search_analyzer: "standard" }
+                                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\Rebrickable\Set
                         provider: ~
                         finder: ~
                         repository: AppBundle\Repository\Search\SetRepository
+                        listener:
+                              insert: false
+                              update: false
+                              delete: false
                 model:
                     mappings:
-                        id: ~
-                        name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                        id: { analyzer: id_analyzer, search_analyzer: "standard" }
+                        name: { analyzer: name_analyzer, search_analyzer: "standard"  }
                         aliases:
                             type: "object"
                             properties:
-                                id: ~
+                                id: { analyzer: id_analyzer, search_analyzer: "standard" }
                         category:
                             type: "object"
                             properties:
-                                id: ~
-                                name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                id: { analyzer: id_analyzer, search_analyzer: "standard" }
+                                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
                         keywords:
                             type: "object"
                             properties:
-                                name: { analyzer: custom_analyzer, search_analyzer: "standard"  }
+                                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\LDraw\Model
                         provider: ~
                         finder: ~
                         repository: AppBundle\Repository\Search\ModelRepository
+                        listener:
+                            insert: false
+                            update: false
+                            delete: false

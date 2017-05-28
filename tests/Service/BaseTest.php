@@ -43,4 +43,9 @@ abstract class BaseTest extends WebTestCase
     {
         return $this->_container->get($service);
     }
+
+    protected function getParameter($parameter)
+    {
+        return $this->_container->getParameter($parameter);
+    }
 }

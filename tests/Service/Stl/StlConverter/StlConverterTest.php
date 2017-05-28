@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Service\Stl;
 
 use AppBundle\Service\Stl\StlConverterService;
+use AppBundle\Service\Stl\StlFixerService;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Tests\AppBundle\Service\BaseTest;
@@ -15,7 +16,12 @@ class StlConverterTest extends BaseTest
 
     public function setUp()
     {
-        $this->stlConverter = $this->get('service.stl.converter');
+        $ldview =  $this->getParameter('ldview_bin');
+
+        $stlFixer = $this->createMock(StlFixerService::class);
+        $stlFixer->method('fix');
+
+        $this->stlConverter = new StlConverterService($ldview,$this->filesystem,$stlFixer);
 
         $adapter = new Local(__DIR__.'/fixtures/ldraw');
         $ldrawLibraryContext = new Filesystem($adapter);

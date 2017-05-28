@@ -16,7 +16,6 @@
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
-        "doctrine/doctrine-migrations-bundle": "^1.0",
         "symfony/swiftmailer-bundle": "^2.3",
         "symfony/monolog-bundle": "^2.8",
         "symfony/polyfill-apcu": "^1.0",
@@ -36,6 +35,7 @@
         "phpunit/phpunit": "^6.1",
         "friendsofphp/php-cs-fixer": "^2.0",
         "mikey179/vfsStream": "^1.6"
+        "doctrine/doctrine-fixtures-bundle": "^2.3"
     },
     "scripts": {
         "symfony-scripts": [

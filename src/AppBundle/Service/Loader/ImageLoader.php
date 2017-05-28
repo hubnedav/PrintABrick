@@ -28,11 +28,9 @@ class ImageLoader extends BaseLoader
      * @param $color
      * @param null $path
      */
-    public function loadColorFromRebrickable($color, $path = null)
+    public function loadColorFromRebrickable($color)
     {
-        if (!$path) {
-            $path = $this->rebrickableDownloadUrl."ldraw/parts_{$color}.zip";
-        }
+        $path = $this->rebrickableDownloadUrl."ldraw/parts_{$color}.zip";
 
         $file = $this->downloadFile($path);
         $zip = new \ZipArchive($file);
@@ -58,8 +56,8 @@ class ImageLoader extends BaseLoader
 
         $this->initProgressBar(count($models));
         foreach ($models as $model) {
-            $this->progressBar->setMessage($model->getNumber());
-            if (!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR.$model->getNumber().'.png')) {
+            $this->progressBar->setMessage($model->getId());
+            if (!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR.$model->getId().'.png')) {
                 try {
                     $this->loadModelImage($this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath());
                 } catch (\Exception $e) {

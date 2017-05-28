@@ -2,12 +2,15 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\DataFixtures\ORM\LoadColors;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use League\Flysystem\FilesystemInterface;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-abstract class BaseTest extends KernelTestCase
+abstract class BaseTest extends WebTestCase
 {
     protected $_container;
 
@@ -20,25 +23,20 @@ abstract class BaseTest extends KernelTestCase
         $this->_container = self::$kernel->getContainer();
         parent::__construct();
 
-        $this->filesystem = $this->get('oneup_flysystem.myfilesystem_filesystem');
+        $this->filesystem = $this->get('oneup_flysystem.media_filesystem');
     }
 
-    public function prime(KernelInterface $kernel)
+    public function setUpDb()
     {
         // Make sure we are in the test environment
-        if ('test' !== $kernel->getEnvironment()) {
+        if ('test' !== self::$kernel->getEnvironment()) {
             throw new \LogicException('Primer must be executed in the test environment');
         }
 
-        // Get the entity manager from the service container
-        $entityManager = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-
-        // Run the schema update tool using our entity metadata
-        $metadatas = $entityManager->getMetadataFactory()->getAllMetadata();
-        $schemaTool = new SchemaTool($entityManager);
-        $schemaTool->updateSchema($metadatas);
-
         // If you are using the Doctrine Fixtures Bundle you could load these here
+        $this->loadFixtures([
+            LoadColors::class
+        ]);
     }
 
     protected function get($service)

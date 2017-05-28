@@ -8,9 +8,9 @@
 
 {% block content %}
     <div class="ui vertical segment noborder">
-        <h2 class="ui dividing header">Sets</h2>
+        <h2 class="ui dividing header">Sets <small>({{ sets | length }})</small></h2>
         <div class="ui eight column doubling grid sets">
-            {% for set in sets %}
+            {% for set in sets | slice(0,8) %}
                 {{ blocks.set(set) }}
             {% endfor %}
         </div>
@@ -20,9 +20,9 @@
     </div>
 
     <div class="ui vertical segment noborder">
-        <h2 class="ui dividing header">Models</h2>
+        <h2 class="ui dividing header">Models <small>({{ models | length }})</small></h2>
         <div class="ui eight column doubling grid parts">
-            {% for model in models %}
+            {% for model in models | slice(0,8) %}
                 {{ blocks.model(model) }}
             {% endfor %}
         </div>

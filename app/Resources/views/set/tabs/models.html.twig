@@ -8,6 +8,10 @@
         {% endfor %}
     {% endfor %}
 
+    <div class="ui segment clearing noborder vertical">
+         <a class="ui primary right floated button" href="{{ path('set_zip', {id: set.id, sorted: false }) }}" download>{{ 'set.download.unicolor.button' | trans}}</a>
+    </div>
+
     {% if models|length > 0 %}
         <div class="ui segment vertical noborder">
             <h3 class="ui horizontal divider header">Models</h3>

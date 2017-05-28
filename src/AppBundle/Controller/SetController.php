@@ -61,8 +61,6 @@ class SetController extends Controller
 
         $bricksetSet = null;
         $partCount = $inventoryPartRepository->getPartCount($set, false);
-        $missingCount = $inventoryPartRepository->getPartCount($set, false, false);
-        $uniqueMissing = $setService->getParts($set, false, false);
 
         try {
             if (!($bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($set->getId()))) {
@@ -78,27 +76,33 @@ class SetController extends Controller
             'set' => $set,
             'brset' => $bricksetSet,
             'partCount' => $partCount,
-            'missingCount' => $missingCount,
-            'uniqueMissing' => $uniqueMissing,
         ]);
     }
 
     /**
-     * @Route("/{id}/parts", name="set_parts")
+     * @Route("/{id}/inventory", name="set_inventory")
      */
-    public function partsAction(Request $request, Set $set)
+    public function inventoryAction(Request $request, Set $set)
     {
-        $inventoryPartRepository = $this->get('repository.rebrickable.inventorypart');
+        $em = $this->getDoctrine()->getManager();
 
-        $regularParts = $inventoryPartRepository->findAllBySetNumber($set->getId(), false, true);
-        $spareParts = $inventoryPartRepository->findAllBySetNumber($set->getId(), true);
+        $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getId());
+        $setService = $this->get('service.set');
+        $inventoryPartRepository = $this->get('repository.rebrickable.inventoryPart');
 
-        $missing = $inventoryPartRepository->findAllBySetNumber($set->getId(), false, false);
+
+        $models = $setService->getModels($set, false);
+        $missing = $setService->getParts($set, false, false);
+        $missingCount = $inventoryPartRepository->getPartCount($set, false, false);
+        $partCount = $inventoryPartRepository->getPartCount($set, false);
 
         $template = $this->render('set/tabs/inventory.html.twig', [
-            'regularParts' => $regularParts,
+            'inventorySets' => $inventorySets,
+            'set' => $set,
             'missing' => $missing,
-            'spareParts' => $spareParts,
+            'models' => $models,
+            'missingCount' => $missingCount,
+            'partCount' => $partCount,
         ]);
 
         if ($request->isXmlHttpRequest()) {
@@ -117,16 +121,14 @@ class SetController extends Controller
      */
     public function modelsAction(Request $request, Set $set)
     {
+        $setService = $this->get('service.set');
+
         $models = null;
-        $spareModels = null;
         $missing = null;
-        $missingSpare = null;
 
         try {
-            $models = $this->get('service.set')->getModels($set, false);
-            $spareModels = $this->get('service.set')->getModels($set, true);
-            $missing = $this->get('service.set')->getParts($set, false, false);
-            $missingSpare = $this->get('repository.rebrickable.inventorypart')->findAllBySetNumber($set->getId(), true, false);
+            $models = $setService->getModels($set, false);
+            $missing = $setService->getParts($set, false, false);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -135,8 +137,6 @@ class SetController extends Controller
             'set' => $set,
             'missing' => $missing,
             'models' => $models,
-            'spareModels' => $spareModels,
-            'missingSpare' => $missingSpare,
         ]);
 
         if ($request->isXmlHttpRequest()) {
@@ -155,14 +155,15 @@ class SetController extends Controller
      */
     public function colorsAction(Request $request, Set $set)
     {
+        /** @var SetService $setService */
+        $setService = $this->get('service.set');
+
         $colors = null;
+        $missing = null;
 
         try {
-            /** @var SetService $setService */
-            $setService = $this->get('service.set');
             $colors = $setService->getModelsGroupedByColor($set, false);
             $missing = $setService->getParts($set,false,false);
-
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -171,30 +172,6 @@ class SetController extends Controller
             'set' => $set,
             'colors' => $colors,
             'missing' => $missing,
-        ]);
-
-        if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
-        }
-
-        return $template;
-    }
-
-    /**
-     * @Route("/{id}/sets", name="set_sets")
-     */
-    public function setsAction(Request $request, Set $set)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getId());
-
-        $template = $this->render('set/tabs/sets.html.twig', [
-            'inventorySets' => $inventorySets,
         ]);
 
         if ($request->isXmlHttpRequest()) {
@@ -222,10 +199,13 @@ class SetController extends Controller
         $response = new BinaryFileResponse($zip);
         $response->headers->set('Content-Type', 'application/zip');
 
+        // escape forbidden characters from filename
+        $filename = preg_replace('/[^a-z0-9\.]/i', '_', "set_{$set->getId()}_{$set->getName()}({$sort}).zip");
+
         // Create the disposition of the file
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            "set_{$set->getId()}_{$set->getName()}({$sort}).zip"
+            $filename
         );
 
         $response->headers->set('Content-Disposition', $disposition);

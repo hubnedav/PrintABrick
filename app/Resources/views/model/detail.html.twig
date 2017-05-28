@@ -60,58 +60,43 @@
                 </table>
 
                 <a class="ui download fluid primary button" href="{{ path('model_zip', {id: model.id}) }}">{{ 'model.download'|trans }}</a>
-
             </div>
         </div>
     </div>
 
-    <div class="ui segment vertical item-info">
-        <div class="ui tabular pointing secondary menu">
-            <a class="item active" data-tab="subparts"><i class="cubes icon"></i> Subparts ({{ model.subparts|length }})</a>
-            <a class="item" data-tab="related"><i class="cubes icon"></i> Related ({{ related|length }})</a>
-            <a class="item" data-tab="parents"><i class="cubes icon"></i> Parents ({{ model.parents|length }})</a>
-            {#<a class="item" data-tab="sets"><i class="cubes icon"></i> Sets ({{ sets|length }})</a>#}
+    <div class="ui segment vertical">
+        {% if subparts|length %}
+        <div class="ui segment vertical noborder">
+            <h4 class="ui horizontal divider header">Submodels ({{ model.subparts|length }})</h4>
+            <div class="ui grid doubling ten column row parts">
+                {% for subpart in subparts %}
+                    {{ blocks.model(subpart['model'], subpart['quantity']) }}
+                {% endfor %}
+            </div>
         </div>
-        <div class="ui vertical segment">
+        {% endif %}
 
-            <div class="ui tab active" data-tab="subparts">
-                <div class="ui eight column grid parts">
-                    {% for subpart in subparts %}
-                        {{ blocks.model(subpart['model'], subpart['quantity']) }}
-                    {% endfor %}
-                </div>
+        {% if related|length  %}
+        <div class="ui segment vertical noborder">
+            <h4 class="ui horizontal divider header">Related models ({{ related|length }})</h4>
+            <div class="ui grid doubling ten column row parts">
+                {% for model in related  %}
+                    {{ blocks.model(model) }}
+                {% endfor %}
             </div>
-
-            <div class="ui tab" data-tab="related">
-                <div class="ui eight column grid parts">
-                    {% for subpart in related  %}
-                        <div class="column">
-                            {{ blocks.model(subpart) }}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="ui tab" data-tab="parents">
-                <div class="ui eight column grid parts">
-                    {% for subpart in model.parents  %}
-                        <div class="column">
-                            {{ blocks.model(subpart.parent) }}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            {#<div class="ui tab" data-tab="sets">#}
-                {#<div class="ui six column doubling grid">#}
-                    {#<div class="row">#}
-                        {#{% for set in sets %}#}
-                            {#{{ blocks.set(set) }}#}
-                        {#{% endfor %}#}
-                    {#</div>#}
-                {#</div>#}
-            {#</div>#}
         </div>
+        {% endif %}
+
+        {% if model.parents|length  %}
+        <div class="ui segment vertical noborder">
+            <h4 class="ui horizontal divider header">Parent models ({{ model.parents|length }})</h4>
+            <div class="ui grid doubling ten column row parts">
+                {% for subpart in model.parents  %}
+                    {{ blocks.model(subpart.parent) }}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 

@@ -4,8 +4,7 @@ $(document).ready(function(){
     // ;
 
     // $('.select2.dropdown').select2({
-    //     placeholder: 'Select theme',
-    //     allowClear: true
+    //
     // });
 
     $('.image.load img')

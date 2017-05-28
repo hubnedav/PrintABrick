@@ -44,7 +44,7 @@
                         <tr>
                             <td>{{ 'set.rating' | trans }}</td>
                             <td>
-                                {{ brset.rating }}/5
+                                {{ brset.rating | number_format(1, '.', ',')  }} / 5
                             </td>
                         </tr>
                     {% endif %}
@@ -58,42 +58,6 @@
                         </td>
                     </tr>
                 </table>
-
-
-                <div class="ui primary fluid open-modal button">{{ 'set.download.button' | trans }}</div>
-
-                {% embed 'embeds/modal.html.twig' %}
-                    {% block title %}
-                        {{ 'set.download.title' | trans({'%set%': set.id~' '~set.name}) }}
-                    {% endblock %}
-                    {% block content %}
-                        {% if missingCount > 0 %}
-                            <div class="ui warning icon message">
-                                <i class="warning icon"></i>
-                                <div class="content">
-                                    <div class="header">
-                                        {{ 'set.download.warning.title' | trans }}
-                                    </div>
-                                    <p> {{ 'set.download.warning.text' | trans({'%percent%':((1 - missingCount/partCount)*100)|number_format(2, '.', ','), '%total%':partCount, '%missing%': missingCount, '%unique%': uniqueMissing|length}) | raw | nl2br }}</p>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endblock %}
-                    {% block actions %}
-                        <div class="ui two column divided center aligned grid">
-                            <div class="column">
-                                <h4 class="ui header">{{ 'set.download.sorted.title' | trans }}</h4>
-                                <p>{{ 'set.download.sorted.text' | trans }}</p>
-                                <a class="ui download button" href="{{ path('set_zip', {id: set.id, sorted: true }) }}" download>Download ZIP</a>
-                            </div>
-                            <div class="column">
-                                <h4 class="ui header">{{ 'set.download.unsorted.title' | trans }}</h4>
-                                <p>{{ 'set.download.unsorted.text' | trans }}</p>
-                                <a class="ui download button" href="{{ path('set_zip', {id: set.id, sorted: false }) }}" download>Download ZIP</a>
-                            </div>
-                        </div>
-                    {% endblock %}
-                {% endembed %}
             </div>
         </div>
     </div>
@@ -108,26 +72,10 @@
                 <a class="item" data-tab="reviews"><i class="write icon"></i> Reviews ({{ brset.reviewCount }})</a>
             {% endif %}
         </div>
-        <div class="ui vertical segment">
+        <div class="ui vertical segment unpadded">
             <div class="ui tab active" data-tab="inventory">
-
-                {#<div class="ui vertical segment">#}
-                {#<p>{{ 'set.models.text' | trans({'%rebrickable%' : partCount, '%brickset%' : brset ? brset.pieces }) | nl2br }}</p>#}
-                {#</div>#}
-
-                <div class="ui vertical segment">
-                    <div class="ui tabular icon buttons submenu">
-                        <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
-                        <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
-                    </div>
-
-                    <div class="ui tab active" data-tab="inventory/models">
-                        {{ render(path('set_models', {id: set.id})) }}
-                    </div>
-                    <div class="ui tab" data-tab="inventory/colors">
-                        {{ render(path('set_colors', {id: set.id})) }}
-                    </div>
-                    {{ render(path('set_sets', {id: set.id})) }}
+                <div class="ui vertical segment unpadded">
+                    {{ render(path('set_inventory', {id: set.id})) }}
                 </div>
             </div>
             {% if brset %}

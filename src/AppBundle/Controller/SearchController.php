@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Set;
+use AppBundle\Model\ModelSearch;
+use AppBundle\Model\SetSearch;
 use AppBundle\Repository\Search\ModelRepository;
 use AppBundle\Repository\Search\SetRepository;
 use FOS\ElasticaBundle\HybridResult;
@@ -34,12 +36,11 @@ class SearchController extends Controller
 
         /** @var SetRepository $setRepository */
         $setRepository = $repositoryManager->getRepository(Set::class);
-        /** @var Repository $modelRepository */
+        /** @var ModelRepository $modelRepository */
         $modelRepository = $repositoryManager->getRepository(Model::class);
 
-        // Option 1. Returns all users who have example.net in any of their mapped fields
-        $setsResult = $setRepository->find($query, 8);
-        $modelResult = $modelRepository->find($query, 8);
+        $setsResult = $setRepository->search(new SetSearch($query), 1000);
+        $modelResult = $modelRepository->search(new ModelSearch($query), 1000);
 
         return $this->render('search/index.html.twig', [
             'sets' => $setsResult,
@@ -67,8 +68,8 @@ class SearchController extends Controller
         $modelRepository = $repositoryManager->getRepository(Model::class);
 
         // Option 1. Returns all users who have example.net in any of their mapped fields
-        $setsResult = $setRepository->findHighlighted($query, 5);
-        $modelResult = $modelRepository->findHighlighted($query, 5);
+        $setsResult = $setRepository->findHighlighted($query, 4);
+        $modelResult = $modelRepository->findHighlighted($query, 4);
 
         $models = [];
         /** @var HybridResult $model */

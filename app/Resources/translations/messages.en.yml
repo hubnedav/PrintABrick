@@ -29,6 +29,8 @@ set:
     theme.all: All Themes
 
   download:
+    unicolor.button: Download set (Uni-color)
+    multicolor.button: Download set (Multi-color)
     button: Download set
     title: Download - %set%
     sorted:
@@ -71,15 +73,20 @@ filter:
    category: Category
 
 homepage:
+  title.text: Web catalogue of LEGO<sup>®</sup> parts for 3D printing
   models:
-    title: %count% models
-    text:
+    title: models
+    text: Browse 3D models of LEGO<sup>®</sup> parts from LDraw™ Library
     browse: Browse models
   sets:
-    title: %count% sets
-    text:
+    title: sets
+    text: Browse LEGO<sup>®</sup> sets from Rebrickable
     browse: Browse sets
 
 view.all:
   sets: View all matched sets
   models: View all matched models
+
+flash:
+  warning.title: Warning
+  error.title: Error

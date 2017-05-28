@@ -8,38 +8,36 @@
         {% endfor %}
     {% endfor %}
 
-    {% if regularParts|length > 0 %}
-        <h4 class="ui horizontal divider header">
-            Regular parts
-        </h4>
-
-        <div class="ui ten column grid">
-            {% for inventoryPart in regularParts %}
-                {{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}
-                {{ inventoryPart.color.id }}
+    {% if inventorySets %}
+        <h3 class="ui horizontal divider header">Sets</h3>
+        <div class="ui eight column doubling grid sets">
+            {% for inventorySet in inventorySets %}
+                {{ blocks.set(inventorySet.set, inventorySet.quantity) }}
             {% endfor %}
         </div>
-    {% endif %}
+    {% else %}
+        {% if missingCount > 0 %}
+            <div class="ui warning icon message">
+                <i class="warning icon"></i>
+                <div class="content">
+                    <div class="header">
+                        {{ 'set.download.warning.title' | trans }}
+                    </div>
+                    <p> {{ 'set.download.warning.text' | trans({'%percent%':((1 - missingCount/partCount)*100)|number_format(2, '.', ','), '%total%':partCount, '%missing%': missingCount, '%unique%': missing|length}) | raw | nl2br }}</p>
+                </div>
+            </div>
+        {% endif %}
 
-    {% if missing|length > 0 %}
-        <h4 class="ui horizontal divider header">
-            Missing models
-        </h4>
-        <div class="ui ten column grid">
-            {% for inventoryPart in missing %}
-                {{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}
-            {% endfor %}
+        <div class="ui tabular icon pointing secondary menu submenu">
+            <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
+            <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
         </div>
-    {% endif %}
 
-    {% if spareParts|length > 0 %}
-        <h4 class="ui horizontal divider header">
-            Spare parts
-        </h4>
-        <div class="ui ten column grid">
-            {% for inventoryPart in spareParts %}
-                {{ blocks.part(inventoryPart.part.id,inventoryPart.quantity, inventoryPart.color.id) }}
-            {% endfor %}
+        <div class="ui tab active" data-tab="inventory/models">
+            {{ render(path('set_models', {id: set.id})) }}
+        </div>
+        <div class="ui tab" data-tab="inventory/colors">
+            {{ render(path('set_colors', {id: set.id})) }}
         </div>
     {% endif %}
 {% endblock %}

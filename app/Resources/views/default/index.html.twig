@@ -1,8 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <!-- Page Contents -->
-    <div class="pusher">
         <div class="ui inverted vertical masthead center aligned segment">
 
             <div class="ui container">
@@ -25,27 +23,46 @@
                 <h1 class="ui inverted header">
                     PrintABrick
                 </h1>
-                <h2>{{ 'page.home.title.text' | trans }}</h2>
+                <h2>{{ 'homepage.title.text' | trans | raw }}</h2>
             </div>
         </div>
 
-        <div class="ui vertical stripe quote segment">
+        <div class="ui main vertical stripe quote segment">
             <div class="ui equal width stackable internally celled grid">
                 <div class="center aligned row">
                     <div class="column">
-                        <h3>{{ 'homepage.models.title' | trans({'%count%' : models})}}</h3>
-                        <p>{{ 'homepage.models.text' | trans }}</p>
+                        <div class="ui horizontal statistic">
+                            <div class="value">
+                                {{ models }}
+                            </div>
+                            <div class="label">
+                                {{ 'homepage.models.title' | trans }}
+                            </div>
+                        </div>
+                        <p>{{ 'homepage.models.text' | trans | raw }}</p>
                         <a class="ui button big primary" href="{{ path('model_index') }}">{{ 'homepage.models.browse' | trans }}</a>
                     </div>
                     <div class="column">
-                        <h3>{{ 'homepage.sets.title' | trans({'%count%' : sets}) }}</h3>
-                        <p>{{ 'homepage.sets.text' | trans }}</p>
+                        <div class="ui horizontal statistic">
+                            <div class="value">
+                                {{ sets }}
+                            </div>
+                            <div class="label">
+                                {{ 'homepage.sets.title' | trans }}
+                            </div>
+                        </div>
+                        <p>{{ 'homepage.sets.text' | trans | raw }}</p>
                         <a class="ui button big primary" href="{{ path('set_index') }}">{{ 'homepage.sets.browse' | trans }}</a>
                     </div>
                 </div>
             </div>
         </div>
 
-    </div>
+        <div class="ui black inverted vertical footer segment stripe">
+            <div class="ui aligned container">
+                <p>LEGO<sup>®</sup>, the LEGO logo, the Minifigure, and the Brick and Knob configurations are trademarks of the LEGO Group of Companies which does not sponsor, authorize, or endorse this site.</p>
+            </div>
+        </div>
+
 {% endblock %}
 

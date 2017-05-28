@@ -1,8 +1,11 @@
 .default-theme {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 
   .ui.main {
+    flex: 1;
     padding-top: 50px;
-    min-height: calc(100% - 67px);
   }
 
   .ui.head {
@@ -109,6 +112,10 @@
       height: 4em;
     }
     padding: 0.5em 1em !important;
+  }
+
+  .unpadded {
+    padding: 0;
   }
 
   .spacing.top {

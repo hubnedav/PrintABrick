@@ -19,9 +19,8 @@ class LoadModelImagesCommand extends ContainerAwareCommand
             ->setDefinition(
                 new InputDefinition([
                     new InputOption('color', 'c', InputOption::VALUE_REQUIRED, 'Color ID of images to load.'),
-                    new InputOption('url', 'u', InputOption::VALUE_REQUIRED, 'Url of zip file to load'),
                     new InputOption('rebrickable', 'r', InputOption::VALUE_NONE, 'Download images from Rebicable.com'),
-                    new InputOption('models', 'm', InputOption::VALUE_NONE, 'Load missing images of models'),
+                    new InputOption('missing', 'm', InputOption::VALUE_NONE, 'Load missing images of models'),
                 ])
             );
     }
@@ -32,13 +31,12 @@ class LoadModelImagesCommand extends ContainerAwareCommand
         $imageLoaderService->setOutput($output);
 
         $color = $input->getOption('color');
-        $url = $input->getOption('url');
 
         if ($color !== null && $input->getOption('rebrickable')) {
-            $imageLoaderService->loadColorFromRebrickable($color, $url);
+            $imageLoaderService->loadColorFromRebrickable($color);
         }
 
-        if ($input->getOption('models')) {
+        if ($input->getOption('missing')) {
             $imageLoaderService->loadMissingModelImages();
         }
     }

@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InitDataCommand extends ContainerAwareCommand
@@ -15,11 +16,11 @@ class InitDataCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:init')
-            ->setDescription('Loads relations between LDraw models and Rebrickable parts.')
-            ->setHelp('This command allows you to load relation between models and parts into database.')
+            ->setDescription('Loads initial data')
+            ->setHelp('This command allows you to load initial data of models and sets into aplication')
             ->setDefinition(
                 new InputDefinition([
-                    new InputArgument('ldraw', InputArgument::OPTIONAL, 'Path to LDraw library directory'),
+                    new InputOption('ldraw', 'l',InputOption::VALUE_OPTIONAL, 'Path to LDraw library directory'),
                 ])
             );
     }
@@ -28,11 +29,16 @@ class InitDataCommand extends ContainerAwareCommand
     {
         $loadModelsCommand = $this->getApplication()->find('app:load:models');
 
-        $returnCode = $loadModelsCommand->run(new ArrayInput([
+        $loadModelsInput = [
             'command' => 'app:load:models',
-            'ldraw' => $input->getArgument('ldraw'),
             '--all' => true,
-        ]), $output);
+        ];
+
+        if($ldraw = $input->getOption('ldraw')) {
+            $loadModelsInput['--ldraw'] = $ldraw;
+        }
+
+        $returnCode = $loadModelsCommand->run(new ArrayInput($loadModelsInput), $output);
 
         if ($returnCode) {
             return 1;
@@ -58,8 +64,19 @@ class InitDataCommand extends ContainerAwareCommand
             'command' => 'app:load:images',
             '--color' => -1,
             '--rebrickable' => true,
-            '--models' => true,
+            '--missing' => true,
         ]), $output);
+
+        if ($returnCode) {
+            return 1;
+        }
+
+        $elasticIndex = $this->getApplication()->find('fos:elastic:populate');
+        $returnCode = $elasticIndex->run(null, $output);
+
+        if ($returnCode) {
+            return 1;
+        }
 
         return 0;
     }

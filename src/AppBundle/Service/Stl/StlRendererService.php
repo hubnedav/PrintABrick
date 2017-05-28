@@ -8,7 +8,6 @@ use AppBundle\Exception\RenderFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
-// TODO create images/{color} directory
 class StlRendererService
 {
     /**
@@ -161,7 +160,7 @@ class StlRendererService
      * http://www.povray.org/
      *
      * @param string $file The full path to .pov file to be rendered
-     * @param $to
+     * @param string $to Destination directory path
      *
      * @throws RenderFailedException throws exception if there are problems rendering image
      * @throws FileNotFoundException throws exception if source file not found
@@ -172,6 +171,10 @@ class StlRendererService
     {
         if (!file_exists($file)) {
             throw new FileNotFoundException($file);
+        }
+
+        if(!file_exists($to)) {
+            mkdir($to);
         }
 
         $filename = pathinfo($file)['filename'];

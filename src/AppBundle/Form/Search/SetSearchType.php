@@ -60,6 +60,10 @@ class SetSearchType extends AbstractType
                 'choices' => $this->themeRepository->findAll(),
                 'choice_label' => 'fullName',
                 'choice_translation_domain' => false,
+                'group_by' => function($theme, $key, $index) {
+                    $parent = $theme->getParent();
+                    return $parent ? $parent->getParent() ? $parent->getParent()->getName() : $parent->getName() : $theme->getName();
+                },
                 'choice_value' => 'id',
                 'placeholder' => 'set.form.theme.all',
                 'required' => false,

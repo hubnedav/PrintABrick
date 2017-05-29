@@ -47,7 +47,7 @@
                         {% for set in sets %}
                             {{ blocks.set(set) }}
                         {% else %}
-                            {{ blocks.empty('empty.sets') }}
+                            {{ blocks.empty('empty.search.title' | trans ) }}
                         {% endfor %}
                     </div>
                 </div>

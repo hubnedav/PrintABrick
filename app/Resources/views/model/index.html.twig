@@ -37,7 +37,7 @@
                         {% for model in models %}
                             {{ blocks.model(model) }}
                         {% else %}
-                            {{ blocks.empty('empty.models') }}
+                            {{ blocks.empty('empty.search.title' | trans )}}
                         {% endfor %}
                     </div>
                 </div>

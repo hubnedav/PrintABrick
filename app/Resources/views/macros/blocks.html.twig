@@ -80,18 +80,24 @@
                 </div>
             </div>
             {% if quantity %}
-            <div class="extra content">
-                <div class="right floated">{{ quantity }}x</div>
-            </div>
+                <div class="extra content">
+                    <div class="right floated">{{ quantity }}x</div>
+                </div>
             {% endif %}
         </div>
     </a>
 {% endmacro %}
 
-{% macro empty(message) %}
-    <div class="ui center aligned icon header empty">
-        <p><i class="circular frown icon"></i>{{ message }}</p>
-    </div>
+{% macro empty(title, message = null) %}
+    <h3 class="ui center aligned icon header empty">
+        <i class="circular frown icon"></i>
+        <div class="content">
+            {{ title }}
+            {% if message %}
+                <div class="sub header">{{ message }}</div>
+            {% endif %}
+        </div>
+    </h3>
 {% endmacro %}
 
 {% macro ccal2_license(title,author) %}

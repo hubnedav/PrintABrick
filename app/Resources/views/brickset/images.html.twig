@@ -24,6 +24,6 @@
             <p class="ui text right">{{ 'set.brickset.credit' | trans | raw }}</p>
         </div>
     {% else %}
-        {{ blocks.empty('empty.images') }}
+        {{ blocks.empty('empty.images.title'|trans, 'empty.images.message'|trans) }}
     {% endif %}
 {% endblock %}

@@ -17,7 +17,7 @@ $(document).ready(function() {
 
                 $("#" + id + "_value").text(ui.values[0] + " - " + ui.values[1]);
             }
-        }).slider("pips", {});
+        }).slider("pips", {}).draggable();
 
         $("#" + id + "_value").text($slider.slider("values", 0) + ' - ' + $slider.slider("values", 1))
     });

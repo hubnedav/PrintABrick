@@ -17,16 +17,16 @@ gulp.task('css', function() {
 
 gulp.task('three', function() {
     gulp.src([
-        'node_modules/three/build/three.js',
-        'node_modules/three/examples/js/libs/stats.min.js',
-        'node_modules/three/examples/js/loaders/STLLoader.js',
-        'node_modules/three/examples/js/Detector.js',
+        'bower_components/three/build/three.js',
+        'bower_components/three/examples/js/libs/stats.min.js',
+        'bower_components/three/examples/js/loaders/STLLoader.js',
+        'bower_components/three/examples/js/Detector.js',
     ])
         .pipe(plugins.concat('three.js'))
         .pipe(gulp.dest('web/resources/js'));
 
     gulp.src([
-        'node_modules/three/examples/js/controls/OrbitControls.js',
+        'bower_components/three/examples/js/controls/OrbitControls.js',
     ])
         .pipe(plugins.concat('OrbitControls.js'))
         .pipe(gulp.dest('web/resources/js'));
@@ -37,11 +37,11 @@ gulp.task('js', function() {
         'bower_components/jquery/dist/jquery.js',
         'bower_components/jquery-ui/jquery-ui.js',
         'bower_components/jQuery-ui-Slider-Pips/dist/jquery-ui-slider-pips.js',
+        'bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.js',
         'bower_components/select2/dist/js/select2.full.js',
         'node_modules/semantic-ui/dist/semantic.js',
         'node_modules/lightbox2/dist/js/lightbox.js',
         'app/Resources/assets/js/**.js',
-        'node_modules/three/examples/js/libs/stats.min.js'
     ])
         .pipe(plugins.concat('main.js'))
         .pipe(gulp.dest('web/resources/js'));
@@ -61,7 +61,6 @@ gulp.task('files:images', function () {
     ])
         .pipe(gulp.dest('web/resources/images'));
 });
-
 
 gulp.task('watch', ['js', 'css', 'three'], function () {
     gulp.watch('app/Resources/assets/js/**.js' , ['js']);

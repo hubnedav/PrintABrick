@@ -1,7 +1,7 @@
 {
   "name": "printabrick",
   "version": "1.0.0",
-  "description": "Website for printable building kits",
+  "description": "Web catalogue of LEGO® parts for 3D printing",
   "main": "web/app.php",
   "dependencies": {
     "gulp": "^3.9.1",
@@ -12,8 +12,7 @@
     "gulp-watch": "^4.3.11",
     "jquery": "^3.2.1",
     "lightbox2": "^2.9.0",
-    "semantic-ui": "^2.2.9",
-    "three": "^0.84.0"
+    "semantic-ui": "^2.2.9"
   },
   "devDependencies": {},
   "scripts": {

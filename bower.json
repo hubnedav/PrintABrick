@@ -18,7 +18,8 @@
   "dependencies": {
     "jQuery-ui-Slider-Pips": "jquery-ui-slider-pips#^1.11.4",
     "jquery-ui": "^1.12.1",
-    "SVG-Loaders": "svg-loaders#^1.0.2",
-    "select2": "^4.0.3"
+    "select2": "^4.0.3",
+    "three.js": "threejs#*",
+    "jqueryui-touch-punch": "*"
   }
 }

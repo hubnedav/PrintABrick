@@ -2,11 +2,12 @@
 {% import 'macros/elements.html.twig' as elements %}
 
 {% block content %}
-    {% for label, flashes in app.session.flashbag.all %}
-        {% for flash in flashes %}
-            {{ elements.flash(label,flash) }}
+    <div class="ui segment vertical">
+        {% for label, flashes in app.session.flashbag.all %}
+            {% for flash in flashes %}
+                {{ elements.flash(label,flash) }}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
 
         {% if inventorySets %}
             <h3 class="ui horizontal divider header">Sets</h3>
@@ -40,6 +41,8 @@
                 {{ render(path('set_colors', {id: set.id})) }}
             </div>
         {% endif %}
-
+    </div>
+    <div class="ui segment vertical">
         <p class="ui text right">{{ 'set.rebrickable.credit' | trans | raw }}</p>
+    </div>
 {% endblock %}

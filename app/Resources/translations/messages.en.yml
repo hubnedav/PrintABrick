@@ -14,7 +14,7 @@ set:
       According to the Brickset, this set has %brickset% parts. The inventory from Rebrickable contains %rebrickable% parts.
   rebrickable:
     credit: |
-      This set inventory and model images has been obtained from Rebrickable. To view more information about set visit <a href="https://rebrickable.com/" title="Rebrickable">Rebrickable.com</a>.
+      This set inventory and model images has been obtained from <a href="https://rebrickable.com/" title="Rebrickable">Rebrickable</a>.
   brickset:
     credit: |
       This data has been obtained from <a href="https://brickset.com/" title="Brickset">Brickset</a>

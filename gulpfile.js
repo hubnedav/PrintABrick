@@ -24,12 +24,14 @@ gulp.task('three', function() {
         'bower_components/three.js/examples/js/Detector.js',
     ])
         .pipe(plugins.concat('three.js'))
+        .pipe(plugins.environments.production(plugins.uglify()))
         .pipe(gulp.dest('web/resources/js'));
 
     gulp.src([
         'bower_components/three.js/examples/js/controls/OrbitControls.js',
     ])
         .pipe(plugins.concat('OrbitControls.js'))
+        .pipe(plugins.environments.production(plugins.uglify()))
         .pipe(gulp.dest('web/resources/js'));
 });
 

@@ -13,13 +13,18 @@ use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Exception\AuthenticationFailedException;
 use AppBundle\Api\Exception\CallFailedException;
 
-class Brickset extends \SoapClient
+class Brickset
 {
     const WSDL = 'https://brickset.com/api/v2.asmx?WSDL';
 
     private $apiKey = '';
 
     private $userHash = '';
+
+    private $options;
+
+    /** @var \SoapClient */
+    private $soapClient;
 
     /**
      * @var array The defined classes
@@ -37,31 +42,45 @@ class Brickset extends \SoapClient
     /**
      * @param string $apikey  Brickset API key
      * @param array  $options A array of config values
-     * @param string $wsdl    The wsdl file to use
      *
      * @throws ApiException
      */
-    public function __construct($apikey, $wsdl = null, array $options = [])
+    public function __construct($apikey, array $options = [])
     {
         $this->apiKey = $apikey;
 
-        $options['cache_wsdl'] = WSDL_CACHE_NONE;
-        $options['exceptions'] = true;
+        $this->options['cache_wsdl'] = WSDL_CACHE_NONE;
+        $this->options['exceptions'] = true;
 
         foreach (self::$classmap as $key => $value) {
-            if (!isset($options['classmap'][$key])) {
-                $options['classmap'][$key] = $value;
+            if (!isset($this->options['classmap'][$key])) {
+                $this->options['classmap'][$key] = $value;
             }
         }
-        if (!$wsdl) {
-            $wsdl = self::WSDL;
-        }
+    }
 
-        try {
-            parent::__construct($wsdl, $options);
-        } catch (\Exception $exception) {
-            throw new ApiException(ApiException::BRICKSET);
+
+    /**
+     * Get or create new SoapClient
+     *
+     * @return \SoapClient
+     * @throws ApiException
+     */
+    private function getSoapClient() {
+        if(!$this->soapClient) {
+            try {
+                $this->soapClient = new \SoapClient(self::WSDL, $this->options);
+            } catch (\SoapFault $exception) {
+                // clear uncaught FatalErrorException
+                error_clear_last();
+                throw new ApiException(ApiException::BRICKSET);
+            } catch (\Exception $exception) {
+                // clear uncaught FatalErrorException
+                error_clear_last();
+                throw new ApiException(ApiException::BRICKSET);
+            }
         }
+        return $this->soapClient;
     }
 
     /**
@@ -79,7 +98,7 @@ class Brickset extends \SoapClient
         try {
             $this->checkApiKey();
 
-            $result = $this->__soapCall($method, [$parameters]);
+            $result = $this->getSoapClient()->__soapCall($method, [$parameters]);
 
             if (property_exists($result, $method.'Result')) {
                 return $result->{$method.'Result'};
@@ -89,7 +108,6 @@ class Brickset extends \SoapClient
         } catch (\SoapFault $e) {
             throw new CallFailedException(ApiException::BRICKSET);
         } catch (\Exception $e) {
-            dump($e);
             throw new ApiException(ApiException::BRICKSET);
         }
     }
@@ -279,7 +297,7 @@ class Brickset extends \SoapClient
     {
         $parameters['apiKey'] = $this->apiKey;
 
-        if ($this->__soapCall('checkKey', [$parameters])->checkKeyResult != 'OK') {
+        if ($this->getSoapClient()->__soapCall('checkKey', [$parameters])->checkKeyResult != 'OK') {
             throw new AuthenticationFailedException(ApiException::BRICKSET);
         }
     }

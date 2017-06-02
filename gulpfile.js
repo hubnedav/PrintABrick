@@ -12,21 +12,22 @@ gulp.task('css', function() {
     ])
         .pipe(plugins.sass().on('error', plugins.sass.logError))
         .pipe(plugins.concat('main.css', {newLine: ' '}))
+        .pipe(plugins.environments.production(plugins.cssmin()))
         .pipe(gulp.dest('web/resources/css'));
 });
 
 gulp.task('three', function() {
     gulp.src([
-        'bower_components/three/build/three.js',
-        'bower_components/three/examples/js/libs/stats.min.js',
-        'bower_components/three/examples/js/loaders/STLLoader.js',
-        'bower_components/three/examples/js/Detector.js',
+        'bower_components/three.js/build/three.js',
+        'bower_components/three.js/examples/js/libs/stats.min.js',
+        'bower_components/three.js/examples/js/loaders/STLLoader.js',
+        'bower_components/three.js/examples/js/Detector.js',
     ])
         .pipe(plugins.concat('three.js'))
         .pipe(gulp.dest('web/resources/js'));
 
     gulp.src([
-        'bower_components/three/examples/js/controls/OrbitControls.js',
+        'bower_components/three.js/examples/js/controls/OrbitControls.js',
     ])
         .pipe(plugins.concat('OrbitControls.js'))
         .pipe(gulp.dest('web/resources/js'));
@@ -44,6 +45,7 @@ gulp.task('js', function() {
         'app/Resources/assets/js/**.js',
     ])
         .pipe(plugins.concat('main.js'))
+        .pipe(plugins.environments.production(plugins.uglify()))
         .pipe(gulp.dest('web/resources/js'));
 });
 

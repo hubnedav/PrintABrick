@@ -37,7 +37,7 @@ For full requirements see Symfony 3.2 [docs](http://symfony.com/doc/3.2/referenc
 #### Front-end
 1. Install dependencies via [npm](https://www.npmjs.com/), `$ npm install`
 2. Install bower dependencies via [bower](https://bower.io), `$ bower install`
-3. Compile assets by running [Gulp](http://gulpjs.com/), `$ gulp`
+3. Compile assets by running [Gulp](http://gulpjs.com/), `$ gulp default [--env production]`
 
 #### Initialization
 

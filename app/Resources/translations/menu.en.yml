@@ -1,0 +1,13 @@
+page:
+  home: Homepage
+  model:
+    index: Models
+    detail: %value%
+  set:
+    index: Sets
+    detail: %value%
+  part:
+      index: Parts
+      detail: %value%
+  search: "Search: \"%value%\""
+  colors: Colors

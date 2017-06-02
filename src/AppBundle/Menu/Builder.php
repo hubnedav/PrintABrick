@@ -3,6 +3,7 @@
 namespace AppBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
+use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class Builder
@@ -25,28 +26,75 @@ class Builder
         $this->requestStack = $requestStack;
     }
 
+
     public function mainMenu(array $options)
     {
         $request = $this->requestStack->getCurrentRequest();
-        $menu = $this->factory->createItem('root', [
+        $menu = $this->factory->createItem('page.home', [
             'route' => 'homepage',
+            'extras' => [
+//                'icon' => 'home',
+            ],
         ]);
 
-        $menu->addChild('Home', [
-            'route' => 'homepage',
-        ]);
-
-        $models = $menu->addChild('Models', [
+        $models = $menu->addChild( 'page.model.index', [
             'route' => 'model_index',
         ]);
 
-        $models->addChild('Colors', [
+        $models->addChild('page.model.detail', [
+            'route' => 'model_detail',
+            'routeParameters' => ['id' => $request->get('id', 0)],
+            'display' => false,
+            'extras' => [
+                'value' => $request->get('id', 0)
+            ],
+        ]);
+
+        $sets = $menu->addChild('page.set.index', [
+            'route' => 'set_index',
+            'options' => [
+//                'icon' => 'edit',
+            ]
+        ]);
+
+        $sets->addChild('page.set.detail', [
+            'route' => 'set_detail',
+            'routeParameters' => ['id' => $request->get('id', 0)],
+            'display' => false,
+            'extras' => [
+                'value' => $request->get('id', 0)
+            ],
+        ]);
+
+        $menu->addChild('page.search', [
+            'route' => 'search_results',
+            'display' => false,
+            'extras' => [
+                'value' => $request->get('query', 0)
+            ],
+        ]);
+
+        $menu->addChild('page.colors', [
             'route' => 'color_index',
         ]);
 
-        $menu->addChild('Sets', [
-            'route' => 'set_index',
+        $parts = $menu->addChild('page.part.index', [
+            'route' => null,
+            'display' => false,
+            'options' => [
+//                'icon' => 'edit',
+            ]
         ]);
+
+        $parts->addChild('page.part.detail', [
+            'route' => 'part_detail',
+            'routeParameters' => ['id' => $request->get('id', 0)],
+            'display' => false,
+            'extras' => [
+                'value' => $request->get('id', 0)
+            ],
+        ]);
+
 
         return $menu;
     }

@@ -64,10 +64,14 @@ model:
   keywords: Keywords
   aliases: Aliases
   download: Download model
+  empty: No model
   form:
     search: Search
     category: Category
     category.all: All Categories
+  subparts: Submodels
+  related: Related models
+  parents: Parent models
 
 page:
   model.index: Browse models
@@ -81,7 +85,6 @@ filter:
    category: Category
 
 homepage:
-  title.text: Web catalogue of LEGO<sup>®</sup> parts for 3D printing
   models:
     title: models
     text: Browse 3D models of LEGO<sup>®</sup> parts from LDraw™ Library
@@ -121,10 +124,12 @@ page.error:
   text:
 
 part:
-  id: ID
+  id: Number
   name: Name
   category: Category
   model: Model
   alternates: Alternate parts
   molds: Molds of part
   prints: Prints
+
+meta.description: Web catalogue of LEGO<sup>®</sup> parts for 3D printing

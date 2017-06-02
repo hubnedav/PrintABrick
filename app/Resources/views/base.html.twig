@@ -4,61 +4,89 @@
 {% import 'macros/blocks.html.twig' as blocks %}
 
 {% block body %}
-    <div class="ui fixed inverted menu">
-        <div class="ui container">
-            {{ knp_menu_render('mainMenu') }}
-
-            <div class="right menu">
-                <div class="ui search item category right aligned">
-                    <div class="ui icon input transparent inverted">
-                        <input class="prompt" type="text" placeholder="Search..." >
-                        <i class="search icon"></i>
-                    </div>
-                    <div class="results transition"></div>
-                </div>
-            </div>
-        </div>
+    <div class="ui vertical inverted sidebar menu right">
+        {{ knp_menu_render('mainMenu') }}
     </div>
-    {% block page %}
-        <div class="ui main">
-            <div class="ui container">
-                <div class="ui head vertical segment">
-                    <h1 class="ui header">{% block header %}{% endblock %}</h1>
 
-                    <div class="ui small breadcrumb">
-                        {% for breadcrumb_item in knp_menu_get_breadcrumbs_array(knp_menu_get_current_item('mainMenu')) %}
-                            {% if not loop.last %}
-                                <a class="section" href="{{ breadcrumb_item.uri }}">{{ breadcrumb_item.label }}</a>
-                                <i class="right chevron icon divider"></i>
-                            {% else %}
-                                <a class="active section">{{ breadcrumb_item.label }}</a>
-                            {% endif %}
-                        {% endfor %}
+    <div class="pusher">
+        <div class="ui fixed inverted menu main">
+            <div class="ui container">
+                <a class="item header" href="{{ path('homepage') }}">
+                    <img class="ui logo" src="{{ asset('resources/images/logo.svg') }}">
+                    {{ name }}
+                </a>
+
+                <div class="left menu">
+                    {{ knp_menu_render('mainMenu') }}
+                </div>
+
+                <div class="right menu">
+                    <div class="ui search item category right aligned">
+                        <div class="ui icon input transparent inverted">
+                            <input class="prompt" type="text" placeholder="Search..." >
+                            <i class="search icon"></i>
+                        </div>
+                        <div class="results transition"></div>
                     </div>
                 </div>
-                <div class="ui basic segment content">
-                    {% for label, flashes in app.session.flashbag.all %}
-                        {% for flash in flashes %}
-                            {{ elements.flash(label,flash) }}
-                        {% endfor %}
-                    {% endfor %}
 
-                    {% block content %}
-
-                    {% endblock %}
-                </div>
+                <a class="toc right floated item">
+                    <i class="sidebar icon"></i>
+                </a>
             </div>
         </div>
-    {% endblock page %}
-    <div class="ui black inverted vertical footer segment stripe">
-        {% block footer %}
-            <div class="ui aligned container">
-                <div class="ui horizontal inverted small divided link list">
-                    <p>LEGO<sup>®</sup>, the LEGO logo, the Minifigure, and the Brick and Knob configurations are trademarks of the LEGO Group of Companies which does not sponsor, authorize, or endorse this site.</p>
-                    Copyright © 2017 PrintABrick
-                </div>
-            </div>
-        {% endblock  %}
+
+        <div class="full height">
+            {% block page %}
+                <header class="ui head vertical segment">
+                    <div class="ui container">
+                        <div class="ui breadcrumb">
+                            {% for breadcrumb_item in knp_menu_get_breadcrumbs_array(knp_menu_get_current_item('mainMenu')) %}
+                                {% set icon -%}
+                                    {% if breadcrumb_item.item.extras.icon is defined %}
+                                        <i class="icon {{ breadcrumb_item.item.extras.icon }}"></i>
+                                    {% endif %}
+                                {%- endset %}
+
+
+                                {% set value = breadcrumb_item.item.extras.value is defined ? breadcrumb_item.item.extras.value : 0 %}
+
+
+                                {% if not loop.last and breadcrumb_item.uri %}
+                                    <a class="section" href="{{ breadcrumb_item.uri }}">{{ icon }}{{ breadcrumb_item.label | trans({},'menu')}}</a>
+                                    <div class="divider"> / </div>
+                                {% else %}
+                                    <div class="active section">{{ icon }}{{ breadcrumb_item.label | trans({'%value%':value},'menu')}}</div>
+                                    {% if not loop.last %}
+                                        <div class="divider"> / </div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {#<div class="ui grid stackable">#}
+                        {#<div class="right floated right aligned four wide column">#}
+
+                        {#</div>#}
+                        {#<div class="left floated left aligned twelve wide column">#}
+                        <h1 class="ui header">{% block header %}{% endblock %}</h1>
+                        {#</div>#}
+                        {#</div>#}
+
+                        {% for label, flashes in app.session.flashbag.all %}
+                            {% for flash in flashes %}
+                                {{ elements.flash(label,flash) }}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </header>
+
+                {% block content %}
+
+                {% endblock %}
+            {% endblock page %}
+        </div>
+        {% include 'footer.html.twig' %}
     </div>
 {% endblock %}
 

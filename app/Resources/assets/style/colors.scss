@@ -145,6 +145,5 @@ $colors: (
 
   .text.color-#{$number} {
       color: $color;
-      //background: color-contrast($color,#000,#FFF);
   }
 }

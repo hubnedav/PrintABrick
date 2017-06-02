@@ -1,25 +1,19 @@
 .default-theme {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+  .pusher {
+    display: flex;
+    flex-direction: column;
+  }
 
-  .ui.main {
+  .pusher > .full.height {
     flex: 1;
-    padding-top: 50px;
   }
 
   .ui.head {
+    padding-top: 4em;
     position: relative;
 
-    .header {
-      margin-bottom: 0;
-    }
-
-    .breadcrumb {
-      right: 0;
-      top: 0;
-      position: absolute;
-      padding: 20px 0;
+    h1.header {
+      margin-top: 0;
     }
   }
 
@@ -37,45 +31,15 @@
     border-radius: 0;
   }
 
-  .item-info {
-    min-height: 300px;
-    background: #EEEEEE;
-    padding: 20px;
-    height: 100%;
-  }
-
   .ui.fixed + .ui.header {
     margin-top: 3em;
     padding-bottom: 4em;
   }
 
-  .link {
-    padding-left: 30px;
-    position: relative;
-  }
-
-  .link:before {
-    width: 23px;
-    height: 23px;
-    position: absolute;
-    left: 0;
-    display: inline-block;
-  }
-
-  .link.brickset:before {
-    content: '';
-    background: url("/resources/images/brickset_logo.png");
-    background-size: cover;
-  }
-
-  .link.rebrickable:before {
-    content: '';
-    background: url("/resources/images/rebrickable_logo.png");
-    background-size: cover;
-  }
-
-  .number-range {
-    margin: 1em 0.6em 3em;
+  .sort {
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .pull-left {
@@ -84,13 +48,13 @@
   .pull-right {
     float: right;
   }
-  
+
   .ui.image.load {
       background: url("/resources/images/spinner.svg") no-repeat center;
       background-color: lightgrey;
   }
 
-  .found-count {
+  .ui.text.menu {
     margin: 0 !important;
   }
 
@@ -118,7 +82,7 @@
   }
 
   .unpadded {
-    padding: 0;
+    padding: 0 !important;
   }
 
   .spacing.top {
@@ -137,6 +101,15 @@
     margin-top: 100px !important;
     margin-bottom: 100px !important;
   }
+
+  .alternate.stripe {
+    background-color: #F2F3F5 !important;
+  }
+
+
+  .ui.segment.vertical.noborder {
+    border-bottom: 0;
+  }
 }
 
 @each $i in 5 10 15 20 25 30 40 50 60 {
@@ -150,6 +123,6 @@
   text-align: right;
 }
 
-.ui.segment.vertical.noborder {
-  border-bottom: 0;
-}
+
+
+

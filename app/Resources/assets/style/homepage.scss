@@ -2,23 +2,32 @@
   display: none;
 }
 
-.masthead.segment {
-  min-height: 400px;
-  padding: 0.5em 0;
-}
-.masthead .logo.item img {
-  margin-right: 1em;
-}
-.masthead .ui.menu .ui.button {
-  margin-left: 0.5em;
-}
-.masthead h1.ui.header {
-  margin-top: 1.5em;
-  margin-bottom: 0;
-  font-size: 4em;
-  font-weight: normal;
-}
-.masthead h2 {
-  font-size: 1.7em;
-  font-weight: normal;
+.masthead {
+  .text.container {
+    margin-bottom: 8em;
+    margin-top: 8em;
+  }
+  .segment {
+    padding: 0.5em 0;
+  }
+  .logo.item img {
+    margin-right: 1em;
+  }
+  .ui.menu .ui.button {
+    margin-left: 0.5em;
+  }
+
+  h1.ui.header {
+    font-size: 4em;
+
+    img {
+      height: 1.2em !important;
+      width: 1.2em !important;
+      margin-top: 0 !important;
+    }
+  }
+  .tagline {
+    font-size: 1.3em;
+    font-weight: normal;
+  }
 }

@@ -9,6 +9,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    name: "PrintABrick"
     # rebrickable csv files root URL (http://rebrickable.com/media/downloads/ or local dir containing csv files)
     app.rebrickable_downloads_url: 'http://rebrickable.com/media/downloads/'
     app.ld_library_download_url: 'http://www.ldraw.org/library/updates/completeCA.zip'
@@ -41,6 +42,8 @@ framework:
 
 # Twig Configuration
 twig:
+    globals:
+        name: "%name%"
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form_themes: ['form/semantic-ui.html.twig', 'form/search.html.twig']

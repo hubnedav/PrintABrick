@@ -23,7 +23,7 @@
     {% if item.hasChildren and options.depth is not same as(0) and item.displayChildren %}
         {% import _self as knp_menu %}
         {#<div {{ knp_menu.attributes(listAttributes) }}>#}
-            {{ block('children') }}
+        {{ block('children') }}
         {#</div>#}
     {% endif %}
 {% endblock %}

@@ -1,9 +1,12 @@
 @import "variables";
 @import "mixins";
 
+@import "navbar";
+@import "table";
 @import "main";
 @import "homepage";
 @import "modelviewer";
+@import "filter";
 
 @import "part";
 @import "set";

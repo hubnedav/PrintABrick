@@ -8,7 +8,6 @@
         {% endfor %}
     {% endfor %}
 
-    <div class="ui segment vertical">
         {% if inventorySets %}
             <h3 class="ui horizontal divider header">Sets</h3>
             <div class="ui eight column doubling grid sets">
@@ -29,21 +28,18 @@
                 </div>
             {% endif %}
 
-            <div class="ui tabular icon pointing secondary menu submenu">
-                <a class="ui item active button" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
-                <a class="ui item button" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
+            <div class="ui top attached tabular menu submenu">
+                <a class="ui item {% if not app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/models"><i class="grid layout icon"></i> Uni-Color</a>
+                <a class="ui item {% if app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/colors"><i class="list layout icon"></i> Multi-Color</a>
             </div>
 
-            <div class="ui tab active" data-tab="inventory/models">
+            <div class="ui bottom attached tab {% if not app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/models">
                 {{ render(path('set_models', {id: set.id})) }}
             </div>
-            <div class="ui tab" data-tab="inventory/colors">
+            <div class="ui bottom attached tab {% if app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/colors">
                 {{ render(path('set_colors', {id: set.id})) }}
             </div>
         {% endif %}
 
-    </div>
-    <div class="ui segment vertical">
         <p class="ui text right">{{ 'set.rebrickable.credit' | trans | raw }}</p>
-    </div>
 {% endblock %}

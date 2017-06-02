@@ -7,99 +7,110 @@
 {% block header %}{{ model.name }}{% endblock %}
 
 {% block content %}
-    <div class="ui stackable grid">
-        <div class="column ten wide">
-            <div id="model-viewer" class="model-container">
-                {{ blocks.partImage(model.id,'part_large') }}
-            </div>
-        </div>
-        <div class="column six wide">
-            <div class="item-info ui">
-                <table class="ui very basic table">
-                    <tr>
-                        <td>{{ 'model.id' | trans }}</td>
-                        <td><h2>{{ model.id }}</h2></td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'model.name' | trans }}</td>
-                        <td>{{ model.name }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'model.category' | trans }}</td>
-                        <td><a href="{{ path('model_index',{'m[category]':model.category.id}) }}">{{ model.category ? model.category.name }}</a></td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'model.author' | trans }}</td><td>{{ model.author.name }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'model.set.count' | trans }}</td><td>{{ sets|length }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'model.license' | trans }}</td>
-                        <td>
-                            {{ blocks.ccal2_license(model.name,model.author.name) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'model.keywords' | trans }}</td>
-                        <td>
-                            <div class="ui grey labels">
-                                {% for keyword in model.keywords %}
-                                    <span class="ui label">{{ keyword.name }}</span>
-                                {% endfor %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% if model.aliases|length %}
-                        <tr>
-                            <td>{{ 'model.aliases' | trans }}</td>
-                            <td>
-                                {% for alias in model.aliases | slice(0,20)%}
-                                    <span>{{ alias.id }}</span>{%  if not loop.last %},{% endif %}
-                                {% endfor %}
-                                {% if model.aliases|length > 20 %}&hellip;{% endif %}
-                            </td>
-                        </tr>
-                    {% endif %}
-                </table>
-                <a class="ui download fluid primary button" href="{{ path('model_zip', {id: model.id}) }}">{{ 'model.download'|trans }}</a>
+    <div class="ui vertical segment alternate stripe">
+        <div class="ui container stackable grid">
+            <div class="row">
+                <div class="column ten wide">
+                    <div id="model-viewer" class="model-container">
+                        {{ blocks.partImage(model.id,'part_large') }}
+                    </div>
+                </div>
+                <div class="column six wide">
+                    <div class="item-info ui">
+                        <table class="ui very basic table">
+                            <tr>
+                                <td>{{ 'model.id' | trans }}</td>
+                                <td><h3>{{ model.id }}</h3></td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'model.name' | trans }}</td>
+                                <td>{{ model.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'model.category' | trans }}</td>
+                                <td><a href="{{ path('model_index',{'m[category]':model.category.id}) }}">{{ model.category ? model.category.name }}</a></td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'model.author' | trans }}</td><td>{{ model.author.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'model.set.count' | trans }}</td><td>{{ sets|length }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'model.license' | trans }}</td>
+                                <td>
+                                    {{ blocks.ccal2_license(model.name,model.author.name) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'model.keywords' | trans }}</td>
+                                <td>
+                                    <div class="ui grey labels">
+                                        {% for keyword in model.keywords %}
+                                            <span class="ui label">{{ keyword.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% if model.aliases|length %}
+                                <tr>
+                                    <td>{{ 'model.aliases' | trans }}</td>
+                                    <td>
+                                        {% for alias in model.aliases | slice(0,15)%}
+                                            <span>{{ alias.id }}</span>{%  if not loop.last %},{% endif %}
+                                        {% endfor %}
+                                        {% if model.aliases|length > 15 %}&hellip;{% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                        <a class="ui download fluid primary button" href="{{ path('model_zip', {id: model.id}) }}"><i class="download icon"></i> {{ 'model.download'|trans }}</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="ui segment vertical">
-        {% if subparts|length %}
-        <div class="ui segment vertical noborder">
-            <h4 class="ui horizontal divider header">Submodels ({{ model.subparts|length }})</h4>
-            <div class="ui grid doubling ten column row parts">
-                {% for subpart in subparts %}
-                    {{ blocks.model(subpart['model'], subpart['quantity']) }}
-                {% endfor %}
+    <div class="ui vertical segment">
+        <div class="container ui">
+            <div class="ui tabular pointing secondary menu stackable">
+                {% if subparts|length %}
+                    <a class="item active" data-tab="subparts">{{ 'model.subparts' | trans }} ({{ subparts|length }})</a>
+                {% endif %}
+                {% if related|length %}
+                    <a class="item {% if not subparts|length %}active{% endif %}" data-tab="related">{{ 'model.related' | trans }} ({{ related|length }})</a>
+                {% endif %}
+                {% if model.parents|length %}
+                    <a class="item {% if not subparts|length and not related|length %}active{% endif %}" data-tab="parents">{{ 'model.parents' | trans }} ({{ model.parents|length }})</a>
+                {% endif %}
             </div>
+            {% if subparts|length %}
+                <div class="ui tab active" data-tab="subparts">
+                    <div class="ui grid doubling ten column row parts">
+                        {% for subpart in subparts %}
+                            {{ blocks.model(subpart['model'], subpart['quantity']) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if related|length %}
+                <div class="ui tab {% if not subparts|length %}active{% endif %}" data-tab="related">
+                    <div class="ui grid doubling ten column row parts">
+                        {% for model in related  %}
+                            {{ blocks.model(model) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if model.parents|length %}
+                <div class="ui tab {% if not subparts|length and not related|length %}active{% endif %}" data-tab="parents">
+                    <div class="ui grid doubling ten column row parts">
+                        {% for subpart in model.parents  %}
+                            {{ blocks.model(subpart.parent) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
-
-        {% if related|length  %}
-        <div class="ui segment vertical noborder">
-            <h4 class="ui horizontal divider header">Related models ({{ related|length }})</h4>
-            <div class="ui grid doubling ten column row parts">
-                {% for model in related  %}
-                    {{ blocks.model(model) }}
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        {% if model.parents|length  %}
-        <div class="ui segment vertical noborder">
-            <h4 class="ui horizontal divider header">Parent models ({{ model.parents|length }})</h4>
-            <div class="ui grid doubling ten column row parts">
-                {% for subpart in model.parents  %}
-                    {{ blocks.model(subpart.parent) }}
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
     </div>
 {% endblock %}
 
@@ -107,7 +118,7 @@
     {{ parent() }}
     <script type="text/javascript">
         window.onload = function() {
-            $('#model-viewer').ModelViewer('{{ url('media_file', {'path': model.path }) }}');
+            $('#model-viewer').ModelViewer('{{ path('media_file', {'path': model.path }) }}');
         };
     </script>
 {% endblock %}

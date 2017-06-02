@@ -8,12 +8,12 @@
         {% endfor %}
     {% endfor %}
 
-    <div class="ui segment clearing noborder vertical">
-         <a class="ui primary right floated button" href="{{ path('set_zip', {id: set.id, sorted: false }) }}" download>{{ 'set.download.unicolor.button' | trans}}</a>
+    <div class="ui segment clearing basic vertical">
+        <a class="ui primary right floated button" href="{{ path('set_zip', {id: set.id, sorted: false }) }}" download><i class="download icon"></i> {{ 'set.download.unicolor.button' | trans}}</a>
     </div>
 
     {% if models|length > 0 %}
-        <div class="ui segment vertical noborder">
+        <div class="ui segment vertical basic">
             <h3 class="ui horizontal divider header">Models</h3>
             <div class="ui grid doubling ten column row parts">
                 {% for model in models %}
@@ -23,7 +23,7 @@
         </div>
     {% endif %}
     {% if missing|length > 0 %}
-        <div class="ui segment vertical noborder">
+        <div class="ui segment vertical basic">
             <h3 class="ui horizontal divider header">Missing</h3>
             <div class="ui grid doubling ten column row parts">
                 {% for part in missing %}

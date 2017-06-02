@@ -9,7 +9,7 @@
     {% endfor %}
 
     <div class="ui segment clearing noborder vertical">
-        <a class="ui primary right floated button" href="{{ path('set_zip', {id: set.id, sorted: true }) }}" download>{{ 'set.download.multicolor.button' | trans}}</a>
+        <a class="ui primary right floated button" href="{{ path('set_zip', {id: set.id, sorted: true }) }}" download><i class="download icon"></i> {{ 'set.download.multicolor.button' | trans}}</a>
     </div>
     
     {% if colors|length > 0 %}

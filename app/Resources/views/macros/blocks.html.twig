@@ -6,7 +6,7 @@
             {% set placeholder = asset("resources/images/transparent_min.png") %}
         {% endif %}
 
-        <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter)}}">
+        <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter) }}">
     </div>
 {% endmacro %}
 
@@ -18,7 +18,7 @@
             {% set placeholder = asset("resources/images/transparent_min.png") %}
         {% endif %}
 
-        <img src="{{ placeholder }}"  data-src="{{ asset(number~'.jpg')|imagine_filter(filter) }}">
+        <img src="{{ placeholder }}" data-src="{{ asset(number~'.jpg')|imagine_filter(filter) }}">
     </div>
 {% endmacro %}
 
@@ -41,7 +41,7 @@
 {% endmacro %}
 
 {% macro part(part, quantity = null, color = -1) %}
-    <a class="column part" href="{{ url('reb_part_detail', {'id': part.id})}}">
+    <a class="column part" href="{{ url('part_detail', {'id': part.id})}}">
         <div class="ui card">
             {% import _self as blocks %}
             {{ blocks.partImage(part.id,'part_min', color) }}

@@ -31,7 +31,6 @@ $(document).ready(function(){
         }
     });
 
-
     $('.message .close')
         .on('click', function() {
             $(this)
@@ -41,15 +40,12 @@ $(document).ready(function(){
         })
     ;
 
-    $('.item-info .download')
-        .popup({
-            popup : $('.download.popup'),
-            on: 'click',
-            inline: true
-        })
-    ;
-
     $('.ui.modal')
         .modal('attach events', '.ui.open-modal.button', 'show')
+    ;
+
+    // create sidebar and attach to menu open
+    $('.ui.sidebar')
+        .sidebar('attach events', '.toc.item')
     ;
 });

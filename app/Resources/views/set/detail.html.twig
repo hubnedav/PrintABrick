@@ -7,76 +7,84 @@
 {% block header %}{{ set.name | escape('html') }}{% endblock %}
 
 {% block content %}
-    <div class="ui stackable grid">
-        <div class="column nine wide">
-            <a class="ui bordered fluid image" href="{{ asset(set.id~'.jpg')|imagine_filter('set_large') }}" data-lightbox="setImages">
-                {{ blocks.setImage(set.id,'set_large') }}
-            </a>
-        </div>
-        <div class="column seven wide">
-            <div class="item-info ui">
-                <table class="ui very basic table">
-                    <tr>
-                        <td>{{ 'set.id' | trans }}</td><td><h2>{{ set.id }}</h2></td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'set.name' | trans }}</td><td>{{ set.name }}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'set.year' | trans }}</td><td><a href="{{ path('set_index',{'s[year][from]':set.year, 's[year][to]':set.year}) }}">{{ set.year }}</a></td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'set.theme' | trans }}</td>
-                        <td><a href="{{ path('set_index',{'s[theme]' : set.theme.id }) }}">{{ set.theme ? set.theme.fullName }}</a></td>
-                    </tr>
-                    <tr>
-                        <td>{{ 'set.parts' | trans }}</td><td>
-                            {{ set.partCount~' (Rebrickable)' }}{{ brset and brset.pieces ? ' / '~brset.pieces~' (Brickset)' }}
-                        </td>
-                    </tr>
-                    {% if brset %}
-                        {% if brset.minifigs %}
+
+    <div class="ui vertical segment alternate stripe">
+        <div class="ui container stackable grid">
+            <div class="row">
+                <div class="column nine wide">
+                    <a class="ui bordered image" href="{{ asset(set.id~'.jpg')|imagine_filter('set_large') }}" data-lightbox="setImages">
+                        {{ blocks.setImage(set.id,'set_large') }}
+                    </a>
+                </div>
+                <div class="column seven wide">
+                    <div class="item-info ui">
+                        <table class="ui very basic table">
                             <tr>
-                                <td>{{ 'set.minifigs' | trans }}</td>
-                                <td>{{ brset.minifigs }}</td>
+                                <td>{{ 'set.id' | trans }}</td><td><h2>{{ set.id }}</h2></td>
                             </tr>
-                        {% endif %}
-                        <tr>
-                            <td>{{ 'set.rating' | trans }}</td>
-                            <td>
-                                {{ brset.rating | number_format(1, '.', ',')  }} / 5
-                            </td>
-                        </tr>
-                    {% endif %}
-                    <tr>
-                        <td></td>
-                        <td>
-                            <a class="rebrickable link" href="http://rebrickable.com/sets/{{ set ? set.id }}">Rebrickable</a>
+                            <tr>
+                                <td>{{ 'set.name' | trans }}</td><td>{{ set.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'set.year' | trans }}</td><td><a href="{{ path('set_index',{'s[year][from]':set.year, 's[year][to]':set.year}) }}">{{ set.year }}</a></td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'set.theme' | trans }}</td>
+                                <td><a href="{{ path('set_index',{'s[theme]' : set.theme.id }) }}">{{ set.theme ? set.theme.fullName }}</a></td>
+                            </tr>
+                            <tr>
+                                <td>{{ 'set.parts' | trans }}</td><td>
+                                    {{ set.partCount~' (Rebrickable)' }}{{ brset and brset.pieces ? ' / '~brset.pieces~' (Brickset)' }}
+                                </td>
+                            </tr>
                             {% if brset %}
-                                <a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a>
+                                {% if brset.minifigs %}
+                                    <tr>
+                                        <td>{{ 'set.minifigs' | trans }}</td>
+                                        <td>{{ brset.minifigs }}</td>
+                                    </tr>
+                                {% endif %}
+                                <tr>
+                                    <td>{{ 'set.rating' | trans }}</td>
+                                    <td>
+                                        {{ brset.rating | number_format(1, '.', ',')  }} / 5
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a>
+                                    </td>
+                                </tr>
                             {% endif %}
-                        </td>
-                    </tr>
-                </table>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <a class="rebrickable link" href="http://rebrickable.com/sets/{{ set ? set.id }}">Rebrickable</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="ui segment vertical">
-        <div class="ui tabular pointing secondary menu">
-            <a class="item active" data-tab="inventory"><i class="cubes icon"></i> Inventory ({{ set ? set.partCount : 0}})</a>
-            {% if brset %}
-                <a class="item" data-tab="description"><i class="info icon"></i> Description</a>
-                <a class="item" data-tab="images"> <i class="image icon"></i> Images ({{ brset.additionalImageCount }})</a>
-                <a class="item" data-tab="instructions"> <i class="file pdf outline icon"></i> Instructions ({{ brset.instructionsCount }})</a>
-                <a class="item" data-tab="reviews"><i class="write icon"></i> Reviews ({{ brset.reviewCount }})</a>
-            {% endif %}
+    <div class="ui vertical segment">
+        <div class="ui tabular pointing secondary menu stackable">
+            <div class="container ui">
+                <a class="item active" data-tab="inventory"><i class="cubes icon"></i> Inventory ({{ set ? set.partCount : 0}})</a>
+                {% if brset %}
+                    <a class="item" data-tab="description"><i class="info icon"></i> Description</a>
+                    <a class="item" data-tab="images"> <i class="image icon"></i> Images ({{ brset.additionalImageCount }})</a>
+                    <a class="item" data-tab="instructions"> <i class="file pdf outline icon"></i> Instructions ({{ brset.instructionsCount }})</a>
+                    <a class="item" data-tab="reviews"><i class="write icon"></i> Reviews ({{ brset.reviewCount }})</a>
+                {% endif %}
+            </div>
         </div>
-        <div class="ui vertical segment unpadded">
+
+        <div class="container ui">
             <div class="ui tab active" data-tab="inventory">
-                <div class="ui vertical segment unpadded">
-                    {{ render(path('set_inventory', {id: set.id})) }}
-                </div>
+                {{ render(path('set_inventory', {id: set.id})) }}
             </div>
             {% if brset %}
                 <div class="ui tab ajax-load" data-tab="description" data-src="{{ path('brickset_description', { 'id': brset.setID }) }}">
@@ -94,4 +102,6 @@
             {% endif %}
         </div>
     </div>
+
+
 {% endblock %}

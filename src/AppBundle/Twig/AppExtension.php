@@ -32,6 +32,7 @@ class AppExtension extends \Twig_Extension
             new \Twig_SimpleFunction('remoteSize', [$this, 'remoteSize']),
             new \Twig_SimpleFunction('remoteFilename', [$this, 'remoteFilename']),
             new \Twig_SimpleFunction('remoteFileExists', [$this, 'remoteFileExists']),
+            new \Twig_SimpleFunction('fileTimestamp', [$this, 'fileTimestamp']),
         ];
     }
 
@@ -70,6 +71,15 @@ class AppExtension extends \Twig_Extension
         curl_close($ch);
 
         return $size;
+    }
+
+    public function fileTimestamp($filePath) {
+        $changeDate = filemtime($_SERVER['DOCUMENT_ROOT'].'/'.$filePath);
+        if (!$changeDate) {
+            //Fallback if mtime could not be found:
+            $changeDate = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
+        }
+        return $filePath.'?'.$changeDate;
     }
 
     public function remoteFilename($url)

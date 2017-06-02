@@ -52,23 +52,25 @@
 
         <main class="ui full height segment vertical unpadded">
             <div class="ui main vertical stripe quote segment">
-                <div class="ui equal width stackable internally celled grid">
-                    <div class="center aligned row">
-                        <div class="column">
-                            <h2 class="ui icon header">
-                                <i class="cube icon"></i>
-                                {{ models }} {{ 'homepage.models.title' | trans }}
-                            </h2>
-                            <p>{{ 'homepage.models.text' | trans | raw }}</p>
-                            <a class="ui button big primary" href="{{ path('model_index') }}">{{ 'homepage.models.browse' | trans }}</a>
-                        </div>
-                        <div class="column">
-                            <h2 class="ui icon header">
-                                <i class="cubes icon"></i>
-                                {{ sets }} {{ 'homepage.sets.title' | trans }}
-                            </h2>
-                            <p>{{ 'homepage.sets.text' | trans | raw }}</p>
-                            <a class="ui button big primary" href="{{ path('set_index') }}">{{ 'homepage.sets.browse' | trans }}</a>
+                <div class="ui container">
+                    <div class="ui equal width stackable internally celled grid">
+                        <div class="center aligned row">
+                            <div class="column">
+                                <h2 class="ui icon header">
+                                    <i class="cube icon"></i>
+                                    {{ models }} {{ 'homepage.models.title' | trans }}
+                                </h2>
+                                <p>{{ 'homepage.models.text' | trans | raw }}</p>
+                                <a class="ui button big primary" href="{{ path('model_index') }}">{{ 'homepage.models.browse' | trans }}</a>
+                            </div>
+                            <div class="column">
+                                <h2 class="ui icon header">
+                                    <i class="cubes icon"></i>
+                                    {{ sets }} {{ 'homepage.sets.title' | trans }}
+                                </h2>
+                                <p>{{ 'homepage.sets.text' | trans | raw }}</p>
+                                <a class="ui button big primary" href="{{ path('set_index') }}">{{ 'homepage.sets.browse' | trans }}</a>
+                            </div>
                         </div>
                     </div>
                 </div>

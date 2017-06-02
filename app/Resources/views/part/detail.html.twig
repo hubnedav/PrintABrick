@@ -38,7 +38,7 @@
                                     <td>{{ 'part.alternates' | trans }}</td>
                                     <td>
                                         {% for alternate in apiPart.alternates %}
-                                            <a href="{{ url('reb_part_detail', {'id': alternate})}}">{{ alternate }}</a>
+                                            <a href="{{ url('part_detail', {'id': alternate})}}">{{ alternate }}</a>
                                         {% endfor %}
                                     </td>
                                 </tr>
@@ -46,7 +46,7 @@
                                     <td>{{ 'part.molds' | trans }}</td>
                                     <td>
                                         {% for mold in apiPart.molds %}
-                                            <a href="{{ url('reb_part_detail', {'id': mold})}}">{{ mold }}</a>
+                                            <a href="{{ url('part_detail', {'id': mold})}}">{{ mold }}</a>
                                         {% endfor %}
                                     </td>
                                 </tr>
@@ -57,7 +57,11 @@
                             {% endif %}
                         </table>
 
-                        <a class="ui disabled fluid primary button"><i class="download icon"></i> {{ 'model.empty'|trans }}</a>
+                        {% if not part.model %}
+                            <a class="ui disabled fluid primary button"><i class="download icon"></i> {{ 'model.empty'|trans }}</a>
+                        {% else %}
+                            <a class="ui fluid primary button" href="{{ path('model_zip', {id: part.model.id}) }}"><i class="download icon"></i> {{ 'model.download'|trans }}</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

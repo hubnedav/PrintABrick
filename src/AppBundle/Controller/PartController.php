@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller\Rebrickable;
+namespace AppBundle\Controller;
 
 use AppBundle\Api\Exception\EmptyResponseException;
 use AppBundle\Entity\Rebrickable\Part;
@@ -11,22 +11,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 /**
  * Part controller.
  *
- * @Route("rebrickable/parts")
+ * @Route("parts")
  */
 class PartController extends Controller
 {
     /**
      * Finds and displays a part entity.
      *
-     * @Route("/{id}", name="reb_part_detail")
+     * @Route("/{id}", name="part_detail")
      */
     public function detailAction(Part $part)
     {
-        $em = $this->getDoctrine()->getManager();
-
         $apiPart = null;
-
         if ($part) {
+            if($model = $part->getModel()) {
+                $this->redirectToRoute('model_detail',['id' => $model->getId()]);
+            }
+
             try {
                 $apiPart = $this->get('api.manager.rebrickable')->getPart($part->getId());
             } catch (EmptyResponseException $e) {
@@ -35,12 +36,9 @@ class PartController extends Controller
                 $this->addFlash('error', $e->getMessage());
             }
 
-            $sets = $part != null ? $em->getRepository(Set::class)->findAllByPartNumber($part->getId()) : null;
-
-            return $this->render('rebrickable/part/detail.html.twig', [
+            return $this->render('part/detail.html.twig', [
                 'part' => $part,
                 'apiPart' => $apiPart,
-                'sets' => $sets,
             ]);
         }
 

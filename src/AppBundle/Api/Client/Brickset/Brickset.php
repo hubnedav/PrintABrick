@@ -15,7 +15,7 @@ use AppBundle\Api\Exception\CallFailedException;
 
 class Brickset extends \SoapClient
 {
-    const WSDL = 'http://brickset.com/api/v2.asmx?WSDL';
+    const WSDL = 'https://brickset.com/api/v2.asmx?WSDL';
 
     private $apiKey = '';
 

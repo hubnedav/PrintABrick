@@ -26,22 +26,25 @@ class InitDataCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $loadModelsCommand = $this->getApplication()->find('app:load:models');
+        // Load LDraw data
 
-        $loadModelsInput = [
-            'command' => 'app:load:models',
+        $loadLDrawCommand = $this->getApplication()->find('app:load:ldraw');
+        $loadLDrawInput = [
+            'command' => 'app:load:ldraw',
             '--all' => true,
         ];
 
         if ($ldraw = $input->getOption('ldraw')) {
-            $loadModelsInput['--ldraw'] = $ldraw;
+            $loadLDrawInput['--ldraw'] = $ldraw;
         }
 
-        $returnCode = $loadModelsCommand->run(new ArrayInput($loadModelsInput), $output);
+        $returnCode = $loadLDrawCommand->run(new ArrayInput($loadLDrawInput), $output);
 
         if ($returnCode) {
             return 1;
         }
+
+        // Load Rebrickable data
 
         $loadRebrickableCommad = $this->getApplication()->find('app:load:rebrickable');
         $returnCode = $loadRebrickableCommad->run(new ArrayInput(['command' => 'app:load:rebrickable']), $output);
@@ -50,14 +53,8 @@ class InitDataCommand extends ContainerAwareCommand
             return 1;
         }
 
-        $loadRelationsCommand = $this->getApplication()->find('app:load:relations');
-
-        $returnCode = $loadRelationsCommand->run(new ArrayInput(['command' => 'app:load:relations']), $output);
-
-        if ($returnCode) {
-            return 1;
-        }
-
+        // Load images
+        
         $loadImagesCommand = $this->getApplication()->find('app:load:images');
         $returnCode = $loadImagesCommand->run(new ArrayInput([
             'command' => 'app:load:images',
@@ -65,13 +62,6 @@ class InitDataCommand extends ContainerAwareCommand
             '--rebrickable' => true,
             '--missing' => true,
         ]), $output);
-
-        if ($returnCode) {
-            return 1;
-        }
-
-        $elasticIndex = $this->getApplication()->find('fos:elastic:populate');
-        $returnCode = $elasticIndex->run(null, $output);
 
         if ($returnCode) {
             return 1;

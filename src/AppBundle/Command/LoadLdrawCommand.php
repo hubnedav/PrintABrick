@@ -10,14 +10,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LoadModelsCommand extends ContainerAwareCommand
+class LoadLdrawCommand extends ContainerAwareCommand
 {
     use LockableTrait;
 
     protected function configure()
     {
         $this
-            ->setName('app:load:models')
+            ->setName('app:load:ldraw')
             ->setDescription('Loads LDraw library models into database')
             ->setHelp('This command allows you to load LDraw library models into database while converting .dat files to .stl format.')
             ->setDefinition(

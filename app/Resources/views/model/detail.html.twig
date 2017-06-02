@@ -20,7 +20,7 @@
                         <table class="ui very basic table">
                             <tr>
                                 <td>{{ 'model.id' | trans }}</td>
-                                <td><h3>{{ model.id }}</h3></td>
+                                <td><h2>{{ model.id }}</h2></td>
                             </tr>
                             <tr>
                                 <td>{{ 'model.name' | trans }}</td>
@@ -73,43 +73,35 @@
     <div class="ui vertical segment">
         <div class="container ui">
             <div class="ui tabular pointing secondary menu stackable">
-                {% if subparts|length %}
-                    <a class="item active" data-tab="subparts">{{ 'model.subparts' | trans }} ({{ subparts|length }})</a>
-                {% endif %}
-                {% if related|length %}
-                    <a class="item {% if not subparts|length %}active{% endif %}" data-tab="related">{{ 'model.related' | trans }} ({{ related|length }})</a>
-                {% endif %}
-                {% if model.parents|length %}
-                    <a class="item {% if not subparts|length and not related|length %}active{% endif %}" data-tab="parents">{{ 'model.parents' | trans }} ({{ model.parents|length }})</a>
-                {% endif %}
+                <a class="item active" data-tab="subparts">{{ 'model.subparts' | trans }} ({{ subparts|length }})</a>
+                <a class="item" data-tab="related">{{ 'model.related' | trans }} ({{ related|length }})</a>
+                <a class="item" data-tab="parents">{{ 'model.parents' | trans }} ({{ model.parents|length }})</a>
             </div>
-            {% if subparts|length %}
-                <div class="ui tab active" data-tab="subparts">
-                    <div class="ui grid doubling ten column row parts">
-                        {% for subpart in subparts %}
-                            {{ blocks.model(subpart['model'], subpart['quantity']) }}
-                        {% endfor %}
-                    </div>
+
+            <div class="ui tab active" data-tab="subparts">
+                <div class="ui grid doubling ten column row parts">
+                    {% for subpart in subparts %}
+                        {{ blocks.model(subpart['model'], subpart['quantity']) }}
+                    {% endfor %}
                 </div>
-            {% endif %}
-            {% if related|length %}
-                <div class="ui tab {% if not subparts|length %}active{% endif %}" data-tab="related">
-                    <div class="ui grid doubling ten column row parts">
-                        {% for model in related  %}
-                            {{ blocks.model(model) }}
-                        {% endfor %}
-                    </div>
+            </div>
+
+            <div class="ui tab" data-tab="related">
+                <div class="ui grid doubling ten column row parts">
+                    {% for model in related  %}
+                        {{ blocks.model(model) }}
+                    {% endfor %}
                 </div>
-            {% endif %}
-            {% if model.parents|length %}
-                <div class="ui tab {% if not subparts|length and not related|length %}active{% endif %}" data-tab="parents">
-                    <div class="ui grid doubling ten column row parts">
-                        {% for subpart in model.parents  %}
-                            {{ blocks.model(subpart.parent) }}
-                        {% endfor %}
-                    </div>
+            </div>
+
+            <div class="ui tab" data-tab="parents">
+                <div class="ui grid doubling ten column row parts">
+                    {% for subpart in model.parents  %}
+                        {{ blocks.model(subpart.parent) }}
+                    {% endfor %}
                 </div>
-            {% endif %}
+            </div>
+
         </div>
     </div>
 {% endblock %}

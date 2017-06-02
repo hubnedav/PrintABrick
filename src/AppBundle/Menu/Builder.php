@@ -3,7 +3,6 @@
 namespace AppBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class Builder
@@ -26,7 +25,6 @@ class Builder
         $this->requestStack = $requestStack;
     }
 
-
     public function mainMenu(array $options)
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -37,7 +35,7 @@ class Builder
             ],
         ]);
 
-        $models = $menu->addChild( 'page.model.index', [
+        $models = $menu->addChild('page.model.index', [
             'route' => 'model_index',
         ]);
 
@@ -46,7 +44,7 @@ class Builder
             'routeParameters' => ['id' => $request->get('id', 0)],
             'display' => false,
             'extras' => [
-                'value' => $request->get('id', 0)
+                'value' => $request->get('id', 0),
             ],
         ]);
 
@@ -54,7 +52,7 @@ class Builder
             'route' => 'set_index',
             'options' => [
 //                'icon' => 'edit',
-            ]
+            ],
         ]);
 
         $sets->addChild('page.set.detail', [
@@ -62,7 +60,7 @@ class Builder
             'routeParameters' => ['id' => $request->get('id', 0)],
             'display' => false,
             'extras' => [
-                'value' => $request->get('id', 0)
+                'value' => $request->get('id', 0),
             ],
         ]);
 
@@ -70,7 +68,7 @@ class Builder
             'route' => 'search_results',
             'display' => false,
             'extras' => [
-                'value' => $request->get('query', 0)
+                'value' => $request->get('query', 0),
             ],
         ]);
 
@@ -83,7 +81,7 @@ class Builder
             'display' => false,
             'options' => [
 //                'icon' => 'edit',
-            ]
+            ],
         ]);
 
         $parts->addChild('page.part.detail', [
@@ -91,10 +89,9 @@ class Builder
             'routeParameters' => ['id' => $request->get('id', 0)],
             'display' => false,
             'extras' => [
-                'value' => $request->get('id', 0)
+                'value' => $request->get('id', 0),
             ],
         ]);
-
 
         return $menu;
     }

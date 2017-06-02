@@ -38,8 +38,9 @@ class PartImageLoader extends BaseImageLoader
         // try to load image from rebrickable website
         try {
             if ($this->remoteFileExists($this->rebrickableContext.$path)) {
-                $context = stream_context_create(array('http' => array('header'=>'Connection: close\r\n')));
-                return file_get_contents($this->rebrickableContext.strtolower($path),false,$context);
+                $context = stream_context_create(['http' => ['header' => 'Connection: close\r\n']]);
+
+                return file_get_contents($this->rebrickableContext.strtolower($path), false, $context);
             }
         } catch (\Exception $e) {
             throw new NotLoadableException(sprintf('Source image %s could not be loaded.', $path), $e->getCode(), $e);

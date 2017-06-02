@@ -20,6 +20,7 @@ class SetSearch
 
     /**
      * SetSearch constructor.
+     *
      * @param string $query
      */
     public function __construct($query = '')

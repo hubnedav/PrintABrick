@@ -20,6 +20,7 @@ class DefaultController extends Controller
 
         /** @var SetRepository $setRepository */
         $setRepository = $this->get('repository.rebrickable.set');
+
         return $this->render('default/index.html.twig', [
             'models' => $modelRepository->count(),
             'sets' => $setRepository->count(),

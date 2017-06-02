@@ -81,7 +81,8 @@ class Theme
         return $this;
     }
 
-    public function getFullName() {
+    public function getFullName()
+    {
         $theme = $this;
         $name = [];
 

@@ -33,7 +33,7 @@ class ModelController extends Controller
         $form->handleRequest($request);
 
         $elasticaManager = $this->get('fos_elastica.manager');
-        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch,5000);
+        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch, 5000);
 
         /** @var Paginator $paginator */
         $paginator = $this->get('knp_paginator');
@@ -94,7 +94,7 @@ class ModelController extends Controller
         $response->headers->set('Content-Type', 'application/zip');
 
         // escape forbidden characters from filename
-        $filename = preg_replace('/[^a-z0-9\.]/i', '_',"model_{$model->getId()}_{$model->getName()}.zip");
+        $filename = preg_replace('/[^a-z0-9\.]/i', '_', "model_{$model->getId()}_{$model->getName()}.zip");
 
         // Create the disposition of the file
         $disposition = $response->headers->makeDisposition(

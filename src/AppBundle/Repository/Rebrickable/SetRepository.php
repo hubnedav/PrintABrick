@@ -73,7 +73,8 @@ class SetRepository extends BaseRepository
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
-    public function count() {
+    public function count()
+    {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->select('count(s)');
 

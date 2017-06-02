@@ -73,12 +73,14 @@ class AppExtension extends \Twig_Extension
         return $size;
     }
 
-    public function fileTimestamp($filePath) {
+    public function fileTimestamp($filePath)
+    {
         $changeDate = filemtime($_SERVER['DOCUMENT_ROOT'].'/'.$filePath);
         if (!$changeDate) {
             //Fallback if mtime could not be found:
             $changeDate = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
         }
+
         return $filePath.'?'.$changeDate;
     }
 

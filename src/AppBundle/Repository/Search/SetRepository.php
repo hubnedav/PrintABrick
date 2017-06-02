@@ -6,18 +6,18 @@ use AppBundle\Model\SetSearch;
 use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\Match;
-use Elastica\Query\MultiMatch;
 use Elastica\Query\Range;
-use Elastica\Query\Wildcard;
 use FOS\ElasticaBundle\Repository;
 
 class SetRepository extends Repository
 {
     /**
      * @param SetSearch $setSearch
+     *
      * @return Query
      */
-    public function getSearchQuery(SetSearch $setSearch) {
+    public function getSearchQuery(SetSearch $setSearch)
+    {
         $boolQuery = new BoolQuery();
 
         if ($searchQuery = $setSearch->getQuery()) {
@@ -28,7 +28,7 @@ class SetRepository extends Repository
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
             $query->setOperator('and');
-            
+
             $boolQuery->addMust($query);
         } else {
             $query = new \Elastica\Query\MatchAll();
@@ -69,7 +69,8 @@ class SetRepository extends Repository
         return $this->find($query, $limit);
     }
 
-    public function findHighlighted($query, $limit = 500) {
+    public function findHighlighted($query, $limit = 500)
+    {
         $setSearch = new SetSearch();
         $setSearch->setQuery($query);
 
@@ -79,10 +80,10 @@ class SetRepository extends Repository
         $query->setHighlight([
             'pre_tags' => ['<em>'],
             'post_tags' => ['</em>'],
-            "fields" => [
-                "name" => new \stdClass(),
-                "id" => new \stdClass()
-            ]
+            'fields' => [
+                'name' => new \stdClass(),
+                'id' => new \stdClass(),
+            ],
         ]);
 
         return $this->findHybrid($query, $limit);

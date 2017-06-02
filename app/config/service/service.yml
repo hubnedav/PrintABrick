@@ -21,7 +21,7 @@ services:
 
     service.set:
         class: AppBundle\Service\SetService
-        arguments: ['@repository.rebrickable.inventorypart']
+        arguments: ['@repository.rebrickable.inventoryPart']
 
     service.model:
         class: AppBundle\Service\ModelService

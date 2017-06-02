@@ -2,7 +2,6 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-
 use AppBundle\Entity\Color;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;

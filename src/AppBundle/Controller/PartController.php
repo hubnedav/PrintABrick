@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Api\Exception\EmptyResponseException;
 use AppBundle\Entity\Rebrickable\Part;
-use AppBundle\Entity\Rebrickable\Set;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -24,8 +23,8 @@ class PartController extends Controller
     {
         $apiPart = null;
         if ($part) {
-            if($model = $part->getModel()) {
-                $this->redirectToRoute('model_detail',['id' => $model->getId()]);
+            if ($model = $part->getModel()) {
+                $this->redirectToRoute('model_detail', ['id' => $model->getId()]);
             }
 
             try {

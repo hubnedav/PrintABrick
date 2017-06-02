@@ -38,6 +38,8 @@ class Rebrickable_v3
      * @param $uri
      * @param array $options
      *
+     * @throws ApiException
+     *
      * @return string
      */
     public function call($method, $uri, $options = [])

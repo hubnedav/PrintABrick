@@ -35,9 +35,9 @@ class StlConverterService
     /**
      * StlConverterService constructor.
      *
-     * @param string     $ldview          Path to LDView OSMesa binary file
+     * @param string              $ldview          Path to LDView OSMesa binary file
      * @param FilesystemInterface $mediaFilesystem Filesystem for generated web assets
-     * @param StlFixerService $stlFixer
+     * @param StlFixerService     $stlFixer
      */
     public function __construct($ldview, $mediaFilesystem, $stlFixer)
     {
@@ -59,7 +59,7 @@ class StlConverterService
      * stores created file to $stlStorage filesystem.
      *
      * @param string $file
-     * @param bool $rewrite
+     * @param bool   $rewrite
      *
      * @throws ConvertingFailedException
      *
@@ -104,7 +104,7 @@ class StlConverterService
      * stores created file to $stlStorage filesystem.
      *
      * @param string $file
-     * @param bool $rewrite
+     * @param bool   $rewrite
      *
      * @throws ConvertingFailedException
      *

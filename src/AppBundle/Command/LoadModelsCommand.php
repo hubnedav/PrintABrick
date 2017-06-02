@@ -5,7 +5,6 @@ namespace AppBundle\Command;
 use AppBundle\Service\Loader\ModelLoader;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\LockableTrait;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -50,7 +49,7 @@ class LoadModelsCommand extends ContainerAwareCommand
             return 1;
         }
 
-        if($ldraw = $input->getOption('ldraw')) {
+        if ($ldraw = $input->getOption('ldraw')) {
             $modelLoader->setLDrawLibraryContext(realpath($ldraw));
         } else {
             $ldraw = $modelLoader->downloadLibrary($this->getContainer()->getParameter('app.ld_library_download_url'));

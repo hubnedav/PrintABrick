@@ -14,6 +14,7 @@ class ModelSearch
 
     /**
      * ModelSearch constructor.
+     *
      * @param string $query
      */
     public function __construct($query = '')

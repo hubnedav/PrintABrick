@@ -4,7 +4,6 @@ namespace AppBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,7 +19,7 @@ class InitDataCommand extends ContainerAwareCommand
             ->setHelp('This command allows you to load initial data of models and sets into aplication')
             ->setDefinition(
                 new InputDefinition([
-                    new InputOption('ldraw', 'l',InputOption::VALUE_OPTIONAL, 'Path to LDraw library directory'),
+                    new InputOption('ldraw', 'l', InputOption::VALUE_OPTIONAL, 'Path to LDraw library directory'),
                 ])
             );
     }
@@ -34,7 +33,7 @@ class InitDataCommand extends ContainerAwareCommand
             '--all' => true,
         ];
 
-        if($ldraw = $input->getOption('ldraw')) {
+        if ($ldraw = $input->getOption('ldraw')) {
             $loadModelsInput['--ldraw'] = $ldraw;
         }
 

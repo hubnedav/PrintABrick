@@ -60,8 +60,9 @@ class SetSearchType extends AbstractType
                 'choices' => $this->themeRepository->findAll(),
                 'choice_label' => 'fullName',
                 'choice_translation_domain' => false,
-                'group_by' => function($theme, $key, $index) {
+                'group_by' => function ($theme, $key, $index) {
                     $parent = $theme->getParent();
+
                     return $parent ? $parent->getParent() ? $parent->getParent()->getName() : $parent->getName() : $theme->getName();
                 },
                 'choice_value' => 'id',
@@ -79,7 +80,7 @@ class SetSearchType extends AbstractType
         $resolver->setDefaults([
             'csrf_protection' => false,
             'data_class' => SetSearch::class,
-            'method' => 'GET'
+            'method' => 'GET',
         ]);
     }
 

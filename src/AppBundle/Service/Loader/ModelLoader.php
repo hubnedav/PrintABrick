@@ -19,8 +19,6 @@ use AppBundle\Util\RelationMapper;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Exception;
 use League\Flysystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class ModelLoader extends BaseLoader
 {
@@ -116,13 +114,13 @@ class ModelLoader extends BaseLoader
     }
 
     /**
-     * Load one model into database
+     * Load one model into database.
      *
      * @param string $file Absolute filepath of model to load
      */
     public function loadOne($file)
     {
-        if(!$this->ldrawLibraryContext) {
+        if (!$this->ldrawLibraryContext) {
             throw new MissingContextException('LDrawLibrary');
         }
 
@@ -140,13 +138,12 @@ class ModelLoader extends BaseLoader
         }
     }
 
-
     /**
-     * Load all models from ldraw library context into database
+     * Load all models from ldraw library context into database.
      */
     public function loadAll()
     {
-        if(!$this->ldrawLibraryContext) {
+        if (!$this->ldrawLibraryContext) {
             throw new MissingContextException('LDrawLibrary');
         }
 
@@ -162,7 +159,7 @@ class ModelLoader extends BaseLoader
         foreach ($files as $file) {
             $this->progressBar->setMessage($file['basename']);
 
-            if($file['type'] == 'file' && $file['extension'] == 'dat') {
+            if ($file['type'] == 'file' && $file['extension'] == 'dat') {
                 $connection = $this->em->getConnection();
                 $connection->beginTransaction();
 
@@ -217,7 +214,7 @@ class ModelLoader extends BaseLoader
             if (($parentId = $this->getParentId($modelArray)) && ($parentModelFile = $this->findSubmodelFile($parentId)) !== null) {
                 if ($parentModel = $this->loadModel($parentModelFile)) {
                     // Remove old model if ~moved to
-                    if($this->rewrite && ($old = $modelRepository->find($modelArray['id'])) != null) {
+                    if ($this->rewrite && ($old = $modelRepository->find($modelArray['id'])) != null) {
                         $modelRepository->delete($old);
                     }
 
@@ -331,8 +328,7 @@ class ModelLoader extends BaseLoader
         // Try to find model in current file's directory
         if ($this->fileContext && $this->fileContext->has($filename)) {
             return $this->fileContext->getAdapter()->getPathPrefix().$filename;
-        }
-        elseif ($this->ldrawLibraryContext) {
+        } elseif ($this->ldrawLibraryContext) {
             // Try to find model in current LDRAW\PARTS sub-directory
             if ($this->ldrawLibraryContext->has('parts'.DIRECTORY_SEPARATOR.$filename)) {
                 return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'parts'.DIRECTORY_SEPARATOR.$filename;
@@ -357,7 +353,7 @@ class ModelLoader extends BaseLoader
     {
         try {
             $adapter = new Local(dirname($file));
-            $this->fileContext =  new Filesystem($adapter);
+            $this->fileContext = new Filesystem($adapter);
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
 

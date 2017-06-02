@@ -10,9 +10,11 @@ class ModelRepository extends Repository
 {
     /**
      * @param ModelSearch $modelSearch
+     *
      * @return \Elastica\Query
      */
-    public function getSearchQuery(ModelSearch $modelSearch) {
+    public function getSearchQuery(ModelSearch $modelSearch)
+    {
         $boolQuery = new Query\BoolQuery();
 
         if ($searchQuery = $modelSearch->getQuery()) {
@@ -23,7 +25,6 @@ class ModelRepository extends Repository
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
             $query->setOperator('and');
-
         } else {
             $query = new Query\MatchAll();
         }
@@ -41,11 +42,13 @@ class ModelRepository extends Repository
 
     public function search(ModelSearch $modelSearch, $limit = 500)
     {
-       $query = $this->getSearchQuery($modelSearch);
+        $query = $this->getSearchQuery($modelSearch);
+
         return $this->find($query, $limit);
     }
 
-    public function findHighlighted($query, $limit = 500) {
+    public function findHighlighted($query, $limit = 500)
+    {
         $modelSearch = new ModelSearch();
         $modelSearch->setQuery($query);
 
@@ -55,10 +58,10 @@ class ModelRepository extends Repository
         $query->setHighlight([
             'pre_tags' => ['<em>'],
             'post_tags' => ['</em>'],
-            "fields" => [
-                "name" => new \stdClass(),
-                "id" => new \stdClass()
-            ]
+            'fields' => [
+                'name' => new \stdClass(),
+                'id' => new \stdClass(),
+            ],
         ]);
 
         return $this->findHybrid($query, $limit);

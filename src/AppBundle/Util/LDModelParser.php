@@ -71,7 +71,7 @@ class LDModelParser
                     $keywords = explode(',', preg_replace('/^!KEYWORDS /', '', $line));
                     foreach ($keywords as $keyword) {
                         $keyword = trim($keyword);
-                        if ($keyword && !in_array($keyword,$model['keywords'])) {
+                        if ($keyword && !in_array($keyword, $model['keywords'])) {
                             $model['keywords'][] = $keyword;
                         }
                     }

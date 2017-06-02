@@ -34,7 +34,7 @@ class SetController extends Controller
 
         /** @var SetRepository $setRepository */
         $setRepository = $this->get('fos_elastica.manager')->getRepository(Set::class);
-        $results = $setRepository->search($setSearch,5000);
+        $results = $setRepository->search($setSearch, 5000);
 
         $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
@@ -89,7 +89,6 @@ class SetController extends Controller
         $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getId());
         $setService = $this->get('service.set');
         $inventoryPartRepository = $this->get('repository.rebrickable.inventoryPart');
-
 
         $models = $setService->getModels($set, false);
         $missing = $setService->getParts($set, false, false);
@@ -163,7 +162,7 @@ class SetController extends Controller
 
         try {
             $colors = $setService->getModelsGroupedByColor($set, false);
-            $missing = $setService->getParts($set,false,false);
+            $missing = $setService->getParts($set, false, false);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }

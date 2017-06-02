@@ -19,7 +19,8 @@ class BricksetManager
     /**
      * BricksetManager constructor.
      *
-     * @param Brickset $bricksetClient
+     * @param Brickset      $bricksetClient
+     * @param CacheProvider $cache
      */
     public function __construct(Brickset $bricksetClient, CacheProvider $cache)
     {

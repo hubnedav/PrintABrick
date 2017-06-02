@@ -1,4 +1,6 @@
-    # Website for printable building kits
+# PrintABrick
+Web catalogue of LEGO® parts for 3D printing
+
 A Symfony project 
 
 ## Install

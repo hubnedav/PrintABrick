@@ -5,6 +5,13 @@
 
 {% block body %}
     <div class="ui vertical inverted sidebar menu right">
+        <div class="ui search item category center aligned">
+            <div class="ui icon input transparent inverted">
+                <input class="prompt" type="text" placeholder="Search..." >
+                <i class="search icon"></i>
+            </div>
+            <div class="results transition"></div>
+        </div>
         {{ knp_menu_render('mainMenu') }}
     </div>
 

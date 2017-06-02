@@ -110,6 +110,20 @@
   .ui.segment.vertical.noborder {
     border-bottom: 0;
   }
+
+
+  .sidebar .search .results {
+    width: 100%;
+
+    .category {
+      .name {
+        width: 100%;
+      }
+      .result {
+        margin-left: 0;
+      }
+    }
+  }
 }
 
 @each $i in 5 10 15 20 25 30 40 50 60 {

@@ -23,9 +23,9 @@ For full requirements see Symfony 3.2 [docs](http://symfony.com/doc/3.2/referenc
 * Elasticsearch
 
     Instructions for installing and deploying Elasticsearch may be found [here](https://www.elastic.co/downloads/elasticsearch). 
-* POV-Ray
-* stl2pov [source](http://www.povray.org/).
-* ADMesh [source](https://github.com/rsmith-nl/stltools/releases/tag/3.3).
+* POV-Ray [source](http://www.povray.org/).
+* stl2pov [source](https://github.com/rsmith-nl/stltools/releases/tag/3.3).
+* ADMesh 
 * LDView OSMesa >= 4.2.1 [source](https://tcobbs.github.io/ldview/).
 
 ### Installing  

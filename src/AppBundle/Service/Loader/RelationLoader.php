@@ -39,7 +39,7 @@ class RelationLoader extends BaseLoader
         $this->load($parts);
     }
 
-    public function loadNotPaired($parts)
+    public function loadNotPaired()
     {
         $parts = $this->partRepository->findAllNotPaired();
         $this->load($parts);

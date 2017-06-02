@@ -132,4 +132,7 @@ part:
   molds: Molds of part
   prints: Prints
 
+form:
+  search.submit: Search
+
 meta.description: Web catalogue of LEGO<sup>®</sup> parts for 3D printing

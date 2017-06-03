@@ -33,7 +33,8 @@
                     <span class="truncate-multiline"><small>{{ model.name }}</small></span>
                 </div>
                 <div class="description">
-                    {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
+                    <span><small>{{ model.category.name }}</small></span>
+                    {% if quantity %}<span class="right floated">{{ quantity }}x</span>{% endif %}
                 </div>
             </div>
         </div>

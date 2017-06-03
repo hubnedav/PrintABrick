@@ -42,6 +42,7 @@ gulp.task('js', function() {
         'bower_components/jQuery-ui-Slider-Pips/dist/jquery-ui-slider-pips.js',
         'bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.js',
         'bower_components/select2/dist/js/select2.full.js',
+        'bower_components/jquery-address/src/jquery.address.js',
         'node_modules/semantic-ui/dist/semantic.js',
         'node_modules/lightbox2/dist/js/lightbox.js',
         'app/Resources/assets/js/**.js',

@@ -20,6 +20,7 @@
     "jquery-ui": "^1.12.1",
     "select2": "^4.0.3",
     "three.js": "threejs#*",
-    "jqueryui-touch-punch": "*"
+    "jqueryui-touch-punch": "*",
+    "jquery-address": "*"
   }
 }

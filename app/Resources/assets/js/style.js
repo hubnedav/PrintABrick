@@ -22,13 +22,17 @@ $(document).ready(function(){
     $('.tabular.menu .item').tab({
         onVisible: function() {
             $('.image img').visibility('refresh');
-        }
+        },
+        history: true,
+        historyType: 'hash'
     });
 
     $('.tabular.submenu .item').tab({
         onVisible: function() {
             $('.image img').visibility('refresh');
-        }
+        },
+        history: true,
+        historyType: 'hash'
     });
 
     $('.message .close')

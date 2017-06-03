@@ -13,9 +13,6 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-uglify": "^3.0.0",
     "gulp-watch": "^4.3.11",
-    "jquery": "^3.2.1",
-    "lightbox2": "^2.9.0",
-    "semantic-ui": "^2.2.9",
     "gulp-environments": "^0.1.2"
   },
   "devDependencies": {},

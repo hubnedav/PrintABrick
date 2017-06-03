@@ -6,7 +6,7 @@
     <meta name="description" content="{{ 'meta.description' | trans | striptags('sup') }}">
     <title>{% block title %}{{ name }} - {{ 'meta.description' | trans | striptags('sup') }}{% endblock %}</title>
     {% block stylesheets %}
-        <link rel="stylesheet" href="{{ fileTimestamp(asset('resources/css/main.css')) }}">
+        <link rel="stylesheet" href="{{ fileTimestamp(asset('resources/css/style.css')) }}">
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
@@ -23,7 +23,7 @@
 {% block javascripts %}
     <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/three.js')) }}"></script>
     <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/OrbitControls.js')) }}"></script>
-    <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/main.js')) }}"></script>
+    <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/style.js')) }}"></script>
 {% endblock %}
 </body>
 </html>

@@ -21,6 +21,8 @@
     "select2": "^4.0.3",
     "three.js": "threejs#*",
     "jqueryui-touch-punch": "*",
-    "jquery-address": "*"
+    "jquery-address": "*",
+    "semantic": "semantic-ui#^2.2.10",
+    "lightbox2": "lightbox#^2.9.0"
   }
 }

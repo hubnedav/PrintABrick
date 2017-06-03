@@ -27,7 +27,7 @@ class Model
     /**
      * @var Category
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Category", inversedBy="models", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\LDraw\Category", inversedBy="models", fetch="EAGER", cascade={"persist"})
      */
     private $category;
 

@@ -14,7 +14,7 @@
 
     {% if models|length > 0 %}
         <div class="ui segment vertical basic">
-            <h3 class="ui horizontal divider header">Models</h3>
+            <h2 class="ui dividing header">{{ 'set.inventory.models' | trans }}</h2>
             <div class="ui grid doubling ten column row parts">
                 {% for model in models %}
                     {{ blocks.model(model['model'],model['quantity']) }}
@@ -24,7 +24,7 @@
     {% endif %}
     {% if missing|length > 0 %}
         <div class="ui segment vertical basic">
-            <h3 class="ui horizontal divider header">Missing</h3>
+            <h2 class="ui dividing header">{{ 'set.inventory.parts' | trans }}</h2>
             <div class="ui grid doubling ten column row parts">
                 {% for part in missing %}
                     {{ blocks.part(part['part'],part['quantity']) }}

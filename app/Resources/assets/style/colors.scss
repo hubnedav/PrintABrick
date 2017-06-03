@@ -146,4 +146,10 @@ $colors: (
   .text.color-#{$number} {
       color: $color;
   }
+
+  .segment.color-#{$number} {
+    padding-left: 0.7em !important;
+    margin-left: -1em !important;
+    border-left: $color 0.3em solid !important;
+  }
 }

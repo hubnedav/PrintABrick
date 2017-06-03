@@ -8,16 +8,16 @@
         {% endfor %}
     {% endfor %}
 
-    <div class="ui segment clearing noborder vertical">
+    <div class="ui segment clearing basic vertical">
         <a class="ui primary right floated button" href="{{ path('set_zip', {id: set.id, sorted: true }) }}" download><i class="download icon"></i> {{ 'set.download.multicolor.button' | trans}}</a>
     </div>
-    
+
     {% if colors|length > 0 %}
-        <div class="ui segment vertical noborder">
-            <h3 class="ui horizontal divider header">Models</h3>
+        <div class="ui segment vertical basic">
+            <h2 class="ui dividing header">{{ 'set.inventory.models' | trans }}</h2>
             {% for color in colors %}
-                <div class="ui segment vertical noborder">
-                    <h5 class="ui dividing header text color-{{ color['color'].id }}">
+                <div class="ui segment vertical basic side color-{{ color['color'].id }}">
+                    <h5 class="ui header">
                         {{ color['color'].name }} ({{ color['quantity'] }})
                     </h5>
                     <div class="ui grid doubling ten column row parts">
@@ -31,8 +31,8 @@
     {% endif %}
 
     {% if missing|length > 0 %}
-        <div class="ui segment vertical noborder">
-            <h3 class="ui horizontal divider header">Missing</h3>
+        <div class="ui vertical segment basic">
+            <h2 class="ui dividing header">{{ 'set.inventory.parts' | trans }}</h2>
             <div class="ui grid doubling ten column row parts">
                 {% for part in missing %}
                     {{ blocks.part(part['part'],part['quantity']) }}

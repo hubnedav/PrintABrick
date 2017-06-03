@@ -9,9 +9,15 @@ use Elastica\Query\Match;
 use Elastica\Query\Range;
 use FOS\ElasticaBundle\Repository;
 
+/**
+ * Class SetRepository
+ * @package AppBundle\Repository\Search
+ */
 class SetRepository extends Repository
 {
     /**
+     * Create search query from SetSearch entity
+     *
      * @param SetSearch $setSearch
      *
      * @return Query
@@ -23,7 +29,7 @@ class SetRepository extends Repository
         if ($searchQuery = $setSearch->getQuery()) {
             $query = new Query\MultiMatch();
 
-            $query->setFields(['name', 'id']);
+            $query->setFields(['name', 'id', 'id.ngrams']);
             $query->setQuery($searchQuery);
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
@@ -62,6 +68,11 @@ class SetRepository extends Repository
         return new Query($boolQuery);
     }
 
+    /**
+     * @param SetSearch $setSearch
+     * @param int $limit
+     * @return array
+     */
     public function search(SetSearch $setSearch, $limit = 500)
     {
         $query = $this->getSearchQuery($setSearch);
@@ -69,6 +80,14 @@ class SetRepository extends Repository
         return $this->find($query, $limit);
     }
 
+
+    /**
+     * Find sets by query with highlighted matched values
+     *
+     * @param string $query
+     * @param int $limit
+     * @return mixed
+     */
     public function findHighlighted($query, $limit = 500)
     {
         $setSearch = new SetSearch();

@@ -34,15 +34,20 @@ fos_elastica:
             types:
                 set:
                     mappings:
-                        id: { analyzer: id_analyzer, search_analyzer: "standard" }
+                        id:
+                            type: "keyword"
+                            fields:
+                                ngrams:
+                                    type: 'text'
+                                    analyzer: id_analyzer
                         name: { analyzer: name_analyzer, search_analyzer: "standard" }
                         year: { type: integer }
                         partCount: { type: integer }
                         theme:
                             type: "object"
                             properties:
-                                id: { analyzer: id_analyzer, search_analyzer: "standard" }
-                                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
+                                id: ~
+#                                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\Rebrickable\Set
@@ -55,7 +60,12 @@ fos_elastica:
                               delete: false
                 model:
                     mappings:
-                        id: { analyzer: id_analyzer, search_analyzer: "standard" }
+                        id:
+                            type: "keyword"
+                            fields:
+                                ngrams:
+                                    type: 'text'
+                                    analyzer: id_analyzer
                         name: { analyzer: name_analyzer, search_analyzer: "standard"  }
                         aliases:
                             type: "object"
@@ -64,7 +74,7 @@ fos_elastica:
                         category:
                             type: "object"
                             properties:
-                                id: { analyzer: id_analyzer, search_analyzer: "standard" }
+                                id: ~
                                 name: { analyzer: name_analyzer, search_analyzer: "standard"  }
                         keywords:
                             type: "object"
@@ -76,7 +86,3 @@ fos_elastica:
                         provider: ~
                         finder: ~
                         repository: AppBundle\Repository\Search\ModelRepository
-                        listener:
-                            insert: false
-                            update: false
-                            delete: false

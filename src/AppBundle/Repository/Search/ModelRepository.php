@@ -9,9 +9,11 @@ use FOS\ElasticaBundle\Repository;
 class ModelRepository extends Repository
 {
     /**
+     * Create search query from ModelSearch entity
+     *
      * @param ModelSearch $modelSearch
      *
-     * @return \Elastica\Query
+     * @return Query
      */
     public function getSearchQuery(ModelSearch $modelSearch)
     {
@@ -20,7 +22,7 @@ class ModelRepository extends Repository
         if ($searchQuery = $modelSearch->getQuery()) {
             $query = new Query\MultiMatch();
 
-            $query->setFields(['name', 'id', 'aliases.id', 'keywords.name']);
+            $query->setFields(['name', 'id', 'id.ngrams', 'aliases.id', 'keywords.name']);
             $query->setQuery($searchQuery);
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
@@ -47,6 +49,13 @@ class ModelRepository extends Repository
         return $this->find($query, $limit);
     }
 
+    /**
+     * Find models by query with highlighted matched values
+     *
+     * @param string $query
+     * @param int $limit
+     * @return mixed
+     */
     public function findHighlighted($query, $limit = 500)
     {
         $modelSearch = new ModelSearch();

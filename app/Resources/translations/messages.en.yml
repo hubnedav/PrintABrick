@@ -26,6 +26,9 @@ set:
       The table below lists all instructions for this set that have been available at <a href="http://service.lego.com/en-gb/buildinginstructions" title="LEGO Customer Service" rel="nofollow">LEGO Customer Services</a>. Those that are no longer listed there may still be available to download.
 
       'NA' or 'V39' indicates the US/Canadian version. 'IN' or 'V29' indicates the international version.
+  inventory:
+    models: Bricks
+    parts: Missing
 
   form:
     search: Search
@@ -63,32 +66,32 @@ model:
   license: License
   keywords: Keywords
   aliases: Aliases
-  download: Download model
+  download: Download brick
   empty: No model
   form:
     search: Search
     category: Category
     category.all: All Categories
-  subparts: Submodels
-  related: Related models
-  parents: Parent models
+  subparts: Subparts
+  related: Related bricks
+  parents: Parent bricks
 
 page:
-  model.index: Browse models
+  model.index: Browse bricks
   set.index: Browse sets
   search: "Search: \"%query%\""
   color: Colors
 
 filter:
   model:
-   search: Search Model
+   search: Search brick
    category: Category
 
 homepage:
   models:
-    title: models
+    title: bricks
     text: Browse 3D models of LEGO<sup>®</sup> parts from LDraw™ Library
-    browse: Browse models
+    browse: Browse bricks
   sets:
     title: sets
     text: Browse LEGO<sup>®</sup> sets from Rebrickable
@@ -96,7 +99,7 @@ homepage:
 
 view.all:
   sets: View all matched sets
-  models: View all matched models
+  models: View all matched bricks
 
 flash:
   warning.title: Warning

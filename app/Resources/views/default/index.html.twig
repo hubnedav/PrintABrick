@@ -1,5 +1,18 @@
 {% extends 'base.html.twig' %}
 
+{% import 'macros/blocks.html.twig' as blocks %}
+
+{% block meta %}
+    {{ blocks.meta(
+    name,
+    app.request.uri,
+    'meta.description' | trans | striptags('sup'),
+    app.request.schemeAndHttpHost~asset('resources/images/meta-logo.png'),
+    256,
+    256
+    )}}
+{% endblock %}
+
 {% block body %}
     <div class="ui vertical inverted sidebar menu right">
         <div class="ui search item category center aligned">

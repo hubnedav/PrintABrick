@@ -2,7 +2,18 @@
 
 {% import 'macros/blocks.html.twig' as blocks %}
 
+{% block title %}{{ part.id }} - {{ part.name }}{% endblock %}
+
 {% block header %}{{ part.name }}{% endblock %}
+
+{% block meta %}
+    {{ blocks.meta(
+    part.id ~' '~ part.name,
+    app.request.uri,
+    'meta.description' | trans | striptags('sup'),
+    asset('-1/'~part.id~'.png') | imagine_filter('part_large')
+    )}}
+{% endblock %}
 
 {% block content %}
     <div class="ui vertical segment secondary">

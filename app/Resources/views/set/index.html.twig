@@ -6,6 +6,17 @@
 
 {% block header %}{{ 'page.set.index' | trans }}{% endblock %}
 
+{% block meta %}
+    {{ blocks.meta(
+    name~' - '~'page.set.index' | trans ,
+    app.request.uri,
+    'meta.description' | trans | striptags('sup'),
+    app.request.schemeAndHttpHost~asset('resources/images/meta-logo.png'),
+    256,
+    256
+    )}}
+{% endblock %}
+
 {% block content %}
     <div class="ui segment vertical">
         <div class="ui container grid stackable divided">

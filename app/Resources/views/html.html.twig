@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="description" content="{{ 'meta.description' | trans | striptags('sup') }}">
+    {% block meta %}
+
+    {% endblock %}
     <title>{% block title %}{{ name }} - {{ 'meta.description' | trans | striptags('sup') }}{% endblock %}</title>
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ fileTimestamp(asset('resources/css/style.css')) }}">
@@ -18,7 +21,7 @@
 </head>
 <body class="default-theme body pushable">
 {% block body %}
-    
+
 {% endblock %}
 {% block javascripts %}
     <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/three.js')) }}"></script>

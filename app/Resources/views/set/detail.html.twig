@@ -6,6 +6,15 @@
 
 {% block header %}{{ set.name | escape('html') }}{% endblock %}
 
+{% block meta %}
+    {{ blocks.meta(
+    set.id~' '~set.name ,
+    app.request.uri,
+    'meta.description' | trans | striptags('sup'),
+    asset(set.id~'.jpg')|imagine_filter('set_large')
+    )}}
+{% endblock %}
+
 {% block content %}
 
     <div class="ui vertical segment secondary">

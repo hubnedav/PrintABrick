@@ -104,3 +104,19 @@
 {% macro ccal2_license(title,author) %}
     "{{ title }}" by {{ author }}, used under <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a> / Converted to stl from original
 {% endmacro %}
+
+{% macro meta(title, url, description, image, imageHeight = 600, imageWidth = 900) %}
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:url" content="{{ url }}">
+    <meta property="og:image" content="{{ image }}">
+    <meta property="og:image:width" content="{{ imageWidth }}">
+    <meta property="og:image:height" content="{{ imageHeight }}">
+
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:image:src" content="{{ image }}">
+    <meta property="twitter:site" content="{{ name }}">
+    <meta property="twitter:url" content="{{ url }}">
+    <meta property="twitter:description" content="{{ description }}">
+    <meta property="twitter:title" content="{{ title }}">
+{% endmacro %}

@@ -163,7 +163,7 @@ class RebrickableManager
      * @param $setId
      * @param $page
      *
-     * @return
+     * @return Part[]
      */
     public function getSetParts($setId, $page = null)
     {
@@ -176,7 +176,6 @@ class RebrickableManager
         $response = $this->rebrickableClient->call('GET', 'lego/sets/'.$setId.'/parts', $options);
         $data = json_decode($response, true)['results'];
 
-        dump($data);
 
         return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
     }

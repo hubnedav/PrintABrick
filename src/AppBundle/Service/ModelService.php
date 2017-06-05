@@ -8,6 +8,13 @@ class ModelService
 {
     private $models = [];
 
+
+    /**
+     * Get all subparts of model
+     *
+     * @param Model $model
+     * @return array
+     */
     public function getAllSubparts(Model $model)
     {
         foreach ($model->getSubparts() as $subpart) {

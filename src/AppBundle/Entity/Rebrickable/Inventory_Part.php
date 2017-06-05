@@ -99,7 +99,7 @@ class Inventory_Part
     /**
      * Set type.
      *
-     * @param bool $type
+     * @param bool $spare
      *
      * @return Inventory_Part
      */

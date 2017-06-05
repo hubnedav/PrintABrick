@@ -130,7 +130,7 @@ class Set
     }
 
     /**
-     * @param Inventory $part
+     * @param Inventory $inventory
      *
      * @return Set
      */

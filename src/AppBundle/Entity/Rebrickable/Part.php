@@ -58,7 +58,7 @@ class Part
     }
 
     /**
-     * @param Inventory_Part $invetoryPart
+     * @param Inventory_Part $inventoryPart
      *
      * @return Part
      */
@@ -70,7 +70,7 @@ class Part
     }
 
     /**
-     * @param Inventory_Part $set
+     * @param Inventory_Part $inventoryPart
      *
      * @return Part
      */
@@ -90,7 +90,7 @@ class Part
     }
 
     /**
-     * @param Collection $category
+     * @param Category $category
      *
      * @return Part
      */

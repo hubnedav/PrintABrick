@@ -190,21 +190,19 @@ class SetController extends Controller
     public function zipAction(Request $request, Set $set)
     {
         $sorted = $request->query->get('sorted') == 1 ? true : false;
-
         $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
+        // escape forbidden characters from filename
+        $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$set->getId()}_{$set->getName()}({$sort})");
 
-        $zip = $this->get('service.zip')->createFromSet($set, $sorted);
+        $zip = $this->get('service.zip')->createFromSet($set, $filename, $sorted);
 
         $response = new BinaryFileResponse($zip);
         $response->headers->set('Content-Type', 'application/zip');
 
-        // escape forbidden characters from filename
-        $filename = preg_replace('/[^a-z0-9\.]/i', '_', "set_{$set->getId()}_{$set->getName()}({$sort}).zip");
-
         // Create the disposition of the file
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $filename
+            $filename.'.zip'
         );
 
         $response->headers->set('Content-Disposition', $disposition);

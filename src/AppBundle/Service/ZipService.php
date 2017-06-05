@@ -45,10 +45,17 @@ class ZipService
         return $archive;
     }
 
-    public function createFromSet(Set $set, $sorted = false)
+    /**
+     * Create zip archive with models in set in temp dir
+     *
+     * @param Set $set
+     * @param string $filename Filename of archive base directory
+     * @param bool $sorted Sort models into folders by color
+     * @return bool|string
+     */
+    public function createFromSet(Set $set, $filename, $sorted = false)
     {
-        $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
-        $this->zipName = "set_{$set->getId()}_{$set->getName()}({$sort})";
+        $this->zipName = $filename;
 
         $zipPath = tempnam(sys_get_temp_dir(), 'printabrick');
         $this->archive = $this->createZip($zipPath);
@@ -65,9 +72,17 @@ class ZipService
         return $zipPath;
     }
 
-    public function createFromModel(Model $model, $subparts = false)
+    /**
+     * Create zip archive of model in temp dir
+     *
+     * @param Model $model
+     * @param string $filename Filename of archive base directory
+     * @param bool $subparts Include directory with subparts into archive
+     * @return bool|string
+     */
+    public function createFromModel(Model $model, $filename, $subparts = false)
     {
-        $this->zipName = "model_{$model->getId()}";
+        $this->zipName = $filename;
 
         $zipPath = tempnam(sys_get_temp_dir(), 'printabrick');
         $this->archive = $this->createZip($zipPath);
@@ -140,6 +155,10 @@ class ZipService
         $this->models[$model->getId()] = $model;
     }
 
+
+    /**
+     * Add LICENSE.txt file to archive
+     */
     private function addLicense()
     {
         $text = sprintf('All stl files in this archive were converted by LDView from LDraw Library http://www.ldraw.org/'."\n\n");

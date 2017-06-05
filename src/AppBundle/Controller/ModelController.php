@@ -88,18 +88,19 @@ class ModelController extends Controller
      */
     public function zipAction(Request $request, Model $model)
     {
-        $zip = $this->get('service.zip')->createFromModel($model, true);
+        // escape forbidden characters from filename
+        $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$model->getId()}_{$model->getName()}");
+
+        $zip = $this->get('service.zip')->createFromModel($model, $filename, true);
 
         $response = new BinaryFileResponse($zip);
         $response->headers->set('Content-Type', 'application/zip');
 
-        // escape forbidden characters from filename
-        $filename = preg_replace('/[^a-z0-9\.]/i', '_', "model_{$model->getId()}_{$model->getName()}.zip");
 
         // Create the disposition of the file
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $filename
+            $filename.'.zip'
         );
 
         $response->headers->set('Content-Disposition', $disposition);

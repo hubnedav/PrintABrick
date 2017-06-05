@@ -6,10 +6,21 @@
 
 {% block header %}{{ 'page.model.index' | trans }}{% endblock %}
 
+{% block meta %}
+    {{ blocks.meta(
+    name~' - '~'page.model.index' | trans,
+    app.request.uri,
+    'meta.description' | trans | striptags('sup'),
+    app.request.schemeAndHttpHost~asset('resources/images/meta-logo.png'),
+    256,
+    256
+    )}}
+{% endblock %}
+
 {% block content %}
-    <div class="ui segment vertical">
+    <div class="ui segment vertical secondary">
         <div class="ui container stackable grid divided">
-                <div class="column four wide alternate stripe">
+                <div class="column four wide">
                     <div class="segment basic ui filter">
                         <h3 class="header dividing ui">{{ 'model.filter.title' | trans }}</h3>
                         {{ form_start(form) }}
@@ -31,18 +42,18 @@
                     <div class="segment basic ui">
                         <div class="ui header segment vertical sort">
                             <div class="ui grid stackable">
-                                <div class="left floated left aligned eleven wide column">
-                                    <div class="ui text menu">
-                                        <div class="header item">Sort By</div>
-                                        {{ knp_pagination_sortable(models, 'Number', 'm.id') }}
-                                        {{ knp_pagination_sortable(models, 'Name', 'm.name') }}
+                                <div class="five wide column">
+                                    <div class="ui text left floated menu">
+                                        <div class="header item">Showing</div>
+                                        <span class="item">{{ models.paginationData['firstItemNumber']~' - '~models.paginationData['lastItemNumber'] }} of {{ models.getTotalItemCount }} items</span>
                                     </div>
                                 </div>
 
-                                <div class="right floated right aligned five wide column">
-                                    <div class="ui text menu right floated">
-                                        <div class="header item">Showing</div>
-                                        <span class="item">{{ models.getTotalItemCount }}</span>
+                                <div class="eleven wide column">
+                                    <div class="ui text right floated menu">
+                                        <div class="header item">Sort By</div>
+                                        {{ knp_pagination_sortable(models, 'Number', 'm.id') }}
+                                        {{ knp_pagination_sortable(models, 'Name', 'm.name') }}
                                     </div>
                                 </div>
                             </div>

@@ -35,11 +35,11 @@
                                 <td>{{ 'set.name' | trans }}</td><td>{{ set.name }}</td>
                             </tr>
                             <tr>
-                                <td>{{ 'set.year' | trans }}</td><td><a href="{{ path('set_index',{'s[year][from]':set.year, 's[year][to]':set.year}) }}">{{ set.year }}</a></td>
+                                <td>{{ 'set.year' | trans }}</td><td><a href="{{ path('set_index',{'year[from]':set.year, 'year[to]':set.year}) }}">{{ set.year }}</a></td>
                             </tr>
                             <tr>
                                 <td>{{ 'set.theme' | trans }}</td>
-                                <td><a href="{{ path('set_index',{'s[theme]' : set.theme.id }) }}">{{ set.theme ? set.theme.fullName }}</a></td>
+                                <td><a href="{{ path('set_index',{'theme' : set.theme.id }) }}">{{ set.theme ? set.theme.fullName }}</a></td>
                             </tr>
                             <tr>
                                 <td>{{ 'set.parts' | trans }}</td><td>
@@ -111,6 +111,4 @@
             {% endif %}
         </div>
     </div>
-
-
 {% endblock %}

@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="ui segment vertical">
+    <div class="ui segment vertical secondary">
         <div class="ui container grid stackable divided">
             <div class="column four wide alternate stripe mobile">
                 <div class="segment basic ui filter">
@@ -48,10 +48,17 @@
             </div>
             <div class="column twelve wide">
                 <div class="ui segment basic">
-                    <div class="ui header sort">
+                    <div class="ui header segment vertical sort">
                         <div class="ui grid stackable">
-                            <div class="left floated left aligned twelve wide column">
-                                <div class="ui text menu">
+                            <div class="five wide column">
+                                <div class="ui text left floated menu">
+                                    <div class="header item">Showing</div>
+                                    <span class="item">{{ sets.paginationData['firstItemNumber']~' - '~sets.paginationData['lastItemNumber'] }} of {{ sets.getTotalItemCount }} items</span>
+                                </div>
+                            </div>
+
+                            <div class="eleven wide column">
+                                <div class="ui text right floated menu">
                                     <div class="header item">Sort By</div>
 
                                     {{ knp_pagination_sortable(sets, 'Number', ['s.id']) }}
@@ -60,25 +67,18 @@
                                     {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount']) }}
                                 </div>
                             </div>
-
-                            <div class="right floated right aligned four wide column">
-                                <div class="ui text right floated menu">
-                                    <div class="header item">Showing</div>
-                                    <span class="item">{{ sets.getTotalItemCount }}</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                    <div class="ui clearing divider"></div>
-                    <div class="ui five column doubling grid sets" id="results">
-                        {% for set in sets %}
-                            {{ blocks.set(set) }}
-                        {% else %}
-                            {{ blocks.empty('empty.search.title' | trans ) }}
-                        {% endfor %}
+                    <div class="ui segment vertical">
+                        <div class="ui five column doubling grid sets" id="results">
+                            {% for set in sets %}
+                                {{ blocks.set(set) }}
+                            {% else %}
+                                {{ blocks.empty('empty.search.title' | trans ) }}
+                            {% endfor %}
+                        </div>
                     </div>
-                    <div class="ui clearing divider"></div>
-                    <div class="ui footer right floated">
+                    <div class="ui segment vertical right floated">
                         {{ knp_pagination_render(sets) }}
                     </div>
                 </div>

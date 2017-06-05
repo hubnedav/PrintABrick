@@ -29,18 +29,18 @@ class SetController extends Controller
     {
         $setSearch = new SetSearch();
 
-        $form = $this->get('form.factory')->createNamedBuilder('s', SetSearchType::class, $setSearch)->getForm();
+        $form = $this->get('form.factory')->createNamedBuilder('', SetSearchType::class, $setSearch)->getForm();
         $form->handleRequest($request);
 
         /** @var SetRepository $setRepository */
         $setRepository = $this->get('fos_elastica.manager')->getRepository(Set::class);
-        $results = $setRepository->search($setSearch, 5000);
+        $results = $setRepository->search($setSearch, 500);
 
         $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
             $results,
             $request->query->getInt('page', 1)/*page number*/,
-            $request->query->getInt('limit', 24)/*limit per page*/
+            $request->query->getInt('limit', 20)/*limit per page*/
         );
 
         return $this->render('set/index.html.twig', [

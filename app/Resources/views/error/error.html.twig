@@ -2,10 +2,20 @@
 
 {% block title %}{{ 'page.error.title'|trans }}{% endblock %}
 
+{% block header %}{{ 'page.error.title'|trans }}{% endblock %}
+
+
 {% block content %}
-    <h1 class="ui center aligned icon header">
-        <i class="circular warning icon"></i>
-        {{ 'page.error.large'|trans }}
-    </h1>
-    <p class="ui center aligned">{{ 'page.error.text'|trans }}</p>
+    <div class="segment very padded vertical ui secondary">
+        <div class="ui container">
+            <h1 class="ui center aligned icon header">
+                <i class="circular warning icon"></i>
+                <div class="content">
+                    {{ 'page.error.large'|trans }}
+                    <div class="sub header">{{ 'page.error.text'|trans }}</div>
+                </div>
+            </h1>
+
+        </div>
+    </div>
 {% endblock %}

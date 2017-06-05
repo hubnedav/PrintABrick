@@ -81,6 +81,10 @@ page:
   set.index: Browse sets
   search: "Search: \"%query%\""
   color: Colors
+  error:
+    title: Error
+    large: Error
+    text: Sorry, an unexpected error has occured.
 
 filter:
   model:
@@ -120,11 +124,6 @@ empty:
         message: Sorry, no reviews found on Brickset
   models:
   search.title: No results found for your search criteria
-
-page.error:
-  title:
-  large:
-  text:
 
 part:
   id: Number

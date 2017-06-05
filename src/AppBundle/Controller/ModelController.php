@@ -5,18 +5,21 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Form\Search\ModelSearchType;
 use AppBundle\Model\ModelSearch;
+use AppBundle\Repository\Rebrickable\SetRepository;
 use Knp\Component\Pager\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
  * Part controller.
  *
- * @Route("models")
+ * @Route("bricks")
  */
 class ModelController extends Controller
 {
@@ -29,11 +32,11 @@ class ModelController extends Controller
     {
         $modelSearch = new ModelSearch();
 
-        $form = $this->get('form.factory')->createNamedBuilder('m', ModelSearchType::class, $modelSearch)->getForm();
+        $form = $this->get('form.factory')->createNamedBuilder('', ModelSearchType::class, $modelSearch)->getForm();
         $form->handleRequest($request);
 
         $elasticaManager = $this->get('fos_elastica.manager');
-        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch, 5000);
+        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch, 500);
 
         /** @var Paginator $paginator */
         $paginator = $this->get('knp_paginator');
@@ -61,15 +64,12 @@ class ModelController extends Controller
         if ($model = $this->get('repository.ldraw.model')->findOneByNumber($id)) {
             try {
                 $subparts = $this->get('service.model')->getAllSubparts($model);
-
-                $rbParts = $model != null ? $this->get('repository.rebrickable.part')->findAllByModel($model) : null;
                 $sets = $model != null ? $this->get('repository.rebrickable.set')->findAllByModel($model) : null;
 
                 $related = $this->get('repository.ldraw.model')->findAllRelatedModels($model->getId());
 
                 return $this->render('model/detail.html.twig', [
                     'model' => $model,
-                    'rbParts' => $rbParts,
                     'sets' => $sets,
                     'related' => $related,
                     'subparts' => $subparts,

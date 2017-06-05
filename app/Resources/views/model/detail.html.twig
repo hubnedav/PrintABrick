@@ -6,6 +6,15 @@
 
 {% block header %}{{ model.name }}{% endblock %}
 
+{% block meta %}
+    {{ blocks.meta(
+    model.id~' '~model.name,
+    app.request.uri,
+    'meta.description' | trans | striptags('sup'),
+    asset('-1/'~model.id~'.png') | imagine_filter('part_large')
+    )}}
+{% endblock %}
+
 {% block content %}
     <div class="ui vertical segment secondary">
         <div class="ui container stackable grid">
@@ -27,7 +36,7 @@
                         </tr>
                         <tr>
                             <td>{{ 'model.category' | trans }}</td>
-                            <td><a href="{{ path('model_index',{'m[category]':model.category.id}) }}">{{ model.category ? model.category.name }}</a></td>
+                            <td><a href="{{ path('model_index',{'category':model.category.id}) }}">{{ model.category ? model.category.name }}</a></td>
                         </tr>
                         <tr>
                             <td>{{ 'model.author' | trans }}</td><td>{{ model.author.name }}</td>

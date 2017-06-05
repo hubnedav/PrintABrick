@@ -4,6 +4,7 @@ namespace AppBundle\Repository\Rebrickable;
 
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Repository\BaseRepository;
+use Doctrine\ORM\Query;
 
 class InventoryRepository extends BaseRepository
 {
@@ -16,6 +17,6 @@ class InventoryRepository extends BaseRepository
             ->setMaxResults(1)
             ->select('inventory.id');
 
-        return $queryBuilder->getQuery()->getSingleScalarResult();
+        return $queryBuilder->getQuery()->getOneOrNullResult(Query::HYDRATE_SINGLE_SCALAR);
     }
 }

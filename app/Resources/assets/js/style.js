@@ -23,7 +23,7 @@ $(document).ready(function(){
         onVisible: function() {
             $('.image img').visibility('refresh');
         },
-        history: true,
+        // history: true,
         historyType: 'hash'
     });
 
@@ -31,7 +31,7 @@ $(document).ready(function(){
         onVisible: function() {
             $('.image img').visibility('refresh');
         },
-        history: true,
+        // history: true,
         historyType: 'hash'
     });
 
@@ -52,4 +52,31 @@ $(document).ready(function(){
     $('.ui.sidebar')
         .sidebar('attach events', '.toc.item')
     ;
+
+    // save last selected inventory tab to session
+    $('.setTab').click(function() {
+        $tab = $(this).attr('data-tab');
+
+        $.ajax({
+            type: 'POST',
+            url: routes.set_tab.replace("PLACEHOLDER", $tab),
+            async: true,
+        });
+    });
+
+    $('.ui.search')
+        .search({
+            type: 'category',
+            apiSettings: {
+                action: 'search',
+                url: routes.search_autocomplete+'?query={query}',
+            },
+            minCharacters: 3,
+            fields: {
+                title: 'name',
+                description: 'id',
+                url: 'url',
+                image: 'img'
+            }
+        });
 });

@@ -117,6 +117,9 @@
 
 {% block javascripts %}
     {{ parent() }}
+
+    <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/three.js')) }}"></script>
+    <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/OrbitControls.js')) }}"></script>
     <script type="text/javascript">
         window.onload = function() {
             $('#model-viewer').ModelViewer('{{ path('media_file', {'path': model.path }) }}');

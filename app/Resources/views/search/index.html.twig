@@ -16,7 +16,7 @@
                 {% endfor %}
             </div>
             <div class="spacing top">
-                <a class="show all" href="{{ path('set_index',{'s[query]':query}) }}">{{ 'view.all.sets' | trans }}</a>
+                <a class="show all" href="{{ path('set_index',{'query':query}) }}">{{ 'view.all.sets' | trans }}</a>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
                 {% endfor %}
             </div>
             <div class="spacing top">
-                <a class="show all" href="{{ path('model_index',{'m[query]':query}) }}">{{ 'view.all.models' | trans }}</a>
+                <a class="show all" href="{{ path('model_index',{'query':query}) }}">{{ 'view.all.models' | trans }}</a>
             </div>
         </div>
     </div>

@@ -23,10 +23,16 @@
 {% block body %}
 
 {% endblock %}
+
+<script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/style.js')) }}"></script>
+<script type="text/javascript">
+    var routes = {
+        search_autocomplete : "{{ path('search_autocomplete') }}",
+        set_tab : "{{ path('set_tab', { 'tab': "PLACEHOLDER" }) }}"
+    };
+</script>
 {% block javascripts %}
-    <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/three.js')) }}"></script>
-    <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/OrbitControls.js')) }}"></script>
-    <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/style.js')) }}"></script>
+
 {% endblock %}
 </body>
 </html>

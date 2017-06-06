@@ -30,14 +30,14 @@
         {% endif %}
 
         <div class="ui top attached tabular menu submenu">
-            <a class="ui item {% if not app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/unicolor"><i class="grid layout icon"></i> Uni-Color</a>
-            <a class="ui item {% if app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/multicolor"><i class="list layout icon"></i> Multi-Color</a>
+            <a class="ui item setTab {% if app.session.get('tab') != 'inventory/multicolor' %}active{%  endif %}" data-tab="inventory/unicolor"><i class="grid layout icon"></i> Uni-Color</a>
+            <a class="ui item setTab {% if app.session.get('tab') == 'inventory/multicolor' %}active{%  endif %}" data-tab="inventory/multicolor"><i class="list layout icon"></i> Multi-Color</a>
         </div>
 
-        <div class="ui bottom attached tab {% if not app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/unicolor">
+        <div class="ui bottom attached tab {% if app.session.get('tab') != 'inventory/multicolor' %}active{%  endif %}" data-tab="inventory/unicolor">
             {{ render(path('set_models', {id: set.id})) }}
         </div>
-        <div class="ui bottom attached tab {% if app.session.get('multicolor') %}active{%  endif %}" data-tab="inventory/multicolor">
+        <div class="ui bottom attached tab {% if app.session.get('tab') == 'inventory/multicolor' %}active{%  endif %}" data-tab="inventory/multicolor">
             {{ render(path('set_colors', {id: set.id})) }}
         </div>
     {% endif %}

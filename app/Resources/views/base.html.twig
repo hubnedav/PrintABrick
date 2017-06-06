@@ -107,27 +107,3 @@
         {% include 'footer.html.twig' %}
     </div>
 {% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('.ui.search')
-                .search({
-                    type: 'category',
-                    apiSettings: {
-                        action: 'search',
-                        url: '{{ path('search_autocomplete') }}?query={query}',
-                    },
-                    minCharacters: 3,
-                    fields: {
-                        title: 'name',
-                        description: 'id',
-                        url: 'url',
-                        image: 'img'
-                    }
-                });
-        });
-    </script>
-{% endblock %}

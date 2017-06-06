@@ -18,11 +18,11 @@ A Symfony project
 
 You can check if your system meets requirements by running `$ bin/symfony_requirements`
 
-For full requirements see Symfony 3.2 [docs](http://symfony.com/doc/3.2/reference/requirements.html).
+For full requirements see Symfony 3.3 [docs](http://symfony.com/doc/3.3/reference/requirements.html).
 
 
 #### Required 
-* Elasticsearch
+* Elasticsearch >= 5
 
     Instructions for installing and deploying Elasticsearch may be found [here](https://www.elastic.co/downloads/elasticsearch). 
 * POV-Ray [source](http://www.povray.org/).

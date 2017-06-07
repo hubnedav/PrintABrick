@@ -2,12 +2,12 @@ page:
   home: Homepage
   model:
     index: Bricks
-    detail: %value%
+    detail: "%value%"
   set:
     index: Sets
-    detail: %value%
+    detail: "%value%"
   part:
       index: Parts
-      detail: %value%
+      detail: "%value%"
   search: "Search: \"%value%\""
   colors: Colors

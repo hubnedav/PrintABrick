@@ -4,6 +4,7 @@ namespace AppBundle\Imagine;
 
 use AppBundle\Api\Manager\BricksetManager;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 
 class SetImageLoader extends BaseImageLoader
@@ -19,9 +20,10 @@ class SetImageLoader extends BaseImageLoader
     /**
      * SetImageLoader constructor.
      *
-     * @param $bricksetManager
+     * @param BricksetManager     $bricksetManager
+     * @param FilesystemInterface $mediaFilesystem
      */
-    public function __construct($bricksetManager, $mediaFilesystem)
+    public function __construct(BricksetManager $bricksetManager, FilesystemInterface $mediaFilesystem)
     {
         $this->bricksetManager = $bricksetManager;
         $this->mediaFilesystem = $mediaFilesystem;

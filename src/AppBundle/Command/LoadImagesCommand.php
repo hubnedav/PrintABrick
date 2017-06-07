@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Service\Loader\ImageLoader;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,6 +11,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class LoadImagesCommand extends ContainerAwareCommand
 {
+    private $imageLoader;
+
+    /**
+     * LoadImagesCommand constructor.
+     */
+    public function __construct($name = null, ImageLoader $imageLoader)
+    {
+        $this->imageLoader = $imageLoader;
+
+        parent::__construct($name);
+    }
+
     protected function configure()
     {
         $this
@@ -27,17 +40,16 @@ class LoadImagesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $imageLoaderService = $this->getContainer()->get('service.loader.image');
-        $imageLoaderService->setOutput($output);
+        $this->imageLoader->setOutput($output);
 
         $color = $input->getOption('color');
 
         if ($color !== null && $input->getOption('rebrickable')) {
-            $imageLoaderService->loadColorFromRebrickable($color);
+            $this->imageLoader->loadColorFromRebrickable($color);
         }
 
         if ($input->getOption('missing')) {
-            $imageLoaderService->loadMissingModelImages();
+            $this->imageLoader->loadMissingModelImages();
         }
     }
 }

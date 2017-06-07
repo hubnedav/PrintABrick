@@ -7,6 +7,8 @@ use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Repository\LDraw\ModelRepository;
 use AppBundle\Repository\Rebrickable\PartRepository;
 use AppBundle\Util\RelationMapper;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class RelationLoader extends BaseLoader
 {
@@ -22,15 +24,17 @@ class RelationLoader extends BaseLoader
     /**
      * RelationLoader constructor.
      *
-     * @param RelationMapper  $relationMapper
-     * @param ModelRepository $modelRepository
-     * @param PartRepository  $partRepository
+     * @param EntityManagerInterface $em
+     * @param LoggerInterface        $logger
+     * @param RelationMapper         $relationMapper
      */
-    public function __construct($relationMapper, $modelRepository, $partRepository)
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, RelationMapper $relationMapper)
     {
         $this->relationMapper = $relationMapper;
-        $this->modelRepository = $modelRepository;
-        $this->partRepository = $partRepository;
+        $this->modelRepository = $em->getRepository(Model::class);
+        $this->partRepository = $em->getRepository(Part::class);
+
+        parent::__construct($em, $logger);
     }
 
     public function loadAll()

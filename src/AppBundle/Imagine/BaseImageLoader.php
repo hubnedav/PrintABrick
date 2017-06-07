@@ -9,6 +9,8 @@ abstract class BaseImageLoader implements LoaderInterface
     abstract public function find($path);
 
     /**
+     * Check if file on remote url exists.
+     *
      * @param string $url
      *
      * @return bool

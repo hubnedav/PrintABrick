@@ -38,9 +38,10 @@ class StlRendererService
     /**
      * StlRendererService constructor.
      *
-     * @param $layout
-     * @param $povray
-     * @param $stl2pov
+     * @param string $layout
+     * @param string $povray
+     * @param string $stl2pov
+     * @param string $tmpDir
      */
     public function __construct($layout, $povray, $stl2pov, $tmpDir = null)
     {

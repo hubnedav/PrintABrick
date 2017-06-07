@@ -8,7 +8,7 @@ use AppBundle\Api\Client\Rebrickable\Entity\Part;
 use AppBundle\Api\Client\Rebrickable\Entity\PartCategory;
 use AppBundle\Api\Client\Rebrickable\Entity\Set;
 use AppBundle\Api\Client\Rebrickable\Entity\Theme;
-use AppBundle\Api\Client\Rebrickable\Rebrickable_v3;
+use AppBundle\Api\Client\Rebrickable\RebrickableClient;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -19,7 +19,7 @@ class RebrickableManager
     const FORMAT = 'json';
 
     /**
-     * @var Rebrickable_v3
+     * @var RebrickableClient
      */
     private $rebrickableClient;
 
@@ -31,9 +31,9 @@ class RebrickableManager
     /**
      * RebrickableManager constructor.
      *
-     * @param Rebrickable_v3 $rebrickableClient
+     * @param RebrickableClient $rebrickableClient
      */
-    public function __construct(Rebrickable_v3 $rebrickableClient)
+    public function __construct(RebrickableClient $rebrickableClient)
     {
         $this->rebrickableClient = $rebrickableClient;
         $this->serializer = $this->initSerializer();
@@ -175,7 +175,6 @@ class RebrickableManager
 
         $response = $this->rebrickableClient->call('GET', 'lego/sets/'.$setId.'/parts', $options);
         $data = json_decode($response, true)['results'];
-
 
         return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
     }

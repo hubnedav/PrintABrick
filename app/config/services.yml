@@ -1,8 +1,92 @@
 imports:
-    - { resource: service/repository.yml }
-    - { resource: service/api.yml }
-    - { resource: service/loader.yml }
-    - { resource: service/util.yml }
-    - { resource: service/service.yml }
-    - { resource: service/form.yml }
+    - { resource: service/legacy_aliases.yml }
     - { resource: service/menu.yml }
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        public: false
+
+    # makes classes in src/AppBundle available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        exclude: '../../src/AppBundle/{Entity,Repository,Exception,Api}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    AppBundle\Controller\:
+        resource: '../../src/AppBundle/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    app.brickset.cache_provider:
+        class: Doctrine\Common\Cache\PhpFileCache
+        arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
+
+    AppBundle\Service\Stl\StlRendererService:
+        arguments:
+            $layout: '%kernel.root_dir%/Resources/povray_layout/layout.tmpl'
+            $povray: '%povray_bin%'
+            $stl2pov: '%stl2pov_bin%'
+
+    AppBundle\Service\Stl\StlConverterService:
+        arguments:
+            $ldview: '%ldview_bin%'
+
+    AppBundle\Service\Stl\StlFixerService:
+        arguments:
+            $ADMesh: '%admesh_bin%'
+
+    AppBundle\Api\Client\Brickset\BricksetClient:
+        arguments:
+            $apiKey: '%brickset_apikey%'
+
+    AppBundle\Api\Client\Rebrickable\RebrickableClient:
+        arguments:
+            $apiKey: '%rebrickable_apikey%'
+
+    AppBundle\Api\Manager\RebrickableManager: ~
+
+    AppBundle\Api\Manager\BricksetManager:
+        arguments:
+           $cache: '@app.brickset.cache_provider'
+
+    AppBundle\Imagine\PartImageLoader:
+        tags:
+            - { name: liip_imagine.binary.loader, loader: part_image_loader }
+
+    AppBundle\Imagine\SetImageLoader:
+        tags:
+            - { name: liip_imagine.binary.loader, loader: set_image_loader }
+
+    AppBundle\Service\Loader\BaseLoader:
+        abstract:  true
+
+    AppBundle\Service\Loader\RebrickableLoader:
+        arguments:
+            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
+
+    AppBundle\Service\Loader\ImageLoader:
+        arguments:
+            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
+
+    AppBundle\Util\RelationMapper:
+        calls:
+            - [ loadResource, ['%kernel.root_dir%/Resources/relations/part_model.yml', 'part_model']]
+            - [ loadResource, ['%kernel.root_dir%/Resources/relations/alias_model.yml', 'alias_model']]
+
+    menu.builder.main:
+        class: AppBundle\Menu\Builder
+        arguments: ['@knp_menu.factory', '@request_stack']
+        public: true
+        tags:
+          - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
+
+    AppBundle\Twig\AppExtension:
+        tags:
+            - { name: twig.extension }

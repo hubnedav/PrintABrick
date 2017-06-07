@@ -2,11 +2,13 @@
 
 namespace AppBundle\Form\Search;
 
+use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Entity\Rebrickable\Theme;
 use AppBundle\Form\NumberRangeType;
 use AppBundle\Model\SetSearch;
 use AppBundle\Repository\Rebrickable\SetRepository;
 use AppBundle\Repository\Rebrickable\ThemeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,10 +23,15 @@ class SetSearchType extends AbstractType
     /** @var SetRepository */
     private $setRepository;
 
-    public function __construct(ThemeRepository $themeRepository, SetRepository $setRepository)
+    /**
+     * SetSearchType constructor.
+     *
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->themeRepository = $themeRepository;
-        $this->setRepository = $setRepository;
+        $this->themeRepository = $em->getRepository(Theme::class);
+        $this->setRepository = $em->getRepository(Set::class);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

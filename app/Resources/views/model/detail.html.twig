@@ -25,6 +25,7 @@
             </div>
             <div class="column six wide">
                 <div class="item-info ui">
+                    <div class="addthis_inline_share_toolbox"></div>
                     <table class="ui very basic table">
                         <tr>
                             <td>{{ 'model.id' | trans }}</td>
@@ -40,9 +41,6 @@
                         </tr>
                         <tr>
                             <td>{{ 'model.author' | trans }}</td><td>{{ model.author.name }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ 'model.set.count' | trans }}</td><td>{{ sets|length }}</td>
                         </tr>
                         <tr>
                             <td>{{ 'model.license' | trans }}</td>
@@ -80,39 +78,57 @@
     <div class="ui vertical segment">
         <div class="ui tabular pointing secondary menu stackable">
             <div class="container ui">
-                <a class="item active" data-tab="subparts">{{ 'model.subparts' | trans }} ({{ subparts|length }})</a>
-                <a class="item" data-tab="related">{{ 'model.related' | trans }} ({{ related|length }})</a>
-                <a class="item" data-tab="parents">{{ 'model.parents' | trans }} ({{ model.parents|length }})</a>
+                <a class="item active" data-tab="related">{{ 'model.related' | trans }}</a>
+                <a class="item" data-tab="sets">{{ 'model.sets' | trans }}</a>
+                {#<a class="item" data-tab="parents">{{ 'model.parents' | trans }} ({{ model.parents|length }})</a>#}
             </div>
         </div>
 
         <div class="container ui">
-            <div class="ui tab active" data-tab="subparts">
-                <div class="ui grid doubling ten column row parts">
-                    {% for subpart in subparts %}
-                        {{ blocks.model(subpart['model'], subpart['quantity']) }}
-                    {% endfor %}
+            <div class="ui tab active" data-tab="related">
+                <div class="segment vertical ui">
+                    <h3 class="header">Submodels</h3>
+                    <div class="ui grid doubling ten column row parts">
+                        {% for subpart in submodels %}
+                            {{ blocks.model(subpart['model'], subpart['quantity']) }}
+                        {% else %}
+                            <div class="empty"></div>
+                        {% endfor %}
+                    </div>
                 </div>
+
+                <div class="segment vertical ui">
+                    <h3 class="header">Siblings</h3>
+                    <div class="ui grid doubling ten column row parts">
+
+                        {% for model in siblings  %}
+                            {{ blocks.model(model) }}
+                        {% else %}
+                            <div class="empty"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="segment vertical ui">
+                    <h3 class="header">Parents</h3>
+                    <div class="ui grid doubling ten column row parts">
+
+                        {% for subpart in model.parents  %}
+                            {{ blocks.model(subpart.parent) }}
+                        {% else %}
+                            <div class="empty"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+
             </div>
 
-            <div class="ui tab" data-tab="related">
-                <div class="ui grid doubling ten column row parts">
-                    {% for model in related  %}
-                        {{ blocks.model(model) }}
-                    {% endfor %}
-                </div>
+            <div class="ui tab ajax-load" data-tab="sets" data-src="{{ path('model_sets', { id: model.id, page: app.request.get('page')  }) }}">
+                <div class="ui active centered inline loader"></div>
             </div>
-
-            <div class="ui tab" data-tab="parents">
-                <div class="ui grid doubling ten column row parts">
-                    {% for subpart in model.parents  %}
-                        {{ blocks.model(subpart.parent) }}
-                    {% endfor %}
-                </div>
-            </div>
-
         </div>
     </div>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -120,6 +136,7 @@
 
     <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/three.js')) }}"></script>
     <script type="text/javascript" src="{{ fileTimestamp(asset('resources/js/OrbitControls.js')) }}"></script>
+
     <script type="text/javascript">
         window.onload = function() {
             $('#model-viewer').ModelViewer('{{ path('media_file', {'path': model.path }) }}');

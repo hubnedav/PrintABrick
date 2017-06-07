@@ -5,6 +5,7 @@ namespace AppBundle\Form\Search;
 use AppBundle\Entity\LDraw\Category;
 use AppBundle\Model\ModelSearch;
 use AppBundle\Repository\LDraw\CategoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,9 +17,14 @@ class ModelSearchType extends AbstractType
     /** @var CategoryRepository */
     private $categoryRepository;
 
-    public function __construct(CategoryRepository $categoryRepository)
+    /**
+     * ModelSearchType constructor.
+     *
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->categoryRepository = $categoryRepository;
+        $this->categoryRepository = $em->getRepository(Category::class);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

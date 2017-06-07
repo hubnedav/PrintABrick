@@ -89,7 +89,7 @@ class ModelRepository extends BaseRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findAllRelatedModels($number)
+    public function findAllRelatedModels(Model $model)
     {
         $queryBuilder = $this->createQueryBuilder('model');
 
@@ -99,7 +99,7 @@ class ModelRepository extends BaseRepository
             ->join(Subpart::class, 'parent', JOIN::WITH, 'subpart.parent = parent.parent')
             ->join(Model::class, 'related', JOIN::WITH, 'related.id = parent.subpart')
             ->where('model.id = :number')
-            ->setParameter('number', $number)
+            ->setParameter('number', $model->getId())
             ->andWhere('related.id != :number')
             ->distinct(true);
 

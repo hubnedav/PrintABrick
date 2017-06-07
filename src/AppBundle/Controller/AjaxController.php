@@ -2,13 +2,12 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-class AjaxController extends Controller
+class AjaxController extends AbstractController
 {
     /**
      * @Route("/set_tab/{tab}", name="set_tab", requirements={"tab"=".+"})
@@ -19,7 +18,7 @@ class AjaxController extends Controller
         $session->set('tab', $tab);
 
         $response = new Response();
-        return $response;
 
+        return $response;
     }
 }

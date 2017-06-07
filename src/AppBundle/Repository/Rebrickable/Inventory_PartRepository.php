@@ -48,6 +48,14 @@ class Inventory_PartRepository extends BaseRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+    /**
+     * Find all Inventory_Parts with $color in set.
+     *
+     * @param string $number
+     * @param int    $color
+     *
+     * @return array
+     */
     public function findAllBySetNumberAndColor($number, $color)
     {
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
@@ -61,6 +69,15 @@ class Inventory_PartRepository extends BaseRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+    /**
+     * Get total part count of Set.
+     *
+     * @param Set  $set
+     * @param bool $spare If true - find all spare parts, false - find all regular parts, null - spare and regular parts
+     * @param bool $model If true - find all parts with model relation, false - find all parts without model relation, null - all parts
+     *
+     * @return mixed
+     */
     public function getPartCount(Set $set, $spare = null, $model = null)
     {
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($set->getId());

@@ -39,7 +39,7 @@ class StlConverterService
      * @param FilesystemInterface $mediaFilesystem Filesystem for generated web assets
      * @param StlFixerService     $stlFixer
      */
-    public function __construct($ldview, $mediaFilesystem, $stlFixer)
+    public function __construct($ldview, FilesystemInterface $mediaFilesystem, StlFixerService $stlFixer)
     {
         $this->ldview = $ldview;
         $this->mediaFilesystem = $mediaFilesystem;
@@ -47,9 +47,9 @@ class StlConverterService
     }
 
     /**
-     * @param string $ldrawLibraryContext
+     * @param FilesystemInterface $ldrawLibraryContext
      */
-    public function setLDrawLibraryContext($ldrawLibraryContext)
+    public function setLDrawLibraryContext(FilesystemInterface $ldrawLibraryContext)
     {
         $this->ldrawLibraryContext = $ldrawLibraryContext;
     }

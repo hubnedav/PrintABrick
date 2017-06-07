@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use League\Flysystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
@@ -19,10 +20,8 @@ class MediaController extends Controller
      *
      * @return Response
      */
-    public function fileAction($path)
+    public function fileAction($path, Filesystem $mediaFilesystem)
     {
-        $mediaFilesystem = $this->get('oneup_flysystem.media_filesystem');
-
         if ($mediaFilesystem->has($path)) {
             $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.$path);
             $response->headers->set('Content-Type', $mediaFilesystem->getMimetype($path));

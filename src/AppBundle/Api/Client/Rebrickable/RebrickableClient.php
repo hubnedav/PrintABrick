@@ -10,7 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 
-class Rebrickable_v3
+class RebrickableClient
 {
     const BASE_URI = 'https://rebrickable.com/api/v3/';
 
@@ -26,6 +26,8 @@ class Rebrickable_v3
 
     /**
      * RebrickableAPI constructor.
+     *
+     * @param string $apiKey
      */
     public function __construct($apiKey)
     {

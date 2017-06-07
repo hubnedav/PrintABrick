@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Service\Loader\RebrickableLoader;
 use League\Flysystem\Exception;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -10,6 +11,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class LoadRebrickableDataCommand extends ContainerAwareCommand
 {
+    /** @var RebrickableLoader */
+    private $rebrickableLoader;
+
+    /**
+     * LoadRebrickableDataCommand constructor.
+     *
+     * @param string            $name
+     * @param RebrickableLoader $rebrickableLoader
+     */
+    public function __construct($name = null, RebrickableLoader $rebrickableLoader)
+    {
+        $this->rebrickableLoader = $rebrickableLoader;
+
+        parent::__construct($name);
+    }
+
     protected function configure()
     {
         $this
@@ -20,11 +37,11 @@ class LoadRebrickableDataCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $rebrickableLoader = $this->getContainer()->get('service.loader.rebrickable');
-        $rebrickableLoader->setOutput($output);
+        $this->rebrickableLoader = $this->getContainer()->get('service.loader.rebrickable');
+        $this->rebrickableLoader->setOutput($output);
 
         try {
-            $rebrickableLoader->loadAll();
+            $this->rebrickableLoader->loadAll();
         } catch (Exception $exception) {
             $output->writeln("<error>{$exception->getMessage()}</error>");
 

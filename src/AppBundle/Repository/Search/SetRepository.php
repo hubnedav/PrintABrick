@@ -10,13 +10,12 @@ use Elastica\Query\Range;
 use FOS\ElasticaBundle\Repository;
 
 /**
- * Class SetRepository
- * @package AppBundle\Repository\Search
+ * Class SetRepository.
  */
 class SetRepository extends Repository
 {
     /**
-     * Create search query from SetSearch entity
+     * Create search query from SetSearch entity.
      *
      * @param SetSearch $setSearch
      *
@@ -70,7 +69,8 @@ class SetRepository extends Repository
 
     /**
      * @param SetSearch $setSearch
-     * @param int $limit
+     * @param int       $limit
+     *
      * @return array
      */
     public function search(SetSearch $setSearch, $limit = 500)
@@ -80,12 +80,12 @@ class SetRepository extends Repository
         return $this->find($query, $limit);
     }
 
-
     /**
-     * Find sets by query with highlighted matched values
+     * Find sets by query with highlighted matched values.
      *
      * @param string $query
-     * @param int $limit
+     * @param int    $limit
+     *
      * @return mixed
      */
     public function findHighlighted($query, $limit = 500)

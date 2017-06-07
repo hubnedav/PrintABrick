@@ -2,28 +2,21 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Repository\LDraw\ModelRepository;
-use AppBundle\Repository\Rebrickable\SetRepository;
+use AppBundle\Service\ModelService;
+use AppBundle\Service\SetService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class DefaultController extends Controller
+class DefaultController extends AbstractController
 {
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction(Request $request)
+    public function indexAction(SetService $setService, ModelService $modelService)
     {
-        /** @var ModelRepository $modelRepository */
-        $modelRepository = $this->get('repository.ldraw.model');
-
-        /** @var SetRepository $setRepository */
-        $setRepository = $this->get('repository.rebrickable.set');
-
         return $this->render('default/index.html.twig', [
-            'models' => $modelRepository->count(),
-            'sets' => $setRepository->count(),
+            'models' => $modelService->getTotalCount(),
+            'sets' => $setService->getTotalCount(),
         ]);
     }
 }

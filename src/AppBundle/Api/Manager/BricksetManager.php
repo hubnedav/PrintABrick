@@ -2,13 +2,13 @@
 
 namespace AppBundle\Api\Manager;
 
-use AppBundle\Api\Client\Brickset\Brickset;
+use AppBundle\Api\Client\Brickset\BricksetClient;
 use Doctrine\Common\Cache\CacheProvider;
 
 class BricksetManager
 {
     /**
-     * @var Brickset
+     * @var BricksetClient
      */
     private $bricksetClient;
 
@@ -19,10 +19,10 @@ class BricksetManager
     /**
      * BricksetManager constructor.
      *
-     * @param Brickset      $bricksetClient
-     * @param CacheProvider $cache
+     * @param BricksetClient $bricksetClient
+     * @param CacheProvider  $cache
      */
-    public function __construct(Brickset $bricksetClient, CacheProvider $cache)
+    public function __construct(BricksetClient $bricksetClient, CacheProvider $cache)
     {
         $this->bricksetClient = $bricksetClient;
         $this->cache = $cache;

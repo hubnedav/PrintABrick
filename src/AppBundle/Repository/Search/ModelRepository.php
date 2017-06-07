@@ -9,7 +9,7 @@ use FOS\ElasticaBundle\Repository;
 class ModelRepository extends Repository
 {
     /**
-     * Create search query from ModelSearch entity
+     * Create search query from ModelSearch entity.
      *
      * @param ModelSearch $modelSearch
      *
@@ -50,10 +50,11 @@ class ModelRepository extends Repository
     }
 
     /**
-     * Find models by query with highlighted matched values
+     * Find models by query with highlighted matched values.
      *
      * @param string $query
-     * @param int $limit
+     * @param int    $limit
+     *
      * @return mixed
      */
     public function findHighlighted($query, $limit = 500)

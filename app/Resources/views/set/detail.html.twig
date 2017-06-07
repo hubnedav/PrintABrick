@@ -59,20 +59,18 @@
                                         {{ brset.rating | number_format(1, '.', ',')  }} / 5
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a>
-                                    </td>
-                                </tr>
                             {% endif %}
                             <tr>
                                 <td></td>
                                 <td>
                                     <a class="rebrickable link" href="http://rebrickable.com/sets/{{ set ? set.id }}">Rebrickable</a>
+                                    {% if brset %}
+                                        <a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         </table>
+                        <div class="addthis_inline_share_toolbox"></div>
                     </div>
                 </div>
             </div>

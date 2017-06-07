@@ -3,25 +3,74 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\LDraw\Model;
+use AppBundle\Repository\LDraw\ModelRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ModelService
 {
     private $models = [];
 
+    /** @var ModelRepository */
+    private $modelRepository;
 
     /**
-     * Get all subparts of model
+     * ModelService constructor.
+     *
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->modelRepository = $em->getRepository(Model::class);
+    }
+
+    /**
+     * Find model by id or alias number.
+     *
+     * @param $id
+     *
+     * @return Model|null
+     */
+    public function findModel($id)
+    {
+        return $this->modelRepository->findOneByNumber($id);
+    }
+
+    /**
+     * Get all subparts of model.
      *
      * @param Model $model
+     *
      * @return array
      */
-    public function getAllSubparts(Model $model)
+    public function getSubmodels(Model $model)
     {
         foreach ($model->getSubparts() as $subpart) {
             $this->resursiveLoadModels($subpart->getSubpart(), $subpart->getCount());
         }
 
         return $this->models;
+    }
+
+    /**
+     * Get all siblings of model.
+     *
+     * @param Model $model
+     *
+     * @return array
+     */
+    public function getSiblings(Model $model)
+    {
+        $this->modelRepository->findAllRelatedModels($model);
+    }
+
+    /**
+     * Get total count of models in database.
+     *
+     * @return mixed
+     */
+    public function getTotalCount()
+    {
+        return $this->modelRepository->count();
     }
 
     private function resursiveLoadModels(Model $model, $quantity = 1)

@@ -6,8 +6,9 @@ use AppBundle\Exception\FileNotFoundException;
 use AppBundle\Exception\WriteErrorException;
 use AppBundle\Transformer\FormatTransformer;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Logger;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,19 +42,16 @@ abstract class BaseLoader
     private $formatTransformer;
 
     /**
-     * Loader constructor.
+     * BaseLoader constructor.
      *
-     * @param EntityManager $em
-     * @param Logger        $logger
-     * @param Translator    $formatTransformer
+     * @param EntityManagerInterface $em
+     * @param LoggerInterface        $logger
      */
-    public function setArguments(EntityManager $em, $logger, $formatTransformer)
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
     {
         $this->em = $em;
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-
         $this->logger = $logger;
-        $this->formatTransformer = $formatTransformer;
+        $this->formatTransformer = new FormatTransformer();
     }
 
     public function setOutput(OutputInterface $output)

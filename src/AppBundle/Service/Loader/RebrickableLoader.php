@@ -4,7 +4,9 @@ namespace AppBundle\Service\Loader;
 
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
+use Psr\Log\LoggerInterface;
 
 //TODO Refactor + validate csv files
 class RebrickableLoader extends BaseLoader
@@ -14,11 +16,17 @@ class RebrickableLoader extends BaseLoader
     private $csvFile;
 
     /**
-     * ModelLoaderService constructor.
+     * RebrickableLoader constructor.
+     *
+     * @param EntityManagerInterface $em
+     * @param LoggerInterface        $logger
+     * @param $rebrickableDownloadUrl
      */
-    public function __construct($rebrickable_url)
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, $rebrickableDownloadUrl)
     {
-        $this->rebrickable_url = $rebrickable_url;
+        $this->rebrickable_url = $rebrickableDownloadUrl;
+
+        parent::__construct($em, $logger);
     }
 
     public function loadAll()

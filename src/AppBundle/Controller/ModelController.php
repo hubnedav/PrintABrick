@@ -5,12 +5,14 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Form\Search\ModelSearchType;
 use AppBundle\Model\ModelSearch;
-use AppBundle\Repository\Rebrickable\SetRepository;
+use AppBundle\Service\ModelService;
+use AppBundle\Service\SetService;
+use AppBundle\Service\ZipService;
 use Knp\Component\Pager\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,11 +30,11 @@ class ModelController extends Controller
      *
      * @Route("/", name="model_index")
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, FormFactoryInterface $formFactory)
     {
         $modelSearch = new ModelSearch();
 
-        $form = $this->get('form.factory')->createNamedBuilder('', ModelSearchType::class, $modelSearch)->getForm();
+        $form = $formFactory->createNamedBuilder('', ModelSearchType::class, $modelSearch)->getForm();
         $form->handleRequest($request);
 
         $elasticaManager = $this->get('fos_elastica.manager');
@@ -58,21 +60,14 @@ class ModelController extends Controller
      * @Route("/{id}", name="model_detail")
      * @Method("GET")
      */
-    public function detailAction($id)
+    public function detailAction($id, ModelService $modelService)
     {
-        /** @var Model $model */
-        if ($model = $this->get('repository.ldraw.model')->findOneByNumber($id)) {
+        if ($model = $modelService->findModel($id)) {
             try {
-                $subparts = $this->get('service.model')->getAllSubparts($model);
-                $sets = $model != null ? $this->get('repository.rebrickable.set')->findAllByModel($model) : null;
-
-                $related = $this->get('repository.ldraw.model')->findAllRelatedModels($model->getId());
-
                 return $this->render('model/detail.html.twig', [
                     'model' => $model,
-                    'sets' => $sets,
-                    'related' => $related,
-                    'subparts' => $subparts,
+                    'siblings' => $modelService->getSiblings($model),
+                    'submodels' => $modelService->getSubmodels($model),
                 ]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
@@ -83,19 +78,47 @@ class ModelController extends Controller
     }
 
     /**
+     * @Route("/{id}/sets", name="model_sets")
+     * @Method("GET")
+     */
+    public function setsAction(Request $request, Model $model, SetService $setService)
+    {
+        /** @var Paginator $paginator */
+        $paginator = $this->get('knp_paginator');
+        $sets = $paginator->paginate(
+            $setService->getAllByModel($model),
+            $request->query->getInt('page', 1)/*page number*/,
+            $request->query->getInt('limit', 16)/*limit per page*/
+        );
+
+        $template = $this->render('model/tabs/sets.html.twig', [
+            'sets' => $sets,
+        ]);
+
+        if ($request->isXmlHttpRequest()) {
+            $json = json_encode($template->getContent());
+            $response = new Response($json, 200);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+        return $template;
+    }
+
+    /**
      * @Route("/{id}/zip", name="model_zip")
      * @Method("GET")
      */
-    public function zipAction(Request $request, Model $model)
+    public function zipAction(Model $model, ZipService $zipService)
     {
         // escape forbidden characters from filename
         $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$model->getId()}_{$model->getName()}");
 
-        $zip = $this->get('service.zip')->createFromModel($model, $filename, true);
+        $zip = $zipService->createFromModel($model, $filename, true);
 
         $response = new BinaryFileResponse($zip);
         $response->headers->set('Content-Type', 'application/zip');
-
 
         // Create the disposition of the file
         $disposition = $response->headers->makeDisposition(

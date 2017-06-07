@@ -20,17 +20,20 @@ class ZipService
     /** @var ModelService */
     private $modelService;
 
+    /** @var string */
     private $zipName;
 
-    private $models;
+    /** @var array */
+    private $models = [];
 
     /**
      * ZipService constructor.
      *
-     * @param $mediaFilesystem
-     * @param $setService
+     * @param Filesystem   $mediaFilesystem
+     * @param ModelService $modelService
+     * @param SetService   $setService
      */
-    public function __construct($mediaFilesystem, $setService, $modelService)
+    public function __construct(Filesystem $mediaFilesystem, ModelService $modelService, SetService $setService)
     {
         $this->mediaFilesystem = $mediaFilesystem;
         $this->setService = $setService;
@@ -46,11 +49,12 @@ class ZipService
     }
 
     /**
-     * Create zip archive with models in set in temp dir
+     * Create zip archive with models in set in temp dir.
      *
-     * @param Set $set
+     * @param Set    $set
      * @param string $filename Filename of archive base directory
-     * @param bool $sorted Sort models into folders by color
+     * @param bool   $sorted   Sort models into folders by color
+     *
      * @return bool|string
      */
     public function createFromSet(Set $set, $filename, $sorted = false)
@@ -73,11 +77,12 @@ class ZipService
     }
 
     /**
-     * Create zip archive of model in temp dir
+     * Create zip archive of model in temp dir.
      *
-     * @param Model $model
+     * @param Model  $model
      * @param string $filename Filename of archive base directory
-     * @param bool $subparts Include directory with subparts into archive
+     * @param bool   $subparts Include directory with subparts into archive
+     *
      * @return bool|string
      */
     public function createFromModel(Model $model, $filename, $subparts = false)
@@ -91,7 +96,7 @@ class ZipService
         $this->addModel($filename, $model);
 
         if ($subparts) {
-            foreach ($this->modelService->getAllSubparts($model) as $subpart) {
+            foreach ($this->modelService->getSubmodels($model) as $subpart) {
                 $submodel = $subpart['model'];
                 $filename = "{$this->zipName}/submodels/{$submodel->getId()}_({$subpart['quantity']}x).stl";
 
@@ -155,9 +160,8 @@ class ZipService
         $this->models[$model->getId()] = $model;
     }
 
-
     /**
-     * Add LICENSE.txt file to archive
+     * Add LICENSE.txt file to archive.
      */
     private function addLicense()
     {

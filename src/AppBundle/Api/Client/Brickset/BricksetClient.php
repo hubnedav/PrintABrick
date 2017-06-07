@@ -13,7 +13,7 @@ use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Exception\AuthenticationFailedException;
 use AppBundle\Api\Exception\CallFailedException;
 
-class Brickset
+class BricksetClient
 {
     const WSDL = 'https://brickset.com/api/v2.asmx?WSDL';
 
@@ -40,14 +40,16 @@ class Brickset
     ];
 
     /**
+     * BricksetClient constructor.
+     *
      * @param string $apikey  Brickset API key
      * @param array  $options A array of config values
      *
      * @throws ApiException
      */
-    public function __construct($apikey, array $options = [])
+    public function __construct($apiKey, array $options = [])
     {
-        $this->apiKey = $apikey;
+        $this->apiKey = $apiKey;
 
         $this->options['cache_wsdl'] = WSDL_CACHE_NONE;
         $this->options['exceptions'] = true;
@@ -59,15 +61,16 @@ class Brickset
         }
     }
 
-
     /**
-     * Get or create new SoapClient
+     * Get or create new SoapClient.
+     *
+     * @throws ApiException
      *
      * @return \SoapClient
-     * @throws ApiException
      */
-    private function getSoapClient() {
-        if(!$this->soapClient) {
+    private function getSoapClient()
+    {
+        if (!$this->soapClient) {
             try {
                 $this->soapClient = new \SoapClient(self::WSDL, $this->options);
             } catch (\SoapFault $exception) {
@@ -80,6 +83,7 @@ class Brickset
                 throw new ApiException(ApiException::BRICKSET);
             }
         }
+
         return $this->soapClient;
     }
 

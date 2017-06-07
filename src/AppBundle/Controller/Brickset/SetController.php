@@ -19,11 +19,11 @@ class SetController extends Controller
      * @Route("/{id}/instructions", name="brickset_instructions")
      * @Method("GET")
      */
-    public function instructionsAction(Request $request, $id)
+    public function instructionsAction(Request $request, $id, BricksetManager $bricksetManager)
     {
         $instructions = [];
         try {
-            $instructions = $this->get('api.manager.brickset')->getSetInstructions($id);
+            $instructions = $bricksetManager->getSetInstructions($id);
         } catch (ApiException $e) {
             $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
@@ -49,13 +49,11 @@ class SetController extends Controller
      * @Route("/{id}/reviews", name="brickset_reviews")
      * @Method("GET")
      */
-    public function reviewsAction(Request $request, $id)
+    public function reviewsAction(Request $request, $id, BricksetManager $bricksetManager)
     {
         $reviews = [];
         $number = null;
         try {
-            /** @var BricksetManager $bricksetManager */
-            $bricksetManager = $this->get('api.manager.brickset');
             $reviews = $bricksetManager->getSetReviews($id);
             $number = $bricksetManager->getSetById($id)->getLegoSetID();
         } catch (ApiException $e) {
@@ -84,11 +82,11 @@ class SetController extends Controller
      * @Route("/{id}/images", name="brickset_images")
      * @Method("GET")
      */
-    public function imagesAction(Request $request, $id)
+    public function imagesAction(Request $request, $id, BricksetManager $bricksetManager)
     {
         $images = [];
         try {
-            $images = $this->get('api.manager.brickset')->getAdditionalImages($id);
+            $images = $bricksetManager->getAdditionalImages($id);
         } catch (ApiException $e) {
             $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {
@@ -114,11 +112,11 @@ class SetController extends Controller
      * @Route("/{id}/description", name="brickset_description")
      * @Method("GET")
      */
-    public function descriptionAction(Request $request, $id)
+    public function descriptionAction(Request $request, $id, BricksetManager $bricksetManager)
     {
         $desription = null;
         try {
-            $desription = $this->get('api.manager.brickset')->getSetById($id)->getDescription();
+            $desription = $bricksetManager->getSetById($id)->getDescription();
         } catch (ApiException $e) {
             $this->addFlash('error', $e->getService());
         } catch (\Exception $e) {

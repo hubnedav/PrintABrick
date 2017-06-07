@@ -10,15 +10,17 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\LDraw\Subpart;
 use AppBundle\Exception\ConvertingFailedException;
 use AppBundle\Exception\FileException;
-use AppBundle\Exception\MissingContextException;
+use AppBundle\Exception\Loader\MissingContextException;
 use AppBundle\Exception\ParseErrorException;
 use AppBundle\Repository\LDraw\ModelRepository;
 use AppBundle\Service\Stl\StlConverterService;
 use AppBundle\Util\LDModelParser;
 use AppBundle\Util\RelationMapper;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Exception;
 use League\Flysystem\Filesystem;
+use Psr\Log\LoggerInterface;
 
 class ModelLoader extends BaseLoader
 {
@@ -50,16 +52,20 @@ class ModelLoader extends BaseLoader
     private $rewrite = false;
 
     /**
-     * LDrawLoaderService constructor.
+     * ModelLoader constructor.
      *
-     * @param StlConverterService $stlConverter
-     * @param RelationMapper      $relationMapper
+     * @param EntityManagerInterface $em
+     * @param LoggerInterface        $logger
+     * @param StlConverterService    $stlConverter
+     * @param RelationMapper         $relationMapper
      */
-    public function __construct($stlConverter, $relationMapper)
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, StlConverterService $stlConverter, RelationMapper $relationMapper)
     {
         $this->stlConverter = $stlConverter;
         $this->relationMapper = $relationMapper;
         $this->ldModelParser = new LDModelParser();
+
+        parent::__construct($em, $logger);
     }
 
     /**
@@ -71,7 +77,7 @@ class ModelLoader extends BaseLoader
     }
 
     /**
-     * @param $ldrawLibrary
+     * @param string $ldrawLibrary
      */
     public function setLDrawLibraryContext($ldrawLibrary)
     {

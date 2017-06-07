@@ -23,14 +23,14 @@ class SetRepository extends BaseRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findAllByPartNumber($number)
+    public function findAllByPart(Part $part)
     {
         $queryBuilder = $this->createQueryBuilder('s')
             ->join(Inventory::class, 'inventory', JOIN::WITH, 'inventory.set = s.id')
             ->join(Inventory_Part::class, 'inventory_part', JOIN::WITH, 'inventory.id = inventory_part.inventory')
             ->join(Part::class, 'part', Join::WITH, 'inventory_part.part = part.id')
             ->where('part.id LIKE :number')
-            ->setParameter('number', $number)
+            ->setParameter('number', $part->getId())
             ->distinct(true);
 
         return $queryBuilder->getQuery()->getResult();

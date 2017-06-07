@@ -14,6 +14,22 @@ class LoadLdrawCommand extends ContainerAwareCommand
 {
     use LockableTrait;
 
+    /** @var ModelLoader */
+    private $modelLoader;
+
+    /**
+     * LoadLdrawCommand constructor.
+     *
+     * @param string      $name
+     * @param ModelLoader $modelLoader
+     */
+    public function __construct($name = null, ModelLoader $modelLoader)
+    {
+        $this->modelLoader = $modelLoader;
+
+        parent::__construct($name);
+    }
+
     protected function configure()
     {
         $this
@@ -38,10 +54,8 @@ class LoadLdrawCommand extends ContainerAwareCommand
             return 1;
         }
 
-        /** @var ModelLoader $modelLoader */
-        $modelLoader = $this->getContainer()->get('service.loader.model');
-        $modelLoader->setOutput($output);
-        $modelLoader->setRewrite($input->getOption('update'));
+        $this->modelLoader->setOutput($output);
+        $this->modelLoader->setRewrite($input->getOption('update'));
 
         if (!$input->getOption('file') && !$input->getOption('all')) {
             $output->writeln('Either the --all or --file option is required');
@@ -50,10 +64,10 @@ class LoadLdrawCommand extends ContainerAwareCommand
         }
 
         if ($ldraw = $input->getOption('ldraw')) {
-            $modelLoader->setLDrawLibraryContext(realpath($ldraw));
+            $this->modelLoader->setLDrawLibraryContext(realpath($ldraw));
         } else {
-            $ldraw = $modelLoader->downloadLibrary($this->getContainer()->getParameter('app.ld_library_download_url'));
-            $modelLoader->setLDrawLibraryContext($ldraw);
+            $ldraw = $this->modelLoader->downloadLibrary($this->getContainer()->getParameter('app.ld_library_download_url'));
+            $this->modelLoader->setLDrawLibraryContext($ldraw);
         }
 
         if (($path = $input->getOption('file')) != null) {
@@ -62,7 +76,7 @@ class LoadLdrawCommand extends ContainerAwareCommand
                     "Loading model: {$path}",
                 ]);
 
-                $modelLoader->loadOne($file);
+                $this->modelLoader->loadOne($file);
 
                 $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
                 $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';
@@ -75,7 +89,7 @@ class LoadLdrawCommand extends ContainerAwareCommand
 
         // Load all models inside ldraw/parts directory
         if ($input->getOption('all')) {
-            $modelLoader->loadAll();
+            $this->modelLoader->loadAll();
 
             $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
             $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';

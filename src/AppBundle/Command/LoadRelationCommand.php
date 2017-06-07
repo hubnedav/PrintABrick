@@ -11,6 +11,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class LoadRelationCommand extends ContainerAwareCommand
 {
+    /** @var RelationLoader */
+    private $relationLoader;
+
+    /**
+     * LoadRelationCommand constructor.
+     *
+     * @param $name
+     * @param RelationLoader $relationLoader
+     */
+    public function __construct($name = null, RelationLoader $relationLoader)
+    {
+        $this->relationLoader = $relationLoader;
+
+        parent::__construct($name);
+    }
+
     protected function configure()
     {
         $this
@@ -26,9 +42,7 @@ class LoadRelationCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var RelationLoader $relationLoader */
-        $relationLoader = $this->getContainer()->get('service.loader.relation');
-        $relationLoader->setOutput($output);
+        $this->relationLoader->setOutput($output);
 
         $output->writeln([
             '<fg=cyan>------------------------------------------------------------------------------</>',
@@ -37,9 +51,9 @@ class LoadRelationCommand extends ContainerAwareCommand
         ]);
 
         if ($input->getOption('rewrite')) {
-            $relationLoader->loadAll();
+            $this->relationLoader->loadAll();
         } else {
-            $relationLoader->loadNotPaired();
+            $this->relationLoader->loadNotPaired();
         }
 
         $output->writeln(['<info>Done!</info>']);

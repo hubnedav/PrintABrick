@@ -11,7 +11,7 @@ set:
   models:
     text: |
       This set inventory has been obtained from Rebrickable.
-      According to the Brickset, this set has %brickset% parts. The inventory from Rebrickable contains %rebrickable% parts.
+      According to the Brickset, this set has '%brickset%' parts. The inventory from Rebrickable contains %rebrickable% parts.
   rebrickable:
     credit: |
       This set inventory and model images has been obtained from <a href="https://rebrickable.com/" title="Rebrickable">Rebrickable</a>.
@@ -137,4 +137,4 @@ part:
 form:
   search.submit: Search
 
-meta.description: Web catalogue of LEGO<sup>®</sup> parts for 3D printing
+meta.description: "Web catalogue of LEGO<sup>®</sup> parts for 3D printing"

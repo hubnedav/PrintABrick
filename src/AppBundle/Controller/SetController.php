@@ -3,15 +3,16 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Api\Exception\ApiException;
-use AppBundle\Entity\Rebrickable\Inventory_Set;
+use AppBundle\Api\Manager\BricksetManager;
 use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Form\Search\SetSearchType;
 use AppBundle\Model\SetSearch;
-use AppBundle\Repository\Rebrickable\Inventory_PartRepository;
 use AppBundle\Repository\Search\SetRepository;
 use AppBundle\Service\SetService;
+use AppBundle\Service\ZipService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,12 +25,16 @@ class SetController extends Controller
 {
     /**
      * @Route("/", name="set_index")
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, FormFactoryInterface $formFactory)
     {
         $setSearch = new SetSearch();
 
-        $form = $this->get('form.factory')->createNamedBuilder('', SetSearchType::class, $setSearch)->getForm();
+        $form = $formFactory->createNamedBuilder('', SetSearchType::class, $setSearch)->getForm();
         $form->handleRequest($request);
 
         /** @var SetRepository $setRepository */
@@ -51,19 +56,17 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}", name="set_detail")
+     *
+     * @param Set $set
+     *
+     * @return Response
      */
-    public function detailAction(Request $request, Set $set)
+    public function detailAction(Set $set, SetService $setService, BricksetManager $bricksetManager)
     {
-        /** @var Inventory_PartRepository $inventoryPartRepository */
-        $inventoryPartRepository = $this->get('repository.rebrickable.inventoryPart');
-        /** @var SetService $setService */
-        $setService = $this->get('service.set');
-
         $bricksetSet = null;
-        $partCount = $inventoryPartRepository->getPartCount($set, false);
 
         try {
-            if (!($bricksetSet = $this->get('api.manager.brickset')->getSetByNumber($set->getId()))) {
+            if (!($bricksetSet = $bricksetManager->getSetByNumber($set->getId()))) {
                 $this->addFlash('warning', "{$set->getId()} not found in Brickset database");
             }
         } catch (ApiException $e) {
@@ -75,33 +78,22 @@ class SetController extends Controller
         return $this->render('set/detail.html.twig', [
             'set' => $set,
             'brset' => $bricksetSet,
-            'partCount' => $partCount,
+            'partCount' => $setService->getPartCount($set),
         ]);
     }
 
     /**
      * @Route("/{id}/inventory", name="set_inventory")
      */
-    public function inventoryAction(Request $request, Set $set)
+    public function inventoryAction(Request $request, Set $set, SetService $setService)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $inventorySets = $em->getRepository(Inventory_Set::class)->findAllBySetNumber($set->getId());
-        $setService = $this->get('service.set');
-        $inventoryPartRepository = $this->get('repository.rebrickable.inventoryPart');
-
-        $models = $setService->getModels($set, false);
-        $missing = $setService->getParts($set, false, false);
-        $missingCount = $inventoryPartRepository->getPartCount($set, false, false);
-        $partCount = $inventoryPartRepository->getPartCount($set, false);
-
         $template = $this->render('set/tabs/inventory.html.twig', [
-            'inventorySets' => $inventorySets,
+            'inventorySets' => $setService->getAllSubSets($set),
             'set' => $set,
-            'missing' => $missing,
-            'models' => $models,
-            'missingCount' => $missingCount,
-            'partCount' => $partCount,
+            'missing' => $setService->getParts($set, false, false),
+            'models' => $setService->getModels($set, false),
+            'missingCount' => $setService->getPartCount($set, false, false),
+            'partCount' => $setService->getPartCount($set, false),
         ]);
 
         if ($request->isXmlHttpRequest()) {
@@ -118,10 +110,8 @@ class SetController extends Controller
     /**
      * @Route("/{id}/models", name="set_models")
      */
-    public function modelsAction(Request $request, Set $set)
+    public function modelsAction(Request $request, Set $set, SetService $setService)
     {
-        $setService = $this->get('service.set');
-
         $models = null;
         $missing = null;
 
@@ -152,11 +142,8 @@ class SetController extends Controller
     /**
      * @Route("/{id}/colors", name="set_colors")
      */
-    public function colorsAction(Request $request, Set $set)
+    public function colorsAction(Request $request, Set $set, SetService $setService)
     {
-        /** @var SetService $setService */
-        $setService = $this->get('service.set');
-
         $colors = null;
         $missing = null;
 
@@ -187,14 +174,14 @@ class SetController extends Controller
     /**
      * @Route("/{id}/zip", name="set_zip")
      */
-    public function zipAction(Request $request, Set $set)
+    public function zipAction(Request $request, Set $set, ZipService $zipService)
     {
         $sorted = $request->query->get('sorted') == 1 ? true : false;
         $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
         // escape forbidden characters from filename
         $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$set->getId()}_{$set->getName()}({$sort})");
 
-        $zip = $this->get('service.zip')->createFromSet($set, $filename, $sorted);
+        $zip = $zipService->createFromSet($set, $filename, $sorted);
 
         $response = new BinaryFileResponse($zip);
         $response->headers->set('Content-Type', 'application/zip');

@@ -14,7 +14,7 @@ class AppExtension extends \Twig_Extension
      *
      * @param FormatTransformer $formatTransformer
      */
-    public function __construct($formatTransformer)
+    public function __construct(FormatTransformer $formatTransformer)
     {
         $this->formatTransformer = $formatTransformer;
     }

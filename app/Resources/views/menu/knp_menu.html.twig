@@ -105,7 +105,7 @@
     {% endif %}
     <span>
         {% set label = item.label|trans(
-        item.getExtra('translation_params', {}),
+        item.getExtra('translatinon_params', {}),
         item.getExtra('translation_domain', 'menu')
         ) %}
         {% if options.allow_safe_labels and item.getExtra('safe_label', false) %}

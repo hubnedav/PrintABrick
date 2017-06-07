@@ -1,0 +1,42 @@
+{% import 'macros/blocks.html.twig' as blocks %}
+{% import 'macros/elements.html.twig' as elements %}
+
+{% block content %}
+    <div id="results">
+        <div class="ui header segment basic sort">
+            <div class="ui grid stackable">
+                <div class="left floated left aligned twelve wide column">
+                    <div class="ui text menu">
+                        <div class="header item">Sort By</div>
+
+                        {{ knp_pagination_sortable(sets, 'Number', ['s.id']) }}
+                        {{ knp_pagination_sortable(sets, 'Year', ['s.year']) }}
+                        {{ knp_pagination_sortable(sets, 'Name', ['s.name']) }}
+                        {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount']) }}
+                    </div>
+                </div>
+
+                <div class="right floated right aligned four wide column">
+                    <div class="ui text right floated menu">
+                        <div class="header item">Showing</div>
+                        <span class="item">{{ sets.getTotalItemCount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui segment basic">
+            {% block sets %}
+                <div class="ui eight column doubling grid sets">
+                    {% for set in sets %}
+                        {{ blocks.set(set) }}
+                    {% else %}
+                        {{ blocks.empty('empty.search.title' | trans ) }}
+                    {% endfor %}
+                </div>
+            {% endblock %}
+        </div>
+        <div class="ui segment basic">
+            {{ knp_pagination_render(sets) }}
+        </div>
+    </div>
+{% endblock %}

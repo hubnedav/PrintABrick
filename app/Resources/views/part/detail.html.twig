@@ -18,63 +18,68 @@
 {% block content %}
     <div class="ui vertical segment grey inverted tertiary">
         <div class="ui container stackable grid">
-            <div class="row">
-                <div class="column ten wide">
-                    <div id="model-viewer" class="model-container">
-                        {{ blocks.partImage(part.id,'part_large') }}
-                    </div>
+            <div class="column ten wide">
+                <div id="model-viewer" class="model-container">
+                    {{ blocks.partImage(part.id,'part_large') }}
                 </div>
-                <div class="column six wide">
-                    <div class="item-info ui">
-                        <table class="ui very basic table">
+            </div>
+            <div class="column six wide">
+                <div class="item-info ui">
+                    <table class="ui very basic table">
+                        <tr>
+                            <td>{{ 'part.id' | trans }}</td><td><h2>{{ part.id}}</h2></td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'part.name' | trans }}</td><td>{{ part.name}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'part.category' | trans }}</td><td>{{ part.category ? part.category.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'part.model' | trans }}</td>
+                            <td>
+                                {% if part.model %}
+                                    <a href="{{ url('model_detail', {'id': part.model.id})}}">{{ part.model.id }}</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if apiPart %}
                             <tr>
-                                <td>{{ 'part.id' | trans }}</td><td><h2>{{ part.id}}</h2></td>
-                            </tr>
-                            <tr>
-                                <td>{{ 'part.name' | trans }}</td><td>{{ part.name}}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ 'part.category' | trans }}</td><td>{{ part.category ? part.category.name }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ 'part.model' | trans }}</td>
+                                <td>{{ 'part.alternates' | trans }}</td>
                                 <td>
-                                    {% if part.model %}
-                                        <a href="{{ url('model_detail', {'id': part.model.id})}}">{{ part.model.id }}</a>
-                                    {% endif %}
+                                    {% for alternate in apiPart.alternates %}
+                                        <a href="{{ url('part_detail', {'id': alternate})}}">{{ alternate }}</a>
+                                    {% endfor %}
                                 </td>
                             </tr>
-                            {% if apiPart %}
-                                <tr>
-                                    <td>{{ 'part.alternates' | trans }}</td>
-                                    <td>
-                                        {% for alternate in apiPart.alternates %}
-                                            <a href="{{ url('part_detail', {'id': alternate})}}">{{ alternate }}</a>
-                                        {% endfor %}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>{{ 'part.molds' | trans }}</td>
-                                    <td>
-                                        {% for mold in apiPart.molds %}
-                                            <a href="{{ url('part_detail', {'id': mold})}}">{{ mold }}</a>
-                                        {% endfor %}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td><a class="rebrickable link" href="{{ apiPart.url }}">Rebrickable</a></td>
-                                </tr>
-                            {% endif %}
-                        </table>
-
-                        {% if not part.model %}
-                            <a class="ui disabled fluid primary button"><i class="download icon"></i> {{ 'model.empty'|trans }}</a>
-                        {% else %}
-                            <a class="ui fluid primary button" href="{{ path('model_zip', {id: part.model.id}) }}"><i class="download icon"></i> {{ 'model.download'|trans }}</a>
+                            <tr>
+                                <td>{{ 'part.molds' | trans }}</td>
+                                <td>
+                                    {% for mold in apiPart.molds %}
+                                        <a href="{{ url('part_detail', {'id': mold})}}">{{ mold }}</a>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><a class="rebrickable link" href="{{ apiPart.url }}">Rebrickable</a></td>
+                            </tr>
                         {% endif %}
-                    </div>
+                    </table>
+
+                    {% if not part.model %}
+                        <a class="ui disabled fluid primary button"><i class="download icon"></i> {{ 'model.empty'|trans }}</a>
+                    {% else %}
+                        <a class="ui fluid primary button" href="{{ path('model_zip', {id: part.model.id}) }}"><i class="download icon"></i> {{ 'model.download'|trans }}</a>
+                    {% endif %}
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui vertical segment">
+        <div class="container ui">
+             <div class="ui ajax-load" data-tab="sets" data-src="{{ path('part_sets', { id: part.id, page: app.request.get('page')  }) }}">
+                <div class="ui active centered inline loader"></div>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ namespace AppBundle\Imagine;
 
 use AppBundle\Api\Manager\RebrickableManager;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 
 class PartImageLoader extends BaseImageLoader
@@ -19,10 +20,10 @@ class PartImageLoader extends BaseImageLoader
     /**
      * PartImageLoader constructor.
      *
-     * @param $rebrickableManager
-     * @param $mediaFilesystem
+     * @param RebrickableManager  $rebrickableManager
+     * @param FilesystemInterface $mediaFilesystem
      */
-    public function __construct($rebrickableManager, $mediaFilesystem)
+    public function __construct(RebrickableManager $rebrickableManager, FilesystemInterface $mediaFilesystem)
     {
         $this->mediaFilesystem = $mediaFilesystem;
         $this->rebrickableManager = $rebrickableManager;

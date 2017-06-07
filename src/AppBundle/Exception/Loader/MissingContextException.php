@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Exception;
+namespace AppBundle\Exception\Loader;
 
 use Symfony\Component\Form\Exception\LogicException;
 use Throwable;

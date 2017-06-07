@@ -2,7 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Color;
+use AppBundle\Service\ColorService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
@@ -10,17 +13,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  *
  * @Route("colors")
  */
-class ColorController extends Controller
+class ColorController extends AbstractController
 {
     /**
      * @Route("/", name="color_index")
      */
-    public function indexAction()
+    public function indexAction(ColorService $colorService)
     {
-        $colors = $this->get('repository.color')->findAll();
-
         return $this->render('color/index.html.twig', [
-            'colors' => $colors,
+            'colors' => $colorService->getAll(),
         ]);
     }
 }

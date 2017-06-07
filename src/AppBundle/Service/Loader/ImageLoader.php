@@ -4,11 +4,13 @@ namespace AppBundle\Service\Loader;
 
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Service\Stl\StlRendererService;
-use League\Flysystem\Filesystem;
+use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemInterface;
+use Psr\Log\LoggerInterface;
 
 class ImageLoader extends BaseLoader
 {
-    /** @var Filesystem */
+    /** @var FilesystemInterface */
     private $mediaFilesystem;
 
     /** @var string */
@@ -17,11 +19,13 @@ class ImageLoader extends BaseLoader
     /** @var StlRendererService */
     private $stlRendererService;
 
-    public function __construct($mediaFilesystem, $rebrickableDownloadUrl, $stlRendererService)
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, FilesystemInterface $mediaFilesystem, $rebrickableDownloadUrl, StlRendererService $stlRendererService)
     {
         $this->mediaFilesystem = $mediaFilesystem;
         $this->rebrickableDownloadUrl = $rebrickableDownloadUrl;
         $this->stlRendererService = $stlRendererService;
+
+        parent::__construct($em, $logger);
     }
 
     /**

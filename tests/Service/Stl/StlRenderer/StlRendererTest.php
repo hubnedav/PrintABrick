@@ -11,7 +11,7 @@ use League\Flysystem\FilesystemInterface;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStreamWrapper;
 use PHPUnit\Framework\TestCase;
-use Tests\AppBundle\Service\BaseTest;
+use Tests\AppBundle\BaseTest;
 
 class StlRendererTest extends BaseTest
 {
@@ -20,7 +20,11 @@ class StlRendererTest extends BaseTest
 
     public function setUp()
     {
-       $this->stlRenderer = $this->get('service.stl.renderer');
+        $layout = $this->get('kernel')->getRootDir().'/Resources/povray_layout/layout.tmpl';
+        $povray = $this->getParameter('povray_bin');
+        $stl2pov = $this->getParameter('stl2pov_bin');
+
+       $this->stlRenderer = new StlRendererService($layout,$povray,$stl2pov);
     }
 
     public function tearDown()

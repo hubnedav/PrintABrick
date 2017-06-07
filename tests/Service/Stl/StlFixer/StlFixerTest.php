@@ -10,7 +10,7 @@ use League\Flysystem\FilesystemInterface;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStreamWrapper;
 use PHPUnit\Framework\TestCase;
-use Tests\AppBundle\Service\BaseTest;
+use Tests\AppBundle\BaseTest;
 
 class StlFixer extends BaseTest
 {
@@ -21,7 +21,7 @@ class StlFixer extends BaseTest
 
     public function setUp()
     {
-        $this->stlFixer = $this->get('service.stl.fixer');
+        $this->stlFixer = new StlFixerService($this->getParameter('admesh_bin'));
         $this->input = __DIR__.'/fixtures/ascii.stl';
     }
 

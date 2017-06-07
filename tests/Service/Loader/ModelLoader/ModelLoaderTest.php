@@ -2,7 +2,9 @@
 
 namespace Tests\AppBundle\Service\Loader\ModelLoader;
 
+use AppBundle\Entity\LDraw\Alias;
 use AppBundle\Entity\LDraw\Model;
+use AppBundle\Repository\LDraw\AliasRepository;
 use AppBundle\Repository\LDraw\ModelRepository;
 use AppBundle\Service\Loader\ModelLoader;
 use AppBundle\Service\Stl\StlConverterService;
@@ -10,7 +12,7 @@ use AppBundle\Util\RelationMapper;
 use League\Flysystem\File;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Console\Output\NullOutput;
-use Tests\AppBundle\Service\BaseTest;
+use Tests\AppBundle\BaseTest;
 
 class ModelLoaderTest extends BaseTest
 {
@@ -23,10 +25,14 @@ class ModelLoaderTest extends BaseTest
      * @var ModelRepository
      */
     private $modelRepository;
+    
+    /** @var AliasRepository */
+    private $aliasRepository;
 
     protected function setUp()
     {
-        $this->modelRepository = $this->get('repository.ldraw.model');
+        $this->modelRepository = $this->em->getRepository(Model::class);
+        $this->aliasRepository = $this->em->getRepository(Alias::class);
 
         $file = $this->createMock(File::class);
         $file->method('getPath')->willReturn('path');
@@ -39,8 +45,7 @@ class ModelLoaderTest extends BaseTest
         $relationMapper->method('find')
             ->will($this->returnArgument(0));
 
-        $this->modelLoader = new ModelLoader($stlConverter,$relationMapper,null);
-        $this->modelLoader->setArguments($this->get('doctrine.orm.entity_manager'),$this->get('monolog.logger.event'),$this->get('app.transformer.format'));
+        $this->modelLoader = new ModelLoader($this->get('doctrine.orm.entity_manager'),$this->get('monolog.logger.event'),$stlConverter,$relationMapper,null);
         $this->modelLoader->setOutput(new NullOutput());
         $this->setUpDb();
     }
@@ -51,7 +56,7 @@ class ModelLoaderTest extends BaseTest
         $this->modelLoader->loadOne(__DIR__ . '/fixtures/librarycontext/parts/3820.dat');
 
         /** @var Model[] $models */
-        $models = $this->get('repository.ldraw.model')->findAll();
+        $models = $this->modelRepository->findAll();
 
         $this->assertEquals(1, count($models));
         $this->assertEquals(3820, $models[0]->getId());
@@ -64,7 +69,7 @@ class ModelLoaderTest extends BaseTest
         $this->modelLoader->loadOne(__DIR__ . '/fixtures/filecontext/parts/999.dat');
 
         /** @var Model[] $models */
-        $models = $this->get('repository.ldraw.model')->findAll();
+        $models = $this->modelRepository->findAll();
 
         $this->assertEquals(1, count($models));
         $this->assertEquals(3820, $models[0]->getId());
@@ -136,9 +141,9 @@ class ModelLoaderTest extends BaseTest
         $this->assertEquals(1, count($this->modelRepository->findAll()));
         $this->assertInstanceOf(Model::class, $model);
         $this->assertEquals(3, count($model->getAliases()));
-        $this->assertEquals('3821', $this->get('repository.ldraw.alias')->find('983')->getModel()->getId());
-        $this->assertEquals('3821', $this->get('repository.ldraw.alias')->find('3820')->getModel()->getId());
-        $this->assertEquals('3821', $this->get('repository.ldraw.alias')->find('500')->getModel()->getId());
+        $this->assertEquals('3821', $this->aliasRepository->find('983')->getModel()->getId());
+        $this->assertEquals('3821', $this->aliasRepository->find('3820')->getModel()->getId());
+        $this->assertEquals('3821', $this->aliasRepository->find('500')->getModel()->getId());
     }
 
     public function testUpdate2()

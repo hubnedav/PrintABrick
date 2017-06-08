@@ -77,16 +77,19 @@ class RelationLoader extends BaseLoader
     private function loadPartRelation(Part $part)
     {
         $number = $part->getId();
+        // Find model by id or alias
         $model = $this->modelRepository->findOneByNumber($number);
         if (!$model) {
+            // Try to find relation from part_model.yml file
             $number = $this->relationMapper->find($this->getPrintedParentId($number), 'part_model');
+            // Find model by id or alias
             $model = $this->modelRepository->findOneByNumber($number);
 
             if (!$model) {
+                // If model not found, try to find by identical model name
                 $model = $this->modelRepository->findOneByName($part->getName());
             }
         }
-
         return $model;
     }
 

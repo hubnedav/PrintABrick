@@ -164,7 +164,6 @@ class ModelLoader extends BaseLoader
 
         $index = 0;
         $connection = $this->em->getConnection();
-        $connection->getConfiguration()->setSQLLogger(null);
 
         foreach ($files as $file) {
             $this->progressBar->setMessage($file['basename']);

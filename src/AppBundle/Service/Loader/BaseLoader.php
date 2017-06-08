@@ -52,6 +52,7 @@ abstract class BaseLoader
         $this->em = $em;
         $this->logger = $logger;
         $this->formatTransformer = new FormatTransformer();
+        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
     }
 
     public function setOutput(OutputInterface $output)

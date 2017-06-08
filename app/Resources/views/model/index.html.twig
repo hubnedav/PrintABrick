@@ -20,33 +20,35 @@
 {% block content %}
     <div class="ui segment vertical secondary">
         <div class="ui container stackable grid divided">
-                <div class="column four wide">
-                    <div class="segment basic ui filter">
-                        <h3 class="header dividing ui">{{ 'model.filter.title' | trans }}</h3>
-                        {{ form_start(form) }}
-                        <div class="field">
-                            {{ form_label(form.query) }}
-                            <div class="ui icon input">
-                                {{ form_widget(form.query) }}
-                                <i class="search icon"></i>
-                            </div>
+            <div class="column four wide">
+                <div class="segment basic ui filter">
+                    <h3 class="header dividing ui">{{ 'model.filter.title' | trans }}</h3>
+                    {{ form_start(form) }}
+                    <div class="field">
+                        {{ form_label(form.query) }}
+                        <div class="ui icon input">
+                            {{ form_widget(form.query) }}
+                            <i class="search icon"></i>
                         </div>
-                        {{ form_row(form.category) }}
-                        <div class="field">
-                            <input class="ui fluid submit green button" type="submit" value="{{ 'form.search.submit' | trans }}"/>
-                        </div>
-                        {{ form_end(form) }}
                     </div>
+                    {{ form_row(form.category) }}
+                    <div class="field">
+                        <input class="ui fluid submit green button" type="submit" value="{{ 'form.search.submit' | trans }}"/>
+                    </div>
+                    {{ form_end(form) }}
                 </div>
-                <div class="column twelve wide">
-                    <div class="segment basic ui">
-                        <div class="ui header segment vertical sort">
-                            <div class="ui grid stackable">
+            </div>
+            <div class="column twelve wide">
+                <div class="segment basic ui">
+                    <div class="ui header segment vertical sort">
+                        <div class="ui grid stackable">
                                 <div class="five wide column">
+                                    {% if models.paginationData['totalCount'] %}
                                     <div class="ui text left floated menu">
                                         <div class="header item">Showing</div>
                                         <span class="item">{{ models.paginationData['firstItemNumber']~' - '~models.paginationData['lastItemNumber'] }} of {{ models.getTotalItemCount }} items</span>
                                     </div>
+                                    {% endif %}
                                 </div>
 
                                 <div class="eleven wide column">
@@ -56,22 +58,23 @@
                                         {{ knp_pagination_sortable(models, 'Name', 'm.name') }}
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="ui segment vertical">
-                            <div class="ui six column doubling grid parts">
-                                {% for model in models %}
-                                    {{ blocks.model(model) }}
-                                {% else %}
-                                    {{ blocks.empty('empty.search.title' | trans )}}
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div class="ui segment vertical right floated">
-                            {{ knp_pagination_render(models) }}
+
                         </div>
                     </div>
+                    <div class="ui segment vertical">
+                        <div class="ui six column doubling grid parts">
+                            {% for model in models %}
+                                {{ blocks.model(model) }}
+                            {% else %}
+                                {{ blocks.empty('empty.search.title' | trans )}}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="ui segment vertical right floated">
+                        {{ knp_pagination_render(models) }}
+                    </div>
                 </div>
+            </div>
         </div>
     </div>
 {% endblock %}

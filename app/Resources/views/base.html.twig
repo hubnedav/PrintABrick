@@ -82,14 +82,7 @@
                             {% endfor %}
                         </div>
 
-                        {#<div class="ui grid stackable">#}
-                        {#<div class="right floated right aligned four wide column">#}
-
-                        {#</div>#}
-                        {#<div class="left floated left aligned twelve wide column">#}
                         <h1 class="ui header">{% block header %}{% endblock %}</h1>
-                        {#</div>#}
-                        {#</div>#}
 
                         {% for label, flashes in app.session.flashbag.all %}
                             {% for flash in flashes %}

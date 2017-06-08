@@ -12,7 +12,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Debug\Exception\ContextErrorException;
 
 abstract class BaseLoader
 {
@@ -65,6 +64,7 @@ abstract class BaseLoader
      * Initialize new progress bar.
      *
      * @param $total
+     * @param string $format
      */
     protected function initProgressBar($total, $format = 'loader')
     {

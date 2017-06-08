@@ -27,9 +27,9 @@ class LDModelParser
      *
      * LDraw.org Standards: Official Library Header Specification (http://www.ldraw.org/article/398.html)
      *
-     * @throws ErrorParsingLineException
-     *
+     * @param $string
      * @return array
+     * @throws ErrorParsingLineException
      */
     public function parse($string)
     {

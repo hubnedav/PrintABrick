@@ -135,8 +135,7 @@ class Color
     }
 
     /**
-     * @param Inventory_Part $part_building_kit
-     *
+     * @param Inventory_Part $inventoryPart
      * @return Color
      */
     public function addPartInventoryPart(Inventory_Part $inventoryPart)
@@ -147,7 +146,7 @@ class Color
     }
 
     /**
-     * @param Inventory_Part $part_building_kit
+     * @param Inventory_Part $inventoryPart
      *
      * @return Color
      */

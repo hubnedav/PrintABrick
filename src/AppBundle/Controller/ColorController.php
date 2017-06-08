@@ -17,6 +17,8 @@ class ColorController extends AbstractController
 {
     /**
      * @Route("/", name="color_index")
+     * @param ColorService $colorService
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(ColorService $colorService)
     {

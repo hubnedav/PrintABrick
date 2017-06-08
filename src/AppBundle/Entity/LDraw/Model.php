@@ -166,6 +166,8 @@ class Model
 
     /**
      * @param string $name
+     *
+     * @return Model
      */
     public function setName($name)
     {

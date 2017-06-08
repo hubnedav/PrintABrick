@@ -134,7 +134,7 @@ class ModelLoader extends BaseLoader
         try {
             $connection->beginTransaction();
 
-            $this->getFileContext($file);
+            $this->loadFileContext($file);
             $this->loadModel($file);
 
             $connection->commit();
@@ -206,6 +206,7 @@ class ModelLoader extends BaseLoader
 
         // Return model from database if rewrite is not enabled
         if (!$this->rewrite && $model = $modelRepository->find(basename($file, '.dat'))) {
+            /** @var Model $model */
             return $model;
         }
 
@@ -329,7 +330,6 @@ class ModelLoader extends BaseLoader
      *
      *
      * @param $id
-     * @param Filesystem $context
      *
      * @return string
      */
@@ -359,18 +359,14 @@ class ModelLoader extends BaseLoader
      * Get new filesystem context of current file.
      *
      * @param $file
-     *
-     * @return Filesystem
      */
-    private function getFileContext($file)
+    private function loadFileContext($file)
     {
         try {
             $adapter = new Local(dirname($file));
             $this->fileContext = new Filesystem($adapter);
         } catch (Exception $exception) {
             $this->logger->error($exception->getMessage());
-
-            return null;
         }
     }
 

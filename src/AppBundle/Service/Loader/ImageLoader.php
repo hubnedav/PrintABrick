@@ -60,6 +60,7 @@ class ImageLoader extends BaseLoader
         // Get models without image
         $missing = [];
         $models = $this->em->getRepository(Model::class)->findAll();
+        /** @var Model $model */
         foreach ($models as $model) {
             if (!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR.$model->getId().'.png')) {
                 $missing[] = $model;

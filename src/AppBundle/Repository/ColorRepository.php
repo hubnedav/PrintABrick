@@ -11,7 +11,7 @@ class ColorRepository extends BaseRepository
 {
     public function findAllBySet(Set $set)
     {
-        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($set->getNumber());
+        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($set->getId());
 
         $queryBuilder = $this->createQueryBuilder('color');
 

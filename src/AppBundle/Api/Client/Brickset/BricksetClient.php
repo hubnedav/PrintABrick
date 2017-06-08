@@ -42,7 +42,7 @@ class BricksetClient
     /**
      * BricksetClient constructor.
      *
-     * @param string $apikey  Brickset API key
+     * @param string $apiKey  Brickset API key
      * @param array  $options A array of config values
      *
      * @throws ApiException

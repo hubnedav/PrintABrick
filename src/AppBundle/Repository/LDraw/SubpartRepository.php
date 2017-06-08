@@ -16,8 +16,10 @@ class SubpartRepository extends BaseRepository
     /**
      * Create new Subpart relation entity or retrieve one by foreign keys.
      *
-     * @param $name
-     *
+     * @param $parent
+     * @param $child
+     * @param $count
+     * @param $colorId
      * @return Subpart
      */
     public function getOrCreate($parent, $child, $count, $colorId)
@@ -29,6 +31,7 @@ class SubpartRepository extends BaseRepository
 
             $colorRepository = $this->getEntityManager()->getRepository(Color::class);
             if (!($color = $colorRepository->find($colorId))) {
+                /** @var Color $color */
                 $color = $colorRepository->find(-1);
             }
 

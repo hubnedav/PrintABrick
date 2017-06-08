@@ -49,20 +49,6 @@ class Inventory_Part
     protected $inventory;
 
     /**
-     * Set count.
-     *
-     * @param int $count
-     *
-     * @return Inventory_Part
-     */
-    public function setCount($count)
-    {
-        $this->count = $count;
-
-        return $this;
-    }
-
-    /**
      * Get count.
      *
      * @return int

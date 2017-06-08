@@ -36,7 +36,7 @@ class SetRepository extends Repository
 
             $boolQuery->addMust($query);
         } else {
-            $query = new \Elastica\Query\MatchAll();
+            $query = new Query\MatchAll();
             $boolQuery->addMust($query);
         }
 

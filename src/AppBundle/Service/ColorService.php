@@ -13,6 +13,7 @@ class ColorService
 
     /**
      * ColorService constructor.
+     * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
     {

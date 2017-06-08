@@ -11,6 +11,9 @@ class AjaxController extends AbstractController
 {
     /**
      * @Route("/set_tab/{tab}", name="set_tab", requirements={"tab"=".+"})
+     * @param Request $request
+     * @param $tab
+     * @return Response
      */
     public function setDefaultTabAction(Request $request, $tab)
     {

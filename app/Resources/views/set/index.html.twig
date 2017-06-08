@@ -51,10 +51,12 @@
                     <div class="ui header segment vertical sort">
                         <div class="ui grid stackable">
                             <div class="five wide column">
-                                <div class="ui text left floated menu">
-                                    <div class="header item">Showing</div>
-                                    <span class="item">{{ sets.paginationData['firstItemNumber']~' - '~sets.paginationData['lastItemNumber'] }} of {{ sets.getTotalItemCount }} items</span>
-                                </div>
+                                {% if sets.paginationData['totalCount'] %}
+                                    <div class="ui text left floated menu">
+                                        <div class="header item">Showing</div>
+                                        <span class="item">{{ sets.paginationData['firstItemNumber']~' - '~sets.paginationData['lastItemNumber'] }} of {{ sets.getTotalItemCount }} items</span>
+                                    </div>
+                                {% endif %}
                             </div>
 
                             <div class="eleven wide column">
@@ -67,6 +69,7 @@
                                     {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount']) }}
                                 </div>
                             </div>
+
                         </div>
                     </div>
                     <div class="ui segment vertical">

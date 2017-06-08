@@ -98,5 +98,7 @@ class LoadLdrawCommand extends ContainerAwareCommand
         }
 
         $this->release();
+
+        return 0;
     }
 }

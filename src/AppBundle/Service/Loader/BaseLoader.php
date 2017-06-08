@@ -117,7 +117,7 @@ abstract class BaseLoader
             if (false === file_put_contents($temp, fopen($url, 'r', 0, $ctx))) {
                 throw new WriteErrorException($temp);
             }
-        } catch (ContextErrorException $e) {
+        } catch (\ErrorException $e) {
             throw new FileNotFoundException($url);
         } catch (\Exception $e) {
             throw new LogicException($e);

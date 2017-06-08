@@ -29,8 +29,9 @@ class ImageLoader extends BaseLoader
     }
 
     /**
-     * @param $color
-     * @param null $path
+     * Download ZIP file with part images from rebrickable and unzip file to filesystem
+     *
+     * @param integer $color color id used by rebrickable
      */
     public function loadColorFromRebrickable($color)
     {
@@ -47,34 +48,46 @@ class ImageLoader extends BaseLoader
             $zip->close();
             $this->output->writeln(['Done!']);
         } else {
-            $this->output->writeln(['<error>Extraction of file failed!</error>']);
+            $this->logger->error('Extraction of file failed!');
         }
     }
 
     /**
-     * Load images of models.
+     * Load missing images of models
      */
     public function loadMissingModelImages()
     {
+        // Get models without image
+        $missing = [];
         $models = $this->em->getRepository(Model::class)->findAll();
-
-        $this->initProgressBar(count($models));
         foreach ($models as $model) {
-            $this->progressBar->setMessage($model->getId());
             if (!$this->mediaFilesystem->has('images'.DIRECTORY_SEPARATOR.'-1'.DIRECTORY_SEPARATOR.$model->getId().'.png')) {
-                try {
-                    $this->loadModelImage($this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath());
-                } catch (\Exception $e) {
-                    dump($e->getMessage());
-                }
+                $missing[] = $model;
+            }
+        }
+        unset($models);
+
+        // Render images
+        $this->output->writeln([
+            "Rendering missing images of models",
+        ]);
+        $this->initProgressBar(count($missing));
+        foreach ($missing as $model) {
+            $this->progressBar->setMessage($model->getId());
+
+            try {
+                $this->loadModelImage($this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath());
+            } catch (\Exception $e) {
+                $this->logger->error('Error rendering model '.$model->getId().' image', $e);
             }
             $this->progressBar->advance();
         }
+
         $this->progressBar->finish();
     }
 
     /**
-     * Render model and save image into co.
+     * Render model and save image into
      *
      * @param $file
      */

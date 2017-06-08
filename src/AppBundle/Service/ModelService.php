@@ -60,7 +60,7 @@ class ModelService
      */
     public function getSiblings(Model $model)
     {
-        $this->modelRepository->findAllRelatedModels($model);
+        return $this->modelRepository->findAllRelatedModels($model);
     }
 
     /**

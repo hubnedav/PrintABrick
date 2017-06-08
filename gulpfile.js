@@ -56,7 +56,7 @@ gulp.task('files:semantic', function () {
     return gulp.src(
         'bower_components/semantic/dist/themes/**'
     )
-        .pipe(gulp.dest('web/resources/css/semantic-ui'));
+        .pipe(gulp.dest('web/resources/css/themes'));
 });
 
 gulp.task('files:images', function () {

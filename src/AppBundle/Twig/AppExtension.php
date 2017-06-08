@@ -9,14 +9,18 @@ class AppExtension extends \Twig_Extension
     /** @var FormatTransformer */
     private $formatTransformer;
 
+    /** @var string */
+    private $webDir;
+
     /**
      * AppExtension constructor.
      *
      * @param FormatTransformer $formatTransformer
      */
-    public function __construct(FormatTransformer $formatTransformer)
+    public function __construct(FormatTransformer $formatTransformer, $webDir)
     {
         $this->formatTransformer = $formatTransformer;
+        $this->webDir = $webDir;
     }
 
     public function getFilters()
@@ -75,11 +79,7 @@ class AppExtension extends \Twig_Extension
 
     public function fileTimestamp($filePath)
     {
-        $changeDate = filemtime($_SERVER['DOCUMENT_ROOT'].'/'.$filePath);
-        if (!$changeDate) {
-            //Fallback if mtime could not be found:
-            $changeDate = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
-        }
+        $changeDate = filemtime($this->webDir.DIRECTORY_SEPARATOR.$filePath);
 
         return $filePath.'?'.$changeDate;
     }

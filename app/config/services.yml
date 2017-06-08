@@ -123,6 +123,8 @@ services:
     # Twig
 
     AppBundle\Twig\AppExtension:
+        arguments:
+            $webDir: "%kernel.root_dir%/../web"
         tags:
             - { name: twig.extension }
 

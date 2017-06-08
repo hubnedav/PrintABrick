@@ -24,6 +24,9 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+    app.relations.cache_provider:
+        class: Doctrine\Common\Cache\ArrayCache
+
     app.brickset.cache_provider:
         class: Doctrine\Common\Cache\PhpFileCache
         arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
@@ -76,6 +79,8 @@ services:
             $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
 
     AppBundle\Util\RelationMapper:
+        arguments:
+            - '@app.relations.cache_provider'
         calls:
             - [ loadResource, ['%kernel.root_dir%/Resources/relations/part_model.yml', 'part_model']]
             - [ loadResource, ['%kernel.root_dir%/Resources/relations/alias_model.yml', 'alias_model']]

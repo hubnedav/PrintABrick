@@ -4,6 +4,7 @@ namespace AppBundle\Util;
 
 use AppBundle\Exception\RelationMapper\InvalidResourceException;
 use AppBundle\Exception\RelationMapper\ResourceNotFoundException;
+use Doctrine\Common\Cache\CacheProvider;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -15,6 +16,16 @@ class RelationMapper
      * @var array
      */
     private $relations;
+
+    /**
+     * RelationMapper constructor.
+     * @param CacheProvider $cache
+     */
+    public function __construct(CacheProvider $cache)
+    {
+        $this->cache = $cache;
+    }
+
 
     /**
      * Adds a Resource.
@@ -31,8 +42,13 @@ class RelationMapper
         }
 
         try {
+            if (!$data = unserialize($this->cache->fetch($domain))) {
+                $data = Yaml::parse(file_get_contents($file),yaml::PARSE_KEYS_AS_STRINGS);
+                $this->cache->save($domain, serialize($data), 60);
+            }
+
             $this->relations[$domain] = [];
-            $this->relations[$domain] = Yaml::parse(file_get_contents($file));
+            $this->relations[$domain] = $data;
         } catch (ParseException $e) {
             throw new InvalidResourceException(sprintf('Error parsing YAML, invalid file "%s"', $file), 0, $e);
         }

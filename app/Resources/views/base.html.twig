@@ -107,28 +107,3 @@
         {% include 'footer.html.twig' %}
     </div>
 {% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
-    <!-- Go to www.addthis.com/dashboard to customize your tools -->
-    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-593560849f04e2fa"></script>
-
-    <script type="text/javascript">
-        $(document).ajaxComplete(function () {
-            $("#results").on( "click", ".pagination a", function (e){
-                e.preventDefault();
-                var page = $(this).attr("href"); //get page number from link
-
-                $.ajax({
-                    type: 'GET',
-                    url: page,
-                    dataType: 'json',
-                    success: function (data) {
-                        $('#results').replaceWith(data);
-                    }
-                });
-            });
-        });
-    </script>
-{% endblock %}

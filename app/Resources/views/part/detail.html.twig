@@ -77,9 +77,15 @@
         </div>
     </div>
     <div class="ui vertical segment">
+        <div class="ui tabular pointing secondary menu stackable">
+            <div class="container ui">
+                <a class="item active" data-tab="sets">{{ 'part.sets' | trans }} ({{ setCount }})</a>
+            </div>
+        </div>
+
         <div class="container ui">
-             <div class="ui ajax-load" data-tab="sets" data-src="{{ path('part_sets', { id: part.id, page: app.request.get('page')  }) }}">
-                <div class="ui active centered inline loader"></div>
+            <div class="ui tab active" data-tab="sets" >
+                {{ render(path('part_sets', { id: part.id, page: app.request.get('page')  })) }}
             </div>
         </div>
     </div>

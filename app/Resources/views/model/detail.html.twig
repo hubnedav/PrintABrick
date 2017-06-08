@@ -25,7 +25,6 @@
             </div>
             <div class="column six wide">
                 <div class="item-info ui">
-                    <div class="addthis_inline_share_toolbox"></div>
                     <table class="ui very basic table">
                         <tr>
                             <td>{{ 'model.id' | trans }}</td>
@@ -76,55 +75,64 @@
         </div>
     </div>
     <div class="ui vertical segment">
+
+        {% set related = submodels is not empty or siblings is not empty or model.parents is not empty %}
+
         <div class="ui tabular pointing secondary menu stackable">
             <div class="container ui">
-                <a class="item active" data-tab="related">{{ 'model.related' | trans }}</a>
-                <a class="item" data-tab="sets">{{ 'model.sets' | trans }}</a>
-                {#<a class="item" data-tab="parents">{{ 'model.parents' | trans }} ({{ model.parents|length }})</a>#}
+                {% if related %}
+                    <a class="item setTab {% if app.session.get('tab') != 'sets' %}active{%  endif %}" data-tab="related">{{ 'model.related' | trans }}</a>
+                {% endif %}
+                <a class="item setTab {% if app.session.get('tab') == 'sets' or not related %}active{%  endif %}" data-tab="sets">{{ 'model.sets' | trans }} ({{ setCount }})</a>
             </div>
         </div>
 
         <div class="container ui">
-            <div class="ui tab active" data-tab="related">
-                <div class="segment vertical ui">
-                    <h3 class="header">Submodels</h3>
-                    <div class="ui grid doubling ten column row parts">
-                        {% for subpart in submodels %}
-                            {{ blocks.model(subpart['model'], subpart['quantity']) }}
-                        {% else %}
-                            <div class="empty"></div>
-                        {% endfor %}
-                    </div>
+            {% if submodels is not empty or siblings is not empty or model.parents is not empty %}
+                <div class="ui tab {% if app.session.get('tab') != 'sets' %}active{%  endif %}" data-tab="related">
+                    {% if submodels is not empty %}
+                        <div class="segment vertical ui">
+                            <h3 class="header">Submodels</h3>
+                            <div class="ui grid doubling ten column row parts">
+                                {% for subpart in submodels %}
+                                    {{ blocks.model(subpart['model'], subpart['quantity']) }}
+                                {% else %}
+                                    <div class="empty"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if siblings is not empty %}
+                        <div class="segment vertical ui">
+                            <h3 class="header">Siblings</h3>
+                            <div class="ui grid doubling ten column row parts">
+
+                                {% for model in siblings  %}
+                                    {{ blocks.model(model) }}
+                                {% else %}
+                                    <div class="empty"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if model.parents is not empty %}
+                        <div class="segment vertical ui">
+                            <h3 class="header">Parents</h3>
+                            <div class="ui grid doubling ten column row parts">
+
+                                {% for subpart in model.parents  %}
+                                    {{ blocks.model(subpart.parent) }}
+                                {% else %}
+                                    <div class="empty"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
+            {% endif %}
 
-                <div class="segment vertical ui">
-                    <h3 class="header">Siblings</h3>
-                    <div class="ui grid doubling ten column row parts">
-
-                        {% for model in siblings  %}
-                            {{ blocks.model(model) }}
-                        {% else %}
-                            <div class="empty"></div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="segment vertical ui">
-                    <h3 class="header">Parents</h3>
-                    <div class="ui grid doubling ten column row parts">
-
-                        {% for subpart in model.parents  %}
-                            {{ blocks.model(subpart.parent) }}
-                        {% else %}
-                            <div class="empty"></div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="ui tab ajax-load" data-tab="sets" data-src="{{ path('model_sets', { id: model.id, page: app.request.get('page')  }) }}">
-                <div class="ui active centered inline loader"></div>
+            <div class="ui tab {% if app.session.get('tab') == 'sets' or not related %}active{%  endif %}" data-tab="sets">
+                {{ render(path('model_sets', { id: model.id, page: app.request.get('page')  })) }}
             </div>
         </div>
     </div>

@@ -75,6 +75,7 @@ model:
   subparts: Subparts
   related: Related bricks
   parents: Parent bricks
+  sets: Sets
 
 page:
   model.index: Browse bricks
@@ -124,6 +125,7 @@ empty:
         message: Sorry, no reviews found on Brickset
   models:
   search.title: No results found for your search criteria
+  sets.title: This model/part is not used in any set
 
 part:
   id: Number
@@ -133,6 +135,7 @@ part:
   alternates: Alternate parts
   molds: Molds of part
   prints: Prints
+  sets: Sets
 
 form:
   search.submit: Search

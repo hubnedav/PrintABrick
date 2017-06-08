@@ -12,6 +12,9 @@ class BricksetManager
      */
     private $bricksetClient;
 
+    /**
+     * @var CacheProvider
+     */
     private $cache;
 
     const CACHE_LIFETIME = 86400;

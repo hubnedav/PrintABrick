@@ -162,25 +162,33 @@ class ModelLoader extends BaseLoader
         $files = $this->ldrawLibraryContext->listContents('parts', false);
         $this->initProgressBar(count($files));
 
+        $index = 0;
+        $connection = $this->em->getConnection();
+        $connection->getConfiguration()->setSQLLogger(null);
+
         foreach ($files as $file) {
             $this->progressBar->setMessage($file['basename']);
 
             if ($file['type'] == 'file' && $file['extension'] == 'dat') {
-                $connection = $this->em->getConnection();
                 $connection->beginTransaction();
-
                 try {
                     $this->loadModel($this->ldrawLibraryContext->getAdapter()->getPathPrefix().$file['path']);
+
+                    // clear managed objects to avoid memory issues
+                    if($index++ % 50 == 0) {
+                        $this->em->clear();
+                    }
                     $connection->commit();
                 } catch (\Exception $exception) {
                     $connection->rollBack();
                     $this->logger->error($exception->getMessage());
                 }
-                $connection->close();
             }
 
             $this->progressBar->advance();
         }
+
+        $connection->close();
         $this->progressBar->finish();
     }
 

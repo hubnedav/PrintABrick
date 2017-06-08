@@ -152,6 +152,8 @@ class StlRendererService
             throw new ConvertingFailedException($file, 'POV');
         }
 
+        unset($incFile);
+
         return $outputFile;
     }
 

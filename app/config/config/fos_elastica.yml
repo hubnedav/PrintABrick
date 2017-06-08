@@ -3,6 +3,7 @@ fos_elastica:
         default: { host: '%elastica_host%', port: '%elastica_port%', logger: true }
     indexes:
         app:
+            index_name: app_%kernel.environment%
             settings:
                 index:
                     analysis:

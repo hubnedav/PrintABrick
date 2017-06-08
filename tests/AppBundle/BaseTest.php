@@ -13,27 +13,22 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class BaseTest extends WebTestCase
 {
-    protected $_container;
-
     /* @var FilesystemInterface $filesystem */
     protected $filesystem;
 
     /** @var EntityManagerInterface */
     protected $em;
 
-    public function __construct()
+    public function setUp()
     {
-        self::bootKernel();
-        $this->_container = self::$kernel->getContainer();
         $this->filesystem = $this->get('oneup_flysystem.media_filesystem');
         $this->em = $this->get('doctrine.orm.entity_manager');
-        parent::__construct();
     }
 
     public function setUpDb()
     {
         // Make sure we are in the test environment
-        if ('test' !== self::$kernel->getEnvironment()) {
+        if ('test' !== $this->get('kernel')->getEnvironment()) {
             throw new \LogicException('setUpDb must be executed in the test environment');
         }
 
@@ -45,11 +40,11 @@ abstract class BaseTest extends WebTestCase
 
     protected function get($service)
     {
-        return $this->_container->get($service);
+        return $this->getContainer()->get($service);
     }
 
     protected function getParameter($parameter)
     {
-        return $this->_container->getParameter($parameter);
+        return $this->getContainer()->getParameter($parameter);
     }
 }

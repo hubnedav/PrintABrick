@@ -21,8 +21,10 @@ class StlFixer extends BaseTest
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->stlFixer = new StlFixerService($this->getParameter('admesh_bin'));
-        $this->input = __DIR__.'/fixtures/ascii.stl';
+        $this->input = __DIR__ . '/fixtures/ascii.stl';
     }
 
     public function tearDown()

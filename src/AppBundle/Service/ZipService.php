@@ -117,7 +117,7 @@ class ZipService
      * @param Set  $set
      * @param bool $spare If true - add only spare parts, false - add only regular parts, null - add all parts
      */
-    public function addSetGroupedByColor(Set $set, $spare = null)
+    private function addSetGroupedByColor(Set $set, $spare = null)
     {
         $colors = $this->setService->getModelsGroupedByColor($set, $spare);
 
@@ -141,7 +141,7 @@ class ZipService
      * @param Set  $set
      * @param bool $spare If true - add only spare parts, false - add only regular parts, null - add all parts
      */
-    public function addSet(Set $set, $spare = null)
+    private function addSet(Set $set, $spare = null)
     {
         $models = $this->setService->getModels($set, $spare);
 

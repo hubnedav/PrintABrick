@@ -33,7 +33,9 @@
                     <span class="truncate-multiline"><small>{{ model.name }}</small></span>
                 </div>
                 <div class="description">
-                    <span><small>{{ model.category.name }}</small></span>
+                    {% if model.category is not null %}
+                        <span><small>{{ model.category.name }}</small></span>
+                    {% endif %}
                     {% if quantity %}<span class="right floated">{{ quantity }}x</span>{% endif %}
                 </div>
             </div>
@@ -71,7 +73,9 @@
                 <div class="meta">
                     <span class="left floated">{{ set.id }}</span>
                     <br>
-                    <span title="{{ set.theme.fullName }}" class="left floated truncate"><small>{{ set.theme.fullName }}</small></span>
+                    {% if set.theme is not null %}
+                        <span title="{{ set.theme.fullName }}" class="left floated truncate"><small>{{ set.theme.fullName }}</small></span>
+                    {% endif %}
                 </div>
                 <div class="description">
                     <small>

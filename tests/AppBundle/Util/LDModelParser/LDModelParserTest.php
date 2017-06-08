@@ -22,7 +22,7 @@ class LDModelParserTest extends TestCase
 
     public function testValid()
     {
-        $resource = file_get_contents(__DIR__.'/fixtures/valid.dat');
+        $resource = file_get_contents(__DIR__ . '/fixtures/valid.dat');
 
         $array = [
             "id" => "1234",
@@ -53,13 +53,13 @@ class LDModelParserTest extends TestCase
      */
     public function testInvalid()
     {
-        $resource = file_get_contents(__DIR__.'/fixtures/invalid.dat');
+        $resource = file_get_contents(__DIR__ . '/fixtures/invalid.dat');
 
         $this->parser->parse($resource);
     }
 
     public function testStickers() {
-        $resource = file_get_contents(__DIR__.'/fixtures/stickers.txt');
+        $resource = file_get_contents(__DIR__ . '/fixtures/stickers.txt');
 
         foreach (preg_split('/^---DAT/m', $resource) as $dat) {
             $this->assertEquals('Sticker', $this->parser->parse($dat)['type']);
@@ -68,7 +68,7 @@ class LDModelParserTest extends TestCase
 
     public function testAlias()
     {
-        $resource = file_get_contents(__DIR__.'/fixtures/alias.txt');
+        $resource = file_get_contents(__DIR__ . '/fixtures/alias.txt');
 
         foreach (preg_split('/^---DAT/m', $resource) as $dat) {
             $this->assertEquals('parent', $this->parser->parse($dat)['parent']);

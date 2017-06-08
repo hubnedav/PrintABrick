@@ -36,6 +36,18 @@ class SetService
     }
 
     /**
+     * Find set by id
+     *
+     * @param $id
+     *
+     * @return Set
+     */
+    public function findSet($id)
+    {
+        return $this->setRepository->find($id);
+    }
+
+    /**
      * Get all sets in the set inventory.
      *
      * @param Set $set

@@ -1,0 +1,52 @@
+#declare main_mesh = m_MYSOLID;
+#include "math.inc"
+#include "finish.inc"
+#include "transforms.inc"
+#include "colors.inc"
+
+background {color rgb 1}
+
+light_source { <-10,-15,15> color White }
+light_source { <-11,-4,10> color White }
+light_source { <-10,14,20> color White }
+
+
+global_settings {
+  assumed_gamma 2.1
+}
+
+#declare Min = min_extent( main_mesh );
+#declare Max = max_extent( main_mesh );
+
+#declare MaxLength = max(
+    Max.x-Min.x,
+    Max.y-Min.y,
+    Max.z-Min.z
+);
+
+// Calculate camera distace factor - if object is large on Y axis and Z axis move the camera further
+#declare cameraDistance = (((Max.y-Min.y)*(1/MaxLength) > 0.3) & ((Max.z-Min.z)*(1/MaxLength) > 0.95) ? 1: 0.9);
+
+camera
+{
+	location <-1.5*cameraDistance, -1*cameraDistance, 1.1*cameraDistance>
+    angle 45
+	sky z
+	look_at 0
+	translate <0,0.05,-0.15>
+	right -1*x
+}
+
+object
+{
+    main_mesh
+    Center_Trans(main_mesh, x+y+z)
+
+    texture
+    {
+        pigment{ color rgb<0, 0.34, 0.6> }
+        finish { phong .51}
+    }
+    scale (1/MaxLength)
+}
+

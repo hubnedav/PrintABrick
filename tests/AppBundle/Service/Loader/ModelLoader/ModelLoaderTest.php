@@ -29,8 +29,10 @@ class ModelLoaderTest extends BaseTest
     /** @var AliasRepository */
     private $aliasRepository;
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
+
         $this->modelRepository = $this->em->getRepository(Model::class);
         $this->aliasRepository = $this->em->getRepository(Alias::class);
 

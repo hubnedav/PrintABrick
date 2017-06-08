@@ -20,7 +20,9 @@ class StlRendererTest extends BaseTest
 
     public function setUp()
     {
-        $layout = $this->get('kernel')->getRootDir().'/Resources/povray_layout/layout.tmpl';
+        parent::setUp();
+
+        $layout = __DIR__ . '/fixtures/layout.tmpl';
         $povray = $this->getParameter('povray_bin');
         $stl2pov = $this->getParameter('stl2pov_bin');
 
@@ -34,7 +36,7 @@ class StlRendererTest extends BaseTest
 
     public function testRendering()
     {
-        $this->stlRenderer->render(__DIR__.'/fixtures/973c00.stl',$this->filesystem->getAdapter()->getPathPrefix());
+        $this->stlRenderer->render(__DIR__ . '/fixtures/973c00.stl',$this->filesystem->getAdapter()->getPathPrefix());
         $this->assertTrue($this->filesystem->has('973c00.png'));
     }
 }

@@ -13,7 +13,7 @@ class RelationMapperTest extends TestCase
     public function testLoad()
     {
         $mapper = new RelationMapper(new ArrayCache());
-        $mapper->loadResource(__DIR__.'/fixtures/resources.yml', 'resources');
+        $mapper->loadResource(__DIR__ . '/fixtures/resources.yml', 'resources');
 
         $this->assertEquals('bar', $mapper->find('foo','resources'));
         $this->assertEquals('bar', $mapper->find('bar','resources'));
@@ -35,7 +35,7 @@ class RelationMapperTest extends TestCase
     public function testLoadInvalidResource()
     {
         $mapper = new RelationMapper(new ArrayCache());
-        $resource = __DIR__.'/fixtures/invalid.yml';
+        $resource = __DIR__ . '/fixtures/invalid.yml';
         $mapper->loadResource($resource, 'resources');
     }
 }

@@ -39,7 +39,11 @@
                             </tr>
                             <tr>
                                 <td>{{ 'set.theme' | trans }}</td>
-                                <td><a href="{{ path('set_index',{'theme' : set.theme.id }) }}">{{ set.theme ? set.theme.fullName }}</a></td>
+                                <td>
+                                    {% if set.theme is not null %}
+                                        <a href="{{ path('set_index',{'theme' : set.theme.id }) }}">{{ set.theme ? set.theme.fullName }}</a>
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr>
                                 <td>{{ 'set.parts' | trans }}</td><td>

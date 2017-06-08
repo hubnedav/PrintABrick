@@ -16,6 +16,8 @@ class StlConverterTest extends BaseTest
 
     public function setUp()
     {
+        parent::setUp();
+
         $ldview = $this->getParameter('ldview_bin');
 
         $stlFixer = $this->createMock(StlFixerService::class);
@@ -26,11 +28,11 @@ class StlConverterTest extends BaseTest
 
     public function testConvertToStl()
     {
-        $adapter = new Local(__DIR__.'/fixtures/ldraw');
+        $adapter = new Local(__DIR__ . '/fixtures/ldraw');
         $ldrawLibraryContext = new Filesystem($adapter);
         $this->stlConverter->setLDrawLibraryContext($ldrawLibraryContext);
 
-        $this->assertNotNull($this->stlConverter->datToStl(__DIR__.'/fixtures/ldraw/parts/983.dat'));
+        $this->assertNotNull($this->stlConverter->datToStl(__DIR__ . '/fixtures/ldraw/parts/983.dat'));
 
         $this->assertTrue($this->filesystem->has('models/983.stl'));
 
@@ -42,16 +44,16 @@ class StlConverterTest extends BaseTest
      */
     public function testLDContextMissing()
     {
-        $this->stlConverter->datToStl(__DIR__.'/fixtures/ldraw/parts/983.dat');
+        $this->stlConverter->datToStl(__DIR__ . '/fixtures/ldraw/parts/983.dat');
     }
 
     public function testConvertToPng()
     {
-        $adapter = new Local(__DIR__.'/fixtures/ldraw');
+        $adapter = new Local(__DIR__ . '/fixtures/ldraw');
         $ldrawLibraryContext = new Filesystem($adapter);
         $this->stlConverter->setLDrawLibraryContext($ldrawLibraryContext);
 
-        $this->assertNotNull($this->stlConverter->datToPng(__DIR__.'/fixtures/ldraw/parts/983.dat'));
+        $this->assertNotNull($this->stlConverter->datToPng(__DIR__ . '/fixtures/ldraw/parts/983.dat'));
 
         $this->assertTrue($this->filesystem->has('images/983.png'));
 

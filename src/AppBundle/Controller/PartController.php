@@ -24,7 +24,7 @@ class PartController extends Controller
      *
      * @Route("/{id}", name="part_detail")
      */
-    public function detailAction(Part $part, RebrickableManager $rebrickableManager)
+    public function detailAction(Part $part, RebrickableManager $rebrickableManager, SetService $setService)
     {
         $apiPart = null;
         if ($part) {
@@ -43,6 +43,7 @@ class PartController extends Controller
             return $this->render('part/detail.html.twig', [
                 'part' => $part,
                 'apiPart' => $apiPart,
+                'setCount' => count($setService->getAllByPart($part))
             ]);
         }
 

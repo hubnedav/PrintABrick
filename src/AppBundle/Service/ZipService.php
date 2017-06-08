@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Set;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 
 class ZipService
 {
@@ -29,11 +30,11 @@ class ZipService
     /**
      * ZipService constructor.
      *
-     * @param Filesystem   $mediaFilesystem
+     * @param FilesystemInterface   $mediaFilesystem
      * @param ModelService $modelService
      * @param SetService   $setService
      */
-    public function __construct(Filesystem $mediaFilesystem, ModelService $modelService, SetService $setService)
+    public function __construct(FilesystemInterface $mediaFilesystem, ModelService $modelService, SetService $setService)
     {
         $this->mediaFilesystem = $mediaFilesystem;
         $this->setService = $setService;

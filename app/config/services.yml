@@ -90,3 +90,16 @@ services:
     AppBundle\Twig\AppExtension:
         tags:
             - { name: twig.extension }
+
+    League\Flysystem\FilesystemInterface:
+        alias: oneup_flysystem.media_filesystem
+
+    Knp\Menu\FactoryInterface:
+        alias: knp_menu.factory
+
+    FOS\ElasticaBundle\Manager\RepositoryManagerInterface:
+        alias: fos_elastica.repository_manager
+
+    AppBundle\Service\SearchService:
+        arguments:
+            - '@fos_elastica.manager'

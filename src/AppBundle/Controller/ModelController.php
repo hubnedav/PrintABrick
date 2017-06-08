@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\LDraw\Model;
 use AppBundle\Form\Search\ModelSearchType;
 use AppBundle\Model\ModelSearch;
+use AppBundle\Model\SetSearch;
 use AppBundle\Service\ModelService;
+use AppBundle\Service\SearchService;
 use AppBundle\Service\SetService;
 use AppBundle\Service\ZipService;
 use Knp\Component\Pager\Paginator;
@@ -30,20 +32,17 @@ class ModelController extends Controller
      *
      * @Route("/", name="model_index")
      */
-    public function indexAction(Request $request, FormFactoryInterface $formFactory)
+    public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService)
     {
         $modelSearch = new ModelSearch();
 
         $form = $formFactory->createNamedBuilder('', ModelSearchType::class, $modelSearch)->getForm();
         $form->handleRequest($request);
 
-        $elasticaManager = $this->get('fos_elastica.manager');
-        $results = $elasticaManager->getRepository(Model::class)->search($modelSearch, 500);
-
         /** @var Paginator $paginator */
         $paginator = $this->get('knp_paginator');
         $models = $paginator->paginate(
-            $results,
+            $searchService->searchModels($modelSearch),
             $request->query->getInt('page', 1)/*page number*/,
             $request->query->getInt('limit', 30)/*limit per page*/
         );
@@ -60,7 +59,7 @@ class ModelController extends Controller
      * @Route("/{id}", name="model_detail")
      * @Method("GET")
      */
-    public function detailAction($id, ModelService $modelService)
+    public function detailAction($id, ModelService $modelService, SetService $setService)
     {
         if ($model = $modelService->findModel($id)) {
             try {
@@ -68,6 +67,7 @@ class ModelController extends Controller
                     'model' => $model,
                     'siblings' => $modelService->getSiblings($model),
                     'submodels' => $modelService->getSubmodels($model),
+                    'setCount' => count($setService->getAllByModel($model)),
                 ]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());

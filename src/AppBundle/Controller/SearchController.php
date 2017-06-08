@@ -8,6 +8,7 @@ use AppBundle\Model\ModelSearch;
 use AppBundle\Model\SetSearch;
 use AppBundle\Repository\Search\ModelRepository;
 use AppBundle\Repository\Search\SetRepository;
+use AppBundle\Service\SearchService;
 use FOS\ElasticaBundle\HybridResult;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -25,24 +26,13 @@ class SearchController extends Controller
     /**
      * @Route("/", name="search_results")
      */
-    public function searchAction(Request $request)
+    public function searchAction(Request $request, SearchService $searchService)
     {
         $query = trim(strip_tags($request->get('query')));
 
-        /** var FOS\ElasticaBundle\Manager\RepositoryManager */
-        $repositoryManager = $this->get('fos_elastica.manager');
-
-        /** @var SetRepository $setRepository */
-        $setRepository = $repositoryManager->getRepository(Set::class);
-        /** @var ModelRepository $modelRepository */
-        $modelRepository = $repositoryManager->getRepository(Model::class);
-
-        $setsResult = $setRepository->search(new SetSearch($query), 1000);
-        $modelResult = $modelRepository->search(new ModelSearch($query), 1000);
-
         return $this->render('search/index.html.twig', [
-            'sets' => $setsResult,
-            'models' => $modelResult,
+            'sets' => $searchService->searchSetsByQuery($query),
+            'models' => $searchService->searchModelsByQuery($query),
             'query' => $query,
         ]);
     }
@@ -50,24 +40,15 @@ class SearchController extends Controller
     /**
      * @Route("/autocomplete", name="search_autocomplete")
      */
-    public function autocompleteAction(Request $request)
+    public function autocompleteAction(Request $request, SearchService $searchService)
     {
         $query = trim(strip_tags($request->get('query')));
 
         /** @var CacheManager $liip */
         $liip = $this->get('liip_imagine.cache.manager');
 
-        /** var FOS\ElasticaBundle\Manager\RepositoryManager */
-        $repositoryManager = $this->get('fos_elastica.manager');
-
-        /** @var SetRepository $setRepository */
-        $setRepository = $repositoryManager->getRepository(Set::class);
-        /** @var ModelRepository $modelRepository */
-        $modelRepository = $repositoryManager->getRepository(Model::class);
-
-        // Option 1. Returns all users who have example.net in any of their mapped fields
-        $setsResult = $setRepository->findHighlighted($query, 4);
-        $modelResult = $modelRepository->findHighlighted($query, 4);
+        $setsResult = $searchService->searchSetsHighlightedByQuery($query, 4);
+        $modelResult = $searchService->searchModelsHighlightedByQuery($query, 4);
 
         $models = [];
         /** @var HybridResult $model */

@@ -8,6 +8,7 @@ use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Form\Search\SetSearchType;
 use AppBundle\Model\SetSearch;
 use AppBundle\Repository\Search\SetRepository;
+use AppBundle\Service\SearchService;
 use AppBundle\Service\SetService;
 use AppBundle\Service\ZipService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -30,20 +31,16 @@ class SetController extends Controller
      *
      * @return Response
      */
-    public function indexAction(Request $request, FormFactoryInterface $formFactory)
+    public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService)
     {
         $setSearch = new SetSearch();
 
         $form = $formFactory->createNamedBuilder('', SetSearchType::class, $setSearch)->getForm();
         $form->handleRequest($request);
 
-        /** @var SetRepository $setRepository */
-        $setRepository = $this->get('fos_elastica.manager')->getRepository(Set::class);
-        $results = $setRepository->search($setSearch, 500);
-
         $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
-            $results,
+            $searchService->searchSets($setSearch, 500),
             $request->query->getInt('page', 1)/*page number*/,
             $request->query->getInt('limit', 20)/*limit per page*/
         );

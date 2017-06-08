@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
@@ -20,7 +21,7 @@ class MediaController extends Controller
      *
      * @return Response
      */
-    public function fileAction($path, Filesystem $mediaFilesystem)
+    public function fileAction($path, FilesystemInterface $mediaFilesystem)
     {
         if ($mediaFilesystem->has($path)) {
             $response = new BinaryFileResponse($mediaFilesystem->getAdapter()->getPathPrefix().DIRECTORY_SEPARATOR.$path);

@@ -55,9 +55,9 @@ fos_elastica:
                         finder: ~
                         repository: AppBundle\Repository\Search\SetRepository
                         listener:
-                              insert: false
-                              update: false
-                              delete: false
+                            insert: false
+                            update: false
+                            delete: false
                 model:
                     mappings:
                         id:
@@ -86,3 +86,7 @@ fos_elastica:
                         provider: ~
                         finder: ~
                         repository: AppBundle\Repository\Search\ModelRepository
+                        listener:
+                            insert: false
+                            update: false
+                            delete: false

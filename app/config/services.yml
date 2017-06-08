@@ -27,9 +27,7 @@ services:
     app.relations.cache_provider:
         class: Doctrine\Common\Cache\ArrayCache
 
-    app.brickset.cache_provider:
-        class: Doctrine\Common\Cache\PhpFileCache
-        arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
+    # STL
 
     AppBundle\Service\Stl\StlRendererService:
         arguments:
@@ -45,6 +43,38 @@ services:
         arguments:
             $ADMesh: '%admesh_bin%'
 
+    # Loaders
+
+    AppBundle\Service\Loader\BaseLoader:
+        abstract:  true
+
+    AppBundle\Service\Loader\ModelLoader:
+        arguments:
+            $logger: '@monolog.logger.loader'
+
+    AppBundle\Service\Loader\RebrickableLoader:
+        arguments:
+            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
+            $logger: '@monolog.logger.loader'
+
+    AppBundle\Service\Loader\ImageLoader:
+        arguments:
+            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
+            $logger: '@monolog.logger.loader'
+
+    AppBundle\Util\RelationMapper:
+        arguments:
+            - '@app.relations.cache_provider'
+        calls:
+            - [ loadResource, ['%kernel.root_dir%/Resources/relations/part_model.yml', 'part_model']]
+            - [ loadResource, ['%kernel.root_dir%/Resources/relations/alias_model.yml', 'alias_model']]
+
+    # API
+
+    app.brickset.cache_provider:
+        class: Doctrine\Common\Cache\PhpFileCache
+        arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
+
     AppBundle\Api\Client\Brickset\BricksetClient:
         arguments:
             $apiKey: '%brickset_apikey%'
@@ -59,6 +89,9 @@ services:
         arguments:
            $cache: '@app.brickset.cache_provider'
 
+
+    # Imagine
+
     AppBundle\Imagine\PartImageLoader:
         tags:
             - { name: liip_imagine.binary.loader, loader: part_image_loader }
@@ -67,23 +100,8 @@ services:
         tags:
             - { name: liip_imagine.binary.loader, loader: set_image_loader }
 
-    AppBundle\Service\Loader\BaseLoader:
-        abstract:  true
 
-    AppBundle\Service\Loader\RebrickableLoader:
-        arguments:
-            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
-
-    AppBundle\Service\Loader\ImageLoader:
-        arguments:
-            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
-
-    AppBundle\Util\RelationMapper:
-        arguments:
-            - '@app.relations.cache_provider'
-        calls:
-            - [ loadResource, ['%kernel.root_dir%/Resources/relations/part_model.yml', 'part_model']]
-            - [ loadResource, ['%kernel.root_dir%/Resources/relations/alias_model.yml', 'alias_model']]
+    # KNP Menu
 
     menu.builder.main:
         class: AppBundle\Menu\Builder
@@ -92,15 +110,23 @@ services:
         tags:
           - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
 
-    AppBundle\Twig\AppExtension:
-        tags:
-            - { name: twig.extension }
+    Knp\Menu\FactoryInterface:
+        alias: knp_menu.factory
+
+
+    # Filesystem
 
     League\Flysystem\FilesystemInterface:
         alias: oneup_flysystem.media_filesystem
 
-    Knp\Menu\FactoryInterface:
-        alias: knp_menu.factory
+
+    # Twig
+
+    AppBundle\Twig\AppExtension:
+        tags:
+            - { name: twig.extension }
+
+    # ElasticSearch
 
     FOS\ElasticaBundle\Manager\RepositoryManagerInterface:
         alias: fos_elastica.repository_manager

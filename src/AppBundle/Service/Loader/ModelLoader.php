@@ -45,9 +45,6 @@ class ModelLoader extends BaseLoader
     /** @var RelationMapper */
     private $relationMapper;
 
-    /** @var string */
-    private $LDLibraryUrl;
-
     /** @var bool */
     private $rewrite = false;
 
@@ -90,6 +87,12 @@ class ModelLoader extends BaseLoader
         }
     }
 
+    /**
+     * Download library form $url, unzip archive and return directory path with library
+     *
+     * @param $url
+     * @return bool|string
+     */
     public function downloadLibrary($url)
     {
         $this->writeOutput([
@@ -115,6 +118,11 @@ class ModelLoader extends BaseLoader
         unlink($libraryZip);
 
         $this->writeOutput(['<info>LDraw libary downloaded</info>']);
+
+        // return ldraw directory if in zip file
+        if(file_exists($temp_dir.'/ldraw/')) {
+            return $temp_dir.'/ldraw/';
+        }
 
         return $temp_dir;
     }
@@ -160,6 +168,7 @@ class ModelLoader extends BaseLoader
         ]);
 
         $files = $this->ldrawLibraryContext->listContents('parts', false);
+
         $this->initProgressBar(count($files));
 
         $index = 0;
@@ -274,7 +283,7 @@ class ModelLoader extends BaseLoader
 
             try {
                 // update model only if newer version
-                if (!$model->getModified() || ($model->getModified() < $modelArray['modified'])) {
+                if ($this->rewrite || ($model->getModified() < $modelArray['modified'])) {
                     $stl = $this->stlConverter->datToStl($file, $this->rewrite)->getPath();
 
                     $model->setPath($stl);

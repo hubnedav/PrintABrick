@@ -12,7 +12,7 @@ parameters:
     name: "PrintABrick"
     # rebrickable csv files root URL (http://rebrickable.com/media/downloads/ or local dir containing csv files)
     app.rebrickable_downloads_url: 'http://rebrickable.com/media/downloads/'
-    app.ld_library_download_url: 'http://www.ldraw.org/library/updates/completeCA.zip'
+    app.ld_library_download_url: 'http://www.ldraw.org/library/updates/complete.zip'
 
     app.media_root: "%kernel.root_dir%/../var/media/"
 

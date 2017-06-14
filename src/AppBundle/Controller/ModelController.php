@@ -36,13 +36,13 @@ class ModelController extends Controller
     {
         $modelSearch = new ModelSearch();
 
-        $form = $formFactory->createNamedBuilder('', ModelSearchType::class, $modelSearch)->getForm();
+        $form = $formFactory->createNamedBuilder('model', ModelSearchType::class, $modelSearch)->getForm();
         $form->handleRequest($request);
 
         /** @var Paginator $paginator */
         $paginator = $this->get('knp_paginator');
         $models = $paginator->paginate(
-            $searchService->searchModels($modelSearch),
+            $searchService->searchModels($modelSearch,500),
             $request->query->getInt('page', 1)/*page number*/,
             $request->query->getInt('limit', 30)/*limit per page*/
         );

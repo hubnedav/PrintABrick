@@ -59,5 +59,10 @@ This command consists of multiple subcommands that can be called separately:
 4. Download images of models from rebrickable.com `$ bin/console app:load:images [--color=INT] [--rebrickable] [--missing]`
 5. Populate Elastisearch index `$ bin/console fos:elastica:populate`
 
+##### Adding part relation 
+Relations between LDraw models and Rebrickable parts are matched automatically by identical (or similar) id/name when executing command `$ bin/console app:load:relation`. 
+
+Unmatched relations can be specified by adding relation of IDs to `app/Resources/relations/part_model.yml` 
+
 ## Testing
 You can run complete system tests by `$ phpunit`. These should cover the main system functions and the functionality of calling the third-party programs that are required are needed to seamlessly retrieve the necessary application data.

@@ -83,6 +83,7 @@ class StlConverterService
                 '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
                 '-ExportFiles=1',
                 '-ExportSuffix=.stl',
+                '-UseQualityStuds=1',
                 '-ExportsDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'models',
             ]);
 

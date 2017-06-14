@@ -6,7 +6,7 @@
             {% set placeholder = asset("resources/images/transparent_min.png") %}
         {% endif %}
 
-        <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter) }}">
+        <img src="{{ placeholder }}" data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter) }}" alt="{{ number }} - image">
     </div>
 {% endmacro %}
 
@@ -18,7 +18,7 @@
             {% set placeholder = asset("resources/images/transparent_min.png") %}
         {% endif %}
 
-        <img src="{{ placeholder }}" data-src="{{ asset(number~'.jpg')|imagine_filter(filter) }}">
+        <img src="{{ placeholder }}" data-src="{{ asset(number~'.jpg')|imagine_filter(filter) }}" alt="{{ number }} - image">
     </div>
 {% endmacro %}
 
@@ -71,7 +71,7 @@
                     {{ set.name }}
                 </h3>
                 <div class="meta">
-                    <span class="left floated">{{ set.id }}</span>
+                    <span title="{{ set.id }}" class="left truncate">{{ set.id }}</span>
                     <br>
                     {% if set.theme is not null %}
                         <span title="{{ set.theme.fullName }}" class="left floated truncate"><small>{{ set.theme.fullName }}</small></span>

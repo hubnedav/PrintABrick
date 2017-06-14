@@ -1,12 +1,12 @@
 {% if options['class'] == 'asc' %}
     {% set icon = '<i class="icon sort content ascending"></i>' %}
-    {% set class = 'item active' %}
+    {% set options = (options)|merge({'class':'item active'}) %}
 {% elseif options['class'] == 'desc' %}
-     {% set icon = '<i class="icon sort content descending"></i>' %}
-    {% set class = 'item active' %}
+    {% set icon = '<i class="icon sort content descending"></i>' %}
+    {% set options = (options)|merge({'class':'item active'}) %}
 {% else %}
     {% set icon = null %}
-    {% set class = 'item' %}
+    {% set options = (options)|merge({'class':'item'}) %}
 {% endif %}
 
-<a class="{{ class }}" {% for attr, value in options %} {{ attr }}="{{ value }}"{% endfor %}>{{ icon|raw }} {{ title }}</a>
+<a {% for attr, value in options %} {{ attr }}="{{ value }}"{% endfor %}>{{ icon|raw }} {{ title }}</a>

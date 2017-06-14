@@ -8,7 +8,11 @@
 
 .set {
   .content .header {
-    font-size: 14px !important;
-    margin-bottom: 3px;
+    font-size: 1em !important;
+    margin-bottom: 0.1em;
+  }
+  .content {
+    padding: 0.5em !important;
+    overflow: hidden;
   }
 }

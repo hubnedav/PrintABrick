@@ -128,7 +128,7 @@ class ZipService
                 $model = $modelArray['model'];
                 $quantity = $modelArray['quantity'];
 
-                $filename = "{$this->zipName}/{$color->getName()}/{$model->getId()}_({$quantity}x).stl";
+                $filename = "{$this->zipName}/{$color->getName()}_(#{$color->getRgb()})/{$model->getId()}_({$quantity}x).stl";
 
                 $this->addModel($filename, $model);
             }
@@ -166,7 +166,7 @@ class ZipService
      */
     private function addLicense()
     {
-        $text = sprintf('All stl files in this archive were converted by LDView from LDraw Library http://www.ldraw.org/'."\n\n");
+        $text = sprintf('All stl files in this archive were converted by LDView from official LDraw Library http://www.ldraw.org/'."\n\n");
         $text .= sprintf('Files are licensed under the Creative Commons - Attribution license.'."\n");
         $text .= sprintf('http://creativecommons.org/licenses/by/2.0/'."\n\n");
 

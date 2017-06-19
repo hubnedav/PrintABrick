@@ -53,9 +53,9 @@ For full requirements see Symfony 3.3 [docs](http://symfony.com/doc/3.3/referenc
 You can load initial application data by running command `$ bin/console app:init`
 
 This command consists of multiple subcommands that can be called separately:
-1. Load LDraw models into database by running commad `$ bin/console app:load:models [--ldraw=PATH] [--all] [--file=FILE] [--update] `
+1. Load LDraw models into database by running commad `$ bin/console app:load:ldraw [--ldraw=PATH] [--all] [--file=FILE] [--update] `
 2. Load Rebrickable data into database by running command `$ bin/console app:load:rebrickable`  
-3. Load relations between LDraw models and Rebrickable parts by running command `$ bin/console app:load:relation` 
+3. Load relations between LDraw models and Rebrickable parts by running command `$ bin/console app:load:relations` 
 4. Download images of models from rebrickable.com `$ bin/console app:load:images [--color=INT] [--rebrickable] [--missing]`
 5. Populate Elastisearch index `$ bin/console fos:elastica:populate`
 

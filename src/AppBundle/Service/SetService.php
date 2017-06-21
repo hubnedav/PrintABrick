@@ -36,13 +36,13 @@ class SetService
     }
 
     /**
-     * Find set by id
+     * Find set by id.
      *
      * @param $id
      *
-     * @return Set
+     * @return object
      */
-    public function findSet($id)
+    public function find($id)
     {
         return $this->setRepository->find($id);
     }

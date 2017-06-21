@@ -20,6 +20,7 @@ class SubpartRepository extends BaseRepository
      * @param $child
      * @param $count
      * @param $colorId
+     *
      * @return Subpart
      */
     public function getOrCreate($parent, $child, $count, $colorId)

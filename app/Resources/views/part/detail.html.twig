@@ -43,28 +43,28 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        {% if apiPart %}
-                            <tr>
-                                <td>{{ 'part.alternates' | trans }}</td>
-                                <td>
-                                    {% for alternate in apiPart.alternates %}
-                                        <a href="{{ url('part_detail', {'id': alternate})}}">{{ alternate }}</a>
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>{{ 'part.molds' | trans }}</td>
-                                <td>
-                                    {% for mold in apiPart.molds %}
-                                        <a href="{{ url('part_detail', {'id': mold})}}">{{ mold }}</a>
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td><a class="rebrickable link" href="{{ apiPart.url }}">Rebrickable</a></td>
-                            </tr>
-                        {% endif %}
+                        {#{% if apiPart %}#}
+                            {#<tr>#}
+                                {#<td>{{ 'part.alternates' | trans }}</td>#}
+                                {#<td>#}
+                                    {#{% for alternate in apiPart.alternates %}#}
+                                        {#<a href="{{ url('part_detail', {'id': alternate})}}">{{ alternate }}</a>#}
+                                    {#{% endfor %}#}
+                                {#</td>#}
+                            {#</tr>#}
+                            {#<tr>#}
+                                {#<td>{{ 'part.molds' | trans }}</td>#}
+                                {#<td>#}
+                                    {#{% for mold in apiPart.molds %}#}
+                                        {#<a href="{{ url('part_detail', {'id': mold})}}">{{ mold }}</a>#}
+                                    {#{% endfor %}#}
+                                {#</td>#}
+                            {#</tr>#}
+                            {#<tr>#}
+                                {#<td></td>#}
+                                {#<td><a class="rebrickable link" href="{{ apiPart.url }}">Rebrickable</a></td>#}
+                            {#</tr>#}
+                        {#{% endif %}#}
                     </table>
 
                     {% if not part.model %}

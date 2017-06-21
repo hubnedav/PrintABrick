@@ -30,9 +30,9 @@ class ZipService
     /**
      * ZipService constructor.
      *
-     * @param FilesystemInterface   $mediaFilesystem
-     * @param ModelService $modelService
-     * @param SetService   $setService
+     * @param FilesystemInterface $mediaFilesystem
+     * @param ModelService        $modelService
+     * @param SetService          $setService
      */
     public function __construct(FilesystemInterface $mediaFilesystem, ModelService $modelService, SetService $setService)
     {

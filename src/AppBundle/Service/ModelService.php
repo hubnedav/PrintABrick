@@ -30,7 +30,7 @@ class ModelService
      *
      * @return Model|null
      */
-    public function findModel($id)
+    public function find($id)
     {
         return $this->modelRepository->findOneByNumber($id);
     }

@@ -30,7 +30,7 @@ class ZipServiceTest extends BaseTest
         $this->modelService = $this->get(ModelService::class);
         $this->setService = $this->get(SetService::class);
 
-        $this->filesystem->write('models/1.stl',file_get_contents(__DIR__.'/../Fixtures/models/1.stl'));
+        $this->filesystem->write('models/1.stl',file_get_contents(__DIR__ . '/../Fixtures/models/1.stl'));
 
         $this->zipService = new ZipService($this->filesystem,$this->modelService,$this->setService);
     }
@@ -42,7 +42,7 @@ class ZipServiceTest extends BaseTest
 
     public function testModelZip()
     {
-        $model = $this->modelService->findModel(1);
+        $model = $this->modelService->find(1);
 
         $path = $this->zipService->createFromModel($model, 'modelzip');
 
@@ -51,7 +51,7 @@ class ZipServiceTest extends BaseTest
 
     public function testSetZip()
     {
-        $set = $this->setService->findSet('8049-1');
+        $set = $this->setService->find('8049-1');
 
         $path = $this->zipService->createFromSet($set, 'setzip');
 

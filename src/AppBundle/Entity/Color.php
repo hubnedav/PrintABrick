@@ -136,6 +136,7 @@ class Color
 
     /**
      * @param Inventory_Part $inventoryPart
+     *
      * @return Color
      */
     public function addPartInventoryPart(Inventory_Part $inventoryPart)

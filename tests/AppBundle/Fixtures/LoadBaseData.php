@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Fixtures;
 
-
 use AppBundle\Entity\Color;
 use AppBundle\Entity\LDraw\Author;
 use AppBundle\Entity\LDraw\Model;

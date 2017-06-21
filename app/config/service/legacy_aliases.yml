@@ -1,29 +1,6 @@
 services:
-#  service.set: '@AppBundle\Service\SetService'
-#  service.zip: '@AppBundle\Service\ZipService'
-#  service.model: '@AppBundle\Service\ModelService'
-#  service.stl.fixer: '@AppBundle\Service\Stl\StlFixerService'
-#  service.stl.converter: '@AppBundle\Service\Stl\StlConverterService'
-#  service.stl.renderer: '@AppBundle\Service\Stl\StlRendererService'
-#
-#  app.part_image_loader: '@AppBundle\Imagine\PartImageLoader'
-#  app.set_image_loader: '@AppBundle\Imagine\SetImageLoader'
-#
-#  app.transformer.format: '@AppBundle\Transformer\FormatTransformer'
-#  app.relation.mapper: '@AppBundle\Util\RelationMapper'
-#
-  service.loader.base: '@AppBundle\Service\Loader\BaseLoader'
-  service.loader.rebrickable: '@AppBundle\Service\Loader\RebrickableLoader'
-  service.loader.model: '@AppBundle\Service\Loader\ModelLoader'
-  service.loader.relation: '@AppBundle\Service\Loader\RelationLoader'
-  service.loader.image: '@AppBundle\Service\Loader\ImageLoader'
-
-#  form.search.model: '@AppBundle\Form\Search\ModelSearchType'
-#  form.search.set: '@AppBundle\Form\Search\SetSearchType'
-#
-#  api.manager.rebrickable: '@AppBundle\Api\Manager\RebrickableManager'
-#  api.manager.brickset: '@AppBundle\Api\Manager\BricksetManager'
-#  api.client.rebrickable: '@AppBundle\Api\Client\Rebrickable\RebrickableClient'
-#  api.client.brickset: '@AppBundle\Api\Client\Brickset\BricksetClient'
-
-#  knp_menu.factory: Knp\Menu\FactoryInterface
+  service.loader.base: '@LoaderBundle\Service\BaseLoader'
+  service.loader.rebrickable: '@LoaderBundle\Service\RebrickableLoader'
+  service.loader.model: '@LoaderBundle\Service\ModelLoader'
+  service.loader.relation: '@LoaderBundle\Service\RelationLoader'
+  service.loader.image: '@LoaderBundle\Service\ImageLoader'

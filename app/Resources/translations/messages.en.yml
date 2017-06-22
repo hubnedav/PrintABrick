@@ -36,6 +36,7 @@ set:
     partCount: Count of parts
     theme: Theme
     theme.all: All Themes
+    theme.placeholder: All Themes
 
   download:
     unicolor.button: Download set (Uni-color)
@@ -72,6 +73,7 @@ model:
     search: Search
     category: Category
     category.all: All Categories
+    category.placeholder: All Categories
   subparts: Subparts
   related: Related bricks
   parents: Parent bricks
@@ -139,5 +141,6 @@ part:
 
 form:
   search.submit: Search
+
 
 meta.description: "Web catalogue of LEGO<sup>®</sup> parts for 3D printing"

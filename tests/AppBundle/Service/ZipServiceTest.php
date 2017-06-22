@@ -27,8 +27,8 @@ class ZipServiceTest extends BaseTest
             LoadBaseData::class
         ]);
 
-        $this->modelService = $this->get(ModelService::class);
-        $this->setService = $this->get(SetService::class);
+        $this->modelService = new ModelService($this->em);
+        $this->setService = new SetService($this->em);
 
         $this->filesystem->write('models/1.stl',file_get_contents(__DIR__ . '/../Fixtures/models/1.stl'));
 

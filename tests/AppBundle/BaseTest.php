@@ -2,14 +2,9 @@
 
 namespace Tests\AppBundle;
 
-use AppBundle\DataFixtures\ORM\LoadColors;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\SchemaTool;
 use League\Flysystem\FilesystemInterface;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class BaseTest extends WebTestCase
 {
@@ -25,7 +20,7 @@ abstract class BaseTest extends WebTestCase
         $this->em = $this->get('doctrine.orm.entity_manager');
     }
 
-    public function setUpDb()
+    public function setUpDb(array $fixtures)
     {
         // Make sure we are in the test environment
         if ('test' !== $this->get('kernel')->getEnvironment()) {
@@ -33,9 +28,7 @@ abstract class BaseTest extends WebTestCase
         }
 
         // If you are using the Doctrine Fixtures Bundle you could load these here
-        $this->loadFixtures([
-            LoadColors::class
-        ]);
+        $this->loadFixtures($fixtures);
     }
 
     protected function get($service)
@@ -46,5 +39,16 @@ abstract class BaseTest extends WebTestCase
     protected function getParameter($parameter)
     {
         return $this->getContainer()->getParameter($parameter);
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $this->filesystem->deleteDir('models');
+        $this->filesystem->deleteDir('images');
+
+        $this->em->close();
+        $this->em = null; // avoid memory leaks
     }
 }

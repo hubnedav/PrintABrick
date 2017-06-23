@@ -111,6 +111,8 @@ class BricksetClient
             return null;
         } catch (\SoapFault $e) {
             throw new CallFailedException(ApiException::BRICKSET);
+        } catch (AuthenticationFailedException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new ApiException(ApiException::BRICKSET);
         }

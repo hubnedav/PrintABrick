@@ -49,27 +49,6 @@ class Inventory_PartRepository extends BaseRepository
     }
 
     /**
-     * Find all Inventory_Parts with $color in set.
-     *
-     * @param string $number
-     * @param int    $color
-     *
-     * @return array
-     */
-    public function findAllBySetNumberAndColor($number, $color)
-    {
-        $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($number);
-
-        $queryBuilder = $this->createQueryBuilder('inventory_part')
-            ->where('inventory_part.inventory = :inventory')
-            ->setParameter('inventory', $inventory)
-            ->andWhere('inventory_part.color = :color')
-            ->setParameter('color', $color);
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-
-    /**
      * Get total part count of Set.
      *
      * @param Set  $set

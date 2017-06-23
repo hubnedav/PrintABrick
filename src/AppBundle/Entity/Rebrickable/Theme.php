@@ -92,4 +92,14 @@ class Theme
 
         return implode(' > ', array_reverse($name));
     }
+
+    public function getGroup()
+    {
+        $theme = $this;
+        while (($theme->getParent()) !== null) {
+            $theme = $theme->getParent();
+        }
+
+        return $theme;
+    }
 }

@@ -24,20 +24,15 @@ class ZipServiceTest extends BaseTest
         parent::setUp();
 
         $this->loadFixtures([
-            LoadBaseData::class
+            LoadBaseData::class,
         ]);
 
         $this->modelService = new ModelService($this->em);
         $this->setService = new SetService($this->em);
 
-        $this->filesystem->write('models/1.stl',file_get_contents(__DIR__ . '/../Fixtures/models/1.stl'));
+        $this->filesystem->write('models/1.stl', file_get_contents(__DIR__.'/../Fixtures/models/1.stl'));
 
-        $this->zipService = new ZipService($this->filesystem,$this->modelService,$this->setService);
-    }
-
-    public function tearDown()
-    {
-        $this->filesystem->delete('models/1.stl');
+        $this->zipService = new ZipService($this->filesystem, $this->modelService, $this->setService);
     }
 
     public function testModelZip()

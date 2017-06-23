@@ -150,11 +150,11 @@ class Set
     }
 
     /**
-     * @param Collection $inventorySets
+     * @param Inventory_Set $inventorySet
      */
-    public function setInventorySets($inventorySets)
+    public function addInventorySet($inventorySet)
     {
-        $this->inventorySets = $inventorySets;
+        $this->inventorySets->add($inventorySet);
     }
 
     /**

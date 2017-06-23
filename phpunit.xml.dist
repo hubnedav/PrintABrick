@@ -23,6 +23,8 @@
             <directory>src</directory>
             <exclude>
                 <directory>src/*Bundle/Resources</directory>
+                <directory>src/*Bundle/Api/Client</directory>
+                <directory>src/*Bundle/DataFixtures</directory>
                 <directory>src/*/*Bundle/Resources</directory>
                 <directory>src/*/Bundle/*Bundle/Resources</directory>
             </exclude>

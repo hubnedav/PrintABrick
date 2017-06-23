@@ -8,11 +8,6 @@ use AppBundle\Repository\BaseRepository;
 
 class SubpartRepository extends BaseRepository
 {
-    public function findOneByKeys($parent, $child, $color)
-    {
-        return $this->find(['parent' => $parent, 'subpart' => $child, 'color' => $color]);
-    }
-
     /**
      * Create new Subpart relation entity or retrieve one by foreign keys.
      *
@@ -25,7 +20,7 @@ class SubpartRepository extends BaseRepository
      */
     public function getOrCreate($parent, $child, $count, $colorId)
     {
-        if (($subpart = $this->findOneByKeys($parent, $child, $colorId))) {
+        if (($subpart = $this->find(['parent' => $parent, 'subpart' => $child, 'color' => $colorId]))) {
             $subpart->setCount($count);
         } else {
             $subpart = new Subpart();

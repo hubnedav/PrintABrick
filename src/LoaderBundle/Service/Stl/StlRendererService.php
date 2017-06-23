@@ -5,6 +5,7 @@ namespace LoaderBundle\Service\Stl;
 use LoaderBundle\Exception\ConvertingFailedException;
 use LoaderBundle\Exception\FileNotFoundException;
 use LoaderBundle\Exception\RenderFailedException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -101,9 +102,6 @@ class StlRendererService
         if (!file_exists($file)) {
             throw new FileNotFoundException($file);
         }
-        if (pathinfo($file, PATHINFO_EXTENSION) != 'stl') {
-            throw new ConvertingFailedException($file, 'POV', 'Wrong input filetype');
-        }
 
         // Save the current working directory and change directory to tmp dir
         // stl2pov outputs converted file to current directory and destination can not be changed
@@ -195,7 +193,8 @@ class StlRendererService
         //+AMn	- use non-adaptive (n=1) or adaptive (n=2) supersampling
         //+A0.n	- perform antialiasing (if color change is above n percent)
         //-D	- Turns graphic display off
-        $process = $processBuilder->setPrefix($this->povray)
+        $process = $processBuilder
+            ->setPrefix($this->povray)
             ->setArguments([
                 "+I\"{$file}\"",
                 '+FN',
@@ -207,7 +206,12 @@ class StlRendererService
                 '+A0.5',
                 '-D',
             ])->getProcess();
+
         $process->mustRun();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         if (!file_exists($outputFile)) {
             throw new RenderFailedException("{$to}{$filename}.png");

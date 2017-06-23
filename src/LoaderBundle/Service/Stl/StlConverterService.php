@@ -93,65 +93,9 @@ class StlConverterService
 
                 return $this->mediaFilesystem->get($newFile);
             }
-        } else {
-            return $this->mediaFilesystem->get($newFile);
         }
 
-        throw new ConvertingFailedException($file, 'STL');
-    }
-
-    /**
-     * Convert LDraw model from .dat format to .stl by using LDView
-     * stores created file to $stlStorage filesystem.
-     *
-     * @param string $file
-     * @param bool   $rewrite
-     *
-     * @throws ConvertingFailedException
-     *
-     * @return File
-     */
-    public function datToPng($file, $rewrite = false)
-    {
-        if (!$this->ldrawLibraryContext) {
-            throw new LDLibraryMissingException();
-        }
-
-        if (!$this->mediaFilesystem->has('images')) {
-            $this->mediaFilesystem->createDir('images');
-        }
-
-        $newFile = 'images'.DIRECTORY_SEPARATOR.basename($file, '.dat').'.png';
-
-        if (!$this->mediaFilesystem->has($newFile) || $rewrite) {
-            $this->runLDView([
-                $file,
-                '-LDrawDir='.$this->ldrawLibraryContext->getAdapter()->getPathPrefix(),
-                '-AutoCrop=0',
-                '-SaveAlpha=0',
-                '-BackgroundColor3=0xFFFFFF',
-                '-DefaultColor3=0x136FC3',
-                '-SnapshotSuffix=.png',
-                '-HiResPrimitives=1',
-                '-UseQualityStuds=1',
-                '-UseQualityLighting=1',
-                '-SaveHeight=600',
-                '-SaveWidth=800',
-                '-CurveQuality=12',
-                '-DefaultLatLong=45,40',
-                '-SaveDir='.$this->mediaFilesystem->getAdapter()->getPathPrefix().'images',
-                '-SaveSnapshots=1',
-            ]);
-
-            // Check if file created successfully
-            if ($this->mediaFilesystem->has($newFile)) {
-                return $this->mediaFilesystem->get($newFile);
-            }
-        } else {
-            return $this->mediaFilesystem->get($newFile);
-        }
-
-        throw new ConvertingFailedException($file, 'PNG');
+        return $this->mediaFilesystem->get($newFile);
     }
 
     /**

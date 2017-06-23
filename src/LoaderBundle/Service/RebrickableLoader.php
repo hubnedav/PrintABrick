@@ -6,6 +6,7 @@ use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
+use LoaderBundle\Exception\Loader\LoadingRebrickableFailedException;
 use Psr\Log\LoggerInterface;
 
 //TODO Refactor + validate csv files
@@ -30,9 +31,9 @@ class RebrickableLoader extends BaseLoader
     }
 
     /**
-     * Truncates and loads all rebrickable tables from csv files
+     * Truncates and loads all rebrickable tables from csv files.
      *
-     * @throws \Exception
+     * @throws LoadingRebrickableFailedException
      */
     public function loadAll()
     {
@@ -67,19 +68,19 @@ class RebrickableLoader extends BaseLoader
 
             $this->writeOutput(['Rebrickable database loaded successfully!']);
         } catch (\Exception $e) {
-            $this->writeOutput(['Rollback back']);
-            $connection->rollBack();
-            throw $e;
+            //            $this->writeOutput(['Rollback back']);
+//            $connection->rollBack();
+
+            throw new LoadingRebrickableFailedException();
         }
     }
 
-
     /**
-     * Downloads csv files from rebrickable_url specified in config.yml
+     * Downloads csv files from rebrickable_url specified in config.yml.
      */
     private function loadCSVFiles()
     {
-        $array = ['inventories', 'inventory_parts', 'inventory_sets', 'sets', 'themes', 'parts', 'part_categories', 'colors'];
+        $array = ['inventories', 'inventory_parts', 'inventory_sets', 'sets', 'themes', 'parts', 'part_categories'];
 
         $this->writeOutput([
             '<fg=cyan>------------------------------------------------------------------------------</>',
@@ -133,6 +134,9 @@ class RebrickableLoader extends BaseLoader
         return $this->em->getConnection()->prepare($query)->execute();
     }
 
+    /**
+     * Creates missing Part entites for foreign keys form inventory_parts table.
+     */
     private function addMissingParts()
     {
         $connection = $this->em->getConnection();
@@ -185,8 +189,8 @@ class RebrickableLoader extends BaseLoader
         return $this->loadCsvFile($csv, 'rebrickable_category', '(`id`,`name`)');
     }
 
-    private function loadColorTable($csv)
-    {
-        return $this->loadCsvFile($csv, 'color', '(`id`,`name`,`rgb`, @var) SET transparent = IF(@var=\'t\',1,0)');
-    }
+//    private function loadColorTable($csv)
+//    {
+//        return $this->loadCsvFile($csv, 'color', '(`id`,`name`,`rgb`, @var) SET transparent = IF(@var=\'t\',1,0)');
+//    }
 }

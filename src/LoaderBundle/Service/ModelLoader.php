@@ -102,27 +102,29 @@ class ModelLoader extends BaseLoader
             '<fg=cyan>------------------------------------------------------------------------------</>',
         ]);
 
-        $libraryZip = $this->downloadFile($url);
+        try {
+            $libraryZip = $this->downloadFile($url);
 
-        $temp_dir = tempnam(sys_get_temp_dir(), 'printabrick.');
-        if (file_exists($temp_dir)) {
-            unlink($temp_dir);
-        }
-        mkdir($temp_dir);
+            $temp_dir = tempnam(sys_get_temp_dir(), 'printabrick.');
+            if (file_exists($temp_dir)) {
+                unlink($temp_dir);
+            }
+            mkdir($temp_dir);
 
-        $zip = new \ZipArchive();
-        if ($zip->open($libraryZip) != 'true') {
-            echo 'Error :- Unable to open the Zip File';
-        }
-        $zip->extractTo($temp_dir);
-        $zip->close();
-        unlink($libraryZip);
+            $zip = new \ZipArchive();
+            $zip->open($libraryZip);
+            $zip->extractTo($temp_dir);
+            $zip->close();
+            unlink($libraryZip);
 
-        $this->writeOutput(['<info>LDraw libary downloaded</info>']);
+            $this->writeOutput(['<info>LDraw libary downloaded</info>']);
 
-        // return ldraw directory if in zip file
-        if (file_exists($temp_dir.'/ldraw/')) {
-            return $temp_dir.'/ldraw/';
+            // return ldraw directory if in zip file
+            if (file_exists($temp_dir.'/ldraw/')) {
+                return $temp_dir.'/ldraw/';
+            }
+        } catch (\Exception $exception) {
+            throw new \LogicException('Falied to open Zip archive');
         }
 
         return $temp_dir;

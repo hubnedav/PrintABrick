@@ -5,11 +5,9 @@ namespace LoaderBundle\Service;
 use AppBundle\Transformer\FormatTransformer;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use LoaderBundle\Exception\FileNotFoundException;
 use LoaderBundle\Exception\WriteErrorException;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -101,27 +99,21 @@ abstract class BaseLoader
      *
      * @param $url
      *
-     * @throws FileNotFoundException
+     * @throws WriteErrorException
      *
      * @return bool|string
      */
     protected function downloadFile($url)
     {
-        $this->output->writeln('Loading file from: <comment>'.$url.'</comment>');
+        $this->writeOutput(['Loading file from: <comment>'.$url.'</comment>']);
         $temp = tempnam(sys_get_temp_dir(), 'printabrick.');
 
         $ctx = stream_context_create([], [
             'notification' => [$this, 'progressCallback'],
         ]);
 
-        try {
-            if (false === file_put_contents($temp, fopen($url, 'r', 0, $ctx))) {
-                throw new WriteErrorException($temp);
-            }
-        } catch (\ErrorException $e) {
-            throw new FileNotFoundException($url);
-        } catch (\Exception $e) {
-            throw new LogicException($e);
+        if (false === file_put_contents($temp, fopen($url, 'r', 0, $ctx))) {
+            throw new WriteErrorException($temp);
         }
 
         return $temp;

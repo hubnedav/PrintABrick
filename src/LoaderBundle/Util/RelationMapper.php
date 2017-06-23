@@ -3,10 +3,10 @@
 namespace LoaderBundle\Util;
 
 use Doctrine\Common\Cache\CacheProvider;
+use LoaderBundle\Exception\RelationMapper\InvalidDomainException;
 use LoaderBundle\Exception\RelationMapper\InvalidResourceException;
 use LoaderBundle\Exception\RelationMapper\ResourceNotFoundException;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -69,6 +69,6 @@ class RelationMapper
         if (isset($this->relations[$domain])) {
             return isset($this->relations[$domain][$number]) ? $this->relations[$domain][$number] : $number;
         }
-        throw new InvalidOptionsException();
+        throw new InvalidDomainException();
     }
 }

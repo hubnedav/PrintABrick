@@ -5,6 +5,7 @@ namespace LoaderBundle\Service;
 use AppBundle\Entity\LDraw\Model;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemInterface;
+use LoaderBundle\Exception\FileException;
 use LoaderBundle\Service\Stl\StlRendererService;
 use Psr\Log\LoggerInterface;
 
@@ -32,6 +33,8 @@ class ImageLoader extends BaseLoader
      * Download ZIP file with part images from rebrickable and unzip file to filesystem.
      *
      * @param int $color color id used by rebrickable
+     *
+     * @throws FileException
      */
     public function loadColorFromRebrickable($color)
     {
@@ -41,14 +44,15 @@ class ImageLoader extends BaseLoader
         $zip = new \ZipArchive($file);
 
         if ($zip->open($file) === true) {
-            $this->output->writeln([
+            $this->writeOutput([
                 "Extracting ZIP file into {$this->mediaFilesystem->getAdapter()->getPathPrefix()}images/{$color}",
             ]);
             $zip->extractTo($this->mediaFilesystem->getAdapter()->getPathPrefix().'images'.DIRECTORY_SEPARATOR.$color);
             $zip->close();
-            $this->output->writeln(['Done!']);
+            $this->writeOutput(['Done!']);
         } else {
             $this->logger->error('Extraction of file failed!');
+            throw new FileException($file);
         }
     }
 
@@ -69,7 +73,7 @@ class ImageLoader extends BaseLoader
         unset($models);
 
         // Render images
-        $this->output->writeln([
+        $this->writeOutput([
             'Rendering missing images of models',
         ]);
         $this->initProgressBar(count($missing));
@@ -79,7 +83,7 @@ class ImageLoader extends BaseLoader
             try {
                 $this->loadModelImage($this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath());
             } catch (\Exception $e) {
-                $this->logger->error('Error rendering model '.$model->getId().' image', $e);
+                $this->logger->error('Error rendering model '.$model->getId().' image');
             }
             $this->progressBar->advance();
         }

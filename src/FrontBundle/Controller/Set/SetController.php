@@ -1,6 +1,6 @@
 <?php
 
-namespace FrontBundle\Controller;
+namespace FrontBundle\Controller\Set;
 
 use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Manager\BricksetManager;
@@ -29,6 +29,8 @@ class SetController extends Controller
      *
      * @param Request $request
      *
+     * @param FormFactoryInterface $formFactory
+     * @param SearchService $searchService
      * @return Response
      */
     public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService)
@@ -56,6 +58,8 @@ class SetController extends Controller
      *
      * @param Set $set
      *
+     * @param SetService $setService
+     * @param BricksetManager $bricksetManager
      * @return Response
      */
     public function detailAction(Set $set, SetService $setService, BricksetManager $bricksetManager)
@@ -81,10 +85,14 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/inventory", name="set_inventory")
+     * @param Request $request
+     * @param Set $set
+     * @param SetService $setService
+     * @return Response
      */
     public function inventoryAction(Request $request, Set $set, SetService $setService)
     {
-        $template = $this->render('set/tabs/inventory.html.twig', [
+        return $this->render('set/tabs/inventory.html.twig', [
             'inventorySets' => $setService->getAllSubSets($set),
             'set' => $set,
             'missing' => $setService->getParts($set, false, false),
@@ -92,84 +100,44 @@ class SetController extends Controller
             'missingCount' => $setService->getPartCount($set, false, false),
             'partCount' => $setService->getPartCount($set, false),
         ]);
-
-        if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
-        }
-
-        return $template;
     }
 
     /**
      * @Route("/{id}/models", name="set_models")
+     * @param Set $set
+     * @param SetService $setService
+     * @return Response
      */
-    public function modelsAction(Request $request, Set $set, SetService $setService)
+    public function modelsAction(Set $set, SetService $setService)
     {
-        $models = null;
-        $missing = null;
-
-        try {
-            $models = $setService->getModels($set, false);
-            $missing = $setService->getParts($set, false, false);
-        } catch (\Exception $e) {
-            $this->addFlash('error', $e->getMessage());
-        }
-
-        $template = $this->render('set/tabs/models.html.twig', [
+        return $this->render('set/tabs/models.html.twig', [
             'set' => $set,
-            'missing' => $missing,
-            'models' => $models,
+            'missing' => $setService->getParts($set, false, false),
+            'models' => $setService->getModels($set, false),
         ]);
-
-        if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
-        }
-
-        return $template;
     }
 
     /**
      * @Route("/{id}/colors", name="set_colors")
+     * @param Set $set
+     * @param SetService $setService
+     * @return Response
      */
-    public function colorsAction(Request $request, Set $set, SetService $setService)
+    public function colorsAction(Set $set, SetService $setService)
     {
-        $colors = null;
-        $missing = null;
-
-        try {
-            $colors = $setService->getModelsGroupedByColor($set, false);
-            $missing = $setService->getParts($set, false, false);
-        } catch (\Exception $e) {
-            $this->addFlash('error', $e->getMessage());
-        }
-
-        $template = $this->render('set/tabs/colors.html.twig', [
+        return $this->render('set/tabs/colors.html.twig', [
             'set' => $set,
-            'colors' => $colors,
-            'missing' => $missing,
+            'colors' => $setService->getModelsGroupedByColor($set, false),
+            'missing' => $setService->getParts($set, false, false),
         ]);
-
-        if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
-        }
-
-        return $template;
     }
 
     /**
      * @Route("/{id}/zip", name="set_zip")
+     * @param Request $request
+     * @param Set $set
+     * @param ZipService $zipService
+     * @return BinaryFileResponse
      */
     public function zipAction(Request $request, Set $set, ZipService $zipService)
     {

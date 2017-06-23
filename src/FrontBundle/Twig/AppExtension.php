@@ -35,7 +35,6 @@ class AppExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('remoteSize', [$this, 'remoteSize']),
             new \Twig_SimpleFunction('remoteFilename', [$this, 'remoteFilename']),
-            new \Twig_SimpleFunction('remoteFileExists', [$this, 'remoteFileExists']),
             new \Twig_SimpleFunction('fileTimestamp', [$this, 'fileTimestamp']),
         ];
     }
@@ -43,22 +42,6 @@ class AppExtension extends \Twig_Extension
     public function bytesToSize($bytes, $precision = 2)
     {
         return $this->formatTransformer->bytesToSize($bytes, $precision);
-    }
-
-    /**
-     * @param string $url
-     *
-     * @return bool
-     */
-    public function remoteFileExists($url)
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        return $status === 200 ? true : false;
     }
 
     public function remoteSize($url)

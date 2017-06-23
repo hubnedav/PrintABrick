@@ -1,6 +1,6 @@
 <?php
 
-namespace FrontBundle\Controller\Brickset;
+namespace FrontBundle\Controller\Set;
 
 use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Manager\BricksetManager;
@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @Route("/brickset/sets")
+ * @Route("sets/brickset")
  */
-class SetController extends Controller
+class BricksetController extends Controller
 {
     /**
      * @Route("/{id}/instructions", name="brickset_instructions")

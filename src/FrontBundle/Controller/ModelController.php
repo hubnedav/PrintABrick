@@ -16,7 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
@@ -90,19 +89,9 @@ class ModelController extends Controller
             $request->query->getInt('limit', 16)/*limit per page*/
         );
 
-        $template = $this->render('model/tabs/sets.html.twig', [
+        return $this->render('model/tabs/sets.html.twig', [
             'sets' => $sets,
         ]);
-
-        if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
-        }
-
-        return $template;
     }
 
     /**

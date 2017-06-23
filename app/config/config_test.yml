@@ -17,14 +17,15 @@ swiftmailer:
 
 doctrine:
     dbal:
-        default_connection: default
-        connections:
-            default:
-                driver:   pdo_sqlite
-                path:   "%kernel.cache_dir%/test.db"
-
-liip_functional_test:
-    cache_sqlite_db: true
+        driver:   pdo_mysql
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   printabrick_testdb
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  UTF8
+        options:
+            1001: true
 
 oneup_flysystem:
     adapters:

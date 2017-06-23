@@ -65,4 +65,10 @@ Relations between LDraw models and Rebrickable parts are matched automatically b
 Unmatched relations can be specified by adding relation of IDs to `app/Resources/relations/part_model.yml` 
 
 ## Testing
+The test database must be created before the first test runs. You can create new one by running:
+
+1. Generate an empty database by running command (if it does not yet exist) `$ bin/console doctrine:database:create --env=test`   
+2. Create database tables/schema by running command`$ bin/console doctrine:schema:create --env=test`
+
+
 You can run complete system tests by `$ phpunit`. These should cover the main system functions and the functionality of calling the third-party programs that are required are needed to seamlessly retrieve the necessary application data.

@@ -8,6 +8,7 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Repository\LDraw\AliasRepository;
 use AppBundle\Repository\LDraw\ModelRepository;
 use League\Flysystem\File;
+use LoaderBundle\Exception\Loader\MissingContextException;
 use LoaderBundle\Service\ModelLoader;
 use LoaderBundle\Service\Stl\StlConverterService;
 use LoaderBundle\Util\RelationMapper;
@@ -65,6 +66,14 @@ class ModelLoaderTest extends BaseTest
         $this->assertEquals('path', $models[0]->getPath());
     }
 
+    /**
+     * @expectedException LoaderBundle\Exception\Loader\MissingContextException
+     */
+    public function testFileNonExistingContext()
+    {
+        $this->modelLoader->setLDrawLibraryContext(__DIR__.'/fixtures/nonexisting/');
+    }
+
     public function testFileContext()
     {
         $this->modelLoader->setLDrawLibraryContext(__DIR__.'/fixtures/librarycontext/');
@@ -100,6 +109,27 @@ class ModelLoaderTest extends BaseTest
 
         $this->assertEquals(1, count($models));
         $this->assertEquals('licensed', $models[0]->getId());
+    }
+
+    public function testLoadSubpart()
+    {
+        $this->modelLoader->setLDrawLibraryContext(__DIR__.'/fixtures/subparts/');
+        $this->modelLoader->loadOne(__DIR__.'/fixtures/subparts/parts/3815c01.dat');
+
+        $models = $this->modelRepository->findAll();
+
+        $this->assertEquals(4, count($models));
+    }
+
+    /**
+     * @expectedException LoaderBundle\Exception\Loader\LoadingModelFailedException
+     */
+    public function testOneMissing()
+    {
+        $this->modelLoader->setLDrawLibraryContext(__DIR__.'/fixtures/subparts/');
+        $this->modelLoader->loadOne(__DIR__.'/fixtures/subparts/parts/381c01.dat');
+
+        $models = $this->modelRepository->findAll();
     }
 
     public function testIsIncluded()
@@ -183,6 +213,10 @@ class ModelLoaderTest extends BaseTest
     public function testDownload()
     {
         $library = $this->modelLoader->downloadLibrary(__DIR__.'/fixtures/ldraw.zip');
+
+        $this->assertDirectoryExists($library);
+
+        $library = $this->modelLoader->downloadLibrary(__DIR__.'/fixtures/completeCA.zip');
 
         $this->assertDirectoryExists($library);
     }

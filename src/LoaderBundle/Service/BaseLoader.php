@@ -75,6 +75,9 @@ abstract class BaseLoader
         $this->progressBar->start();
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     protected function progressCallback($notification_code, $severity, $message, $message_code, $bytes_transferred, $bytes_max)
     {
         switch ($notification_code) {

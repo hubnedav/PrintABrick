@@ -15,7 +15,7 @@ class FormatTransformer
     public function bytesToSize($bytes, $precision = 2)
     {
         if ($bytes == 0) {
-            return '0.00 B';
+            return round(0, $precision).' B';
         }
 
         $suffix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];

@@ -15,6 +15,8 @@ use League\Flysystem\Exception;
 use League\Flysystem\Filesystem;
 use LoaderBundle\Exception\ConvertingFailedException;
 use LoaderBundle\Exception\FileException;
+use LoaderBundle\Exception\Loader\LoadingModelFailedException;
+use LoaderBundle\Exception\Loader\LoadingRebrickableFailedException;
 use LoaderBundle\Exception\Loader\MissingContextException;
 use LoaderBundle\Exception\ParseErrorException;
 use LoaderBundle\Service\Stl\StlConverterService;
@@ -78,13 +80,14 @@ class ModelLoader extends BaseLoader
      */
     public function setLDrawLibraryContext($ldrawLibrary)
     {
-        try {
-            $adapter = new Local($ldrawLibrary);
-            $this->ldrawLibraryContext = new Filesystem($adapter);
-            $this->stlConverter->setLDrawLibraryContext($this->ldrawLibraryContext);
-        } catch (Exception $exception) {
-            $this->logger->error($exception->getMessage());
+        if(!file_exists($ldrawLibrary)) {
+            $this->logger->error('Wrong library context');
+            throw new MissingContextException($ldrawLibrary);
         }
+
+        $adapter = new Local($ldrawLibrary);
+        $this->ldrawLibraryContext = new Filesystem($adapter);
+        $this->stlConverter->setLDrawLibraryContext($this->ldrawLibraryContext);
     }
 
     /**
@@ -152,6 +155,7 @@ class ModelLoader extends BaseLoader
         } catch (\Exception $e) {
             $connection->rollBack();
             $this->logger->error($e->getMessage());
+            throw new LoadingModelFailedException($file);
         }
     }
 
@@ -374,12 +378,8 @@ class ModelLoader extends BaseLoader
      */
     private function loadFileContext($file)
     {
-        try {
-            $adapter = new Local(dirname($file));
-            $this->fileContext = new Filesystem($adapter);
-        } catch (Exception $exception) {
-            $this->logger->error($exception->getMessage());
-        }
+        $adapter = new Local(dirname($file));
+        $this->fileContext = new Filesystem($adapter);
     }
 
     /**

@@ -48,12 +48,6 @@ class LoadLdrawCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!$this->lock()) {
-            $output->writeln('The command is already running in another process.');
-
-            return 1;
-        }
-
         $this->modelLoader->setOutput($output);
         $this->modelLoader->setRewrite($input->getOption('update'));
 
@@ -96,8 +90,6 @@ class LoadLdrawCommand extends ContainerAwareCommand
 
             $output->writeln(['Done with "'.$errors.'" errors.']);
         }
-
-        $this->release();
 
         return 0;
     }

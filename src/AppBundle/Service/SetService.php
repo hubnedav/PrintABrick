@@ -117,7 +117,7 @@ class SetService
     {
         $models = [];
 
-        $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, true);
+        $inventoryParts = $this->inventoryPartRepository->getAllMatching($set, $spare, true);
 
         /** @var Inventory_Part $inventoryPart */
         foreach ($inventoryParts as $inventoryPart) {
@@ -127,56 +127,6 @@ class SetService
                 } else {
                     $models[$model->getId()] = [
                         'model' => $model,
-                        'quantity' => $inventoryPart->getQuantity(),
-                    ];
-                }
-            }
-        }
-
-        return $models;
-    }
-
-    /**
-     * Get array of all known models in the kit(set).
-     * [
-     *    modelNumber => [
-     *      'model' => Model,
-     *      'colors => [
-     *         colorID => [
-     *              'color' => Color,
-     *              'quantity => int
-     *          ]
-     *          ...
-     *       ]
-     *    ]
-     *    ...
-     * ].
-     *
-     * @param Set  $set
-     * @param bool $spare If true - add only spare parts, false - add only regular parts, null - add all parts
-     *
-     * @return array
-     */
-    public function getModelsWithColors(Set $set, $spare = null)
-    {
-        $models = [];
-
-        $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, true);
-
-        /** @var Inventory_Part $inventoryPart */
-        foreach ($inventoryParts as $inventoryPart) {
-            if ($model = $inventoryPart->getPart()->getModel()) {
-                $color = $inventoryPart->getColor();
-
-                if (!isset($models[$model->getId()]['model'])) {
-                    $models[$model->getId()]['model'] = $model;
-                }
-
-                if (isset($models[$model->getId()]['colors'][$color->getId()])) {
-                    $models[$model->getId()]['colors'][$color->getId()]['quantity'] += $inventoryPart->getQuantity();
-                } else {
-                    $models[$model->getId()]['colors'][$color->getId()] = [
-                        'color' => $color,
                         'quantity' => $inventoryPart->getQuantity(),
                     ];
                 }
@@ -211,7 +161,7 @@ class SetService
     {
         $colors = [];
 
-        $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, true);
+        $inventoryParts = $this->inventoryPartRepository->getAllMatching($set, $spare, true);
 
         /** @var Inventory_Part $inventoryPart */
         foreach ($inventoryParts as $inventoryPart) {
@@ -225,14 +175,10 @@ class SetService
 
                 $colors[$color->getId()]['quantity'] += $inventoryPart->getQuantity();
 
-                if (isset($colors[$color->getId()]['models'][$model->getId()])) {
-                    $colors[$color->getId()]['models'][$model->getId()]['quantity'] += $inventoryPart->getQuantity();
-                } else {
-                    $colors[$color->getId()]['models'][$model->getId()] = [
-                        'model' => $model,
-                        'quantity' => $inventoryPart->getQuantity(),
-                    ];
-                }
+                $colors[$color->getId()]['models'][$model->getId()] = [
+                    'model' => $model,
+                    'quantity' => $inventoryPart->getQuantity(),
+                ];
             }
         }
 
@@ -249,7 +195,7 @@ class SetService
     {
         $parts = [];
 
-        $inventoryParts = $this->inventoryPartRepository->findAllBySetNumber($set->getId(), $spare, $model);
+        $inventoryParts = $this->inventoryPartRepository->getAllMatching($set, $spare, $model);
 
         /** @var Inventory_Part $inventoryPart */
         foreach ($inventoryParts as $inventoryPart) {

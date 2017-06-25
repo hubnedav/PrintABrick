@@ -15,8 +15,8 @@ class InventoryRepository extends BaseRepository
             ->setParameter('setNumber', $number)
             ->orderBy('inventory.version', 'DESC')
             ->setMaxResults(1)
-            ->select('inventory.id');
+            ->select('inventory');
 
-        return $queryBuilder->getQuery()->getOneOrNullResult(Query::HYDRATE_SINGLE_SCALAR);
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 }

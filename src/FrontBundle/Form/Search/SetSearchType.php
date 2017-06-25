@@ -88,9 +88,4 @@ class SetSearchType extends AbstractType
             'method' => 'GET',
         ]);
     }
-
-    public function getName()
-    {
-        return 'set_search_type';
-    }
 }

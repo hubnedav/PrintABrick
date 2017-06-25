@@ -23,7 +23,7 @@ class SubpartRepositoryTest extends BaseTest
 
     public function testGetOrCreate()
     {
-        $this->assertCount(2, $this->repository->findAll());
+        $this->assertCount(3, $this->repository->findAll());
 
         /** @var Model $model */
         $model = $this->em->getRepository(Model::class)->find(1);
@@ -32,14 +32,14 @@ class SubpartRepositoryTest extends BaseTest
 
         $subpart = $this->repository->getOrCreate($model, $child, 2, 1);
         $this->repository->save($subpart);
-        $this->assertCount(2, $this->repository->findAll());
+        $this->assertCount(3, $this->repository->findAll());
 
         $subpart = $this->repository->getOrCreate($model, $child, 2, 2);
         $this->repository->save($subpart);
-        $this->assertCount(3, $this->repository->findAll());
+        $this->assertCount(4, $this->repository->findAll());
 
         $subpart = $this->repository->getOrCreate($model, $child, 2, 3);
         $this->repository->save($subpart);
-        $this->assertCount(4, $this->repository->findAll());
+        $this->assertCount(5, $this->repository->findAll());
     }
 }

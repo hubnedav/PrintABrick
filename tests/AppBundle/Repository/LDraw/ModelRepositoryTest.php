@@ -48,19 +48,19 @@ class ModelRepositoryTest extends BaseTest
 
     public function testCount()
     {
-        $this->assertEquals(3, $this->repository->count());
+        $this->assertEquals(4, $this->repository->count());
     }
 
     public function testGetOrCreate()
     {
-        $this->assertCount(3, $this->repository->findAll());
+        $this->assertCount(4, $this->repository->findAll());
 
         $model = $this->repository->getOrCreate('25');
         $this->repository->save($model);
-        $this->assertCount(3, $this->repository->findAll());
+        $this->assertCount(4, $this->repository->findAll());
 
         $model = $this->repository->getOrCreate(33);
         $this->repository->save($model);
-        $this->assertCount(4, $this->repository->findAll());
+        $this->assertCount(5, $this->repository->findAll());
     }
 }

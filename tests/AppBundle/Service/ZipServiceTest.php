@@ -2,6 +2,8 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\Entity\LDraw\Model;
+use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Service\ModelService;
 use AppBundle\Service\SetService;
 use AppBundle\Service\ZipService;
@@ -13,12 +15,6 @@ class ZipServiceTest extends BaseTest
     /** @var ZipService */
     private $zipService;
 
-    /** @var ModelService */
-    private $modelService;
-
-    /** @var SetService */
-    private $setService;
-
     public function setUp()
     {
         parent::setUp();
@@ -27,17 +23,14 @@ class ZipServiceTest extends BaseTest
             LoadBaseData::class,
         ]);
 
-        $this->modelService = new ModelService($this->em);
-        $this->setService = new SetService($this->em);
-
         $this->filesystem->write('models/1.stl', file_get_contents(__DIR__.'/../Fixtures/models/1.stl'));
 
-        $this->zipService = new ZipService($this->filesystem, $this->modelService, $this->setService);
+        $this->zipService = new ZipService($this->filesystem, new ModelService($this->em), new SetService($this->em));
     }
 
     public function testModelZip()
     {
-        $model = $this->modelService->find(1);
+        $model = $this->em->getRepository(Model::class)->find(1);
 
         $path = $this->zipService->createFromModel($model, 'modelzip');
 
@@ -46,9 +39,18 @@ class ZipServiceTest extends BaseTest
 
     public function testSetZip()
     {
-        $set = $this->setService->find('8049-1');
+        $set = $this->em->getRepository(Set::class)->find('8049-1');
 
         $path = $this->zipService->createFromSet($set, 'setzip');
+
+        $this->assertFileExists($path);
+    }
+
+    public function testSetGroupedByColorZip()
+    {
+        $set = $this->em->getRepository(Set::class)->find('8049-1');
+
+        $path = $this->zipService->createFromSet($set, 'setzip', true);
 
         $this->assertFileExists($path);
     }

@@ -34,6 +34,14 @@ class Inventory_Set
     protected $quantity;
 
     /**
+     * @param int $quantity
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+    }
+
+    /**
      * Get count.
      *
      * @return int

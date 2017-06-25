@@ -59,9 +59,4 @@ class ModelSearchType extends AbstractType
             'method' => 'GET',
         ]);
     }
-
-    public function getName()
-    {
-        return 'model_search_type';
-    }
 }

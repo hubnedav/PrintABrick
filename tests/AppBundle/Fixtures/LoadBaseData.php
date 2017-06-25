@@ -9,6 +9,7 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\LDraw\Subpart;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
+use AppBundle\Entity\Rebrickable\Inventory_Set;
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Entity\Rebrickable\Set;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -45,12 +46,12 @@ class LoadBaseData implements FixtureInterface, ContainerAwareInterface
         $color2->setTransparent(false);
         $manager->persist($color2);
 
-        $color2 = new Color();
-        $color2->setId(-1);
-        $color2->setName('Unknown');
-        $color2->setRgb('EEEEEE');
-        $color2->setTransparent(false);
-        $manager->persist($color2);
+        $color3 = new Color();
+        $color3->setId(-1);
+        $color3->setName('Unknown');
+        $color3->setRgb('EEEEEE');
+        $color3->setTransparent(false);
+        $manager->persist($color3);
 
         // Add sample author
         $author = new Author();
@@ -84,6 +85,15 @@ class LoadBaseData implements FixtureInterface, ContainerAwareInterface
         $child2->setPath('models/1.stl');
         $manager->persist($child);
 
+        // Add sample model
+        $child3 = new Model();
+        $child3->setId(4);
+        $child3->setAuthor($author);
+        $child3->setModified(new \DateTime());
+        $child3->setName('Name');
+        $child3->setPath('models/1.stl');
+        $manager->persist($child3);
+
         $subpart = new Subpart();
         $subpart->setParent($model);
         $subpart->setSubpart($child);
@@ -97,8 +107,17 @@ class LoadBaseData implements FixtureInterface, ContainerAwareInterface
         $subpart2->setCount(2);
         $subpart2->setColor($color);
 
+        $subpart3 = new Subpart();
+        $subpart3->setParent($child2);
+        $subpart3->setSubpart($child3);
+        $subpart3->setCount(2);
+        $subpart3->setColor($color);
+
         $model->addSubpart($subpart2);
         $manager->persist($model);
+
+        $child2->addSubpart($subpart3);
+        $manager->persist($child2);
 
         // Add sample model
         $alias = new Alias();
@@ -120,10 +139,17 @@ class LoadBaseData implements FixtureInterface, ContainerAwareInterface
         $manager->persist($part);
 
         // Add sample part
-        $part = new Part();
-        $part->setId(2);
-        $part->setName('Name2');
-        $manager->persist($part);
+        $part2 = new Part();
+        $part2->setId(2);
+        $part2->setName('Name2');
+        $part2->setModel($child2);
+        $manager->persist($part2);
+
+        // Add sample part
+        $part3 = new Part();
+        $part3->setId(3);
+        $part3->setName('Name3');
+        $manager->persist($part3);
 
         $set = new Set();
         $set->setName('Set name');
@@ -132,17 +158,63 @@ class LoadBaseData implements FixtureInterface, ContainerAwareInterface
         $set->setYear(2011);
         $manager->persist($set);
 
+        $set2 = new Set();
+        $set2->setName('Set 2');
+        $set2->setId('8055-1');
+        $set2->setPartCount(2);
+        $set2->setYear(2015);
+        $manager->persist($set2);
+
         $inventory = new Inventory();
         $inventory->setSet($set);
-        $inventory->setVersion(1);
+        $inventory->setVersion(2);
         $set->addInventory($inventory);
         $manager->persist($inventory);
         $manager->persist($set);
 
+        $inventory2 = new Inventory();
+        $inventory2->setSet($set);
+        $inventory2->setVersion(1);
+        $set->addInventory($inventory2);
+        $manager->persist($inventory2);
+        $manager->persist($set);
+
         $inventoryPart = new Inventory_Part();
         $inventoryPart->setColor($color);
-        $inventoryPart->setQuantity(5);
+        $inventoryPart->setQuantity(4);
         $inventoryPart->setPart($part);
+        $inventoryPart->setInventory($inventory);
+        $inventoryPart->setSpare(false);
+        $manager->persist($inventoryPart);
+
+        $inventorySet = new Inventory_Set();
+        $inventorySet->setInventory($inventory);
+        $inventorySet->setSet($set2);
+        $inventorySet->setQuantity(2);
+        $manager->persist($inventorySet);
+        $set->addInventorySet($inventorySet);
+        $manager->persist($set);
+
+        $inventoryPart = new Inventory_Part();
+        $inventoryPart->setColor($color3);
+        $inventoryPart->setQuantity(6);
+        $inventoryPart->setPart($part2);
+        $inventoryPart->setInventory($inventory);
+        $inventoryPart->setSpare(true);
+        $manager->persist($inventoryPart);
+
+        $inventoryPart = new Inventory_Part();
+        $inventoryPart->setColor($color2);
+        $inventoryPart->setQuantity(3);
+        $inventoryPart->setPart($part3);
+        $inventoryPart->setInventory($inventory);
+        $inventoryPart->setSpare(false);
+        $manager->persist($inventoryPart);
+
+        $inventoryPart = new Inventory_Part();
+        $inventoryPart->setColor($color);
+        $inventoryPart->setQuantity(1);
+        $inventoryPart->setPart($part2);
         $inventoryPart->setInventory($inventory);
         $inventoryPart->setSpare(false);
         $manager->persist($inventoryPart);

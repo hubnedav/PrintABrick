@@ -18,6 +18,28 @@ class ApplicationAvailabilityTest extends BaseControllerTest
         $this->assertTrue($client->getResponse()->isSuccessful());
     }
 
+    public function testPageIsUnsuccessful()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/files/models/sdad');
+
+        $this->assertTrue($client->getResponse()->isNotFound());
+    }
+
+
+    /**
+     * @dataProvider ajaxUrlProvider
+     */
+    public function testPageIsSuccessfulAjax($url)
+    {
+        $client = static::createClient();
+
+        $client->request('GET', $url, [],[],['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $this->assertTrue($client->getResponse()->isSuccessful());
+    }
+
     public function urlProvider()
     {
         return [
@@ -37,6 +59,17 @@ class ApplicationAvailabilityTest extends BaseControllerTest
             ['/parts/1'],
             ['/search/autocomplete?query=name'],
             ['/search/?query=name'],
+            ['/sets/brickset/8540/reviews'],
+            ['/sets/brickset/8540/instructions'],
+            ['/sets/brickset/8540/description'],
+            ['/sets/brickset/8540/images'],
+            ['/files/models/1.stl']
+        ];
+    }
+
+    public function ajaxUrlProvider()
+    {
+        return [
             ['/sets/brickset/8540/reviews'],
             ['/sets/brickset/8540/instructions'],
             ['/sets/brickset/8540/description'],

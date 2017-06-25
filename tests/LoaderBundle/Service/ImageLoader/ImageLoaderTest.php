@@ -52,7 +52,7 @@ class ImageLoaderTest extends BaseTest
         $stlRenderer = $this->createMock(StlRendererService::class);
         $stlRenderer->method('render')->willReturn('image');
 
-        $stlRenderer->expects($this->exactly(3))->method('render');
+        $stlRenderer->expects($this->exactly(4))->method('render');
 
         $this->imageLoader = new ImageLoader($this->em, $this->get('monolog.logger.event'), $this->filesystem, __DIR__.'/fixtures/', $stlRenderer);
         $this->imageLoader->setOutput(new NullOutput());

@@ -177,28 +177,17 @@ ModelViewer.prototype.addModel = function(geometry) {
 
 ModelViewer.prototype.loadStl = function(model) {
     var self = this;
-
     var loader = new THREE.STLLoader();
 
     loader.load(model,
         function (geometry) {
+            // Add model to view
             self.addModel(geometry);
         },
-        function(progress) {
-
-        },
+        function(progress) {},
         function(error) {
-
-            var wrapper = $('<div/>', {
-                'class': 'modelviewer-wrapper'
-            });
-
-            var errorText = $('<p/>', {
-                'class': 'ui center aligned icon header',
-                'html': '<i class="warning icon"/> Model could not be loaded!',
-            }).appendTo(wrapper);
-
-            self.dom_element.append(wrapper);
+            // Show error message
+            self.showError();
         }
     );
 };
@@ -254,6 +243,17 @@ ModelViewer.prototype.toggleMaterial = function () {
             object.material.wireframe = $this.wireframe;
         }
     });
+};
+
+
+ModelViewer.prototype.showError = function () {
+    var wrapper = $('<div/>', {'class': 'modelviewer-wrapper'});
+    var errorText = $('<p/>', {
+        'class': 'ui center aligned icon header',
+        'html': '<i class="warning icon"/> Model could not be loaded!',
+    }).appendTo(wrapper);
+
+    $this.dom_element.append(wrapper);
 };
 
 ModelViewer.prototype.objectCenter = function (mesh) {

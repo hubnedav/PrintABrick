@@ -155,38 +155,23 @@ ModelViewer.prototype.initLights = function () {
 ModelViewer.prototype.addModel = function(geometry) {
     var material = new THREE.MeshPhongMaterial({
         color: 0x136fc3,
-        specular: 0x0D0D0D,
+        specular: 0x111111,
         shading: THREE.SmoothShading,
         shininess: 30,
         fog: false,
         side: THREE.DoubleSide,
-        wireframe: this.wireframe,
     });
 
-    geometry.center();
     var mesh = new THREE.Mesh(geometry, material);
 
-    mesh.geometry.computeFaceNormals();
-    mesh.geometry.computeVertexNormals();
-    mesh.geometry.computeBoundingBox();
-
-    mesh.castShadow = true;
-    // mesh.receiveShadow = true;
-
-    var dims = mesh.geometry.boundingBox.max.clone().sub(mesh.geometry.boundingBox.min);
-
-    maxDim = Math.max(Math.max(dims.x, dims.y), dims.z);
-
-    mesh.position.x = -(mesh.geometry.boundingBox.min.x + mesh.geometry.boundingBox.max.x) / 2;
-    mesh.position.y = -(mesh.geometry.boundingBox.min.y + mesh.geometry.boundingBox.max.y) / 2;
+    // Move model to ground
+    geometry.center();
     mesh.position.z = -mesh.geometry.boundingBox.min.z;
 
-    // mesh.position.set(0, mesh.position.x,  mesh.position.z);
-
     this.object = mesh;
-
     this.scene.add(mesh);
 
+    // Center and zoom camera to model
     this.centerCamera(mesh);
 };
 

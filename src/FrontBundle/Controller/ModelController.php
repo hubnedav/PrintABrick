@@ -34,7 +34,7 @@ class ModelController extends Controller
     {
         $modelSearch = new ModelSearch();
 
-        $form = $formFactory->createNamedBuilder('model', ModelSearchType::class, $modelSearch)->getForm();
+        $form = $formFactory->createNamedBuilder('', ModelSearchType::class, $modelSearch)->getForm();
         $form->handleRequest($request);
 
         /** @var Paginator $paginator */

@@ -31,21 +31,25 @@ class PartImageLoader extends BaseImageLoader
 
     public function find($path)
     {
+        $localPath = '/images/'.$path.'.png';
+
         // try to load image from local mediaFilesystem
-        if ($this->mediaFilesystem->has('/images/'.$path)) {
-            return $this->mediaFilesystem->read('/images/'.$path);
+        if ($this->mediaFilesystem->has($localPath)) {
+            return $this->mediaFilesystem->read($localPath);
         }
 
+        $rebrickablePath = $this->rebrickableContext.strtolower($path).'.png';
+
         // try to load image from rebrickable website
-        if ($this->remoteFileExists($this->rebrickableContext.$path)) {
+        if ($this->remoteFileExists($rebrickablePath)) {
             $context = stream_context_create(['http' => ['header' => 'Connection: close\r\n']]);
 
-            return file_get_contents($this->rebrickableContext.strtolower($path), false, $context);
+            return file_get_contents($rebrickablePath, false, $context);
         }
 
         // Load part entity form rebrickable api and get image path from response
         try {
-            if (preg_match('/^(.*)\/(.*).png$/', $path, $match)) {
+            if (preg_match('/^(.*)\/(.*)$/', $path, $match)) {
                 $part = $this->rebrickableManager->getPart($match[2]);
 
                 if ($part && $part->getImgUrl()) {

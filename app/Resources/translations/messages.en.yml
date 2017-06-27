@@ -8,6 +8,7 @@ set:
   minifigs: Minifigs
   rating: Rating
   reviews.link: View all reviews on Brickset.com
+  image.alt: Image of set '%number%'
   models:
     text: |
       This set inventory has been obtained from Rebrickable.
@@ -69,6 +70,7 @@ model:
   aliases: Aliases
   download: Download brick
   empty: No model
+  image.alt: Image of brick '%number%'
   form:
     search: Search
     category: Category
@@ -138,6 +140,7 @@ part:
   molds: Molds of part
   prints: Prints
   sets: Sets
+  image.alt: Image of part '%number%'
 
 form:
   search.submit: Search

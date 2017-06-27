@@ -29,28 +29,28 @@ class SetImageLoader extends BaseImageLoader
         $this->mediaFilesystem = $mediaFilesystem;
     }
 
-    public function find($path)
+    public function find($setNumber)
     {
+        $rebrickablePath = $this->rebrickableContext.strtolower($setNumber).'.jpg';
+
         // try to load image from rebrickable website
-        if ($this->remoteFileExists($this->rebrickableContext.strtolower($path))) {
+        if ($this->remoteFileExists($rebrickablePath)) {
             $context = stream_context_create(['http' => ['header' => 'Connection: close\r\n']]);
 
-            return file_get_contents($this->rebrickableContext.strtolower($path), false, $context);
+            return file_get_contents($rebrickablePath, false, $context);
         }
 
         // Load part entity form brickset api and get image path from response
         try {
-            if (preg_match('/^(.*)(.png|.jpg)$/', $path, $match)) {
-                $set = $this->bricksetManager->getSetByNumber($match[1]);
+            $set = $this->bricksetManager->getSetByNumber($setNumber);
 
-                if ($set && $set->getImage()) {
-                    return file_get_contents($set->getImageURL());
-                }
+            if ($set && $set->getImage()) {
+                return file_get_contents($set->getImageURL());
             }
         } catch (\Exception $e) {
-            throw new NotLoadableException(sprintf('Source image %s could not be loaded.', $path), $e->getCode(), $e);
+            throw new NotLoadableException(sprintf('Image %s could not be loaded.', $setNumber), $e->getCode(), $e);
         }
 
-        throw new NotLoadableException(sprintf('Source image %s not found.', $path));
+        throw new NotLoadableException(sprintf('Image %s not found.', $setNumber));
     }
 }

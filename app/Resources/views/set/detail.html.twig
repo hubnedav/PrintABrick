@@ -21,9 +21,9 @@
         <div class="ui container stackable grid">
             <div class="row">
                 <div class="column nine wide">
-                    <a class="ui bordered image" href="{{ asset(set.id~'.jpg')|imagine_filter('set_large') }}" data-lightbox="setImages">
+                    <div class="ui bordered image">
                         {{ blocks.setImage(set.id,'set_large') }}
-                    </a>
+                    </div>
                 </div>
                 <div class="column seven wide">
                     <div class="item-info ui">

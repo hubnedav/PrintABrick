@@ -175,7 +175,7 @@ class StlRendererService
         }
 
         if (!file_exists($to)) {
-            mkdir($to);
+            mkdir($to, 0777, true);
         }
 
         $filename = pathinfo($file)['filename'];

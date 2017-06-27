@@ -41,7 +41,7 @@ class ImageLoader extends BaseLoader
         $path = $this->rebrickableDownloadUrl."ldraw/parts_{$color}.zip";
 
         $file = $this->downloadFile($path);
-        $zip = new \ZipArchive($file);
+        $zip = new \ZipArchive();
 
         if ($zip->open($file) === true) {
             $this->writeOutput([
@@ -83,7 +83,7 @@ class ImageLoader extends BaseLoader
             try {
                 $this->loadModelImage($this->mediaFilesystem->getAdapter()->getPathPrefix().$model->getPath());
             } catch (\Exception $e) {
-                $this->logger->error('Error rendering model '.$model->getId().' image');
+                $this->logger->error('Error rendering model '.$model->getId().' image', [$e->getMessage()]);
             }
             $this->progressBar->advance();
         }

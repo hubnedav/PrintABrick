@@ -11,7 +11,7 @@
     model.id~' '~model.name,
     app.request.uri,
     'meta.description' | trans | striptags('sup'),
-    asset('-1/'~model.id) | imagine_filter('part_large')
+    asset('-1/'~model.id~'.png') | imagine_filter('part_large')
     )}}
 {% endblock %}
 

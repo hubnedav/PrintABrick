@@ -11,7 +11,7 @@
     set.id~' '~set.name ,
     app.request.uri,
     'meta.description' | trans | striptags('sup'),
-    asset(set.id)|imagine_filter('set_large')
+    asset(set.id~'.jpg')|imagine_filter('set_large')
     )}}
 {% endblock %}
 

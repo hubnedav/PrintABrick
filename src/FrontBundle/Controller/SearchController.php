@@ -54,7 +54,7 @@ class SearchController extends Controller
                 'id' => $id,
                 'name' => $name,
                 'url' => $this->generateUrl('model_detail', ['id' => $model->getTransformed()->getId()]),
-                'img' => $liip->getBrowserPath('-1/'.$model->getTransformed()->getId(), 'part_min'),
+                'img' => $liip->getBrowserPath('-1/'.$model->getTransformed()->getId().'.png', 'part_min'),
             ];
         }
 
@@ -68,7 +68,7 @@ class SearchController extends Controller
                 'id' => $id,
                 'name' => $name,
                 'url' => $this->generateUrl('set_detail', ['id' => $set->getTransformed()->getId()]),
-                'img' => $liip->getBrowserPath($set->getTransformed()->getId(), 'set_min'),
+                'img' => $liip->getBrowserPath($set->getTransformed()->getId().'.jpg', 'set_min'),
             ];
         }
 

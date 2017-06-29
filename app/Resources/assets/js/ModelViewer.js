@@ -36,31 +36,7 @@ var ModelViewer = function($dom_element, model_url) {
     this.initHtml();
     this.initScene();
 
-
-    // this.stats = new Stats();
-    // this.stats.dom.style.position = 'absolute';
-    // this.container.append(this.stats.dom);
-
-
-    function renderLoop() {
-        requestAnimationFrame(renderLoop);
-        if($this.rendering) {
-            if(!$this.loaded) {
-                $this.loadStl($this.model_url);
-                $this.loaded = true;
-            }
-
-            if($this.stats) {
-                $this.stats.update();
-            }
-            $this.render();
-        }
-
-        $this.resize(parseInt($this.dom_element.width()), parseInt($this.dom_element.height()));
-    }
-
-
-    renderLoop();
+    this.render();
 };
 
 // Initialize model viewer dom element - add buttons
@@ -134,12 +110,12 @@ ModelViewer.prototype.initScene = function() {
 
 ModelViewer.prototype.initLights = function () {
     this.spotLight = new THREE.SpotLight(0xffffff, 0.8, 0);
-    this.spotLight.position.set(-1000, 1000, 1000);
+    this.spotLight.position.set(-100, 100, 100);
     this.spotLight.castShadow = false;
     this.scene.add(this.spotLight);
 
     this.bottomSpotLight = new THREE.SpotLight(0xffffff, 0.8, 0);
-    this.bottomSpotLight.position.set(0, -100, -1000);
+    this.bottomSpotLight.position.set(0, -10, -100);
     this.bottomSpotLight.castShadow = false;
     this.scene.add(this.bottomSpotLight);
 
@@ -147,7 +123,7 @@ ModelViewer.prototype.initLights = function () {
     this.scene.add(this.ambientLight);
 
     this.pointLight = new THREE.PointLight(0xfdfdfd, 1, 0);
-    this.pointLight.position.set(320, -390, 350);
+    this.pointLight.position.set(32, -39, 35);
     this.pointLight.castShadow = true;
     this.scene.add(this.pointLight);
 };
@@ -190,6 +166,8 @@ ModelViewer.prototype.loadStl = function(model) {
             self.showError();
         }
     );
+
+    self.loaded = true;
 };
 
 ModelViewer.prototype.centerCamera = function(mesh) {
@@ -222,6 +200,9 @@ ModelViewer.prototype.toggleRendering = function () {
         $this.toggleButton.html('<i class="cube icon"/>3D');
         $this.wireframeButton.hide();
     } else {
+        if(!$this.loaded) {
+            $this.loadStl($this.model_url);
+        }
         $this.container.style.display = "block";
         $this.rendering = true;
         $this.toggleButton.html('<i class="close icon"/>Close');
@@ -279,6 +260,14 @@ ModelViewer.prototype.resize = function(width, height) {
     this.renderer.setSize(width, height);
 };
 
+ModelViewer.prototype.resize = function() {
+    this.resize(parseInt(this.dom_element.width()), parseInt(this.dom_element.height()));
+};
+
 ModelViewer.prototype.render = function() {
-    this.renderer.render(this.scene, this.camera);
+    requestAnimationFrame(this.render);
+    if(this.rendering) {
+        this.renderer.render(this.scene, this.camera);
+    }
+    this.resize();
 };

@@ -18,7 +18,7 @@
             {% for color in colors %}
                 <div class="ui segment vertical basic side color-{{ color['color'].id }}">
                     <h5 class="ui header">
-                        {{ color['color'].name }} ({{ color['quantity'] }})
+                        {{ color['color'].name }} - #{{ color['color'].rgb }} ({{ color['quantity'] }})
                     </h5>
                     <div class="ui grid doubling ten column row parts">
                         {% for model in color['models'] %}

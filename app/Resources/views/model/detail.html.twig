@@ -75,9 +75,6 @@
         </div>
     </div>
     <div class="ui vertical segment">
-
-        {% dump app.request.get('page') %}
-
         {% set related = submodels is not empty or siblings is not empty or model.parents is not empty %}
 
         <div class="ui tabular pointing secondary menu stackable">

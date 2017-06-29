@@ -33,6 +33,7 @@ class StlConverterTest extends BaseTest
 
         $this->assertNotNull($this->stlConverter->datToStl(__DIR__.'/fixtures/ldraw/parts/983.dat'));
 
+        // Check if stl file exists
         $this->assertTrue($this->filesystem->has('models/983.stl'));
     }
 

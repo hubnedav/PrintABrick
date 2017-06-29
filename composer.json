@@ -34,7 +34,8 @@
         "phpunit/phpunit": "^6.1",
         "friendsofphp/php-cs-fixer": "^2.0",
         "liip/functional-test-bundle": "^1.7",
-        "doctrine/doctrine-fixtures-bundle": "^2.3"
+        "doctrine/doctrine-fixtures-bundle": "^2.3",
+        "phpstan/phpstan": "^0.7.0"
     },
     "scripts": {
         "symfony-scripts": [

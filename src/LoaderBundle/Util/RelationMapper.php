@@ -18,6 +18,11 @@ class RelationMapper
     private $relations;
 
     /**
+     * @var CacheProvider
+     */
+    private $cache;
+
+    /**
      * RelationMapper constructor.
      *
      * @param CacheProvider $cache

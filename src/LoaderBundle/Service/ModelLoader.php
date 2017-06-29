@@ -232,10 +232,6 @@ class ModelLoader extends BaseLoader
             $this->logger->error($e->getMessage(), [$file]);
 
             return null;
-        } catch (FileException $e) {
-            $this->logger->error($e->getMessage(), [$file]);
-
-            return null;
         }
 
         // Check if model fulfills rules and should be loaded

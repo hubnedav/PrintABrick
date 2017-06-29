@@ -17,7 +17,7 @@ class LDModelParserTest extends TestCase
         $this->parser = new LDModelParser();
     }
 
-    public function testValid()
+    public function testParse()
     {
         $resource = file_get_contents(__DIR__.'/fixtures/valid.dat');
 

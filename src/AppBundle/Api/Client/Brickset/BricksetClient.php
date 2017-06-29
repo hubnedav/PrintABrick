@@ -43,15 +43,14 @@ class BricksetClient
      * BricksetClient constructor.
      *
      * @param string $apiKey  Brickset API key
-     * @param array  $options A array of config values
      *
      * @throws ApiException
      */
-    public function __construct($apiKey, array $options = [])
+    public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
 
-        $this->options['cache_wsdl'] = WSDL_CACHE_NONE;
+//        $this->options['cache_wsdl'] = WSDL_CACHE_NONE;
         $this->options['exceptions'] = true;
 
         foreach (self::$classmap as $key => $value) {

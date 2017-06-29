@@ -129,7 +129,7 @@ class ModelLoaderTest extends BaseTest
         $this->modelLoader->setLDrawLibraryContext(__DIR__.'/fixtures/subparts/');
         $this->modelLoader->loadOne(__DIR__.'/fixtures/subparts/parts/381c01.dat');
 
-        $models = $this->modelRepository->findAll();
+        $this->modelRepository->findAll();
     }
 
     public function testIsIncluded()

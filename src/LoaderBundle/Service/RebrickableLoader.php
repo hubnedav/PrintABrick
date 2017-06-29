@@ -78,7 +78,7 @@ class RebrickableLoader extends BaseLoader
     /**
      * Downloads csv files from rebrickable_url specified in config.yml.
      */
-    private function loadCSVFiles()
+    private function loadCsvFiles()
     {
         $array = ['inventories', 'inventory_parts', 'inventory_sets', 'sets', 'themes', 'parts', 'part_categories'];
 

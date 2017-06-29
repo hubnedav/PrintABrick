@@ -76,20 +76,22 @@
     </div>
     <div class="ui vertical segment">
 
+        {% dump app.request.get('page') %}
+
         {% set related = submodels is not empty or siblings is not empty or model.parents is not empty %}
 
         <div class="ui tabular pointing secondary menu stackable">
             <div class="container ui">
                 {% if related %}
-                    <a class="item setTab {% if app.session.get('tab') != 'sets' %}active{%  endif %}" data-tab="related">{{ 'model.related' | trans }}</a>
+                    <a class="item {% if not app.request.get("page") %}active{%  endif %}" data-tab="related">{{ 'model.related' | trans }}</a>
                 {% endif %}
-                <a class="item setTab {% if app.session.get('tab') == 'sets' or not related %}active{%  endif %}" data-tab="sets">{{ 'model.sets' | trans }} ({{ setCount }})</a>
+                <a class="item {% if app.request.get("page") or not related %}active{%  endif %}" data-tab="sets">{{ 'model.sets' | trans }} ({{ setCount }})</a>
             </div>
         </div>
 
         <div class="container ui">
             {% if submodels is not empty or siblings is not empty or model.parents is not empty %}
-                <div class="ui tab {% if app.session.get('tab') != 'sets' %}active{%  endif %}" data-tab="related">
+                <div class="ui tab {% if not app.request.get("page")  %}active{%  endif %}" data-tab="related">
                     {% if submodels is not empty %}
                         <div class="segment vertical ui">
                             <h3 class="header">Submodels</h3>
@@ -131,7 +133,7 @@
                 </div>
             {% endif %}
 
-            <div class="ui tab {% if app.session.get('tab') == 'sets' or not related %}active{%  endif %}" data-tab="sets">
+            <div class="ui tab {% if app.request.get("page") or not related %}active{%  endif %}" data-tab="sets">
                 {{ render(path('model_sets', { id: model.id, page: app.request.get('page')  })) }}
             </div>
         </div>

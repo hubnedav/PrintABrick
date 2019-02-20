@@ -11,12 +11,9 @@ use AppBundle\Entity\LDraw\Subpart;
 use AppBundle\Repository\LDraw\ModelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Adapter\Local;
-use League\Flysystem\Exception;
 use League\Flysystem\Filesystem;
 use LoaderBundle\Exception\ConvertingFailedException;
-use LoaderBundle\Exception\FileException;
 use LoaderBundle\Exception\Loader\LoadingModelFailedException;
-use LoaderBundle\Exception\Loader\LoadingRebrickableFailedException;
 use LoaderBundle\Exception\Loader\MissingContextException;
 use LoaderBundle\Exception\ParseErrorException;
 use LoaderBundle\Service\Stl\StlConverterService;
@@ -80,7 +77,7 @@ class ModelLoader extends BaseLoader
      */
     public function setLDrawLibraryContext($ldrawLibrary)
     {
-        if(!file_exists($ldrawLibrary)) {
+        if (!file_exists($ldrawLibrary)) {
             $this->logger->error('Wrong library context');
             throw new MissingContextException($ldrawLibrary);
         }
@@ -164,6 +161,8 @@ class ModelLoader extends BaseLoader
      */
     public function loadAll()
     {
+        ini_set('memory_limit', '2G');
+
         if (!$this->ldrawLibraryContext) {
             throw new MissingContextException('LDrawLibrary');
         }
@@ -184,13 +183,13 @@ class ModelLoader extends BaseLoader
         foreach ($files as $file) {
             $this->progressBar->setMessage($file['basename']);
 
-            if ($file['type'] == 'file' && $file['extension'] == 'dat') {
+            if ('file' === $file['type'] && 'dat' === $file['extension']) {
                 $connection->beginTransaction();
                 try {
                     $this->loadModel($this->ldrawLibraryContext->getAdapter()->getPathPrefix().$file['path']);
 
                     // clear managed objects to avoid memory issues
-                    if ($index++ % 50 == 0) {
+                    if (0 === $index++ % 50) {
                         $this->em->clear();
                     }
                     $connection->commit();
@@ -213,7 +212,7 @@ class ModelLoader extends BaseLoader
      *
      * @param $file
      *
-     * @return Model|null|false
+     * @return Model|false|null
      */
     public function loadModel($file)
     {
@@ -237,10 +236,10 @@ class ModelLoader extends BaseLoader
         // Check if model fulfills rules and should be loaded
         if ($this->isModelIncluded($modelArray)) {
             // Recursively load model parent (if any) and add model id as alias of parent
-            if (($parentId = $this->getParentId($modelArray)) && ($parentModelFile = $this->findSubmodelFile($parentId)) !== null) {
+            if (($parentId = $this->getParentId($modelArray)) && null !== ($parentModelFile = $this->findSubmodelFile($parentId))) {
                 if ($parentModel = $this->loadModel($parentModelFile)) {
                     // Remove old model if ~moved to
-                    if ($this->rewrite && ($old = $modelRepository->find($modelArray['id'])) != null) {
+                    if ($this->rewrite && null !== ($old = $modelRepository->find($modelArray['id']))) {
                         $modelRepository->delete($old);
                     }
 
@@ -263,7 +262,7 @@ class ModelLoader extends BaseLoader
                 foreach ($modelArray['subparts'] as $subpartId => $colors) {
                     foreach ($colors as $color => $count) {
                         // Try to find model of subpart
-                        if (($subpartFile = $this->findSubmodelFile($subpartId)) !== null) {
+                        if (null !== ($subpartFile = $this->findSubmodelFile($subpartId))) {
                             $subModel = $this->loadModel($subpartFile);
                             if ($subModel) {
                                 $subpart = $this->em->getRepository(Subpart::class)->getOrCreate($model, $subModel, $count, $color);
@@ -289,9 +288,8 @@ class ModelLoader extends BaseLoader
                 if ($this->rewrite || ($model->getModified() < $modelArray['modified'])) {
                     $stl = $this->stlConverter->datToStl($file, $this->rewrite)->getPath();
 
-                    $model->setPath($stl);
-
                     $model
+                        ->setPath($stl)
                         ->setName($modelArray['name'])
                         ->setCategory($this->em->getRepository(Category::class)->getOrCreate($modelArray['category']))
                         ->setAuthor($this->em->getRepository(Author::class)->getOrCreate($modelArray['author']))
@@ -353,13 +351,15 @@ class ModelLoader extends BaseLoader
         // Try to find model in current file's directory
         if ($this->fileContext && $this->fileContext->has($filename)) {
             return $this->fileContext->getAdapter()->getPathPrefix().$filename;
-        } elseif ($this->ldrawLibraryContext) {
+        }
+
+        if ($this->ldrawLibraryContext) {
             // Try to find model in current LDRAW\PARTS sub-directory
             if ($this->ldrawLibraryContext->has('parts'.DIRECTORY_SEPARATOR.$filename)) {
                 return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'parts'.DIRECTORY_SEPARATOR.$filename;
             }
             // Try to find model in current LDRAW\P sub-directory
-            elseif ($this->ldrawLibraryContext->has('p'.DIRECTORY_SEPARATOR.$filename)) {
+            if ($this->ldrawLibraryContext->has('p'.DIRECTORY_SEPARATOR.$filename)) {
                 return $this->ldrawLibraryContext->getAdapter()->getPathPrefix().'p'.DIRECTORY_SEPARATOR.$filename;
             }
         }
@@ -385,26 +385,24 @@ class ModelLoader extends BaseLoader
      *
      * @return bool
      */
-    private function isModelIncluded($modelArray)
+    private function isModelIncluded($modelArray): bool
     {
         // Do not include part primitives and subparts
         if (in_array($modelArray['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
             return false;
         }
         // Do not include Pov-RAY file
-        elseif ($modelArray['category'] == 'Pov-RAY') {
+        if ('Pov-RAY' === $modelArray['category']) {
             return false;
         }
         // Do not include sticker models
-        elseif ($modelArray['type'] == 'Sticker') {
+        if ('Sticker' === $modelArray['type']) {
             $this->logger->info('Model skipped.', ['number' => $modelArray['id'], 'type' => $modelArray['type']]);
-
             return false;
         }
         // Do not include models without permission to redistribute
-        elseif ($modelArray['license'] != 'Redistributable under CCAL version 2.0') {
+        if ('Redistributable under CCAL version 2.0' !== $modelArray['license']) {
             $this->logger->info('Model skipped.', ['number' => $modelArray['id'], 'license' => $modelArray['license']]);
-
             return false;
         }
 

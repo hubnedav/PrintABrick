@@ -2,7 +2,6 @@
 
 namespace AppBundle\Repository\Rebrickable;
 
-use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Category;
 use AppBundle\Repository\BaseRepository;
 use Doctrine\ORM\Query\Expr\Join;

@@ -4,17 +4,17 @@ namespace FrontBundle\Controller;
 
 use AppBundle\Entity\Rebrickable\Part;
 use AppBundle\Service\SetService;
-use Knp\Component\Pager\Paginator;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Part controller.
  *
  * @Route("parts")
  */
-class PartController extends Controller
+class PartController extends AbstractController
 {
     /**
      * Finds and displays a part entity.
@@ -32,10 +32,8 @@ class PartController extends Controller
     /**
      * @Route("/{id}/sets", name="part_sets")
      */
-    public function setsAction(Request $request, Part $part, SetService $setService)
+    public function setsAction(Request $request, Part $part, SetService $setService, PaginatorInterface $paginator)
     {
-        /** @var Paginator $paginator */
-        $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
             $setService->getAllByPart($part),
             $request->query->getInt('page', 1)/*page number*/,

@@ -9,36 +9,33 @@ use AppBundle\Service\SearchService;
 use AppBundle\Service\SetService;
 use AppBundle\Service\ZipService;
 use FrontBundle\Form\Search\ModelSearchType;
-use Knp\Component\Pager\Paginator;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Part controller.
  *
  * @Route("bricks")
  */
-class ModelController extends Controller
+class ModelController extends AbstractController
 {
     /**
      * Lists all part entities.
      *
      * @Route("/", name="model_index")
      */
-    public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService)
+    public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService, PaginatorInterface $paginator)
     {
         $modelSearch = new ModelSearch();
 
         $form = $formFactory->createNamedBuilder('', ModelSearchType::class, $modelSearch)->getForm();
         $form->handleRequest($request);
 
-        /** @var Paginator $paginator */
-        $paginator = $this->get('knp_paginator');
         $models = $paginator->paginate(
             $searchService->searchModels($modelSearch, 500),
             $request->query->getInt('page', 1)/*page number*/,
@@ -54,8 +51,7 @@ class ModelController extends Controller
     /**
      * Finds and displays a model entity.
      *
-     * @Route("/{id}", name="model_detail")
-     * @Method("GET")
+     * @Route("/{id}", name="model_detail", methods={"GET"})
      */
     public function detailAction($id, ModelService $modelService, SetService $setService)
     {
@@ -76,13 +72,10 @@ class ModelController extends Controller
     }
 
     /**
-     * @Route("/{id}/sets", name="model_sets")
-     * @Method("GET")
+     * @Route("/{id}/sets", name="model_sets", methods={"GET"})
      */
-    public function setsAction(Request $request, Model $model, SetService $setService)
+    public function setsAction(Request $request, Model $model, SetService $setService, PaginatorInterface $paginator)
     {
-        /** @var Paginator $paginator */
-        $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
             $setService->getAllByModel($model),
             $request->query->getInt('page', 1)/*page number*/,
@@ -95,8 +88,7 @@ class ModelController extends Controller
     }
 
     /**
-     * @Route("/{id}/zip", name="model_zip")
-     * @Method("GET")
+     * @Route("/{id}/zip", name="model_zip", methods={"GET"})
      */
     public function zipAction(Model $model, ZipService $zipService)
     {

@@ -4,12 +4,12 @@ namespace LoaderBundle\Command;
 
 use League\Flysystem\Exception;
 use LoaderBundle\Service\RebrickableLoader;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LoadRebrickableDataCommand extends ContainerAwareCommand
+class LoadRebrickableDataCommand extends Command
 {
     /** @var RebrickableLoader */
     private $rebrickableLoader;

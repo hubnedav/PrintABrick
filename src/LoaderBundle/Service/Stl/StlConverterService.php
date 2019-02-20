@@ -8,7 +8,7 @@ use League\Flysystem\FilesystemInterface;
 use LoaderBundle\Exception\ConvertingFailedException;
 use LoaderBundle\Exception\Stl\LDLibraryMissingException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Process\Process;
 
 class StlConverterService
 {
@@ -105,12 +105,7 @@ class StlConverterService
      */
     private function runLDView(array $arguments)
     {
-        $builder = new ProcessBuilder();
-        $process = $builder
-            ->setPrefix($this->ldview)
-            ->setArguments($arguments)
-            ->getProcess();
-
+        $process = new Process(array_merge([$this->ldview], $arguments));
         $process->run();
 
         if (!$process->isSuccessful()) {

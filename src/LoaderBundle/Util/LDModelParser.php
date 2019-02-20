@@ -53,23 +53,23 @@ class LDModelParser
             $line = trim($line);
 
             // Comments or META Commands
-            if (strpos($line, '0 ') === 0) {
+            if (0 === strpos($line, '0 ')) {
                 $line = preg_replace('/^0 /', '', $line);
 
                 // 0 <CategoryName> <PartDescription>
                 if (!$firstLine) {
                     $array = explode(' ', ltrim(trim($line, 2), '=_~'));
-                    $model['category'] = isset($array[0]) ? $array[0] : '';
+                    $model['category'] = $array[0] ?? '';
                     $model['name'] = preg_replace('/ {2,}/', ' ', ltrim($line, '_'));
 
                     $firstLine = true;
                 }
                 // 0 !CATEGORY <CategoryName>
-                elseif (strpos($line, '!CATEGORY ') === 0) {
+                elseif (0 === strpos($line, '!CATEGORY ')) {
                     $model['category'] = trim(preg_replace('/^!CATEGORY /', '', $line));
                 }
                 // 0 !KEYWORDS <first keyword>, <second keyword>, ..., <last keyword>
-                elseif (strpos($line, '!KEYWORDS ') === 0) {
+                elseif (0 === strpos($line, '!KEYWORDS ')) {
                     $keywords = explode(',', preg_replace('/^!KEYWORDS /', '', $line));
                     foreach ($keywords as $keyword) {
                         $keyword = trim($keyword);
@@ -79,15 +79,15 @@ class LDModelParser
                     }
                 }
                 // 0 Name: <Filename>.dat
-                elseif (strpos($line, 'Name: ') === 0 && !isset($header['id'])) {
+                elseif (!isset($header['id']) && 0 === strpos($line, 'Name: ')) {
                     $model['id'] = preg_replace('/(^Name: )(.*)(.dat|.DAT)/', '$2', $line);
                 }
                 // 0 Author: <Realname> [<Username>]
-                elseif (strpos($line, 'Author: ') === 0) {
+                elseif (0 === strpos($line, 'Author: ')) {
                     $model['author'] = preg_replace('/^Author: /', '', $line);
                 }
                 // 0 !LDRAW_ORG Part|Subpart|Primitive|48_Primitive|Shortcut (optional qualifier(s)) ORIGINAL|UPDATE YYYY-RR
-                elseif (strpos($line, '!LDRAW_ORG ') === 0) {
+                elseif (0 === strpos($line, '!LDRAW_ORG ')) {
                     $type = preg_replace('/(^!LDRAW_ORG )(.*)( UPDATE| ORIGINAL)(.*)/', '$2', $line);
 
                     $model['type'] = $type;
@@ -99,10 +99,10 @@ class LDModelParser
                     }
                 }
                 // 0 !LICENSE Redistributable under CCAL version 2.0 : see CAreadme.txt | 0 !LICENSE Not redistributable : see NonCAreadme.txt
-                elseif (strpos($line, '!LICENSE ') === 0) {
+                elseif (0 === strpos($line, '!LICENSE ')) {
                     $model['license'] = preg_replace('/(^!LICENSE )(.*) : (.*)$/', '$2', $line);
                 }
-            } elseif (strpos($line, '1 ') === 0) {
+            } elseif (0 === strpos($line, '1 ')) {
                 if ($reference = $this->getReferencedModelNumber($line)) {
                     $id = strtolower($reference['id']);
                     $color = strtolower($reference['color']);
@@ -119,9 +119,9 @@ class LDModelParser
             }
         }
 
-        if ($this->isSticker($model['name'], $model['id']) && !in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
+        if (!in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart']) && $this->isSticker($model['name'], $model['id'])) {
             $model['type'] = 'Sticker';
-        } elseif (count($model['subparts']) == 1 && in_array($model['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
+        } elseif (1 === count($model['subparts']) && in_array($model['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
             $model['parent'] = array_keys($model['subparts'])[0];
         } elseif (($parent = $this->getPrintedModelParentNumber($model['id'])) && !in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
             $model['type'] = 'Printed';
@@ -198,7 +198,7 @@ class LDModelParser
      */
     public function isSticker($name, $number)
     {
-        if (strpos($name, 'Sticker') === 0) {
+        if (0 === strpos($name, 'Sticker')) {
             return true;
         }
 

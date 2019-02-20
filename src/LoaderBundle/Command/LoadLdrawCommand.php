@@ -3,29 +3,40 @@
 namespace LoaderBundle\Command;
 
 use LoaderBundle\Service\ModelLoader;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LoadLdrawCommand extends ContainerAwareCommand
+class LoadLdrawCommand extends Command
 {
     use LockableTrait;
 
     /** @var ModelLoader */
     private $modelLoader;
 
+    /** @var LoggerInterface */
+    private $logger;
+
+    private $libraryPath;
+
     /**
      * LoadLdrawCommand constructor.
      *
-     * @param string      $name
-     * @param ModelLoader $modelLoader
+     * @param ModelLoader           $modelLoader
+     * @param string                $ldrawLibraryPath
+     * @param LoggerInterface       $logger
+     * @param string                $name
      */
-    public function __construct($name = null, ModelLoader $modelLoader)
+    public function __construct(ModelLoader $modelLoader, $ldrawLibraryPath, LoggerInterface $logger, string $name = null)
     {
         $this->modelLoader = $modelLoader;
+        $this->libraryPath = $ldrawLibraryPath;
+        $this->logger = $logger;
 
         parent::__construct($name);
     }
@@ -39,8 +50,8 @@ class LoadLdrawCommand extends ContainerAwareCommand
             ->setDefinition(
                 new InputDefinition([
                     new InputOption('ldraw', 'l', InputOption::VALUE_OPTIONAL, 'Path to LDraw library directory'),
-                    new InputOption('all', 'a', InputOption::VALUE_NONE, 'Load all models from LDraw libary folder (/parts directory)'),
-                    new InputOption('file', 'f', InputOption::VALUE_REQUIRED, 'Load single modle into database'),
+                    new InputOption('all', 'a', InputOption::VALUE_NONE, 'Load all models from LDraw library folder (/parts directory)'),
+                    new InputOption('file', 'f', InputOption::VALUE_REQUIRED, 'Load single model into database'),
                     new InputOption('update', 'u', InputOption::VALUE_NONE, 'Update models'),
                 ])
             );
@@ -60,11 +71,11 @@ class LoadLdrawCommand extends ContainerAwareCommand
         if ($ldraw = $input->getOption('ldraw')) {
             $this->modelLoader->setLDrawLibraryContext(realpath($ldraw));
         } else {
-            $ldraw = $this->modelLoader->downloadLibrary($this->getContainer()->getParameter('app.ld_library_download_url'));
+            $ldraw = $this->modelLoader->downloadLibrary($this->libraryPath);
             $this->modelLoader->setLDrawLibraryContext($ldraw);
         }
 
-        if (($path = $input->getOption('file')) != null) {
+        if (null !== ($path = $input->getOption('file'))) {
             if ($file = realpath($path)) {
                 $output->writeln([
                     "Loading model: {$path}",
@@ -72,7 +83,7 @@ class LoadLdrawCommand extends ContainerAwareCommand
 
                 $this->modelLoader->loadOne($file);
 
-                $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
+                $errorCount = $this->logger->countErrors();
                 $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';
 
                 $output->writeln(['Done with "'.$errors.'" errors.']);
@@ -85,7 +96,7 @@ class LoadLdrawCommand extends ContainerAwareCommand
         if ($input->getOption('all')) {
             $this->modelLoader->loadAll();
 
-            $errorCount = $this->getContainer()->get('monolog.logger.loader')->countErrors();
+            $errorCount = $this->logger->countErrors();
             $errors = $errorCount ? '<error>'.$errorCount.'</error>' : '<info>0</info>';
 
             $output->writeln(['Done with "'.$errors.'" errors.']);

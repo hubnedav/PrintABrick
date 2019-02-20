@@ -2,11 +2,9 @@
 
 namespace FrontBundle\Controller;
 
-use AppBundle\Entity\Color;
 use AppBundle\Service\ColorService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Part controller.

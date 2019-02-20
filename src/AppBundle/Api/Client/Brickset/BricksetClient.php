@@ -42,13 +42,13 @@ class BricksetClient
     /**
      * BricksetClient constructor.
      *
-     * @param string $apiKey  Brickset API key
+     * @param string $bricksetApiKey  Brickset API key
      *
      * @throws ApiException
      */
-    public function __construct($apiKey)
+    public function __construct(string $bricksetApiKey)
     {
-        $this->apiKey = $apiKey;
+        $this->apiKey = $bricksetApiKey;
 
 //        $this->options['cache_wsdl'] = WSDL_CACHE_NONE;
         $this->options['exceptions'] = true;

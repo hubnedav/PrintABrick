@@ -10,7 +10,6 @@ services:
     FrontBundle\:
           resource: '../../../src/FrontBundle/*'
 
-
     # controllers are imported separately to make sure they're public
     # and have a tag that allows actions to type-hint services
     FrontBundle\Controller\:

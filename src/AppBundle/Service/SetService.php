@@ -90,7 +90,7 @@ class SetService
      */
     public function getTotalCount()
     {
-        return $this->setRepository->count();
+        return $this->setRepository->count([]);
     }
 
     public function getPartCount(Set $set, $spare = null, $model = null)

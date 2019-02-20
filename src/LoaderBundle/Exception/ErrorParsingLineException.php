@@ -4,7 +4,7 @@ namespace LoaderBundle\Exception;
 
 use Throwable;
 
-class ErrorParsingLineException extends FileException
+class ErrorParsingLineException extends ParseErrorException
 {
     public function __construct($path, $line, $message = '', $code = 0, Throwable $previous = null)
     {

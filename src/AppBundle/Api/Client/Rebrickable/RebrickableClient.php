@@ -27,12 +27,12 @@ class RebrickableClient
     /**
      * RebrickableAPI constructor.
      *
-     * @param string $apiKey
+     * @param string $rebrickableApiKey
      */
-    public function __construct($apiKey)
+    public function __construct(string $rebrickableApiKey)
     {
         $this->client = new Client(['base_uri' => self::BASE_URI]);
-        $this->apiKey = $apiKey;
+        $this->apiKey = $rebrickableApiKey;
     }
 
     /**

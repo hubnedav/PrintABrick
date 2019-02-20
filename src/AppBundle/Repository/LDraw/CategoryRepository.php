@@ -21,7 +21,7 @@ class CategoryRepository extends BaseRepository
      */
     public function getOrCreate($name)
     {
-        if (($category = $this->findByName($name)) == null) {
+        if (null == ($category = $this->findByName($name))) {
             $category = new Category();
             $category->setName($name);
         }

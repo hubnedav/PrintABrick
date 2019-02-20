@@ -5,17 +5,17 @@ namespace FrontBundle\Controller;
 use AppBundle\Service\SearchService;
 use FOS\ElasticaBundle\HybridResult;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Search controller.
  *
  * @Route("search")
  */
-class SearchController extends Controller
+class SearchController extends AbstractController
 {
     /**
      * @Route("/", name="search_results")

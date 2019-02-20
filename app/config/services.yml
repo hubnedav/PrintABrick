@@ -10,10 +10,13 @@ services:
         # automatically registers your services as commands, event subscribers, etc.
         autoconfigure: true
         public: false
+        bind:
+            $bricksetApiKey: '%brickset_apikey%'
+            $rebrickableApiKey: '%rebrickable_apikey%'
 
     AppBundle\:
         resource: '../../src/AppBundle/*'
-        exclude: '../../src/AppBundle/{Entity,Repository,Exception,Api}'
+        exclude: '../../src/AppBundle/{Entity,Repository,Exception}'
 
     app.relations.cache_provider:
         class: Doctrine\Common\Cache\ArrayCache
@@ -21,14 +24,6 @@ services:
     app.brickset.cache_provider:
         class: Doctrine\Common\Cache\PhpFileCache
         arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
-
-    AppBundle\Api\Client\Brickset\BricksetClient:
-        arguments:
-            $apiKey: '%brickset_apikey%'
-
-    AppBundle\Api\Client\Rebrickable\RebrickableClient:
-        arguments:
-            $apiKey: '%rebrickable_apikey%'
 
     AppBundle\Api\Manager\RebrickableManager: ~
 

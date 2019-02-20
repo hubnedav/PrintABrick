@@ -58,12 +58,13 @@ class RelationLoader extends BaseLoader
 
             if ($model) {
                 $part->setModel($model);
-                $this->partRepository->save($part);
+                $this->partRepository->save($part, false);
             }
 
             $this->progressBar->setMessage($part->getId());
             $this->progressBar->advance();
         }
+        $this->em->flush();
         $this->progressBar->finish();
     }
 

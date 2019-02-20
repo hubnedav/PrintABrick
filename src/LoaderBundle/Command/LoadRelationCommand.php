@@ -3,13 +3,13 @@
 namespace LoaderBundle\Command;
 
 use LoaderBundle\Service\RelationLoader;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LoadRelationCommand extends ContainerAwareCommand
+class LoadRelationCommand extends Command
 {
     /** @var RelationLoader */
     private $relationLoader;

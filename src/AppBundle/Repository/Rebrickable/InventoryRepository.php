@@ -2,9 +2,7 @@
 
 namespace AppBundle\Repository\Rebrickable;
 
-use AppBundle\Entity\Rebrickable\Set;
 use AppBundle\Repository\BaseRepository;
-use Doctrine\ORM\Query;
 
 class InventoryRepository extends BaseRepository
 {

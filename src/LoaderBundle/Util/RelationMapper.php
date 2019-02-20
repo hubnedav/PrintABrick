@@ -48,11 +48,10 @@ class RelationMapper
 
         try {
             if (!$data = unserialize($this->cache->fetch($domain))) {
-                $data = Yaml::parse(file_get_contents($file), yaml::PARSE_KEYS_AS_STRINGS);
+                $data = Yaml::parse(file_get_contents($file));
                 $this->cache->save($domain, serialize($data), 60);
             }
 
-            $this->relations[$domain] = [];
             $this->relations[$domain] = $data;
         } catch (ParseException $e) {
             throw new InvalidResourceException(sprintf('Error parsing YAML, invalid file "%s"', $file), 0, $e);
@@ -72,7 +71,7 @@ class RelationMapper
     public function find($number, $domain)
     {
         if (isset($this->relations[$domain])) {
-            return isset($this->relations[$domain][$number]) ? $this->relations[$domain][$number] : $number;
+            return $this->relations[$domain][$number] ?? $number;
         }
         throw new InvalidDomainException();
     }

@@ -111,12 +111,11 @@ class StlRendererService
         $filename = pathinfo($file)['filename'];
 
         // Run stl2pov conversion
-        $processBuilder = new ProcessBuilder();
-        $process = $processBuilder->setPrefix($this->stl2pov)
-            ->setArguments([
-                $file,
-            ])
-            ->getProcess();
+        $process = new Process([
+            $this->stl2pov,
+            $file,
+        ]);
+
         $process->mustRun();
 
         // Check if file created successfully
@@ -182,8 +181,6 @@ class StlRendererService
 
         $outputFile = "{$to}{$filename}.png";
 
-        $processBuilder = new ProcessBuilder();
-
         //+I	- input file name
         //+FN	- PNG file format
         //+Wn	- Sets screen width to n pixels
@@ -193,19 +190,18 @@ class StlRendererService
         //+AMn	- use non-adaptive (n=1) or adaptive (n=2) supersampling
         //+A0.n	- perform antialiasing (if color change is above n percent)
         //-D	- Turns graphic display off
-        $process = $processBuilder
-            ->setPrefix($this->povray)
-            ->setArguments([
-                "+I\"{$file}\"",
-                '+FN',
-                "+W{$this->size}",
-                "+H{$this->size}",
-                "+O\"$outputFile\"",
-                '+Q8',
-                '+AM2',
-                '+A0.5',
-                '-D',
-            ])->getProcess();
+        $process = new Process([
+            $this->povray,
+            "+I\"{$file}\"",
+            '+FN',
+            "+W{$this->size}",
+            "+H{$this->size}",
+            "+O\"$outputFile\"",
+            '+Q8',
+            '+AM2',
+            '+A0.5',
+            '-D',
+        ]);
 
         $process->mustRun();
 

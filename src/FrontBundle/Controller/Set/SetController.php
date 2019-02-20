@@ -9,38 +9,38 @@ use AppBundle\Model\SetSearch;
 use AppBundle\Service\SearchService;
 use AppBundle\Service\SetService;
 use AppBundle\Service\ZipService;
-use Elastica\Index;
 use FrontBundle\Form\Search\SetSearchType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/sets")
  */
-class SetController extends Controller
+class SetController extends AbstractController
 {
     /**
      * @Route("/", name="set_index")
      *
-     * @param Request $request
-     *
+     * @param Request              $request
      * @param FormFactoryInterface $formFactory
-     * @param SearchService $searchService
+     * @param SearchService        $searchService
+     * @param PaginatorInterface   $paginator
+     *
      * @return Response
      */
-    public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService)
+    public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService, PaginatorInterface $paginator): Response
     {
         $setSearch = new SetSearch();
 
         $form = $formFactory->createNamedBuilder('', SetSearchType::class, $setSearch)->getForm();
         $form->handleRequest($request);
 
-        $paginator = $this->get('knp_paginator');
         $sets = $paginator->paginate(
             $searchService->searchSets($setSearch, 500),
             $request->query->getInt('page', 1)/*page number*/,
@@ -56,13 +56,13 @@ class SetController extends Controller
     /**
      * @Route("/{id}", name="set_detail")
      *
-     * @param Set $set
-     *
-     * @param SetService $setService
+     * @param Set             $set
+     * @param SetService      $setService
      * @param BricksetManager $bricksetManager
+     *
      * @return Response
      */
-    public function detailAction(Set $set, SetService $setService, BricksetManager $bricksetManager)
+    public function detailAction(Set $set, SetService $setService, BricksetManager $bricksetManager): Response
     {
         $bricksetSet = null;
 
@@ -85,12 +85,13 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/inventory", name="set_inventory")
-     * @param Request $request
-     * @param Set $set
+     *
+     * @param Set        $set
      * @param SetService $setService
+     *
      * @return Response
      */
-    public function inventoryAction(Request $request, Set $set, SetService $setService)
+    public function inventoryAction(Set $set, SetService $setService): Response
     {
         return $this->render('set/tabs/inventory.html.twig', [
             'inventorySets' => $setService->getAllSubSets($set),
@@ -104,11 +105,13 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/models", name="set_models")
-     * @param Set $set
+     *
+     * @param Set        $set
      * @param SetService $setService
+     *
      * @return Response
      */
-    public function modelsAction(Set $set, SetService $setService)
+    public function modelsAction(Set $set, SetService $setService): Response
     {
         return $this->render('set/tabs/models.html.twig', [
             'set' => $set,
@@ -119,11 +122,13 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/colors", name="set_colors")
-     * @param Set $set
+     *
+     * @param Set        $set
      * @param SetService $setService
+     *
      * @return Response
      */
-    public function colorsAction(Set $set, SetService $setService)
+    public function colorsAction(Set $set, SetService $setService): Response
     {
         return $this->render('set/tabs/colors.html.twig', [
             'set' => $set,
@@ -134,14 +139,16 @@ class SetController extends Controller
 
     /**
      * @Route("/{id}/zip", name="set_zip")
-     * @param Request $request
-     * @param Set $set
+     *
+     * @param Request    $request
+     * @param Set        $set
      * @param ZipService $zipService
+     *
      * @return BinaryFileResponse
      */
-    public function zipAction(Request $request, Set $set, ZipService $zipService)
+    public function zipAction(Request $request, Set $set, ZipService $zipService): BinaryFileResponse
     {
-        $sorted = $request->query->get('sorted') == 1 ? true : false;
+        $sorted = 1 === $request->query->get('sorted');
         $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
         // escape forbidden characters from filename
         $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$set->getId()}_{$set->getName()}({$sort})");

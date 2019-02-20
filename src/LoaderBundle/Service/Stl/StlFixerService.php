@@ -4,6 +4,7 @@ namespace LoaderBundle\Service\Stl;
 
 use LoaderBundle\Exception\FileNotFoundException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
 class StlFixerService
@@ -52,12 +53,7 @@ class StlFixerService
      */
     private function runADMesh(array $arguments)
     {
-        $builder = new ProcessBuilder();
-        $process = $builder
-            ->setPrefix($this->ADMesh)
-            ->setArguments($arguments)
-            ->getProcess();
-
+        $process = new Process(array_merge([$this->ADMesh], $arguments));
         $process->run();
 
         if (!$process->isSuccessful()) {

@@ -34,7 +34,7 @@ fos_elastica:
                                 ignore_case : true
             types:
                 set:
-                    mappings:
+                    properties:
                         id:
                             type: "keyword"
                             fields:
@@ -60,7 +60,7 @@ fos_elastica:
                             update: false
                             delete: false
                 model:
-                    mappings:
+                    properties:
                         id:
                             type: "keyword"
                             fields:

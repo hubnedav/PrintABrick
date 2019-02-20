@@ -4,8 +4,8 @@ namespace FrontBundle\Controller;
 
 use AppBundle\Service\ModelService;
 use AppBundle\Service\SetService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {

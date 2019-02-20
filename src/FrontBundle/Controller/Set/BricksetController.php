@@ -4,20 +4,18 @@ namespace FrontBundle\Controller\Set;
 
 use AppBundle\Api\Exception\ApiException;
 use AppBundle\Api\Manager\BricksetManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("sets/brickset")
  */
-class BricksetController extends Controller
+class BricksetController extends AbstractController
 {
     /**
-     * @Route("/{id}/instructions", name="brickset_instructions")
-     * @Method("GET")
+     * @Route("/{id}/instructions", name="brickset_instructions", methods={"GET"})
      */
     public function instructionsAction(Request $request, $id, BricksetManager $bricksetManager)
     {
@@ -46,8 +44,7 @@ class BricksetController extends Controller
     }
 
     /**
-     * @Route("/{id}/reviews", name="brickset_reviews")
-     * @Method("GET")
+     * @Route("/{id}/reviews", name="brickset_reviews", methods={"GET"})
      */
     public function reviewsAction(Request $request, $id, BricksetManager $bricksetManager)
     {
@@ -79,8 +76,7 @@ class BricksetController extends Controller
     }
 
     /**
-     * @Route("/{id}/images", name="brickset_images")
-     * @Method("GET")
+     * @Route("/{id}/images", name="brickset_images", methods={"GET"})
      */
     public function imagesAction(Request $request, $id, BricksetManager $bricksetManager)
     {
@@ -109,8 +105,7 @@ class BricksetController extends Controller
     }
 
     /**
-     * @Route("/{id}/description", name="brickset_description")
-     * @Method("GET")
+     * @Route("/{id}/description", name="brickset_description", methods={"GET"})
      */
     public function descriptionAction(Request $request, $id, BricksetManager $bricksetManager)
     {

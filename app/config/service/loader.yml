@@ -5,6 +5,8 @@ services:
         # automatically registers your services as commands, event subscribers, etc.
         autoconfigure: true
         public: false
+        bind:
+            $ldrawLibraryPath: '%app.ld_library_download_url%'
 
 
     LoaderBundle\:

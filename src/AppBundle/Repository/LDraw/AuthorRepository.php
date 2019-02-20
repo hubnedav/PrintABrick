@@ -21,7 +21,7 @@ class AuthorRepository extends BaseRepository
      */
     public function getOrCreate($name)
     {
-        if (($author = $this->findOneByName($name)) == null) {
+        if (null == ($author = $this->findOneByName($name))) {
             $author = new Author();
             $author->setName($name);
         }

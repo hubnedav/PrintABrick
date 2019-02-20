@@ -70,7 +70,7 @@ class ModelService
      */
     public function getTotalCount()
     {
-        return $this->modelRepository->count();
+        return $this->modelRepository->count([]);
     }
 
     private function resursiveLoadModels(Model $model, $quantity = 1)

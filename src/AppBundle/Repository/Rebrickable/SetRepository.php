@@ -6,8 +6,6 @@ use AppBundle\Entity\LDraw\Model;
 use AppBundle\Entity\Rebrickable\Inventory;
 use AppBundle\Entity\Rebrickable\Inventory_Part;
 use AppBundle\Entity\Rebrickable\Part;
-use AppBundle\Entity\Rebrickable\Set;
-use AppBundle\Entity\Rebrickable\Theme;
 use AppBundle\Repository\BaseRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -59,14 +57,6 @@ class SetRepository extends BaseRepository
     {
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('MIN(s.year)');
-
-        return $queryBuilder->getQuery()->getSingleScalarResult();
-    }
-
-    public function count()
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->select('count(s)');
 
         return $queryBuilder->getQuery()->getSingleScalarResult();
     }

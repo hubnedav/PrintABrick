@@ -10,13 +10,6 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class ModelRepository extends BaseRepository
 {
-    /**
-     * Find model by id or alias id.
-     *
-     * @param $number
-     *
-     * @return mixed
-     */
     public function findOneByNumber($number)
     {
         $model = $this->createQueryBuilder('model')
@@ -57,14 +50,6 @@ class ModelRepository extends BaseRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function count()
-    {
-        $queryBuilder = $this->createQueryBuilder('model');
-        $queryBuilder->select('count(model)');
-
-        return $queryBuilder->getQuery()->getSingleScalarResult();
-    }
-
     /**
      * Create new Model entity with $number or retrieve one.
      *
@@ -72,9 +57,9 @@ class ModelRepository extends BaseRepository
      *
      * @return Model
      */
-    public function getOrCreate($id)
+    public function getOrCreate($id): Model
     {
-        if (($model = $this->findOneByNumber($id)) == null) {
+        if (null === ($model = $this->findOneByNumber($id))) {
             $model = new Model();
             $model->setId($id);
         }

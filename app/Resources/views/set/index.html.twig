@@ -8,12 +8,12 @@
 
 {% block meta %}
     {{ blocks.meta(
-    name~' - '~'page.set.index' | trans ,
-    app.request.uri,
-    'meta.description' | trans | striptags('sup'),
-    app.request.schemeAndHttpHost~asset('resources/images/meta-logo.png'),
-    256,
-    256
+        name~' - '~'page.set.index' | trans ,
+        app.request.uri,
+        'meta.description' | trans | striptags('sup'),
+        app.request.schemeAndHttpHost~asset('resources/images/meta-logo.png'),
+        256,
+        256
     )}}
 {% endblock %}
 
@@ -63,10 +63,10 @@
                                 <div class="ui text right floated menu">
                                     <div class="header item">Sort By</div>
 
-                                    {{ knp_pagination_sortable(sets, 'Number', ['s.id']) }}
-                                    {{ knp_pagination_sortable(sets, 'Year', ['s.year']) }}
-                                    {{ knp_pagination_sortable(sets, 'Name', ['s.name']) }}
-                                    {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount']) }}
+                                    {{ knp_pagination_sortable(sets, 'Number', 'id') }}
+                                    {{ knp_pagination_sortable(sets, 'Year', 'year') }}
+                                    {{ knp_pagination_sortable(sets, 'Name', 'name') }}
+                                    {{ knp_pagination_sortable(sets, 'Parts', 'partCount') }}
                                 </div>
                             </div>
 

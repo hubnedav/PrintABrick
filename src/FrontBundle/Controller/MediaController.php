@@ -3,9 +3,8 @@
 namespace FrontBundle\Controller;
 
 use League\Flysystem\FilesystemInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -14,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/files")
  */
-class MediaController extends Controller
+class MediaController extends AbstractController
 {
     /**
      * @Route("/{path}", name="media_file", requirements={"path"=".+"})

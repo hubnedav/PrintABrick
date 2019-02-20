@@ -1,4 +1,4 @@
-# Define the relationship between LDraw models that are not automatically recognizabe to eliminate duplication of models
+# Define the relationship between LDraw models that are not automatically recognizable to eliminate duplication of models
 #
 # To load changes run `bin/console app:load:relation` command
 #

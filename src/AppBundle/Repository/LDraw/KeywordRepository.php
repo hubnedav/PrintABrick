@@ -21,7 +21,7 @@ class KeywordRepository extends BaseRepository
      */
     public function getOrCreate($name)
     {
-        if (($keyword = $this->findByName($name)) == null) {
+        if (null == ($keyword = $this->findByName($name))) {
             $keyword = new Keyword();
             $keyword->setName($name);
         }

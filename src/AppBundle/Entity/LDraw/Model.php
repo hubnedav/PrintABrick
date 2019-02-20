@@ -106,10 +106,14 @@ class Model
 
     /**
      * @param string $path
+     *
+     * @return Model
      */
     public function setPath($path)
     {
         $this->path = $path;
+
+        return $this;
     }
 
     /**

@@ -1,0 +1,84 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: 'en'
+    name: "PrintABrick"
+    app.media_root: "%kernel.project_dir%/var/media/"
+    app.rebrickable_downloads_url: 'http://rebrickable.com/media/downloads/'
+    app.ld_library_download_url: 'http://www.ldraw.org/library/updates/complete.zip'
+    povray_bin: '%env(POVRAY_BIN)%'
+    stl2pov_bin: '%env(STL2POV_BIN)%'
+    ldview_bin: '%env(LDVIEW_BIN)%'
+    admesh_bin: '%env(ADMESH_BIN)%'
+    layout_bin: '%kernel.root_dir%/Resources/povray_layout/layout.tmpl'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false
+        bind:
+            $ldrawLibraryPath: '%app.ld_library_download_url%'
+            $bricksetApiKey: '%env(BRICKSET_APIKEY)%'
+            $rebrickableApiKey: '%env(REBRICKABLE_APIKEY)%'
+            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
+            $povray: '%povray_bin%'
+            $stl2pov: '%stl2pov_bin%'
+            $ldview: '%ldview_bin%'
+            $ADMesh: '%admesh_bin%'
+            $layout: '%kernel.root_dir%/Resources/povray_layout/layout.tmpl'
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+
+    App\Imagine\PartImageLoader:
+        tags:
+            - { name: liip_imagine.binary.loader, loader: part_image_loader }
+
+    App\Imagine\SetImageLoader:
+        tags:
+            - { name: liip_imagine.binary.loader, loader: set_image_loader }
+
+    App\Menu\Builder:
+        public: true
+        tags:
+            - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
+
+    League\Flysystem\FilesystemInterface:
+        alias: oneup_flysystem.media_filesystem
+
+    app.relations.cache_provider:
+        class: Doctrine\Common\Cache\ArrayCache
+
+    app.brickset.cache_provider:
+        class: Doctrine\Common\Cache\PhpFileCache
+        arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
+
+    App\Api\Manager\BricksetManager:
+        arguments:
+            $cache: '@app.brickset.cache_provider'
+
+    App\Util\RelationMapper:
+        arguments:
+            - '@app.relations.cache_provider'
+        calls:
+            - [ loadResource, ['%kernel.root_dir%/Resources/relations/part_model.yml', 'part_model']]
+            - [ loadResource, ['%kernel.root_dir%/Resources/relations/alias_model.yml', 'alias_model']]

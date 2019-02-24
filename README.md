@@ -18,7 +18,7 @@ A Symfony project
 
 You can check if your system meets requirements by running `$ bin/symfony_requirements`
 
-For full requirements see Symfony 3.3 [docs](http://symfony.com/doc/3.3/reference/requirements.html).
+For full requirements see Symfony 4.2 [docs](http://symfony.com/doc/3.3/reference/requirements.html).
 
 
 #### Required 
@@ -37,14 +37,13 @@ For full requirements see Symfony 3.3 [docs](http://symfony.com/doc/3.3/referenc
 2. Install dependencies via [Composer](https://getcomposer.org/), `$ composer install`
 
 #### Front-end
-1. Install dependencies via [npm](https://www.npmjs.com/), `$ npm install`
-2. Install bower dependencies via [bower](https://bower.io), `$ bower install`
-3. Compile assets by running [Gulp](http://gulpjs.com/), `$ gulp default [--env production]`
+1. Install dependencies via [npm](https://www.npmjs.com/), `$ yarn install`
+3. Compile assets by running [Gulp](http://gulpjs.com/), `$ yarn encore [dev|prod]`
 
 #### Initialization
 
 ##### Setup database 
-1. Set application parameters in *app/config/parameters.yml*
+1. Set application parameters in *.env.local* file 
 2. Generate an empty database by running command (if it does not yet exist) `$ bin/console doctrine:database:create`   
 3. Create database tables/schema by running command`$ bin/console doctrine:schema:create`
 4. Load database fixtures `$ bin/console doctrine:fixtures:load`
@@ -62,7 +61,7 @@ This command consists of multiple subcommands that can be called separately:
 ##### Adding part relation 
 Relations between LDraw models and Rebrickable parts are matched automatically by identical (or similar) id/name when executing command `$ bin/console app:load:relation`. 
 
-Unmatched relations can be specified by adding relation of IDs to `app/Resources/relations/part_model.yml` 
+Unmatched relations can be specified by adding relation of IDs to `src/Resources/relations/part_model.yml` 
 
 ## Testing
 The test database must be created before the first test runs. You can create new one by running:
@@ -70,5 +69,4 @@ The test database must be created before the first test runs. You can create new
 1. Generate an empty database by running command (if it does not yet exist) `$ bin/console doctrine:database:create --env=test`   
 2. Create database tables/schema by running command`$ bin/console doctrine:schema:create --env=test`
 
-
-You can run complete system tests by `$ phpunit`. These should cover the main system functions and the functionality of calling the third-party programs that are required are needed to seamlessly retrieve the necessary application data.
+You can run complete system tests by `$ bin/phpunit`. These should cover the main system functions and the functionality of calling the third-party programs that are required are needed to seamlessly retrieve the necessary application data.

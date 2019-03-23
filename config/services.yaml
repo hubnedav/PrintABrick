@@ -48,7 +48,6 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-
     App\Imagine\PartImageLoader:
         tags:
             - { name: liip_imagine.binary.loader, loader: part_image_loader }
@@ -72,9 +71,17 @@ services:
         class: Doctrine\Common\Cache\PhpFileCache
         arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
 
+    app.rebrickable.cache_provider:
+        class: Doctrine\Common\Cache\PhpFileCache
+        arguments: ["%kernel.cache_dir%/rebrickable", ".cache.php"]
+
     App\Api\Manager\BricksetManager:
         arguments:
             $cache: '@app.brickset.cache_provider'
+
+    App\Api\Manager\RebrickableManager:
+        arguments:
+            $cache: '@app.rebrickable.cache_provider'
 
     App\Util\RelationMapper:
         arguments:

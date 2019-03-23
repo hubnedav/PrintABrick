@@ -9,6 +9,7 @@ use App\Api\Client\Rebrickable\Entity\PartCategory;
 use App\Api\Client\Rebrickable\Entity\Set;
 use App\Api\Client\Rebrickable\Entity\Theme;
 use App\Api\Client\Rebrickable\RebrickableClient;
+use Doctrine\Common\Cache\CacheProvider;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -17,6 +18,7 @@ use Symfony\Component\Serializer\Serializer;
 class RebrickableManager
 {
     const FORMAT = 'json';
+    const CACHE_LIFETIME = 86400;
 
     /**
      * @var RebrickableClient
@@ -29,14 +31,21 @@ class RebrickableManager
     private $serializer;
 
     /**
+     * @var CacheProvider
+     */
+    private $cache;
+
+    /**
      * RebrickableManager constructor.
      *
      * @param RebrickableClient $rebrickableClient
+     * @param CacheProvider     $cache
      */
-    public function __construct(RebrickableClient $rebrickableClient)
+    public function __construct(RebrickableClient $rebrickableClient, CacheProvider $cache)
     {
         $this->rebrickableClient = $rebrickableClient;
         $this->serializer = $this->initSerializer();
+        $this->cache = $cache;
     }
 
     private function initSerializer()
@@ -57,7 +66,12 @@ class RebrickableManager
      */
     public function getPart($id)
     {
-        $data = $this->rebrickableClient->call('GET', 'lego/parts/'.$id);
+        $key = 'part-'.$id;
+
+        if (!$data = $this->cache->fetch($key)) {
+            $data = $this->rebrickableClient->call('GET', 'lego/parts/'.$id);
+            $this->cache->save($key, $data, self::CACHE_LIFETIME);
+        }
 
         return $this->serializer->deserialize($data, Part::class, self::FORMAT);
     }

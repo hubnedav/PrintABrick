@@ -45,8 +45,7 @@ For full requirements see Symfony 4.2 [docs](http://symfony.com/doc/3.3/referenc
 ##### Setup database 
 1. Set application parameters in *.env.local* file 
 2. Generate an empty database by running command (if it does not yet exist) `$ bin/console doctrine:database:create`   
-3. Create database tables/schema by running command`$ bin/console doctrine:schema:create`
-4. Load database fixtures `$ bin/console doctrine:fixtures:load`
+4. Load database migrations `$ bin/console doctrine:migrations:migrate`
 
 ##### Load data
 You can load initial application data by running command `$ bin/console app:init`
@@ -67,6 +66,5 @@ Unmatched relations can be specified by adding relation of IDs to `src/Resources
 The test database must be created before the first test runs. You can create new one by running:
 
 1. Generate an empty database by running command (if it does not yet exist) `$ bin/console doctrine:database:create --env=test`   
-2. Create database tables/schema by running command`$ bin/console doctrine:schema:create --env=test`
 
 You can run complete system tests by `$ bin/phpunit`. These should cover the main system functions and the functionality of calling the third-party programs that are required are needed to seamlessly retrieve the necessary application data.

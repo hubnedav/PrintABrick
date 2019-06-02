@@ -7,7 +7,7 @@
         {% endif %}
 
         <img src="{{ placeholder }}"
-             data-src="{{ asset(color~'/'~number~'.png') | imagine_filter(filter) }}"
+             data-src="{{ asset(color~'/'~number~'.jpg') | imagine_filter(filter) }}"
              alt="{{ 'part.image.alt'|trans({'%number%':number}) }}">
     </div>
 {% endmacro %}

@@ -1,0 +1,36 @@
+.hidden.menu {
+  display: none;
+}
+
+.masthead {
+  background: url("../images/background.jpg") !important;
+  background-size: cover !important;
+
+  .text.container {
+    margin-bottom: 8em;
+    margin-top: 8em;
+  }
+  .segment {
+    padding: 0.5em 0;
+  }
+  .logo.item img {
+    margin-right: 1em;
+  }
+  .ui.menu .ui.button {
+    margin-left: 0.5em;
+  }
+
+  h1.ui.header {
+    font-size: 4em;
+
+    img {
+      height: 1.2em !important;
+      width: 1.2em !important;
+      margin-top: 0 !important;
+    }
+  }
+  .tagline {
+    font-size: 1.3em;
+    font-weight: normal;
+  }
+}

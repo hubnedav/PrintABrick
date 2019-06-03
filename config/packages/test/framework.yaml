@@ -1,0 +1,9 @@
+framework:
+    test: true
+    session:
+        storage_id: session.storage.mock_file
+        name: MOCKSESSION
+
+liip_functional_test:
+    cache_db:
+        mysql: liip_functional_test.services_database_backup.mysql

@@ -1,21 +1,33 @@
 {
   "name": "printabrick",
   "version": "1.0.0",
+  "author": "David Hübner",
+  "license": "MIT",
   "description": "Web catalogue of LEGO® parts for 3D printing",
-  "main": "web/app.php",
+  "main": "public/index.php",
   "dependencies": {
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-cssmin": "^0.2.0",
-    "gulp-load-plugins": "^1.4.0",
-    "gulp-newer": "^1.3.0",
-    "gulp-sass": "^2.3.2",
-    "gulp-sourcemaps": "^2.6.0",
-    "gulp-uglify": "^3.0.0",
-    "gulp-watch": "^4.3.11",
-    "gulp-environments": "^0.1.2"
+    "@symfony/webpack-encore": "^0.22.1",
+    "autoprefixer": "^9.3.1",
+    "copy-webpack-plugin": "^4.0.1",
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-slider": "^1.12.1",
+    "lightbox2": "^2.10.0",
+    "natives": "^1.1.6",
+    "node-sass": "^4.10.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.0.1",
+    "select2": "^4.0.6-rc.1",
+    "semantic-ui-css": "^2.4.1",
+    "three": "^0.101.1",
+    "webpack-notifier": "^1.6.0"
   },
   "devDependencies": {},
+  "browserslist": [
+    "> 0.5%",
+    "last 4 versions",
+    "not dead"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,8 +35,6 @@
     "type": "git",
     "url": "git+https://github.com/hubnedav/PrintABrick.git"
   },
-  "author": "David Hübner",
-  "license": "",
   "bugs": {
     "url": "https://github.com/hubnedav/PrintABrick/issues"
   },

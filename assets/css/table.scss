@@ -1,0 +1,42 @@
+.item-info {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+
+  .link {
+    padding-left: 30px;
+    position: relative;
+    display: inline-block;
+    margin: 0.2em 1em;
+  }
+
+  .link:before {
+    width: 23px;
+    height: 23px;
+    position: absolute;
+    left: 0;
+    display: inline-block;
+  }
+
+  .link.brickset:before {
+    content: '';
+    background: url("../images/brickset_logo.png");
+    background-size: cover;
+  }
+
+  .link.rebrickable:before {
+    content: '';
+    background: url("../images/rebrickable_logo.png");
+    background-size: cover;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .ui.table:not(.unstackable) tr {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+}

@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% import 'macros/blocks.html.twig' as blocks %}
+
+{% block title %}{{ model.id }} - {{ model.name }}{% endblock %}
+
+{% block header %}{{ model.name }}{% endblock %}
+
+{% block meta %}
+    {{ blocks.meta(
+    model.id~' '~model.name,
+    app.request.uri,
+    'meta.description' | trans | striptags('sup'),
+    asset('-1/'~model.id~'.png') | imagine_filter('part_large')
+    )}}
+{% endblock %}
+
+{% block content %}
+    <div class="ui vertical segment secondary">
+        <div class="ui container stackable grid">
+            <div class="column ten wide">
+                <div id="model-viewer" class="model-container">
+                    {{ blocks.partImage(model.id,'part_large') }}
+                </div>
+            </div>
+            <div class="column six wide">
+                <div class="item-info ui">
+                    <table class="ui very basic table">
+                        <tr>
+                            <td>{{ 'model.id' | trans }}</td>
+                            <td><h2>{{ model.id }}</h2></td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'model.name' | trans }}</td>
+                            <td>{{ model.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'model.category' | trans }}</td>
+                            <td><a href="{{ path('model_index',{'category':model.category.id}) }}">{{ model.category ? model.category.name }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'model.author' | trans }}</td><td>{{ model.author.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'model.license' | trans }}</td>
+                            <td>
+                                {{ blocks.ccal2_license(model.name,model.author.name) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'model.keywords' | trans }}</td>
+                            <td>
+                                <div class="ui grey labels">
+                                    {% for keyword in model.keywords %}
+                                        <span class="ui label">{{ keyword.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% if model.aliases|length %}
+                            <tr>
+                                <td>{{ 'model.aliases' | trans }}</td>
+                                <td>
+                                    {% for alias in model.aliases | slice(0,15)%}
+                                        <span>{{ alias.id }}</span>{%  if not loop.last %},{% endif %}
+                                    {% endfor %}
+                                    {% if model.aliases|length > 15 %}&hellip;{% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                    <a class="ui download fluid primary button" href="{{ path('model_zip', {id: model.id}) }}"><i class="download icon"></i> {{ 'model.download'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui vertical segment">
+        {% set related = submodels is not empty or siblings is not empty or model.parents is not empty %}
+
+        <div class="ui tabular pointing secondary menu stackable">
+            <div class="container ui">
+                {% if related %}
+                    <a class="item {% if not app.request.get("page") %}active{%  endif %}" data-tab="related">{{ 'model.related' | trans }}</a>
+                {% endif %}
+                <a class="item {% if app.request.get("page") or not related %}active{%  endif %}" data-tab="sets">{{ 'model.sets' | trans }} ({{ setCount }})</a>
+            </div>
+        </div>
+
+        <div class="container ui">
+            {% if submodels is not empty or siblings is not empty or model.parents is not empty %}
+                <div class="ui tab {% if not app.request.get("page")  %}active{%  endif %}" data-tab="related">
+                    {% if submodels is not empty %}
+                        <div class="segment vertical ui">
+                            <h3 class="header">Submodels</h3>
+                            <div class="ui grid doubling ten column row parts">
+                                {% for subpart in submodels %}
+                                    {{ blocks.model(subpart['model'], subpart['quantity']) }}
+                                {% else %}
+                                    <div class="empty"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if siblings is not empty %}
+                        <div class="segment vertical ui">
+                            <h3 class="header">Siblings</h3>
+                            <div class="ui grid doubling ten column row parts">
+
+                                {% for model in siblings  %}
+                                    {{ blocks.model(model) }}
+                                {% else %}
+                                    <div class="empty"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if model.parents is not empty %}
+                        <div class="segment vertical ui">
+                            <h3 class="header">Parents</h3>
+                            <div class="ui grid doubling ten column row parts">
+
+                                {% for subpart in model.parents  %}
+                                    {{ blocks.model(subpart.parent) }}
+                                {% else %}
+                                    <div class="empty"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="ui tab {% if app.request.get("page") or not related %}active{%  endif %}" data-tab="sets">
+                {{ render(path('model_sets', { id: model.id, page: app.request.get('page')  })) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        window.onload = function() {
+            $('#model-viewer').ModelViewer('{{ path('media_file', {'path': model.path }) }}');
+        };
+    </script>
+{% endblock %}

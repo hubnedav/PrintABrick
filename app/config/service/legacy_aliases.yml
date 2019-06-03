@@ -1,6 +1,0 @@
-services:
-  service.loader.base: '@LoaderBundle\Service\BaseLoader'
-  service.loader.rebrickable: '@LoaderBundle\Service\RebrickableLoader'
-  service.loader.model: '@LoaderBundle\Service\ModelLoader'
-  service.loader.relation: '@LoaderBundle\Service\RelationLoader'
-  service.loader.image: '@LoaderBundle\Service\ImageLoader'

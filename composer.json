@@ -17,7 +17,7 @@
         }
     },
     "require": {
-        "php": "^7.0",
+        "php": "^7.2",
         "symfony/flex": "^1.1",
         "symfony/asset": "^4.2",
         "symfony/orm-pack": "^1.0",
@@ -32,14 +32,14 @@
         "symfony/serializer": "^4.2",
         "symfony/webpack-encore-bundle": "^1.1",
         "symfony/cache": "^4.2",
+        "symfony/test-pack": "^1.0",
         "sensio/framework-extra-bundle": "^5.2",
         "guzzlehttp/guzzle": "^6.2",
         "knplabs/knp-menu-bundle": "^2.1",
-        "knplabs/knp-paginator-bundle": "^2.5",
+        "knplabs/knp-paginator-bundle": "^3.0",
         "oneup/flysystem-bundle": "^3.0.0",
         "liip/imagine-bundle": "^2.1",
-        "friendsofsymfony/elastica-bundle": "^5.0",
-        "symfony/test-pack": "^1.0"
+        "friendsofsymfony/elastica-bundle": "^5.0"
     },
     "require-dev": {
         "symfony/dotenv": "^4.2",

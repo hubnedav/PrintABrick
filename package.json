@@ -9,6 +9,7 @@
     "@symfony/webpack-encore": "^0.22.1",
     "autoprefixer": "^9.3.1",
     "copy-webpack-plugin": "^4.0.1",
+    "core-js": "3",
     "jquery": "^3.3.1",
     "jquery-ui": "^1.12.1",
     "jquery-ui-slider": "^1.12.1",

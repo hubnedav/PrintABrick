@@ -21,6 +21,6 @@ class FormatTransformer
         $suffix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
         $exponent = floor(log($bytes, 1024));
 
-        return round($bytes / (1024 ** $exponent), $precision).' '.$suffix[(int) $exponent];
+        return $bytes ? round($bytes / (1024 ** $exponent), $precision).' '.$suffix[(int) $exponent] : '0 B';
     }
 }

@@ -1,4 +1,4 @@
-{% macro partImage(number, filter, color = -1) %}
+{% macro brickImage(number, filter, color = -1) %}
     <div class="ui image load">
         {% if 'large' in filter %}
             {% set placeholder = asset("build/images/transparent_large.png") %}
@@ -26,41 +26,26 @@
     </div>
 {% endmacro %}
 
-{% macro model(model, quantity = null, color = -1) %}
-    <a class="column part" href="{{ url('model_detail', {'id': model.id})}}">
-        <div class="ui card">
+{% macro brick(brick, quantity = null, color = -1, type = null) %}
+    <a class="column part" href="{{ url('brick_detail', {'id': brick.id})}}" title="{{ brick.id }} - {{ brick.name }}">
+        <div class="ui card {% if brick.model is defined and not brick.model %}grey{% endif %}">
             {% import _self as blocks %}
-            {{ blocks.partImage(model.id, 'part_min', color) }}
+            {{ blocks.brickImage(brick.id,'part_min', color, type) }}
             <div class="content">
-                <h3 class="header truncate">{{ model.id }}</h3>
+                <h3 class="header truncate">{{ brick.id }}</h3>
                 <div class="meta">
-                    <span class="truncate-multiline"><small>{{ model.name }}</small></span>
+                    <span class="truncate-multiline"><small>{{ brick.name }}</small></span>
                 </div>
                 <div class="description">
-                    {% if model.category is not null %}
-                        <span><small>{{ model.category.name }}</small></span>
+                    {% if brick.category is defined and not null %}
+                        <span><small>{{ brick.category.name }}</small></span>
                     {% endif %}
-                    {% if quantity %}<span class="right floated">{{ quantity }}x</span>{% endif %}
-                </div>
-            </div>
-        </div>
-    </a>
-{% endmacro %}
-
-{% macro part(part, quantity = null, color = -1) %}
-    <a class="column part" href="{{ url('part_detail', {'id': part.id})}}">
-        <div class="ui card">
-            {% import _self as blocks %}
-            {{ blocks.partImage(part.id,'part_min', color) }}
-            <div class="content">
-                <h3 class="header truncate">{{ part.id }}</h3>
-                <div class="meta">
-                    <span class="truncate-multiline"><small>{{ part.name }}</small></span>
-                </div>
-                <div class="description">
                     {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
                 </div>
             </div>
+            {% if type %}
+                <span class="ui top right attached label small">{{ type }}</span>
+            {% endif %}
         </div>
     </a>
 {% endmacro %}

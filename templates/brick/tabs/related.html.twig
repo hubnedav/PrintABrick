@@ -1,0 +1,53 @@
+{% import 'macros/blocks.html.twig' as blocks %}
+{% import 'macros/elements.html.twig' as elements %}
+
+{% block content %}
+    {% if submodels is not empty %}
+        <div class="segment vertical ui">
+            <h3 class="header">Submodels</h3>
+            <div class="ui grid doubling ten column row parts">
+                {% for subpart in submodels %}
+                    {{ blocks.brick(subpart['model'], subpart['quantity']) }}
+                {% else %}
+                    <div class="empty"></div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% if siblings is not empty %}
+        <div class="segment vertical ui">
+            <h3 class="header">Siblings</h3>
+            <div class="ui grid doubling ten column row parts">
+                {% for model in siblings  %}
+                    {{ blocks.brick(model) }}
+                {% else %}
+                    <div class="empty"></div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% if entity.parents is not empty %}
+        <div class="segment vertical ui">
+            <h3 class="header">Parents</h3>
+            <div class="ui grid doubling ten column row parts">
+                {% for subpart in entity.parents  %}
+                    {{ blocks.brick(subpart.parent) }}
+                {% else %}
+                    <div class="empty"></div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% if entity.parts is not empty %}
+        <div class="segment vertical ui">
+            <h3 class="header">Parts</h3>
+            <div class="ui grid doubling ten column row parts">
+                {% for part in entity.parts  %}
+                    {{ blocks.brick(part) }}
+                {% else %}
+                    <div class="empty"></div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

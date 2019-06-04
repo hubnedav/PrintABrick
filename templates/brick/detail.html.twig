@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% import 'macros/blocks.html.twig' as blocks %}
+
+{% block title %}{{ entity.id }} | {{ entity.name }}{% endblock %}
+
+{% block header %}{{ entity.name }}{% endblock %}
+
+{% block meta %}
+    {{ blocks.meta(
+        entity.id~' '~entity.name,
+        app.request.uri,
+        'meta.description' | trans | striptags('sup'),
+        asset('-1/'~entity.id~'.png') | imagine_filter('part_large')
+    )}}
+{% endblock %}
+
+{% block content %}
+    <div class="ui vertical segment secondary">
+        <div class="ui container stackable grid">
+            <div class="column ten wide">
+                <div id="model-viewer" class="model-container">
+                    {{ blocks.brickImage(entity.id,'part_large') }}
+                </div>
+            </div>
+            <div class="column six wide">
+                <div class="item-info ui">
+                    <table class="ui very basic table">
+                        <tr>
+                            <td>{{ 'brick.id' | trans }}</td>
+                            <td><h2>{{ entity.id }}</h2></td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'brick.name' | trans }}</td>
+                            <td>{{ entity.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'brick.category' | trans }}</td>
+                            <td><a href="{{ path('brick_index',{'category':entity.category.id}) }}">{{ entity.category ? entity.category.name }}</a></td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'brick.author' | trans }}</td><td>{{ entity.author.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'brick.license' | trans }}</td>
+                            <td>
+                                {{ blocks.ccal2_license(entity.name,entity.author.name) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'brick.modified' | trans }}</td><td>{{ entity.modified|date("d.m.Y") }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ 'brick.keywords' | trans }}</td>
+                            <td>
+                                <div class="ui grey labels">
+                                    {% for keyword in entity.keywords %}
+                                        <span class="ui label">{{ keyword.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% if entity.aliases|filter(alias => alias.type == 'alias')|length %}
+                            <tr>
+                                <td>{{ 'brick.aliases' | trans }}</td>
+                                <td>
+                                    {% for alias in entity.aliases | filter(alias => alias.type == 'alias') | slice(0,15)%}
+                                        <span>{{ alias.id }}</span>{%  if not loop.last %},{% endif %}
+                                    {% endfor %}
+                                    {% if entity.aliases|filter(alias => alias.type == 'alias')|length > 15 %}&hellip;{% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </table>
+
+                    <form action="{{ path('brick_zip', {id: entity.id}) }}" method="post">
+                        <input type="hidden" name="token" value="{{ csrf_token('download-brick') }}" />
+                        <button class="ui download fluid primary button" type="submit"><i class="download icon"></i> {{ 'brick.download'|trans }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui vertical segment">
+
+        <div class="ui tabular pointing secondary menu stackable">
+            <div class="container ui">
+                <a class="item {% if not app.request.get("page") %}active{% endif %}" data-tab="related">{{ 'brick.related' | trans }}</a>
+                <a class="item {% if app.request.get("page") %}active{% endif %}" data-tab="sets">{{ 'brick.sets' | trans }} ({{ setCount }})</a>
+            </div>
+        </div>
+
+        <div class="container ui">
+            <div class="ui tab {% if not app.request.get("page") %}active{%  endif %}" data-tab="related">
+                {{ render(path('brick_related', { id: entity.id })) }}
+            </div>
+            <div class="ui tab {% if app.request.get("page") %}active{% endif %}" data-tab="sets">
+                {{ render(path('brick_sets', { id: entity.id, page: app.request.get('page')  })) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#model-viewer').ModelViewer('{{ path('media_file', {'path': entity.path, 'token': csrf_token('download-media')}) }}');
+        });
+    </script>
+{% endblock %}

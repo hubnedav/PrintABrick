@@ -20,7 +20,7 @@ class SearchController extends AbstractController
     /**
      * @Route("/", name="search_results")
      */
-    public function searchAction(Request $request, SearchService $searchService)
+    public function search(Request $request, SearchService $searchService)
     {
         $query = trim(strip_tags($request->get('query')));
 
@@ -34,7 +34,7 @@ class SearchController extends AbstractController
     /**
      * @Route("/autocomplete", name="search_autocomplete")
      */
-    public function autocompleteAction(Request $request, SearchService $searchService, CacheManager $cacheManager)
+    public function autocomplete(Request $request, SearchService $searchService, CacheManager $cacheManager)
     {
         $query = trim(strip_tags($request->get('query')));
 
@@ -50,7 +50,7 @@ class SearchController extends AbstractController
             $models[] = [
                 'id' => $id,
                 'name' => $name,
-                'url' => $this->generateUrl('model_detail', ['id' => $model->getTransformed()->getId()]),
+                'url' => $this->generateUrl('brick_detail', ['id' => $model->getTransformed()->getId()]),
                 'img' => $cacheManager->getBrowserPath('-1/'.$model->getTransformed()->getId().'.png', 'part_min'),
             ];
         }

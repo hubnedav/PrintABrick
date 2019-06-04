@@ -2,16 +2,16 @@
 
 {% import 'macros/blocks.html.twig' as blocks %}
 
-{% block title %}{{ part.id }} - {{ part.name }}{% endblock %}
+{% block title %}{{ entity.id }} - {{ entity.name }}{% endblock %}
 
-{% block header %}{{ part.name }}{% endblock %}
+{% block header %}{{ entity.name }}{% endblock %}
 
 {% block meta %}
     {{ blocks.meta(
-    part.id ~' '~ part.name,
-    app.request.uri,
-    'meta.description' | trans | striptags('sup'),
-    asset('-1/'~part.id~'.png') | imagine_filter('part_large')
+        entity.id ~' '~ entity.name,
+        app.request.uri,
+        'meta.description' | trans | striptags('sup'),
+        asset('-1/'~entity.id~'.png') | imagine_filter('part_large')
     )}}
 {% endblock %}
 
@@ -20,58 +20,30 @@
         <div class="ui container stackable grid">
             <div class="column ten wide">
                 <div id="model-viewer" class="model-container">
-                    {{ blocks.partImage(part.id,'part_large') }}
+                    {{ blocks.brickImage(entity.id,'part_large') }}
                 </div>
             </div>
             <div class="column six wide">
                 <div class="item-info ui">
                     <table class="ui very basic table">
                         <tr>
-                            <td>{{ 'part.id' | trans }}</td><td><h2>{{ part.id}}</h2></td>
+                            <td>{{ 'brick.id' | trans }}</td><td><h2>{{ entity.id}}</h2></td>
                         </tr>
                         <tr>
-                            <td>{{ 'part.name' | trans }}</td><td>{{ part.name}}</td>
+                            <td>{{ 'brick.name' | trans }}</td><td>{{ entity.name}}</td>
                         </tr>
                         <tr>
-                            <td>{{ 'part.category' | trans }}</td><td>{{ part.category ? part.category.name }}</td>
+                            <td>{{ 'brick.category' | trans }}</td><td>{{ entity.category ? entity.category.name }}</td>
                         </tr>
                         <tr>
-                            <td>{{ 'part.model' | trans }}</td>
+                            <td></td>
                             <td>
-                                {% if part.model %}
-                                    <a href="{{ url('model_detail', {'id': part.model.id})}}">{{ part.model.id }}</a>
-                                {% endif %}
+                                <a class="rebrickable link" href="https://rebrickable.com/parts/{{ entity.id }}" target="_blank">Rebrickable</a>
                             </td>
                         </tr>
-                        {#{% if apiPart %}#}
-                            {#<tr>#}
-                                {#<td>{{ 'part.alternates' | trans }}</td>#}
-                                {#<td>#}
-                                    {#{% for alternate in apiPart.alternates %}#}
-                                        {#<a href="{{ url('part_detail', {'id': alternate})}}">{{ alternate }}</a>#}
-                                    {#{% endfor %}#}
-                                {#</td>#}
-                            {#</tr>#}
-                            {#<tr>#}
-                                {#<td>{{ 'part.molds' | trans }}</td>#}
-                                {#<td>#}
-                                    {#{% for mold in apiPart.molds %}#}
-                                        {#<a href="{{ url('part_detail', {'id': mold})}}">{{ mold }}</a>#}
-                                    {#{% endfor %}#}
-                                {#</td>#}
-                            {#</tr>#}
-                            {#<tr>#}
-                                {#<td></td>#}
-                                {#<td><a class="rebrickable link" href="{{ apiPart.url }}">Rebrickable</a></td>#}
-                            {#</tr>#}
-                        {#{% endif %}#}
                     </table>
 
-                    {% if not part.model %}
-                        <a class="ui disabled fluid primary button"><i class="download icon"></i> {{ 'model.empty'|trans }}</a>
-                    {% else %}
-                        <a class="ui fluid primary button" href="{{ path('model_zip', {id: part.model.id}) }}"><i class="download icon"></i> {{ 'model.download'|trans }}</a>
-                    {% endif %}
+                    <a class="ui disabled fluid primary button"><i class="download icon"></i> {{ 'brick.empty'|trans }}</a>
                 </div>
             </div>
         </div>
@@ -79,13 +51,43 @@
     <div class="ui vertical segment">
         <div class="ui tabular pointing secondary menu stackable">
             <div class="container ui">
-                <a class="item active" data-tab="sets">{{ 'part.sets' | trans }} ({{ setCount }})</a>
+                <a class="item {% if not app.request.get("page") %}active{% endif %}" data-tab="related">{{ 'part.related' | trans }}</a>
+                <a class="item {% if app.request.get("page") %}active{% endif %}" data-tab="sets">{{ 'part.sets' | trans }} ({{ setCount }})</a>
             </div>
         </div>
 
         <div class="container ui">
-            <div class="ui tab active" data-tab="sets" >
-                {{ render(path('part_sets', { id: part.id, page: app.request.get('page')  })) }}
+            <div class="ui tab {% if not app.request.get("page") %}active{%  endif %}" data-tab="related">
+                {% if entity.childrenParts('M') is not empty or entity.parentParts('M') is not empty  %}
+                    <div class="segment vertical ui">
+                        <h3 class="header">Molds</h3>
+                        <div class="ui grid doubling ten column row parts">
+                            {% for children in entity.childrenParts('M') %}
+                                {{ blocks.brick(children.children) }}
+                            {% endfor %}
+                            {% for parent in entity.parentParts('M') %}
+                                {{ blocks.brick(parent.parent) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if entity.childrenParts('A') is not empty or entity.parentParts('A') is not empty %}
+                    <div class="segment vertical ui">
+                        <h3 class="header">Alternatives</h3>
+                        <div class="ui grid doubling ten column row parts">
+                            {% for children in entity.childrenParts('A') %}
+                                {{ blocks.brick(children.children) }}
+                            {% endfor %}
+                            {% for parent in entity.parentParts('A') %}
+                                {{ blocks.brick(parent.parent) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="ui tab {% if app.request.get("page") %}active{% endif %}" data-tab="sets">
+                {{ render(path('brick_sets', { id: entity.id, page: app.request.get('page')  })) }}
             </div>
         </div>
     </div>

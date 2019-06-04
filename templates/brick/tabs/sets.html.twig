@@ -10,7 +10,6 @@
                         <div class="header item">Showing</div>
 
                         <span class="item">{{ sets.paginationData['firstItemNumber']~' - '~sets.paginationData['lastItemNumber'] }} of {{ sets.getTotalItemCount }} items</span>
-
                     </div>
                 </div>
 
@@ -28,7 +27,7 @@
     {% endif %}
     <div class="ui segment basic">
         {% block sets %}
-            <div class="ui eight column doubling grid sets">
+            <div class="ui grid doubling eight column row sets">
                 {% for set in sets %}
                     {{ blocks.set(set) }}
                 {% else %}

@@ -35,12 +35,12 @@ class Builder
             ],
         ]);
 
-        $models = $menu->addChild('page.model.index', [
-            'route' => 'model_index',
+        $models = $menu->addChild('page.brick.index', [
+            'route' => 'brick_index',
         ]);
 
-        $models->addChild('page.model.detail', [
-            'route' => 'model_detail',
+        $models->addChild('page.brick.detail', [
+            'route' => 'brick_detail',
             'routeParameters' => ['id' => $request->get('id', 0)],
             'display' => false,
             'extras' => [
@@ -74,23 +74,6 @@ class Builder
 
         $menu->addChild('page.colors', [
             'route' => 'color_index',
-        ]);
-
-        $parts = $menu->addChild('page.part.index', [
-            'route' => null,
-            'display' => false,
-            'options' => [
-//                'icon' => 'edit',
-            ],
-        ]);
-
-        $parts->addChild('page.part.detail', [
-            'route' => 'part_detail',
-            'routeParameters' => ['id' => $request->get('id', 0)],
-            'display' => false,
-            'extras' => [
-                'value' => $request->get('id', 0),
-            ],
         ]);
 
         return $menu;

@@ -2,14 +2,12 @@
 {% import 'macros/elements.html.twig' as elements %}
 
 {% block content %}
-    {% for label, flashes in app.session.flashbag.all %}
-        {% for flash in flashes %}
-            {{ elements.flash(label,flash) }}
-        {% endfor %}
-    {% endfor %}
-
     <div class="ui segment clearing basic vertical">
-        <a class="ui primary right floated button" href="{{ path('set_zip', {id: set.id, sorted: true }) }}" download><i class="download icon"></i> {{ 'set.download.multicolor.button' | trans}}</a>
+        <form action="{{ path('set_zip', {id: set.id }) }}" method="post">
+            <input type="hidden" name="token" value="{{ csrf_token('download-set') }}" />
+            <input type="hidden" name="sorted" value="1" />
+            <button class="ui primary right floated button" type="submit" ><i class="download icon"></i> {{ 'set.download.multicolor.button' | trans}}</button>
+        </form>
     </div>
 
     {% if colors|length > 0 %}
@@ -22,22 +20,11 @@
                     </h5>
                     <div class="ui grid doubling ten column row parts">
                         {% for model in color['models'] %}
-                            {{ blocks.model(model['model'],model['quantity'], color['color'].id) }}
+                            {{ blocks.brick(model['model'],model['quantity'], color['color'].id) }}
                         {% endfor %}
                     </div>
                 </div>
             {% endfor %}
-        </div>
-    {% endif %}
-
-    {% if missing|length > 0 %}
-        <div class="ui vertical segment basic">
-            <h2 class="ui dividing header">{{ 'set.inventory.parts' | trans }}</h2>
-            <div class="ui grid doubling ten column row parts">
-                {% for part in missing %}
-                    {{ blocks.part(part['part'],part['quantity']) }}
-                {% endfor %}
-            </div>
         </div>
     {% endif %}
 {% endblock %}

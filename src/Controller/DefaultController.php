@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Service\ModelService;
 use App\Service\SetService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,5 +20,21 @@ class DefaultController extends AbstractController
             'models' => $modelService->getTotalCount(),
             'sets' => $setService->getTotalCount(),
         ]);
+    }
+
+    /**
+     * @Route("/set_tab/{tab}", name="set_tab", requirements={"tab"=".+"}, methods={"POST"})
+     *
+     * @param Request $request
+     * @param $tab
+     *
+     * @return Response
+     */
+    public function setDefaultTabAction(Request $request, $tab): Response
+    {
+        $session = $request->getSession();
+        $session->set('tab', $tab);
+
+        return new Response('OK');
     }
 }

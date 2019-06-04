@@ -32,21 +32,21 @@ class ModelSearchType extends AbstractType
         $builder
             ->add('query', TextType::class, [
                 'required' => false,
-                'label' => 'model.form.search',
+                'label' => 'brick.form.search',
                 'attr' => [
-                    'placeholder' => 'model.form.search',
+                    'placeholder' => 'brick.form.search',
                 ],
             ])
             ->add('category', ChoiceType::class, [
-                'label' => 'model.form.category',
+                'label' => 'brick.form.category',
                 'choices' => $this->categoryRepository->findAll(),
-                'placeholder' => 'model.form.category.all',
+                'placeholder' => 'brick.form.category.all',
                 'choice_label' => 'name',
                 'choice_translation_domain' => false,
                 'choice_value' => 'id',
                 'required' => false,
                 'attr' => [
-//                    'class' => 'ui dropdown search selection'
+                    'class' => 'ui dropdown search selection'
                 ],
             ]);
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Controller\Set;
+namespace App\Controller;
 
 use App\Api\Exception\ApiException;
 use App\Api\Manager\BricksetManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -33,11 +33,7 @@ class BricksetController extends AbstractController
         ]);
 
         if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
+            return new JsonResponse($template->getContent());
         }
 
         return $template;
@@ -65,11 +61,7 @@ class BricksetController extends AbstractController
         ]);
 
         if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
+            return new JsonResponse($template->getContent());
         }
 
         return $template;
@@ -94,11 +86,7 @@ class BricksetController extends AbstractController
         ]);
 
         if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
+            return new JsonResponse($template->getContent());
         }
 
         return $template;
@@ -123,11 +111,7 @@ class BricksetController extends AbstractController
         ]);
 
         if ($request->isXmlHttpRequest()) {
-            $json = json_encode($template->getContent());
-            $response = new Response($json, 200);
-            $response->headers->set('Content-Type', 'application/json');
-
-            return $response;
+            return new JsonResponse($template->getContent());
         }
 
         return $template;

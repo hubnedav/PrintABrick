@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Set;
+namespace App\Controller;
 
 use App\Api\Exception\ApiException;
 use App\Api\Manager\BricksetManager;
@@ -9,14 +9,12 @@ use App\Form\Search\SetSearchType;
 use App\Model\SetSearch;
 use App\Service\SearchService;
 use App\Service\SetService;
-use App\Service\ZipService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -34,7 +32,7 @@ class SetController extends AbstractController
      *
      * @return Response
      */
-    public function indexAction(Request $request, FormFactoryInterface $formFactory, SearchService $searchService, PaginatorInterface $paginator): Response
+    public function index(Request $request, FormFactoryInterface $formFactory, SearchService $searchService, PaginatorInterface $paginator): Response
     {
         $setSearch = new SetSearch();
 
@@ -62,7 +60,7 @@ class SetController extends AbstractController
      *
      * @return Response
      */
-    public function detailAction(Set $set, SetService $setService, BricksetManager $bricksetManager): Response
+    public function detail(Set $set, SetService $setService, BricksetManager $bricksetManager): Response
     {
         $bricksetSet = null;
 
@@ -86,14 +84,15 @@ class SetController extends AbstractController
     /**
      * @Route("/{id}/inventory", name="set_inventory")
      *
+     * @param Request    $request
      * @param Set        $set
      * @param SetService $setService
      *
      * @return Response
      */
-    public function inventoryAction(Set $set, SetService $setService): Response
+    public function inventory(Request $request, Set $set, SetService $setService): Response
     {
-        return $this->render('set/tabs/inventory.html.twig', [
+        $template = $this->render('set/tabs/inventory.html.twig', [
             'inventorySets' => $setService->getAllSubSets($set),
             'set' => $set,
             'missing' => $setService->getParts($set, false, false),
@@ -101,71 +100,60 @@ class SetController extends AbstractController
             'missingCount' => $setService->getPartCount($set, false, false),
             'partCount' => $setService->getPartCount($set, false),
         ]);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse($template->getContent());
+        }
+
+        return $template;
     }
 
     /**
      * @Route("/{id}/models", name="set_models")
      *
+     * @param Request    $request
      * @param Set        $set
      * @param SetService $setService
      *
      * @return Response
      */
-    public function modelsAction(Set $set, SetService $setService): Response
+    public function models(Request $request, Set $set, SetService $setService): Response
     {
-        return $this->render('set/tabs/models.html.twig', [
+        $template = $this->render('set/tabs/models.html.twig', [
             'set' => $set,
             'missing' => $setService->getParts($set, false, false),
             'models' => $setService->getModels($set, false),
         ]);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse($template->getContent());
+        }
+
+        return $template;
     }
 
     /**
      * @Route("/{id}/colors", name="set_colors")
+
      *
+     * @param Request    $request
      * @param Set        $set
      * @param SetService $setService
      *
      * @return Response
      */
-    public function colorsAction(Set $set, SetService $setService): Response
+    public function colors(Request $request, Set $set, SetService $setService): Response
     {
-        return $this->render('set/tabs/colors.html.twig', [
+        $template = $this->render('set/tabs/colors.html.twig', [
             'set' => $set,
             'colors' => $setService->getModelsGroupedByColor($set, false),
             'missing' => $setService->getParts($set, false, false),
         ]);
-    }
 
-    /**
-     * @Route("/{id}/zip", name="set_zip")
-     *
-     * @param Request    $request
-     * @param Set        $set
-     * @param ZipService $zipService
-     *
-     * @return BinaryFileResponse
-     */
-    public function zipAction(Request $request, Set $set, ZipService $zipService): BinaryFileResponse
-    {
-        $sorted = 1 === $request->query->get('sorted');
-        $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
-        // escape forbidden characters from filename
-        $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$set->getId()}_{$set->getName()}({$sort})");
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse($template->getContent());
+        }
 
-        $zip = $zipService->createFromSet($set, $filename, $sorted);
-
-        $response = new BinaryFileResponse($zip);
-        $response->headers->set('Content-Type', 'application/zip');
-
-        // Create the disposition of the file
-        $disposition = $response->headers->makeDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $filename.'.zip'
-        );
-
-        $response->headers->set('Content-Disposition', $disposition);
-
-        return $response;
+        return $template;
     }
 }

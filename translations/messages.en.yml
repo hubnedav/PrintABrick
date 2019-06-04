@@ -58,7 +58,7 @@ set:
        This set is <strong>%percent%%</strong> complete
        <strong>%unique%</strong> unique models missing (<strong>%missing%</strong> parts total)
 
-model:
+brick:
   filter.title: Filter
   id: Number
   name: Name
@@ -80,9 +80,11 @@ model:
   related: Related bricks
   parents: Parent bricks
   sets: Sets
+  redirect: |
+    The Brick ID you tried to get (%src%) is an alias of %dest%. You have been redirected.
 
 page:
-  model.index: Browse bricks
+  brick.index: Browse bricks
   set.index: Browse sets
   search: "Search: \"%query%\""
   color: Colors
@@ -92,12 +94,12 @@ page:
     text: Sorry, an unexpected error has occured.
 
 filter:
-  model:
-   search: Search brick
-   category: Category
+  brick:
+    search: Search brick
+    category: Category
 
 homepage:
-  models:
+  bricks:
     title: bricks
     text: Browse 3D models of LEGO<sup>®</sup> parts from LDraw™ Library
     browse: Browse bricks
@@ -113,6 +115,7 @@ view.all:
 flash:
   warning.title: Warning
   error.title: Error
+  info.title: Info
 
 empty:
   description:
@@ -141,6 +144,7 @@ part:
   prints: Prints
   sets: Sets
   image.alt: Image of part '%number%'
+  related: Related parts
 
 form:
   search.submit: Search

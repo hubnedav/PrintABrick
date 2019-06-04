@@ -2,13 +2,13 @@
 
 {% import 'macros/blocks.html.twig' as blocks %}
 
-{% block title %}{{ 'page.model.index' | trans }}{% endblock %}
+{% block title %}{{ 'page.brick.index' | trans }}{% endblock %}
 
-{% block header %}{{ 'page.model.index' | trans }}{% endblock %}
+{% block header %}{{ 'page.brick.index' | trans }}{% endblock %}
 
 {% block meta %}
     {{ blocks.meta(
-    name~' - '~'page.model.index' | trans,
+    name~' - '~'page.brick.index' | trans,
     app.request.uri,
     'meta.description' | trans | striptags('sup'),
     app.request.schemeAndHttpHost~asset('resources/images/meta-logo.png'),
@@ -22,7 +22,7 @@
         <div class="ui container stackable grid divided">
             <div class="column four wide">
                 <div class="segment basic ui filter">
-                    <h3 class="header dividing ui">{{ 'model.filter.title' | trans }}</h3>
+                    <h3 class="header dividing ui">{{ 'brick.filter.title' | trans }}</h3>
                     {{ form_start(form) }}
                     <div class="field">
                         {{ form_label(form.query) }}
@@ -62,9 +62,9 @@
                         </div>
                     </div>
                     <div class="ui segment vertical">
-                        <div class="ui six column doubling grid parts">
+                        <div class="ui grid six column doubling parts">
                             {% for model in models %}
-                                {{ blocks.model(model) }}
+                                {{ blocks.brick(model) }}
                             {% else %}
                                 {{ blocks.empty('empty.search.title' | trans )}}
                             {% endfor %}

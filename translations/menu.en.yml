@@ -1,6 +1,6 @@
 page:
   home: Homepage
-  model:
+  brick:
     index: Bricks
     detail: "%value%"
   set:

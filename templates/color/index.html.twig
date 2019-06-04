@@ -21,7 +21,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for color in colors if not color.transparent%}
+                {% for color in colors|filter(color => color.transparent == false ) %}
                     <tr>
                         <td style="background-color: #{{ color.rgb }}"></td>
                         <td>{{ color.id }}</td>
@@ -50,7 +50,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for color in colors if color.transparent%}
+                {% for color in colors|filter(color => color.transparent == true ) %}
                     <tr>
                         <td style="background-color: #{{ color.rgb }}"></td>
                         <td>{{ color.id }}</td>
@@ -58,6 +58,7 @@
                         <td>#{{ color.rgb }}</td>
                         <td>{{ color.transparent ? 'Transparent' : 'Solid' }}</td>
                     </tr>
+
                 {% endfor %}
                 </tbody>
             </table>

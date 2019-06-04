@@ -3,8 +3,11 @@
 namespace App\Twig;
 
 use App\Transformer\FormatTransformer;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
-class AppExtension extends \Twig_Extension
+class AppExtension extends AbstractExtension
 {
     /** @var FormatTransformer */
     private $formatTransformer;
@@ -22,15 +25,15 @@ class AppExtension extends \Twig_Extension
     public function getFilters(): array
     {
         return [
-            new \Twig_SimpleFilter('bytesToSize', [$this, 'bytesToSize']),
+            new TwigFilter('bytesToSize', [$this, 'bytesToSize']),
         ];
     }
 
     public function getFunctions(): array
     {
         return [
-            new \Twig_SimpleFunction('remoteSize', [$this, 'remoteSize']),
-            new \Twig_SimpleFunction('remoteFilename', [$this, 'remoteFilename']),
+            new TwigFunction('remoteSize', [$this, 'remoteSize']),
+            new TwigFunction('remoteFilename', [$this, 'remoteFilename']),
         ];
     }
 

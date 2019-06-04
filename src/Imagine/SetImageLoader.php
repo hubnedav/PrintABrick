@@ -12,7 +12,7 @@ class SetImageLoader extends BaseImageLoader
     /** @var BricksetManager */
     private $bricksetManager;
 
-    private $rebrickableContext = 'http://rebrickable.com/media/sets/';
+    private $rebrickableContext = 'https://rebrickable.com/media/sets/';
 
     /** @var Filesystem */
     private $mediaFilesystem;

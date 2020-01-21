@@ -1,6 +1,3 @@
-# PrintABrick
-Web catalogue of LEGO® parts for 3D printing
-
 Made a  low cost version of site, yet to add upload function.
 As of rn, has 5000 bricks or something.
 [link to site.](https://printabrick.000webhostapp.com/)
@@ -27,5 +24,10 @@ This API is AWS server less, so basically no maintenance, and low cost.
 
 **$3.50 for 1,000,000 API requests**
 **S3 storage is like 0.025/gb**
+
+
+
+
+
 
 

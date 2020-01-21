@@ -1,5 +1,0 @@
-0 Sticker Model Name
-0 Name: 0043d03.dat
----DAT
-0 Category Model
-0 Name: 0043d03.dat

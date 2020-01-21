@@ -1,0 +1,1 @@
+[https://www.thingiverse.com/thing:3874382](Here is the thingiverse backup of all files, It is stored in an s3 bucket.)

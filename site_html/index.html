@@ -1,0 +1,166 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style>
+body {
+  font-size: 100%;
+}
+h1 {
+  font-size: 300%;
+  margin-top:5%;
+  text-align: center;
+}
+h3 {
+  font-size: 150%;
+  text-align: center;
+}
+  .form-control-borderless {
+    border: none;
+}
+.output {
+  margin-left: 1%;
+}
+.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+.HeaderLogo {
+  width: 100%;
+  text-align: center;
+  margin-top: 2%;
+}
+.HeaderLogoWraper {
+    margin: 0 auto;
+    margin-top: 2%;
+    text-align: center;
+    width: 100%;
+}
+</style>
+<body>
+  <div class="HeaderLogoWrapper"><div class="HeaderLogo"><img  src="logo.png"></img></div></div>
+
+<h1> Print A Brick </h1>
+<h3> 3D print lego bricks </h3>
+
+<div class="container">
+    <br/>
+	<div class="row justify-content-center">
+                        <div class="col-12 col-md-10 col-lg-8">
+                            <div class="card card-sm">
+                                <div class="card-body row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <i class="fas fa-search h4 text-body"></i>
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col">
+                                        <input id='input1' class="form-control form-control-lg form-control-borderless" type="search" placeholder="Search for bricks">
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col-auto">
+                                        <button class="btn btn-lg btn-success" TYPE="button" NAME="button"  onClick="testResults()">Search</button>
+                                    </div>
+                                    <!--end of col-->
+                                </div>
+                            </div>
+                        </div>
+                        <!--end of col-->
+                    </div>
+</div>
+<br>
+
+
+
+
+
+
+
+
+
+<!-- OUTPUT -->
+<div class="output">
+<p1 id='par'></p1>
+</div>
+<!-- SCRIPTS -->
+</body>
+<script>
+    $(document).on("keypress", "input", function(e){
+        if(e.which == 13){
+            var inputVal = $(this).val();
+            enterResults(inputVal);
+        }
+    });
+</script>
+<script LANGUAGE="JavaScript">
+function pretty(data){
+  var exact = false;
+  if (data[0][1] == null) {
+    exact = false;
+    data[0][0] = ' ';
+    data[0][1] = " ";
+  }
+  else {
+    exact = true;
+    //data[0][1] = "abc";
+  }
+  var count = Object.keys(data).length;
+  var output = [];
+  var i = 0;
+  for (i = 0; i<count; i++) {
+    if (exact) {
+      var outputtmp = "<h3> <b> Exact Model: </b> <a href='https://0sb44une91.execute-api.ap-southeast-2.amazonaws.com/testing/download/" + data[i][0] + "'>" + data[i][1] + '</a></h3>';
+      output.push(outputtmp);
+      exact = false;
+    }
+    else {
+    var outputtmp =  "<b>" + data[i][0] + "</b> <a href='https://0sb44une91.execute-api.ap-southeast-2.amazonaws.com/testing/download/" + data[i][0] + "'>" + data[i][1] + '</a><br>';
+    output.push(outputtmp);
+    }
+  }
+  var x = output.join("");
+  //console.log(x);
+  document.getElementById("par").innerHTML = x;
+}
+
+
+function enterResults (TestVar) {
+  console.log('enter');
+  console.log(TestVar)
+  var TestVar = logJson(TestVar);
+  pretty(TestVar);
+
+    //document.getElementById('par').value = TestVar.toString();
+}
+function testResults (form) {
+  var TestVar = document.getElementById('input1').value;
+  var TestVar = logJson(TestVar);
+  pretty(TestVar);
+}
+//Load JSON
+var myjson;
+
+$.getJSON("list.json", function(json) {
+  myjson = json;
+});
+//debug func
+function logJson(x){
+  var results = [[x, myjson[x]]];
+  var i;
+  console.log(x);
+  for (const key of Object.keys(myjson)) {
+    var xtmp = x.toLowerCase();
+    var jsontmp = myjson[key].toLowerCase();
+
+    if (jsontmp.includes(xtmp)) {
+      results.push([key, myjson[key]])
+    }
+}
+  console.log(results);
+  return results;
+}
+// search:
+
+</script>

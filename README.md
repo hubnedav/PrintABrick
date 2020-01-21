@@ -1,4 +1,6 @@
-Made a  low cost version of site, yet to add upload function.
+# PRINT A BRICK
+## The low cost serverless verion hosted on AWS.
+### Also works and is not down.
 As of rn, has 5000 bricks or something.
 [link to site.](https://printabrick.000webhostapp.com/)
 
@@ -21,7 +23,7 @@ _by the way, if its slow its its because I throttled the rate to 1/second as i d
 ### Whats the point of this?
 .
 This API is AWS server less, so basically no maintenance, and low cost. 
-
+I really only made this to teach myself these skills, so no preasure to use it.
 **$3.50 for 1,000,000 API requests**
 **S3 storage is like 0.025/gb**
 

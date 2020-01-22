@@ -1,6 +1,6 @@
 # PRINT A BRICK
 ## The low cost serverless verion hosted on AWS.
-### Also works and is not down.
+### I have now taken it down as I didn't know og printabrick was taken down due to leagal reasons. All the infomation below is now irrelevent.
 As of rn, has 5000 bricks or something.
 [link to site.](https://printabrick.000webhostapp.com/)
 

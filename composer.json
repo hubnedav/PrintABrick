@@ -30,7 +30,7 @@
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "3.3.*",
+        "symfony/phpunit-bridge": "3.4.*",
         "phpunit/phpunit": "^6.1",
         "friendsofphp/php-cs-fixer": "^2.0",
         "liip/functional-test-bundle": "^1.7",

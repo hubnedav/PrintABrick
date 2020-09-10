@@ -4,16 +4,16 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: 'en'
     name: "PrintABrick"
     app.media_root: "%kernel.project_dir%/var/media/"
-    app.rebrickable_downloads_url: 'https://rebrickable.com/media/downloads/'
+    app.rebrickable_downloads_cdn: 'https://cdn.rebrickable.com/media/downloads/'
+    app.rebrickable_downloads_page: 'https://rebrickable.com/downloads/'
     app.ld_library_download_url: 'https://www.ldraw.org/library/updates/complete.zip'
     povray_bin: '%env(POVRAY_BIN)%'
     stl2pov_bin: '%env(STL2POV_BIN)%'
     ldview_bin: '%env(LDVIEW_BIN)%'
     admesh_bin: '%env(ADMESH_BIN)%'
-    layout_bin: '%kernel.root_dir%/Resources/povray_layout/layout.tmpl'
+    layout_bin: '%kernel.project_dir%/resources/povray_layout/layout.tmpl'
     liip_imagine.jpegoptim.binary: '%env(JPEGOPTIM_BIN)%'
 
 services:
@@ -24,20 +24,25 @@ services:
         public: false
         bind:
             $ldrawLibraryPath: '%app.ld_library_download_url%'
-            $rebrickableDownloadUrl: '%app.rebrickable_downloads_url%'
+            $rebrickableDownloadsCdn: '%app.rebrickable_downloads_cdn%'
+            $rebrickableDownloadsPage: '%app.rebrickable_downloads_page%'
             $bricksetApiKey: '%env(BRICKSET_APIKEY)%'
             $rebrickableApiKey: '%env(REBRICKABLE_APIKEY)%'
             $povray: '%povray_bin%'
             $stl2pov: '%stl2pov_bin%'
             $ldview: '%ldview_bin%'
             $ADMesh: '%admesh_bin%'
-            $layout: '%kernel.root_dir%/Resources/povray_layout/layout.tmpl'
+            $layout: '%layout_bin%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -62,9 +67,6 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
 
-    League\Flysystem\FilesystemInterface:
-        alias: oneup_flysystem.media_filesystem
-
     app.relations.cache_provider:
         class: Doctrine\Common\Cache\ArrayCache
 
@@ -88,5 +90,5 @@ services:
         arguments:
             - '@app.relations.cache_provider'
         calls:
-            - [ loadResource, ['%kernel.root_dir%/Resources/relations/part_model.yml', 'part_model']]
-            - [ loadResource, ['%kernel.root_dir%/Resources/relations/alias_model.yml', 'alias_model']]
+            - [ loadResource, ['%kernel.project_dir%/resources/relations/part_model.yml', 'part_model']]
+            - [ loadResource, ['%kernel.project_dir%/resources/relations/alias_model.yml', 'alias_model']]

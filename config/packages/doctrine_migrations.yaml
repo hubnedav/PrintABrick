@@ -1,5 +1,17 @@
 doctrine_migrations:
-    dir_name: '%kernel.project_dir%/src/Migrations'
-    # namespace is arbitrary but should be different from App\Migrations
-    # as migrations classes should NOT be autoloaded
-    namespace: DoctrineMigrations
+    migrations_paths:
+        # namespace is arbitrary but should be different from App\Migrations
+        # as migrations classes should NOT be autoloaded
+        'DoctrineMigrations': '%kernel.project_dir%/migrations'
+#
+#    storage:
+#        # Default (SQL table) metadata storage configuration
+#        table_storage:
+#            table_name: 'migration_versions'
+#            version_column_name: 'version'
+#            version_column_length: 255
+#            executed_at_column_name: 'executed_at'
+#            execution_time_column_name: 'execution_time'
+
+#    organize_migrations: false
+#    check_database_platform: true

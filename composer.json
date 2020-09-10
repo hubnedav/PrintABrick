@@ -17,44 +17,54 @@
         }
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.3",
+        "ext-zip": "*",
+        "ext-zlib": "*",
+        "symfony/dotenv": "5.1.*",
         "symfony/flex": "^1.1",
-        "symfony/asset": "^4.2",
-        "symfony/orm-pack": "^1.0",
-        "symfony/twig-bundle": "^4.2",
-        "symfony/form": "^4.2",
-        "symfony/security-bundle": "^4.2",
-        "symfony/translation": "^4.2",
-        "symfony/validator": "^4.2",
-        "symfony/yaml": "^4.2",
+        "symfony/asset": "5.1.*",
+        "symfony/orm-pack": "^2.0",
+        "symfony/twig-bundle": "5.1.*",
+        "symfony/form": "5.1.*",
+        "symfony/security-bundle": "5.1.*",
+        "symfony/translation": "5.1.*",
+        "symfony/validator": "5.1.*",
+        "symfony/yaml": "5.1.*",
         "symfony/polyfill-apcu": "^1.0",
         "symfony/monolog-bundle": "^3.3",
-        "symfony/serializer": "^4.2",
+        "symfony/serializer": "5.1.*",
         "symfony/webpack-encore-bundle": "^1.1",
-        "symfony/cache": "^4.2",
-        "symfony/test-pack": "^1.0",
+        "symfony/cache": "5.1.*",
         "sensio/framework-extra-bundle": "^5.2",
+        "sensiolabs/security-checker": "^6.0",
         "guzzlehttp/guzzle": "^6.2",
-        "knplabs/knp-menu-bundle": "^2.1",
-        "knplabs/knp-paginator-bundle": "^3.0",
+        "knplabs/knp-menu-bundle": "^3.0",
+        "knplabs/knp-paginator-bundle": "^5.0",
         "oneup/flysystem-bundle": "^3.0.0",
         "liip/imagine-bundle": "^2.1",
-        "friendsofsymfony/elastica-bundle": "^5.0"
+        "friendsofsymfony/elastica-bundle": "^5.1"
     },
     "require-dev": {
-        "symfony/dotenv": "^4.2",
         "symfony/maker-bundle": "^1.11",
         "symfony/profiler-pack": "^1.0",
-        "sensiolabs/security-checker": "^5.0",
-        "liip/functional-test-bundle": "~2.0@alpha",
-        "doctrine/doctrine-fixtures-bundle": "^3.1"
+        "liip/functional-test-bundle": "^4.2.0",
+        "doctrine/doctrine-fixtures-bundle": "^3.1",
+        "symfony/test-pack": "^1.0"
+    },
+    "repositories": {
+        "coil_foselasticabundle": {
+            "type": "vcs",
+            "url": "git@github.com:COil/FOSElasticaBundle.git"
+        }
     },
     "conflict": {
         "symfony/symfony": "*"
     },
     "scripts": {
         "auto-scripts": {
-            "security-checker security:check": "script"
+            "security-checker security:check": "script",
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"
@@ -65,8 +75,8 @@
     },
     "extra": {
         "symfony": {
-            "id": "",
-            "allow-contrib": false
+            "allow-contrib": false,
+            "require": "5.1.*"
         },
         "public-dir": "public"
     }

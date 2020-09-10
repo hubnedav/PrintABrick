@@ -1,0 +1,89 @@
+#declare main_mesh = m_MYSOLID;
+#declare m_COL = "0055BF";
+#include "math.inc"
+#include "finish.inc"
+#include "transforms.inc"
+#include "colors.inc"
+
+#macro hex2rgb (hexString)
+  #macro hex2dec (theHexValue)
+    (asc(theHexValue)>64?asc(theHexValue)-55:asc(theHexValue)-48)
+  #end
+
+  <16*hex2dec(substr(hexString,1,1))+hex2dec(substr(hexString,2,1)),
+  16*hex2dec(substr(hexString,3,1))+hex2dec(substr(hexString,4,1)),
+  16*hex2dec(substr(hexString,5,1))+hex2dec(substr(hexString,6,1))>/255
+#end
+
+background {color rgb 1}
+
+light_source { <-3,4,-3> color White shadowless}
+light_source { <3,3,3> color White shadowless}
+light_source { <-5,3,6> color White shadowless}
+
+
+global_settings{
+    assumed_gamma 2.1
+}
+
+#declare Min = min_extent( main_mesh );
+#declare Max = max_extent( main_mesh );
+
+#declare MaxLength = max(
+    Max.x-Min.x,
+    Max.y-Min.y,
+    Max.z-Min.z
+);
+
+// Calculate camera distace factor - if object is large on Y axis and Z axis move the camera further
+#declare cameraDistance = (((Max.z-Min.z)*(1/MaxLength) > 0.3) & ((Max.y-Min.y)*(1/MaxLength) > 0.95) ? 1: 0.9);
+
+object
+{
+    main_mesh
+    Center_Trans(main_mesh, x+y+z)
+
+    texture
+    {
+        pigment { rgb hex2rgb(m_COL) }
+        finish {
+            ambient 0.1
+            phong 0.2
+            phong_size 20
+            roughness .001
+        }
+    }
+    transform{
+        scale<-1,-1,1>
+        rotate<-90,-90,0> // y<->z
+        scale 1/MaxLength
+    }
+}
+
+camera {
+    #declare L3PercentageBack = 25 * ( (Max.y-Min.y)/ MaxLength ); // Percentage of radius
+	#declare L3ViewingAngle = 45; // degrees
+	#declare L3StereoAngle = 60; // degrees
+	//5 degrees corresponds to a distance between eyes (stereo cameras)
+	//of 1/12 of distance to model.
+	#declare L3StereoView =  L3StereoAngle/2; // Right view
+
+	sky      y
+	right    -1*x
+    #declare L3LookAt = <0, -0.2, 0>;
+    #declare L3Location = <1*cameraDistance, 0.8*cameraDistance, 1.2*cameraDistance>;
+    #declare L3Location = L3Location + L3PercentageBack/100.0*(L3Location-L3LookAt);
+    angle    L3ViewingAngle
+    location L3Location
+	look_at  L3LookAt
+
+//
+//	translate -L3Location
+//	#declare Ver=<3.53553,18.66025,3.53553>;
+//	#declare vx=vaxis_rotate(x,Ver,L3StereoView);
+//	#declare vy=vaxis_rotate(y,Ver,L3StereoView);
+//	#declare vz=vaxis_rotate(z,Ver,L3StereoView);
+//	matrix <vx.x,vx.y,vx.z, vy.x,vy.y,vy.z, vz.x,vz.y,vz.z, 0,0,0>
+//	#declare L3Location = L3LookAt + vaxis_rotate(L3Location-L3LookAt, Ver, L3StereoView);
+//	translate L3Location
+}

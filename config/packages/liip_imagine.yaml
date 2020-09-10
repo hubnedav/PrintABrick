@@ -1,48 +1,52 @@
+# See dos how to configure the bundle: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
 liip_imagine:
-  resolvers:
-    default:
-      web_path: ~
+    # valid drivers options include "gd" or "gmagick" or "imagick"
+    driver: "gd"
 
-  filter_sets:
-    set_min:
-      data_loader: set_image_loader
-      cache: ~
-      default_image: "/build/images/noimage_min.png"
-      filters:
-        upscale: { min: [230, 230] }
-        thumbnail: { size: [230, 230], mode: inset, allow_upscale: true }
-        background: { size: [250, 250], position: center, color: '#FFFFFF' }
-      post_processors:
-        jpegoptim: { strip_all: true, max: 90, progressive: true }
-    set_large:
-      data_loader: set_image_loader
-      cache: ~
-      default_image: "/build/images/noimage_large.png"
-      filters:
-        upscale: { min: [840, 580] }
-        thumbnail: { size: [840, 580], mode: inset, allow_upscale: true }
-        background: { size: [900, 600], position: center, color: '#FFFFFF' }
-      post_processors:
-        jpegoptim: { strip_all: true, max: 90, progressive: true }
-    part_min:
-      data_loader: part_image_loader
-      cache: ~
-      default_image: "/build/images/noimage_min.png"
-      format: jpg
-      filters:
-        upscale: { min: [230, 230] }
-        thumbnail: { size: [230, 230], mode: inset, allow_upscale: true }
-        background: { size: [250, 250], position: center, color: '#FFFFFF' }
-      post_processors:
-        jpegoptim: { strip_all: true, max: 90, progressive: true }
-    part_large:
-      data_loader: part_image_loader
-      cache: ~
-      default_image: "/build/images/noimage_large.png"
-      format: jpg
-      filters:
-        upscale: { min: [600, 400] }
-        thumbnail: { size: [600, 400], mode: inset, allow_upscale: true }
-        background: { size: [900, 600], position: center, color: '#FFFFFF' }
-      post_processors:
-        jpegoptim: { strip_all: true, max: 90, progressive: true }
+    resolvers:
+        default:
+            web_path: ~
+
+    filter_sets:
+        set_min:
+            data_loader: set_image_loader
+            cache: ~
+            default_image: "/build/images/noimage_min.png"
+            filters:
+                upscale: { min: [230, 230] }
+                thumbnail: { size: [230, 230], mode: inset, allow_upscale: true }
+                background: { size: [250, 250], position: center, color: '#FFFFFF' }
+            post_processors:
+                jpegoptim: { strip_all: true, max: 90, progressive: true }
+        set_large:
+            data_loader: set_image_loader
+            cache: ~
+            default_image: "/build/images/noimage_large.png"
+            filters:
+                upscale: { min: [840, 580] }
+                thumbnail: { size: [840, 580], mode: inset, allow_upscale: true }
+                background: { size: [900, 600], position: center, color: '#FFFFFF' }
+            post_processors:
+                jpegoptim: { strip_all: true, max: 90, progressive: true }
+        part_min:
+            data_loader: part_image_loader
+            cache: ~
+            default_image: "/build/images/noimage_min.png"
+            format: jpg
+            filters:
+                upscale: { min: [230, 230] }
+                thumbnail: { size: [230, 230], mode: inset, allow_upscale: true }
+                background: { size: [250, 250], position: center, color: '#FFFFFF' }
+            post_processors:
+                jpegoptim: { strip_all: true, max: 90, progressive: true }
+        part_large:
+            data_loader: part_image_loader
+            cache: ~
+            default_image: "/build/images/noimage_large.png"
+            format: jpg
+            filters:
+                upscale: { min: [600, 400] }
+                thumbnail: { size: [600, 400], mode: inset, allow_upscale: true }
+                background: { size: [900, 600], position: center, color: '#FFFFFF' }
+            post_processors:
+                jpegoptim: { strip_all: true, max: 90, progressive: true }

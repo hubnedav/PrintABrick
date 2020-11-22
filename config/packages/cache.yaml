@@ -3,6 +3,8 @@ framework:
         # Unique name of your app: used to compute stable namespaces for cache keys.
         prefix_seed: hubnedav/printabrick
 
+        directory: '%kernel.cache_dir%/pools' # Only used with cache.adapter.filesystem
+
         # The "app" cache stores to the filesystem by default.
         # The data in this cache should persist between deploys.
         # Other options include:
@@ -15,5 +17,17 @@ framework:
         #app: cache.adapter.apcu
 
         # Namespaced pools use the above "app" backend by default
-        #pools:
-            #my.dedicated.cache: null
+        pools:
+            my.dedicated.cache: null
+
+            relations.cache:
+                adapter: cache.adapter.array
+                default_lifetime: 1800 # 30 minutes
+
+            brickset.cache:
+                adapter: cache.adapter.filesystem
+                default_lifetime: 1_209_600  # two weeks
+
+            rebrickable.cache:
+                adapter: cache.adapter.filesystem
+                default_lifetime: 1_209_600  # two weeks

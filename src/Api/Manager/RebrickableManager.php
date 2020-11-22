@@ -9,43 +9,30 @@ use App\Api\Client\Rebrickable\Entity\PartCategory;
 use App\Api\Client\Rebrickable\Entity\Set;
 use App\Api\Client\Rebrickable\Entity\Theme;
 use App\Api\Client\Rebrickable\RebrickableClient;
-use Doctrine\Common\Cache\CacheProvider;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class RebrickableManager
 {
     const FORMAT = 'json';
-    const CACHE_LIFETIME = 86400;
 
-    /**
-     * @var RebrickableClient
-     */
-    private $rebrickableClient;
-
-    /**
-     * @var Serializer
-     */
-    private $serializer;
-
-    /**
-     * @var CacheProvider
-     */
-    private $cache;
+    private RebrickableClient $rebrickableClient;
+    private SerializerInterface $serializer;
+    private CacheInterface $cache;
 
     /**
      * RebrickableManager constructor.
-     *
-     * @param RebrickableClient $rebrickableClient
-     * @param CacheProvider     $cache
      */
-    public function __construct(RebrickableClient $rebrickableClient, CacheProvider $cache)
+    public function __construct(RebrickableClient $rebrickableClient, CacheInterface $rebrickableCache)
     {
         $this->rebrickableClient = $rebrickableClient;
         $this->serializer = $this->initSerializer();
-        $this->cache = $cache;
+        $this->cache = $rebrickableCache;
     }
 
     private function initSerializer()
@@ -66,14 +53,11 @@ class RebrickableManager
      */
     public function getPart($id)
     {
-        $key = 'part-'.$id;
+        return $this->cache->get("lego/parts/{$id}", function (ItemInterface $item) use ($id) {
+            $data = $this->rebrickableClient->call('GET', "lego/parts/{$id}");
 
-        if (!$data = $this->cache->fetch($key)) {
-            $data = $this->rebrickableClient->call('GET', 'lego/parts/'.$id);
-            $this->cache->save($key, $data, self::CACHE_LIFETIME);
-        }
-
-        return $this->serializer->deserialize($data, Part::class, self::FORMAT);
+            return $this->serializer->deserialize($data, Part::class, self::FORMAT);
+        });
     }
 
     /**
@@ -85,9 +69,11 @@ class RebrickableManager
      */
     public function getColor($id)
     {
-        $data = $this->rebrickableClient->call('GET', 'lego/colors/'.$id);
+        return $this->cache->get("lego/colors/{$id}", function (ItemInterface $item) use ($id) {
+            $data = $this->rebrickableClient->call('GET', "lego/colors/{$id}");
 
-        return $this->serializer->deserialize($data, Color::class, self::FORMAT);
+            return $this->serializer->deserialize($data, Color::class, self::FORMAT);
+        });
     }
 
     /**
@@ -99,9 +85,11 @@ class RebrickableManager
      */
     public function getSet($id)
     {
-        $data = $this->rebrickableClient->call('GET', 'lego/sets/'.$id);
+        return $this->cache->get("lego/sets/{$id}", function (ItemInterface $item) use ($id) {
+            $data = $this->rebrickableClient->call('GET', "lego/sets/{$id}");
 
-        return $this->serializer->deserialize($data, Set::class, self::FORMAT);
+            return $this->serializer->deserialize($data, Set::class, self::FORMAT);
+        });
     }
 
     /**
@@ -113,9 +101,11 @@ class RebrickableManager
      */
     public function getTheme($id)
     {
-        $data = $this->rebrickableClient->call('GET', 'lego/themes/'.$id);
+        return $this->cache->get("lego/themes/{$id}", function (ItemInterface $item) use ($id) {
+            $data = $this->rebrickableClient->call('GET', "lego/themes/{$id}");
 
-        return $this->serializer->deserialize($data, Theme::class, self::FORMAT);
+            return $this->serializer->deserialize($data, Theme::class, self::FORMAT);
+        });
     }
 
     /**
@@ -127,24 +117,28 @@ class RebrickableManager
      */
     public function getPartCategory($id)
     {
-        $data = $this->rebrickableClient->call('GET', 'lego/part_categories/'.$id);
+        return $this->cache->get("lego/part_categories/{$id}", function (ItemInterface $item) use ($id) {
+            $data = $this->rebrickableClient->call('GET', 'lego/part_categories/'.$id);
 
-        return $this->serializer->deserialize($data, PartCategory::class, self::FORMAT);
+            return $this->serializer->deserialize($data, PartCategory::class, self::FORMAT);
+        });
     }
 
     public function getPartsByLDrawNumber($number)
     {
-        $options = [
-            'query' => [
-                'ldraw_id' => $number,
-            ],
-        ];
+        return $this->cache->get('lego/parts-'.$number, function (ItemInterface $item) use ($number) {
+            $options = [
+                'query' => [
+                    'ldraw_id' => $number,
+                ],
+            ];
 
-        $response = $this->rebrickableClient->call('GET', 'lego/parts', $options);
+            $response = $this->rebrickableClient->call('GET', 'lego/parts', $options);
 
-        $data = json_decode($response, true)['results'];
+            $data = json_decode($response, true)['results'];
 
-        return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
+            return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
+        });
     }
 
     /**
@@ -158,16 +152,22 @@ class RebrickableManager
      */
     public function getPartSets($partId, $colorId, $page = null)
     {
-        $options = [
-            'query' => [
-                'page' => $page,
-            ],
-        ];
+        return $this->cache->get("lego/parts/{$partId}/colors/{$colorId}/sets", function (ItemInterface $item) use ($partId, $colorId, $page) {
+            $options = [
+                'query' => [
+                    'page' => $page,
+                ],
+            ];
 
-        $response = $this->rebrickableClient->call('GET', 'lego/parts/'.$partId.'/colors/'.$colorId.'/sets', $options);
-        $data = json_decode($response, true)['results'];
+            $response = $this->rebrickableClient->call(
+                'GET',
+                "lego/parts/{$partId}/colors/{$colorId}/sets",
+                $options
+            );
+            $data = json_decode($response, true)['results'];
 
-        return $this->serializer->denormalize($data, Set::class.'[]', self::FORMAT);
+            return $this->serializer->denormalize($data, Set::class.'[]', self::FORMAT);
+        });
     }
 
     /**
@@ -180,15 +180,17 @@ class RebrickableManager
      */
     public function getSetParts($setId, $page = null)
     {
-        $options = [
-            'query' => [
-                'page' => $page,
-            ],
-        ];
+        return $this->cache->get("lego/sets/{$setId}/parts", function (ItemInterface $item) use ($setId, $page) {
+            $options = [
+                'query' => [
+                    'page' => $page,
+                ],
+            ];
 
-        $response = $this->rebrickableClient->call('GET', 'lego/sets/'.$setId.'/parts', $options);
-        $data = json_decode($response, true)['results'];
+            $response = $this->rebrickableClient->call('GET', "lego/sets/{$setId}/parts", $options);
+            $data = json_decode($response, true)['results'];
 
-        return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
+            return $this->serializer->denormalize($data, Part::class.'[]', self::FORMAT);
+        });
     }
 }

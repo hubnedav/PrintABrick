@@ -67,28 +67,7 @@ services:
         tags:
             - { name: knp_menu.menu_builder, method: mainMenu, alias: mainMenu }
 
-    app.relations.cache_provider:
-        class: Doctrine\Common\Cache\ArrayCache
-
-    app.brickset.cache_provider:
-        class: Doctrine\Common\Cache\PhpFileCache
-        arguments: ["%kernel.cache_dir%/brickset", ".cache.php"]
-
-    app.rebrickable.cache_provider:
-        class: Doctrine\Common\Cache\PhpFileCache
-        arguments: ["%kernel.cache_dir%/rebrickable", ".cache.php"]
-
-    App\Api\Manager\BricksetManager:
-        arguments:
-            $cache: '@app.brickset.cache_provider'
-
-    App\Api\Manager\RebrickableManager:
-        arguments:
-            $cache: '@app.rebrickable.cache_provider'
-
     App\Util\RelationMapper:
-        arguments:
-            - '@app.relations.cache_provider'
         calls:
             - [ loadResource, ['%kernel.project_dir%/resources/relations/part_model.yml', 'part_model']]
             - [ loadResource, ['%kernel.project_dir%/resources/relations/alias_model.yml', 'alias_model']]

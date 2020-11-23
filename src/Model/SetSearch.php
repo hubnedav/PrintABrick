@@ -18,6 +18,9 @@ class SetSearch
     /** @var Theme */
     protected $theme;
 
+    /** @var NumberRange */
+    protected $completeness;
+
     /**
      * SetSearch constructor.
      *
@@ -90,5 +93,20 @@ class SetSearch
     public function setTheme($theme)
     {
         $this->theme = $theme;
+    }
+
+    /**
+     * @return NumberRange
+     */
+    public function getCompleteness(): ?NumberRange
+    {
+        return $this->completeness;
+    }
+
+    public function setCompleteness(NumberRange $completeness): SetSearch
+    {
+        $this->completeness = $completeness;
+
+        return $this;
     }
 }

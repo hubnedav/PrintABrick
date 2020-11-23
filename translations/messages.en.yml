@@ -35,6 +35,7 @@ set:
     search: Search
     year: Year of release
     partCount: Count of parts
+    completeness: Completeness
     theme: Theme
     theme.all: All Themes
     theme.placeholder: All Themes

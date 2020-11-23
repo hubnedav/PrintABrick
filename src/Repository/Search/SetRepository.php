@@ -37,9 +37,12 @@ class SetRepository extends Repository
             $boolQuery->addMust($query);
         }
 
+        $boolQuery->addMust(new Match('disabled', false));
+
         if ($setSearch->getTheme()) {
             $themeQuery = new Match();
             $themeQuery->setField('theme.id', $setSearch->getTheme()->getId());
+
             $boolQuery->addFilter($themeQuery);
         }
 
@@ -52,6 +55,15 @@ class SetRepository extends Repository
             $boolQuery->addFilter($range);
         }
 
+        if ($setSearch->getCompleteness() ? $setSearch->getCompleteness()->getFrom() > 1 : false) {
+            $range = new Range();
+            $range->addField('completeness', [
+                'gte' => $setSearch->getCompleteness()->getFrom(),
+                'lte' => $setSearch->getCompleteness()->getTo(),
+            ]);
+            $boolQuery->addFilter($range);
+        }
+
         if ($setSearch->getYear()) {
             $range = new Range();
             $range->addField('year', [
@@ -60,6 +72,18 @@ class SetRepository extends Repository
             ]);
             $boolQuery->addFilter($range);
         }
+
+        $range = new Range();
+        $range->addField('partCount', [
+            'gte' => 1,
+        ]);
+        $boolQuery->addFilter($range);
+
+//        $range = new Range();
+//        $range->addField('completeness', [
+//            'gte' => 1,
+//        ]);
+//        $boolQuery->addFilter($range);
 
         return new Query($boolQuery);
     }

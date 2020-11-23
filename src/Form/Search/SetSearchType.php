@@ -25,8 +25,6 @@ class SetSearchType extends AbstractType
 
     /**
      * SetSearchType constructor.
-     *
-     * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
     {
@@ -58,8 +56,17 @@ class SetSearchType extends AbstractType
                 'attr' => [
                     'class' => 'slider',
                     'step' => 50,
-                    'min' => 0,
+                    'min' => 1,
                     'max' => $this->setRepository->getMaxPartCount(),
+                ],
+            ])
+            ->add('completeness', NumberRangeType::class, [
+                'label' => 'set.form.completeness',
+                'attr' => [
+                    'class' => 'slider',
+                    'step' => 1,
+                    'min' => 1,
+                    'max' => 100,
                 ],
             ])
             ->add('theme', ChoiceType::class, [

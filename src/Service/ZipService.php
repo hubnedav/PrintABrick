@@ -4,35 +4,24 @@ namespace App\Service;
 
 use App\Entity\LDraw\Model;
 use App\Entity\Rebrickable\Set;
-use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 
 class ZipService
 {
-    /** @var \ZipArchive */
-    private $archive;
+    private ?\ZipArchive $archive = null;
 
-    /** @var Filesystem */
-    private $mediaFilesystem;
+    private FilesystemInterface $mediaFilesystem;
 
-    /** @var SetService */
-    private $setService;
+    private SetService $setService;
 
-    /** @var ModelService */
-    private $modelService;
+    private ModelService $modelService;
 
-    /** @var string */
-    private $zipName;
+    private string $zipName;
 
-    /** @var array */
-    private $models = [];
+    private array $models = [];
 
     /**
      * ZipService constructor.
-     *
-     * @param FilesystemInterface $mediaFilesystem
-     * @param ModelService        $modelService
-     * @param SetService          $setService
      */
     public function __construct(FilesystemInterface $mediaFilesystem, ModelService $modelService, SetService $setService)
     {
@@ -41,7 +30,7 @@ class ZipService
         $this->modelService = $modelService;
     }
 
-    private function createZip($path)
+    private function createZip(string $path): \ZipArchive
     {
         $archive = new \ZipArchive();
         $archive->open($path, \ZipArchive::CREATE);
@@ -52,13 +41,12 @@ class ZipService
     /**
      * Create zip archive with models in set in temp dir.
      *
-     * @param Set    $set
      * @param string $filename Filename of archive base directory
      * @param bool   $sorted   Sort models into folders by color
      *
      * @return bool|string
      */
-    public function createFromSet(Set $set, $filename, $sorted = false)
+    public function createFromSet(Set $set, string $filename, bool $sorted = false)
     {
         $this->zipName = $filename;
 
@@ -80,13 +68,12 @@ class ZipService
     /**
      * Create zip archive of model in temp dir.
      *
-     * @param Model  $model
      * @param string $filename Filename of archive base directory
      * @param bool   $subparts Include directory with subparts into archive
      *
      * @return bool|string
      */
-    public function createFromModel(Model $model, $filename, $subparts = false)
+    public function createFromModel(Model $model, string $filename, bool $subparts = false)
     {
         $this->zipName = $filename;
 
@@ -114,10 +101,9 @@ class ZipService
     /**
      * Add stl files of models used in set into zip grouped by color.
      *
-     * @param Set  $set
      * @param bool $spare If true - add only spare parts, false - add only regular parts, null - add all parts
      */
-    private function addSetGroupedByColor(Set $set, $spare = null)
+    private function addSetGroupedByColor(Set $set, ?bool $spare = null)
     {
         $colors = $this->setService->getModelsGroupedByColor($set, $spare);
 
@@ -138,10 +124,9 @@ class ZipService
     /**
      * Add stl files used in set into zip.
      *
-     * @param Set  $set
      * @param bool $spare If true - add only spare parts, false - add only regular parts, null - add all parts
      */
-    private function addSet(Set $set, $spare = null)
+    private function addSet(Set $set, ?bool $spare = null)
     {
         $models = $this->setService->getModels($set, $spare);
 
@@ -155,7 +140,7 @@ class ZipService
         }
     }
 
-    private function addModel($path, $model)
+    private function addModel(string $path, Model $model)
     {
         $this->archive->addFromString($path, $this->mediaFilesystem->read($model->getPath()));
         $this->models[$model->getId()] = $model;

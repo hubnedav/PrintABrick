@@ -15,12 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * @Route("/files")
+ * @Route("/media")
  */
 class MediaController extends AbstractController
 {
     /**
-     * @Route("/media/{path}", name="media_file", requirements={"path"=".+"})
+     * @Route("/stl/{path}", name="stl_file", requirements={"path"=".+"})
      */
     public function media(Request $request, $path, FilesystemInterface $mediaFilesystem): BinaryFileResponse
     {
@@ -46,11 +46,11 @@ class MediaController extends AbstractController
     }
 
     /**
-     * @Route("/brick/{id}", name="brick_zip", methods={"POST"})
+     * @Route("/brick/{id}", name="brick_zip")
      */
     public function brick(Request $request, Model $model, ZipService $zipService): BinaryFileResponse
     {
-        if ($this->isCsrfTokenValid('download-brick', $request->request->get('token'))) {
+        if ($this->isCsrfTokenValid('download-brick', $request->get('token'))) {
             // escape forbidden characters from filename
             $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$model->getId()}_{$model->getName()}");
 
@@ -78,8 +78,9 @@ class MediaController extends AbstractController
      */
     public function set(Request $request, Set $set, ZipService $zipService): BinaryFileResponse
     {
-        if ($this->isCsrfTokenValid('download-set', $request->request->get('token'))) {
-            $sorted = 1 === $request->get('sorted');
+        if ($this->isCsrfTokenValid('download-set', $request->get('token'))) {
+            $sorted = filter_var($request->get('sorted'), FILTER_VALIDATE_BOOLEAN);
+
             $sort = $sorted ? 'Multi-Color' : 'Uni-Color';
             // escape forbidden characters from filename
             $filename = preg_replace('/[^a-z0-9()\-\.]/i', '_', "{$set->getId()}_{$set->getName()}({$sort})");

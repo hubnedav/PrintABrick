@@ -3,10 +3,10 @@
 
 {% block content %}
     <div class="ui segment clearing basic vertical">
-        <form action="{{ path('set_zip', {id: set.id }) }}" method="post">
+        <form action="{{ path('set_zip', {id: set.id }) }}" method="get">
             <input type="hidden" name="token" value="{{ csrf_token('download-set') }}" />
-            <input type="hidden" name="sorted" value="false" />
-            <button class="ui primary right floated button" type="submit" ><i class="download icon"></i> {{ 'set.download.unicolor.button' | trans}}</button>
+            <input type="hidden" name="sorted" value="0" />
+            <button class="ui primary right floated button" type="submit" data-id="{{ set.id }}" data-type="set"><i class="download icon"></i> {{ 'set.download.unicolor.button' | trans}}</button>
         </form>
     </div>
 

@@ -72,11 +72,14 @@
                             </tr>
                         {% endif %}
                     </table>
-
-                    <form action="{{ path('brick_zip', {id: entity.id}) }}" method="post">
-                        <input type="hidden" name="token" value="{{ csrf_token('download-brick') }}" />
-                        <button class="ui download fluid primary button" type="submit"><i class="download icon"></i> {{ 'brick.download'|trans }}</button>
-                    </form>
+                    {% if entity.path %}
+                        <form action="{{ path('brick_zip', {id: entity.id}) }}" method="get">
+                            <input type="hidden" name="token" value="{{ csrf_token('download-brick') }}" />
+                            <button class="ui download fluid primary button" type="submit" data-id="{{ entity.id }}" data-type="brick"><i class="download icon"></i> {{ 'brick.download'|trans }}</button>
+                        </form>
+                    {% else %}
+                        <a class="ui disabled fluid primary button"><i class="download icon"></i> {{ 'brick.empty'|trans }}</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

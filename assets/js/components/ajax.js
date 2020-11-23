@@ -1,27 +1,24 @@
 $(document).ready(function () {
-   $('.ajax-load').each(function () {
-       $self = $(this);
+    $('.ajax-load').each(function () {
+        let self = $(this);
 
-       $.ajax({
-           dataType: "json",
-           url: $self.data('src'),
-           context: $self
-       }).done(function(data) {
-           $(this).html(data);
-       });
-   })
-});
+        $.ajax({
+            dataType: "json",
+            url: self.data('src'),
+            context: self
+        }).done(function(data) {
+            $(this).html(data);
 
-$(document).ajaxComplete(function () {
-    $('.image.load img')
-        .visibility({
-            type       : 'image',
-            transition : 'fade in',
-            duration   : 1000
-        })
-    ;
+            self.find('.image.load img')
+                .visibility({
+                    type       : 'image',
+                    transition : 'fade in',
+                })
+            ;
 
-    $('.ui.rating')
-        .rating("disable")
-    ;
+            self.find('.ui.rating')
+                .rating("disable")
+            ;
+        });
+    })
 });

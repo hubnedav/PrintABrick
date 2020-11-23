@@ -8,9 +8,7 @@ global.$ = global.jQuery = $;
 import 'semantic-ui-css';
 import 'semantic-ui-css/semantic.css'
 
-// SELECT 2
-import 'select2';
-import 'select2/dist/css/select2.css';
+import 'Hinclude/hinclude';
 
 // JQUERY-UI
 import 'jquery-ui';

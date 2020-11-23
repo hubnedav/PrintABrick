@@ -4,3 +4,31 @@
     margin: 1em 0.6em 3em;
   }
 }
+
+.ui.form .select2-container {
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.ui.form .select2-chosen {
+  padding-top: 0.85em;
+  padding-bottom: 0.85em;
+  line-height: normal;
+}
+
+.ui.form .select2-choice {
+  height: auto;
+}
+
+.ui.form .select2-arrow {
+  padding-top: 0.3em;
+}
+
+.select2-drop .select2-result-label {
+  font-size: 0.85em;
+}
+
+.ui.left.icon.input .select2-choice {
+  padding-left: 3em!important;
+  padding-right: 1.2em!important;
+}

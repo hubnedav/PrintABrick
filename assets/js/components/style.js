@@ -1,37 +1,24 @@
+import 'select2';
+import 'select2/dist/css/select2.css';
+
 $(document).ready(function(){
-    // $('.ui.dropdown')
-    //     .dropdown('restore defaults')
-    // ;
-
-    // $('.select2.dropdown').select2({
-    //
-    // });
-
     $('.image.load img')
         .visibility({
             type       : 'image',
             transition : 'fade in',
-            duration   : 1000
         })
     ;
+
+    $('.select2').select2();
 
     $('.ui.rating')
         .rating("disable")
     ;
 
-    $('.tabular.menu .item').tab({
-        onVisible: function() {
-            $('.image img').visibility('refresh');
+    $('.tabular.menu .item, .tabular.submenu .item').tab({
+        onVisible: function(data) {
+            $(this).find('.image.load img').visibility('refresh');
         },
-        // history: true,
-        historyType: 'hash'
-    });
-
-    $('.tabular.submenu .item').tab({
-        onVisible: function() {
-            $('.image img').visibility('refresh');
-        },
-        // history: true,
         historyType: 'hash'
     });
 
@@ -55,11 +42,11 @@ $(document).ready(function(){
 
     // save last selected inventory tab to session
     $('.setTab').click(function() {
-        $tab = $(this).attr('data-tab');
+        let tab = $(this).attr('data-tab');
 
         $.ajax({
             type: 'POST',
-            url: routes.set_tab.replace("PLACEHOLDER", $tab),
+            url: routes.set_tab.replace("PLACEHOLDER", tab),
             async: true,
         });
     });

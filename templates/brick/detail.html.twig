@@ -16,11 +16,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="ui vertical segment secondary">
+    <div class="ui vertical segment {{ not entity.path ? 'grey inverted tertiary' : 'secondary'}}">
         <div class="ui container stackable grid">
             <div class="column ten wide">
                 <div id="model-viewer" class="model-container">
                     {{ blocks.brickImage(entity.id,'part_large') }}
+                    <span class="ui bottom attached label">{{ entity.type.name }}</span>
                 </div>
             </div>
             <div class="column six wide">
@@ -36,15 +37,25 @@
                         </tr>
                         <tr>
                             <td>{{ 'brick.category' | trans }}</td>
-                            <td><a href="{{ path('brick_index',{'category':entity.category.id}) }}">{{ entity.category ? entity.category.name }}</a></td>
+                            <td>
+                                {% if brick.category is defined and brick.category %}
+                                    <a href="{{ path('brick_index',{'category':entity.category.id}) }}">{{ entity.category ? entity.category.name }}</a>
+                                {% endif %}
+                            </td>
                         </tr>
                         <tr>
-                            <td>{{ 'brick.author' | trans }}</td><td>{{ entity.author.name }}</td>
+                            <td>{{ 'brick.author' | trans }}</td><td>{{ entity.author ? entity.author.name }}</td>
                         </tr>
                         <tr>
                             <td>{{ 'brick.license' | trans }}</td>
                             <td>
-                                {{ blocks.ccal2_license(entity.name,entity.author.name) }}
+                                {{ blocks.ccal2_license(entity.name, entity.author ? entity.author.name) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <a href="https://www.ldraw.org/parts/official-part-lookup.html?folder=parts&partid={{entity.id}}">LDraw</a>
                             </td>
                         </tr>
                         <tr>
@@ -60,17 +71,6 @@
                                 </div>
                             </td>
                         </tr>
-                        {% if entity.aliases|filter(alias => alias.type == 'alias')|length %}
-                            <tr>
-                                <td>{{ 'brick.aliases' | trans }}</td>
-                                <td>
-                                    {% for alias in entity.aliases | filter(alias => alias.type == 'alias') | slice(0,15)%}
-                                        <span>{{ alias.id }}</span>{%  if not loop.last %},{% endif %}
-                                    {% endfor %}
-                                    {% if entity.aliases|filter(alias => alias.type == 'alias')|length > 15 %}&hellip;{% endif %}
-                                </td>
-                            </tr>
-                        {% endif %}
                     </table>
                     {% if entity.path %}
                         <form action="{{ path('brick_zip', {id: entity.id}) }}" method="get">
@@ -85,21 +85,38 @@
         </div>
     </div>
     <div class="ui vertical segment">
+        {% set related = entity.children is not empty or entity.parents is not empty %}
 
         <div class="ui tabular pointing secondary menu stackable">
             <div class="container ui">
-                <a class="item {% if not app.request.get("page") %}active{% endif %}" data-tab="related">{{ 'brick.related' | trans }}</a>
-                <a class="item {% if app.request.get("page") %}active{% endif %}" data-tab="sets">{{ 'brick.sets' | trans }} ({{ setCount }})</a>
+                {% if related %}
+                    <a class="item {% if not app.request.get("page") %}active{% endif %}" data-tab="related">{{ 'brick.related' | trans }}</a>
+                {% endif %}
+{#                {% if setCount %}#}
+{#                    <a class="item {% if app.request.get("page") or not related %}active{% endif %}" data-tab="sets">{{ 'brick.sets' | trans }} ({{ setCount }})</a>#}
+{#                {% endif %}#}
             </div>
         </div>
 
         <div class="container ui">
-            <div class="ui tab {% if not app.request.get("page") %}active{%  endif %}" data-tab="related">
-                {{ render(path('brick_related', { id: entity.id })) }}
-            </div>
-            <div class="ui tab {% if app.request.get("page") %}active{% endif %}" data-tab="sets">
-                {{ render(path('brick_sets', { id: entity.id, page: app.request.get('page')  })) }}
-            </div>
+            {% if related %}
+                <div class="ui tab ajax-load {% if not app.request.get("page") %}active{%else %}ajax-load{% endif %}" data-tab="description" data-src="{{ path('brick_related', { 'id': entity.id }) }}">
+                    {% if app.session.get('tab') != 'inventory/multicolor' %}
+                        {{ render(path('brick_related', { 'id': entity.id })) }}
+                    {% else %}
+                        <div class="ui active centered inline loader"></div>
+                    {% endif %}
+                </div>
+            {% endif %}
+{#            {% if setCount %}#}
+{#                <div class="ui tab {% if app.request.get("page") or not related %}active{%else %}ajax-load{% endif %}" data-tab="sets" data-src="{{ path('brick_sets', { 'id': entity.id, page: app.request.get('page') }) }}">#}
+{#                    {% if app.session.get('tab') != 'inventory/multicolor' %}#}
+{#                        {{ render(path('brick_sets', { 'id': entity.id, page: app.request.get('page') })) }}#}
+{#                    {% else %}#}
+{#                        <div class="ui active centered inline loader"></div>#}
+{#                    {% endif %}#}
+{#                </div>#}
+{#            {% endif %}#}
         </div>
     </div>
 
@@ -107,9 +124,11 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#model-viewer').ModelViewer('{{ path('media_file', {'path': entity.path, 'token': csrf_token('download-media')}) }}');
-        });
-    </script>
+    {% if entity.path %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#model-viewer').ModelViewer('{{ path('stl_file', {'path': entity.path, 'token': csrf_token('download-media')}) }}');
+            });
+        </script>
+    {% endif %}
 {% endblock %}

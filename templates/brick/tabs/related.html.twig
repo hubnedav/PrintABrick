@@ -1,53 +1,34 @@
 {% import 'macros/blocks.html.twig' as blocks %}
 {% import 'macros/elements.html.twig' as elements %}
 
+{% macro bricks_list(title, bricks) %}
+    {% if bricks is not empty %}
+        <div class="segment vertical ui">
+            <h3 class="header">{{ title }}</h3>
+            <div class="ui grid doubling ten column row parts">
+                {% for brick in bricks %}
+                    {% if brick is instanceof('App\\Entity\\LDraw\\Subpart') %}
+                        {{ blocks.brick(brick.child, brick.count, brick.color.id) }}
+                    {% elseif brick is instanceof('App\\Entity\\LDraw\\Alias') %}
+                        {{ blocks.brick(brick.parent, 0) }}
+                    {% else %}
+                        {{ blocks.brick(brick) }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
-    {% if submodels is not empty %}
-        <div class="segment vertical ui">
-            <h3 class="header">Submodels</h3>
-            <div class="ui grid doubling ten column row parts">
-                {% for subpart in submodels %}
-                    {{ blocks.brick(subpart['model'], subpart['quantity']) }}
-                {% else %}
-                    <div class="empty"></div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
-    {% if siblings is not empty %}
-        <div class="segment vertical ui">
-            <h3 class="header">Siblings</h3>
-            <div class="ui grid doubling ten column row parts">
-                {% for model in siblings  %}
-                    {{ blocks.brick(model) }}
-                {% else %}
-                    <div class="empty"></div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
-    {% if entity.parents is not empty %}
-        <div class="segment vertical ui">
-            <h3 class="header">Parents</h3>
-            <div class="ui grid doubling ten column row parts">
-                {% for subpart in entity.parents  %}
-                    {{ blocks.brick(subpart.parent) }}
-                {% else %}
-                    <div class="empty"></div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
-    {% if entity.parts is not empty %}
-        <div class="segment vertical ui">
-            <h3 class="header">Parts</h3>
-            <div class="ui grid doubling ten column row parts">
-                {% for part in entity.parts  %}
-                    {{ blocks.brick(part) }}
-                {% else %}
-                    <div class="empty"></div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endif %}
+    {{ _self.bricks_list('Sub-parts', entity.subparts) }}
+    {{ _self.bricks_list('Sub-part of', entity.subpartOf) }}
+
+    {{ _self.bricks_list('Siblings', siblings) }}
+
+    {{ _self.bricks_list('Aliases', entity.aliases('A')) }}
+    {{ _self.bricks_list('Alias of', entity.aliasOf('A')) }}
+
+{#    {{ _self.bricks_list('Prints', entity.aliases('P')) }}#}
+{#    {{ _self.bricks_list('Print of', entity.aliasOf('P')) }}#}
 {% endblock %}

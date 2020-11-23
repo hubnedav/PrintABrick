@@ -16,10 +16,10 @@
                 <div class="eleven wide column">
                     <div class="ui text right floated menu">
                         <div class="header item">Sort By</div>
-                        {{ knp_pagination_sortable(sets, 'Number', ['s.id']) }}
-                        {{ knp_pagination_sortable(sets, 'Year', ['s.year']) }}
-                        {{ knp_pagination_sortable(sets, 'Name', ['s.name']) }}
-                        {{ knp_pagination_sortable(sets, 'Parts', ['s.partCount']) }}
+                        {{ knp_pagination_sortable(sets, 'Number', 's.id') }}
+                        {{ knp_pagination_sortable(sets, 'Year', 's.year') }}
+                        {{ knp_pagination_sortable(sets, 'Name', 's.name') }}
+                        {{ knp_pagination_sortable(sets, 'Parts', 's.partCount') }}
                     </div>
                 </div>
             </div>

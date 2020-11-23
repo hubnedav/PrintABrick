@@ -1,4 +1,7 @@
 {
+    "composer/package-versions-deprecated": {
+        "version": "1.11.99.1"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -94,7 +97,13 @@
         "version": "1.1.1"
     },
     "elasticsearch/elasticsearch": {
-        "version": "v6.1.0"
+        "version": "v7.10.0"
+    },
+    "ezimuel/guzzlestreams": {
+        "version": "3.0.1"
+    },
+    "ezimuel/ringphp": {
+        "version": "1.1.2"
     },
     "friendsofsymfony/elastica-bundle": {
         "version": "5.0",
@@ -103,10 +112,7 @@
             "branch": "master",
             "version": "5.0",
             "ref": "46c9cd2c1e07f0fcfd97e96f12b03b2e0845c4cd"
-        },
-        "files": [
-            "config/packages/fos_elastica.yaml"
-        ]
+        }
     },
     "guzzlehttp/guzzle": {
         "version": "6.3.3"
@@ -116,12 +122,6 @@
     },
     "guzzlehttp/psr7": {
         "version": "1.5.2"
-    },
-    "guzzlehttp/ringphp": {
-        "version": "1.1.1"
-    },
-    "guzzlehttp/streams": {
-        "version": "3.0.0"
     },
     "imagine/imagine": {
         "version": "v0.7.1"
@@ -137,6 +137,12 @@
     },
     "knplabs/knp-paginator-bundle": {
         "version": "v2.8.0"
+    },
+    "laminas/laminas-code": {
+        "version": "3.5.0"
+    },
+    "laminas/laminas-eventmanager": {
+        "version": "3.3.0"
     },
     "laminas/laminas-zendframework-bridge": {
         "version": "1.0.3"
@@ -188,7 +194,7 @@
         }
     },
     "pagerfanta/pagerfanta": {
-        "version": "v1.1.0"
+        "version": "v2.5.1"
     },
     "paragonie/random_compat": {
         "version": "v9.99.99"
@@ -262,10 +268,10 @@
         "version": "2.0.5"
     },
     "react/promise": {
-        "version": "v2.7.1"
+        "version": "v2.8.0"
     },
     "ruflin/elastica": {
-        "version": "6.1.1"
+        "version": "7.0.0"
     },
     "sebastian/cli-parser": {
         "version": "1.0.0"

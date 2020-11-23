@@ -38,15 +38,15 @@ class BrickController extends AbstractController
         $form->handleRequest($request);
 
         $models = $paginator->paginate(
-                $searchService->searchModels($modelSearch, 500),
-                $request->query->getInt('page', 1)/*page number*/,
-                $request->query->getInt('limit', 30)/*limit per page*/
-            );
+            $searchService->searchModels($modelSearch),
+            $request->query->getInt('page', 1)/*page number*/,
+            $request->query->getInt('limit', 30)/*limit per page*/
+        );
 
         return $this->render('brick/index.html.twig', [
-                'models' => $models,
-                'form' => $form->createView(),
-            ]);
+            'models' => $models,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**

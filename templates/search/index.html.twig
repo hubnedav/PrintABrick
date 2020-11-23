@@ -9,9 +9,9 @@
 {% block content %}
     <div class="ui vertical segment alternate stripe">
         <div class="ui container">
-            <h2 class="ui header">Sets <small>({{ sets | length }})</small></h2>
+            <h2 class="ui header">Sets <small>({{ sets.totalHits }})</small></h2>
             <div class="ui eight column doubling grid sets">
-                {% for set in sets | slice(0,8) %}
+                {% for set in sets.results(0,8).toArray %}
                     {{ blocks.set(set) }}
                 {% else %}
                     {{ blocks.empty('empty.sets.title' | trans ) }}
@@ -25,9 +25,9 @@
 
     <div class="ui vertical segment">
         <div class="ui container">
-            <h2 class="ui header">Models <small>({{ models | length }})</small></h2>
+            <h2 class="ui header">Models <small>({{ models.totalHits }})</small></h2>
             <div class="ui eight column doubling grid parts">
-                {% for model in models | slice(0,8) %}
+                {% for model in models.results(0,8).toArray %}
                     {{ blocks.brick(model) }}
                 {% else %}
                     {{ blocks.empty('empty.models.title' | trans ) }}

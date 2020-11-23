@@ -8,21 +8,16 @@ use App\Model\ModelSearch;
 use App\Model\SetSearch;
 use App\Repository\Search\ModelRepository;
 use App\Repository\Search\SetRepository;
-use FOS\ElasticaBundle\HybridResult;
 use FOS\ElasticaBundle\Manager\RepositoryManagerInterface;
+use FOS\ElasticaBundle\Paginator\PaginatorAdapterInterface;
 
 class SearchService
 {
-    /** @var ModelRepository */
-    private $modelRepository;
-
-    /** @var SetRepository */
-    private $setRepository;
+    private ModelRepository $modelRepository;
+    private SetRepository $setRepository;
 
     /**
      * SearchService constructor.
-     *
-     * @param RepositoryManagerInterface $repositoryManager
      */
     public function __construct(RepositoryManagerInterface $repositoryManager)
     {
@@ -34,77 +29,55 @@ class SearchService
      * Find matching sets by query.
      *
      * @param $query
-     * @param int $limit
-     *
-     * @return array
      */
-    public function searchSetsByQuery($query, $limit = 1000)
+    public function searchSetsByQuery(string $query): PaginatorAdapterInterface
     {
-        return $this->setRepository->search(new SetSearch($query), $limit);
+        return $this->setRepository->search(new SetSearch($query));
     }
 
     /**
      * Find matching sets by query with highlights.
      *
      * @param $query
-     * @param int $limit
-     *
-     * @return HybridResult[]
      */
-    public function searchSetsHighlightedByQuery($query, $limit = 4)
+    public function searchSetsHighlightedByQuery(string $query, array $options = []): PaginatorAdapterInterface
     {
-        return $this->setRepository->findHighlighted($query, $limit);
+        return $this->setRepository->findHighlighted($query, $options);
     }
 
     /**
      * Find matching sets by rules in SetSearch class.
-     *
-     * @param SetSearch $setSearch
-     * @param int       $limit
-     *
-     * @return array
      */
-    public function searchSets(SetSearch $setSearch, $limit = 1000)
+    public function searchSets(SetSearch $setSearch): PaginatorAdapterInterface
     {
-        return $this->setRepository->search($setSearch, $limit);
+        return $this->setRepository->search($setSearch);
     }
 
     /**
      * Find matching models by query.
      *
      * @param $query
-     * @param int $limit
-     *
-     * @return array
      */
-    public function searchModelsByQuery($query, $limit = 1000)
+    public function searchModelsByQuery($query, array $options = []): PaginatorAdapterInterface
     {
-        return $this->modelRepository->search(new ModelSearch($query), $limit);
+        return $this->modelRepository->search(new ModelSearch($query), $options);
     }
 
     /**
      * Find matching models by query with highlights.
      *
      * @param $query
-     * @param int $limit
-     *
-     * @return HybridResult[]
      */
-    public function searchModelsHighlightedByQuery($query, $limit = 4)
+    public function searchModelsHighlightedByQuery($query, array $options = []): PaginatorAdapterInterface
     {
-        return $this->modelRepository->findHighlighted($query, $limit);
+        return $this->modelRepository->findHighlighted($query, $options);
     }
 
     /**
      * Find matching models by rules in ModelSearch class.
-     *
-     * @param ModelSearch $modelSearch
-     * @param int         $limit
-     *
-     * @return array
      */
-    public function searchModels(ModelSearch $modelSearch, $limit = 1000)
+    public function searchModels(ModelSearch $modelSearch, array $options = []): PaginatorAdapterInterface
     {
-        return $this->modelRepository->search($modelSearch, $limit);
+        return $this->modelRepository->search($modelSearch, $options);
     }
 }

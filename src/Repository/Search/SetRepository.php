@@ -7,6 +7,7 @@ use Elastica\Query;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\Match;
 use Elastica\Query\Range;
+use FOS\ElasticaBundle\Paginator\PaginatorAdapterInterface;
 use FOS\ElasticaBundle\Repository;
 
 /**
@@ -16,19 +17,15 @@ class SetRepository extends Repository
 {
     /**
      * Create search query from SetSearch entity.
-     *
-     * @param SetSearch $setSearch
-     *
-     * @return Query
      */
-    public function getSearchQuery(SetSearch $setSearch)
+    public function getSearchQuery(SetSearch $setSearch): Query
     {
         $boolQuery = new BoolQuery();
 
         if ($searchQuery = $setSearch->getQuery()) {
             $query = new Query\MultiMatch();
 
-            $query->setFields(['name', 'id', 'id.ngrams']);
+            $query->setFields(['name', 'id', 'id.ngrams', 'theme.name']);
             $query->setQuery($searchQuery);
             $query->setFuzziness(0.7);
             $query->setMinimumShouldMatch('80%');
@@ -67,33 +64,23 @@ class SetRepository extends Repository
         return new Query($boolQuery);
     }
 
-    /**
-     * @param SetSearch $setSearch
-     * @param int       $limit
-     *
-     * @return array
-     */
-    public function search(SetSearch $setSearch, $limit = 500)
+    public function search(SetSearch $setSearch): PaginatorAdapterInterface
     {
         $query = $this->getSearchQuery($setSearch);
 
-        return $this->find($query, $limit);
+        return $this->createPaginatorAdapter($query);
     }
 
     /**
      * Find sets by query with highlighted matched values.
      *
-     * @param string $query
-     * @param int    $limit
-     *
      * @return mixed
      */
-    public function findHighlighted($query, $limit = 500)
+    public function findHighlighted(string $query, array $options = []): PaginatorAdapterInterface
     {
         $setSearch = new SetSearch();
         $setSearch->setQuery($query);
 
-        /** @var Query $query */
         $query = $this->getSearchQuery($setSearch);
 
         $query->setHighlight([
@@ -105,6 +92,6 @@ class SetRepository extends Repository
             ],
         ]);
 
-        return $this->findHybrid($query, $limit);
+        return $this->createHybridPaginatorAdapter($query, $options);
     }
 }

@@ -40,7 +40,7 @@ class SetController extends AbstractController
         $form->handleRequest($request);
 
         $sets = $paginator->paginate(
-            $searchService->searchSets($setSearch, 500),
+            $searchService->searchSets($setSearch),
             $request->query->getInt('page', 1)/*page number*/,
             $request->query->getInt('limit', 20)/*limit per page*/
         );

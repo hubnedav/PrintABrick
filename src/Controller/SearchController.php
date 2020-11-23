@@ -38,8 +38,8 @@ class SearchController extends AbstractController
     {
         $query = trim(strip_tags($request->get('query')));
 
-        $setsResult = $searchService->searchSetsHighlightedByQuery($query, 4);
-        $modelResult = $searchService->searchModelsHighlightedByQuery($query, 4);
+        $setsResult = $searchService->searchSetsHighlightedByQuery($query)->getResults(0, 4)->toArray();
+        $modelResult = $searchService->searchModelsHighlightedByQuery($query)->getResults(0, 4)->toArray();
 
         $models = [];
         /** @var HybridResult $model */

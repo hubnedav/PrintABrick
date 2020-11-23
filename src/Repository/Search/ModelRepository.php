@@ -2,18 +2,16 @@
 
 namespace App\Repository\Search;
 
+use App\Entity\LDraw\ModelType;
 use App\Model\ModelSearch;
 use Elastica\Query;
+use FOS\ElasticaBundle\Paginator\PaginatorAdapterInterface;
 use FOS\ElasticaBundle\Repository;
 
 class ModelRepository extends Repository
 {
     /**
      * Create search query from ModelSearch entity.
-     *
-     * @param ModelSearch $modelSearch
-     *
-     * @return Query
      */
     private function getSearchQuery(ModelSearch $modelSearch): Query
     {
@@ -33,6 +31,15 @@ class ModelRepository extends Repository
 
         $boolQuery->addMust($query);
 
+        $categoryQuery = new Query\Prefix();
+        $categoryQuery->setParam('name', '~');
+        $boolQuery->addMustNot($categoryQuery);
+
+        $modelType = new Query\BoolQuery();
+        $modelType->addShould(new Query\Match('type.name', ModelType::PART));
+        $modelType->addShould(new Query\Match('type.name', ModelType::SHORTCUT));
+        $boolQuery->addMust($modelType);
+
         if ($modelSearch->getCategory()) {
             $categoryQuery = new Query\Match();
             $categoryQuery->setField('category.id', $modelSearch->getCategory()->getId());
@@ -42,22 +49,21 @@ class ModelRepository extends Repository
         return new Query($boolQuery);
     }
 
-    public function search(ModelSearch $modelSearch, $limit = 500)
+    public function search(ModelSearch $modelSearch, array $options = []): PaginatorAdapterInterface
     {
         $query = $this->getSearchQuery($modelSearch);
 
-        return $this->find($query, $limit);
+        return $this->createPaginatorAdapter($query, $options);
     }
 
     /**
      * Find models by query with highlighted matched values.
      *
      * @param string $queryString
-     * @param int    $limit
      *
      * @return mixed
      */
-    public function findHighlighted($queryString, $limit = 500)
+    public function findHighlighted($queryString, array $options = []): PaginatorAdapterInterface
     {
         $modelSearch = new ModelSearch();
         $modelSearch->setQuery($queryString);
@@ -72,6 +78,6 @@ class ModelRepository extends Repository
             ],
         ]);
 
-        return $this->findHybrid($query, $limit);
+        return $this->createHybridPaginatorAdapter($query, $options);
     }
 }

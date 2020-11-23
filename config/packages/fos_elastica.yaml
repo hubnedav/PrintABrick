@@ -2,126 +2,107 @@
 fos_elastica:
   clients:
     default: { url: '%env(ELASTICSEARCH_URL)%' }
+  index_templates:
+    printabrick:
+      client: default
+      template: printabrick_*
+      settings:
+        number_of_shards: 1
+        number_of_replicas: 0
+        index:
+          analysis:
+            analyzer:
+              name_autocomplete:
+                tokenizer: whitespace
+                filter:
+                  - lowercase
+                  - edge_ngram
+              name_analyzer:
+                tokenizer: whitespace
+                filter:
+                  - lowercase
+                  - stopwords
+                  - stemmer
+                  - stopwords
+              id_analyzer:
+                type: custom
+                tokenizer: id_edge_ngram
+                filter:
+                  - lowercase
+            tokenizer:
+              id_edge_ngram:
+                type: edge_ngram
+                min_gram: 2
+                max_gram: 20
+            filter:
+              edge_ngram:
+                type: edge_ngram
+                min_gram: 2
+                max_gram: 20
+              stopwords:
+                type: stop
+                stopwords: [ _english_ ]
+                ignore_case: true
   indexes:
-    set:
-      settings:
-        index:
-          analysis:
-            analyzer:
-              name_analyzer:
-                type: custom
-                tokenizer: nGram
-                filter:  [lowercase,stopwords]
-              id_analyzer:
-                type: custom
-                tokenizer: edge_ngram
-            tokenizer:
-              nGram:
-                type:     nGram
-                min_gram: 3
-                max_gram: 4
-              edge_ngram:
-                type:     edge_ngram
-                min:gram: 3
-                max_gram: 10
-            filter:
-              snowball:
-                type: snowball
-                language: English
-              stopwords:
-                type:      stop
-                stopwords: [_english_]
-                ignore_case: true
-      types:
-        set:
+    printabrick_sets:
+      properties:
+        id:
+          type: text
+          analyzer: id_analyzer
+          search_analyzer: keyword
+        name:
+          search_analyzer: name_analyzer
+          analyzer: name_autocomplete
+          boost: 2.0
+        year: { type: integer }
+        partCount: { type: integer }
+        disabled: { type: boolean }
+        completeness: { type: integer }
+        theme:
+          type: object
           properties:
-            id:
-              type: "keyword"
-              fields:
-                ngrams:
-                  type: 'text'
-                  analyzer: id_analyzer
-            name: { analyzer: name_analyzer, search_analyzer: "standard" }
-            year: { type: integer }
-            partCount: { type: integer }
-            disabled: { type: boolean }
-            completeness: { type: integer }
-            theme:
-              type: "object"
-              properties:
-                id: ~
-                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
-          persistence:
-            driver: orm
-            model: App\Entity\Rebrickable\Set
-            provider: ~
-            finder: ~
-            repository: App\Repository\Search\SetRepository
-            listener:
-              insert: true
-              update: true
-              delete: true
+            id: ~
+            name: { search_analyzer: name_analyzer, analyzer: name_autocomplete }
+      persistence:
+        driver: orm
+        model: App\Entity\Rebrickable\Set
+        repository: App\Repository\Search\SetRepository
+        listener:
+          insert: false
+          update: false
+          delete: false
 
-    models:
-      settings:
-        index:
-          analysis:
-            analyzer:
-              name_analyzer:
-                type: custom
-                tokenizer: nGram
-                filter:  [lowercase,stopwords]
-              id_analyzer:
-                type: custom
-                tokenizer: edge_ngram
-            tokenizer:
-              nGram:
-                type:     nGram
-                min_gram: 3
-                max_gram: 4
-              edge_ngram:
-                type:     edge_ngram
-                min:gram: 3
-                max_gram: 10
-            filter:
-              snowball:
-                type: snowball
-                language: English
-              stopwords:
-                type:      stop
-                stopwords: [_english_]
-                ignore_case: true
-      types:
-        model:
+    printabrick_models:
+      properties:
+        id:
+          type: text
+          analyzer: id_analyzer
+          search_analyzer: keyword
+        name:
+          search_analyzer: name_analyzer
+          analyzer: name_autocomplete
+          boost: 2.0
+        category:
+          type: object
           properties:
-            id:
-              type: "keyword"
-              fields:
-                ngrams:
-                  type: 'text'
-                  analyzer: id_analyzer
-            name: { analyzer: name_analyzer, search_analyzer: "standard"  }
-            #            parents:
-            #              type: "object"
-            #              properties:
-            #                id: { analyzer: id_analyzer, search_analyzer: "standard" }
-            category:
-              type: "object"
-              properties:
-                id: ~
-                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
-            keywords:
-              type: "object"
-              properties:
-                name: { analyzer: name_analyzer, search_analyzer: "standard"  }
-            type: { type: text }
-          persistence:
-            driver: orm
-            model: App\Entity\LDraw\Model
-            provider: ~
-            finder: ~
-            repository: App\Repository\Search\ModelRepository
-            listener:
-              insert: true
-              update: true
-              delete: true
+            id: ~
+            name:
+              type: keyword
+        keywords:
+          type: object
+          properties:
+            name: { search_analyzer: name_analyzer, analyzer: name_autocomplete }
+        type:
+          type: object
+          properties:
+            name:
+              type: keyword
+
+      persistence:
+        driver: orm
+        model: App\Entity\LDraw\Model
+        repository: App\Repository\Search\ModelRepository
+        listener:
+          insert: false
+          update: false
+          delete: false

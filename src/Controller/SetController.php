@@ -62,10 +62,13 @@ class SetController extends AbstractController
      */
     public function detail(Set $set, SetService $setService, BricksetManager $bricksetManager): Response
     {
-        $bricksetSet = null;
+        if ($set->isDisabled()) {
+            throw $this->createAccessDeniedException();
+        }
 
+        $bricksetSet = null;
         try {
-            if (!($bricksetSet = $bricksetManager->getSetByNumber($set->getId()))) {
+            if ($bricksetManager->isEnabled() && !($bricksetSet = $bricksetManager->getSetByNumber($set->getId()))) {
                 $this->addFlash('warning', "{$set->getId()} not found in Brickset database");
             }
         } catch (ApiException $e) {

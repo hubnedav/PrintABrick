@@ -94,6 +94,14 @@ class BricksetClient
         $this->apiKey = $apiKey;
     }
 
+    /**
+     * @return string
+     */
+    public function getApiKey(): string
+    {
+        return $this->apiKey;
+    }
+
     private function call($method, $parameters)
     {
         $parameters['apiKey'] = $this->apiKey;

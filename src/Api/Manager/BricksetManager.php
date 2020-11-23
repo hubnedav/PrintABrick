@@ -20,6 +20,11 @@ class BricksetManager
         $this->cache = $bricksetCache;
     }
 
+    public function isEnabled(): bool
+    {
+        return $this->bricksetClient->getApiKey();
+    }
+
     public function getThemes()
     {
         return $this->cache->get('themes', function (ItemInterface $item) {

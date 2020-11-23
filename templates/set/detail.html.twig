@@ -2,7 +2,7 @@
 
 {% import 'macros/blocks.html.twig' as blocks %}
 
-{% block title %}{{ set.id }} {{ set.name }}{% endblock %}
+{% block title %}{{ set.id }} | {{ set.name }}{% endblock %}
 
 {% block header %}{{ set.name | escape('html') }}{% endblock %}
 
@@ -67,9 +67,11 @@
                             <tr>
                                 <td></td>
                                 <td>
-                                    <a class="rebrickable link" href="http://rebrickable.com/sets/{{ set ? set.id }}">Rebrickable</a>
+                                    {% if set %}
+                                        <a class="rebrickable link" href="https://rebrickable.com/sets/{{ set.id }}" target="_blank">Rebrickable</a>
+                                    {% endif %}
                                     {% if brset %}
-                                        <a class="brickset link" href="{{ brset.bricksetURL }}">Brickset</a>
+                                        <a class="brickset link" href="{{ brset.bricksetURL }}" target="_blank">Brickset</a>
                                     {% endif %}
                                 </td>
                             </tr>

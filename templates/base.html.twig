@@ -5,12 +5,12 @@
 
 {% block meta %}
     {{ blocks.meta(
-    name,
-    app.request.uri,
-    'meta.description' | trans | striptags('sup'),
-    app.request.schemeAndHttpHost~asset('build/images/meta-logo.png'),
-    256,
-    256
+        name,
+        app.request.uri,
+        'meta.description' | trans | striptags('sup'),
+        app.request.schemeAndHttpHost~asset('build/images/meta-logo.png'),
+        256,
+        256
     )}}
 {% endblock %}
 

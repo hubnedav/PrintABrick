@@ -7,9 +7,9 @@
     {% block meta %}
 
     {% endblock %}
-    <title>{% block title %}{{ name }} - {{ 'meta.description' | trans | striptags('sup') }}{% endblock %}</title>
+    <title>{% block title %}{{ 'meta.description' | trans | striptags('sup') }}{% endblock %} - {{ name }}</title>
     {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('build/app.css') }}">
+        {{ encore_entry_link_tags('app') }}
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
@@ -25,15 +25,15 @@
 
 {% endblock %}
 
-<script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
-<script type="text/javascript">
-    var routes = {
-        search_autocomplete : "{{ path('search_autocomplete') }}",
-        set_tab : "{{ path('set_tab', { 'tab': "PLACEHOLDER" }) }}"
-    };
-</script>
 {% block javascripts %}
-
+    {{ encore_entry_script_tags('app') }}
+    <script type="text/javascript">
+        var routes = {
+            search_autocomplete : "{{ path('search_autocomplete') }}",
+            set_tab : "{{ path('set_tab', { 'tab': "PLACEHOLDER" }) }}",
+            search_results : "{{ path('search_results')}}"
+        };
+    </script>
 {% endblock %}
 </body>
 </html>

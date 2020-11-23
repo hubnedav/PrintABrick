@@ -7,6 +7,7 @@
   "main": "public/index.php",
   "dependencies": {
     "@symfony/webpack-encore": "^0.30.0",
+    "Hinclude": "^1.2.0",
     "autoprefixer": "^9.3.1",
     "copy-webpack-plugin": "^4.0.1",
     "core-js": "3",

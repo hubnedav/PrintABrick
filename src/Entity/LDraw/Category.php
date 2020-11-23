@@ -45,8 +45,6 @@ class Category
     }
 
     /**
-     * @param Model $model
-     *
      * @return Category
      */
     public function addModel(Model $model)
@@ -57,8 +55,6 @@ class Category
     }
 
     /**
-     * @param Model $model
-     *
      * @return Category
      */
     public function removeModel(Model $model)

@@ -3,10 +3,16 @@
 namespace App\Repository\LDraw;
 
 use App\Entity\LDraw\Category;
-use App\Repository\BaseRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class CategoryRepository extends BaseRepository
+class CategoryRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Category::class);
+    }
+
     public function findByName($name)
     {
         return $this->findOneBy(['name' => $name]);
@@ -16,15 +22,23 @@ class CategoryRepository extends BaseRepository
      * Get existing entity or create new.
      *
      * @param $name
-     *
-     * @return Category
      */
-    public function getOrCreate($name)
+    public function getOrCreate($name): Category
     {
-        if (null == ($category = $this->findByName($name))) {
-            $category = new Category();
-            $category->setName($name);
+        if ($category = $this->findByName($name)) {
+            return $category;
         }
+
+        $uow = $this->_em->getUnitOfWork()->getScheduledEntityInsertions();
+
+        foreach ($uow as $scheduled) {
+            if ($scheduled instanceof Category && $scheduled->getName() === $name) {
+                return $scheduled;
+            }
+        }
+
+        $category = new Category();
+        $category->setName($name);
 
         return $category;
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Service\Loader\Stl;
+namespace App\Service\Stl;
 
 use App\Exception\FileNotFoundException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class StlFixerService
+class StlFixer
 {
     private $ADMesh;
 
@@ -30,7 +30,7 @@ class StlFixerService
      */
     public function fix($input, $output = null)
     {
-        $output = $output ? $output : $input;
+        $output = $output ?: $input;
 
         if (file_exists($input)) {
             $this->runADMesh([
@@ -47,8 +47,6 @@ class StlFixerService
 
     /**
      * Call ADMesh process with $arguments.
-     *
-     * @param array $arguments
      */
     private function runADMesh(array $arguments)
     {

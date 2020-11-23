@@ -32,30 +32,30 @@ class Model
     private $category;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\LDraw\Alias", mappedBy="model", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\LDraw\Relation", mappedBy="parent", cascade={"all"}, fetch="EAGER")
      */
-    private $aliases;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\LDraw\Subpart", mappedBy="parent", cascade={"persist"})
-     */
-    private $subparts;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\LDraw\Subpart", mappedBy="subpart")
-     */
-    private $parents;
+    private $children;
 
     /**
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\LDraw\Keyword", inversedBy="models", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\LDraw\Relation", mappedBy="child", cascade={"all"})
+     */
+    private $parents;
+
+    /**
+     * @var ModelType
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\LDraw\ModelType", cascade={"persist"})
+     */
+    private $type;
+
+    /**
+     * @var Collection
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\LDraw\Keyword", inversedBy="models", orphanRemoval=true, cascade={"persist"})
      */
     private $keywords;
 
@@ -83,16 +83,15 @@ class Model
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Rebrickable\Part", mappedBy="model")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Rebrickable\Part", mappedBy="model")
      */
     private $parts;
 
     public function __construct()
     {
         $this->keywords = new ArrayCollection();
-        $this->subparts = new ArrayCollection();
+        $this->children = new ArrayCollection();
         $this->parents = new ArrayCollection();
-        $this->aliases = new ArrayCollection();
         $this->parts = new ArrayCollection();
     }
 
@@ -189,8 +188,6 @@ class Model
     }
 
     /**
-     * @param Category $category
-     *
      * @return Model
      */
     public function setCategory(Category $category)
@@ -201,19 +198,52 @@ class Model
     }
 
     /**
-     * @return Collection
+     * @return Collection|Relation[]
      */
-    public function getSubparts()
+    public function getChildren()
     {
-        return $this->subparts;
+        return $this->children;
+    }
+
+    public function getParents(): Collection
+    {
+        return $this->parents;
     }
 
     /**
-     * @return ArrayCollection
+     * @return $this
      */
-    public function getParents()
+    public function addParent(Relation $relation): Model
     {
-        return $this->parents;
+        if (!$this->parents->contains($relation)) {
+            $this->parents->add($relation);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function addChild(Relation $relation): Model
+    {
+        if (!$this->children->contains($relation)) {
+            $this->children->add($relation);
+        }
+
+        return $this;
+    }
+
+    public function getType(): ModelType
+    {
+        return $this->type;
+    }
+
+    public function setType(ModelType $type): Model
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -226,12 +256,7 @@ class Model
         return $this->keywords;
     }
 
-    /**
-     * @param Keyword $keyword
-     *
-     * @return Model
-     */
-    public function addKeyword(Keyword $keyword)
+    public function addKeyword(Keyword $keyword): Model
     {
         if (!$this->keywords->contains($keyword)) {
             $this->keywords->add($keyword);
@@ -241,12 +266,7 @@ class Model
         return $this;
     }
 
-    /**
-     * @param Keyword $keyword
-     *
-     * @return Model
-     */
-    public function removeKeyword(Keyword $keyword)
+    public function removeKeyword(Keyword $keyword): Model
     {
         $this->keywords->removeElement($keyword);
 
@@ -254,46 +274,54 @@ class Model
     }
 
     /**
-     * @return ArrayCollection
-     */
-    public function getAliases()
-    {
-        return $this->aliases;
-    }
-
-    /**
-     * @param Alias $alias
-     *
-     * @return $this
-     */
-    public function addAlias($alias)
-    {
-        if (!$this->aliases->contains($alias)) {
-            $this->aliases->add($alias);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Subpart $subpart
-     *
-     * @return $this
-     */
-    public function addSubpart($subpart)
-    {
-        if (!$this->subparts->contains($subpart)) {
-            $this->subparts->add($subpart);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return ArrayCollection
+     * @return Collection
      */
     public function getParts()
     {
         return $this->parts;
+    }
+
+    public function getAliases($type = null): Collection
+    {
+        return $this->parents
+            ->filter(fn (Relation $r) => ($r instanceof Alias) && ($type ? $r->getAliasType() === $type : true) && ($r->getParent() !== $this))
+//            ->map(fn (Relation $r) => $r->getParent())
+            ;
+    }
+
+    public function getAliasOf($type = null): Collection
+    {
+        return $this->children
+            ->filter(fn (Relation $r) => ($r instanceof Alias) && ($type ? $r->getAliasType() === $type : true) && ($r->getChild() !== $this))
+            ->map(fn (Relation $r) => $r->getChild())
+            ;
+    }
+
+    public function getSubpartOf(): Collection
+    {
+        return $this->parents
+            ->filter(fn (Relation $r) => $r instanceof Subpart)
+            ->map(fn (Relation $r) => $r->getParent());
+    }
+
+    public function getSubparts(): Collection
+    {
+        return $this->children
+            ->filter(fn (Relation $r) => $r instanceof Subpart)
+//            ->map(fn (Relation $r) => $r->getChild())
+            ;
+    }
+
+    public function getSiblings(): Collection
+    {
+        $siblingRelations = $this->parents
+            ->map(fn (Relation $r) => $r->getParent())
+            ->map(fn (Model $p) => $p->getChildren())
+            ->map(fn (Collection $c) => $c->toArray())
+            ->toArray();
+
+        return (new ArrayCollection(array_merge(...$siblingRelations)))
+            ->filter(fn (Relation $r) => ($r instanceof Subpart) && ($r->getChild() !== $this))
+            ->map(fn (Relation $r) => $r->getChild());
     }
 }

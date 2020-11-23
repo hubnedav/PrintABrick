@@ -2,39 +2,44 @@
 
 namespace App\Entity\LDraw;
 
-use App\Entity\Traits\NumberTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Model.
- *
  * @ORM\Table(name="ldraw_alias")
  * @ORM\Entity(repositoryClass="App\Repository\LDraw\AliasRepository")
  */
-class Alias
+class Alias extends Relation
 {
-    use NumberTrait;
+    public const PATTERNED = 'P';
+    public const ALTERNATE = 'A';
 
     /**
-     * @var Model
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\LDraw\Model", inversedBy="aliases")
+     * @ORM\Column(name="alias_type", type="string", length=1)
      */
-    private $model;
+    protected $type;
 
     /**
-     * @return Model
+     * @return mixed
      */
-    public function getModel()
+    public function getAliasType()
     {
-        return $this->model;
+        return $this->type;
     }
 
     /**
-     * @param Model $model
+     * @param mixed $type
+     *
+     * @return Alias
      */
-    public function setModel($model)
+    public function setAliasType($type)
     {
-        $this->model = $model;
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getRelationType()
+    {
+        return self::TYPE_ALIAS;
     }
 }

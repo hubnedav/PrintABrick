@@ -27,17 +27,28 @@
 {% endmacro %}
 
 {% macro brick(brick, quantity = null, color = -1, type = null) %}
-    <a class="column part" href="{{ url('brick_detail', {'id': brick.id})}}" title="{{ brick.id }} - {{ brick.name }}">
+    {% if brick is instanceof('App\\Entity\\LDraw\\Model') and brick.aliasOf('A') is not empty %}
+        <div class="column part" title="{{ brick.id }} - {{ brick.name }}">
+    {% else %}
+        <a class="column part" href="{{ url('brick_detail', {'id': brick.id})}}" title="{{ brick.id }} - {{ brick.name }}">
+    {% endif %}
         <div class="ui card {% if brick.model is defined and not brick.model %}grey{% endif %}">
             {% import _self as blocks %}
-            {{ blocks.brickImage(brick.id,'part_min', color, type) }}
+            {% if brick is instanceof('App\\Entity\\LDraw\\Model') and brick.aliasOf('A') is not empty %}
+                {{ blocks.brickImage((brick.aliasOf('A')|first).id, 'part_min', color, type) }}
+            {% else %}
+                {{ blocks.brickImage(brick.id, 'part_min', color, type) }}
+            {% endif %}
+
             <div class="content">
                 <h3 class="header truncate">{{ brick.id }}</h3>
                 <div class="meta">
-                    <span class="truncate-multiline"><small>{{ brick.name }}</small></span>
+                    {% if brick.name is defined and not null %}
+                        <span class="truncate-multiline"><small>{{ brick.name }}</small></span>
+                    {% endif %}
                 </div>
                 <div class="description">
-                    {% if brick.category is defined and not null %}
+                    {% if brick.category is defined and brick.category %}
                         <span><small>{{ brick.category.name }}</small></span>
                     {% endif %}
                     {% if quantity %}<div class="right floated">{{ quantity }}x</div>{% endif %}
@@ -47,7 +58,12 @@
                 <span class="ui top right attached label small">{{ type }}</span>
             {% endif %}
         </div>
-    </a>
+    {% if brick is not instanceof('App\\Entity\\LDraw\\Model') or brick.aliasOf('A') is empty %}
+        </a>
+    {% else %}
+        </div>
+    {% endif %}
+
 {% endmacro %}
 
 {% macro set(set, quantity = null) %}

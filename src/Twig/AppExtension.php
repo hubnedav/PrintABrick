@@ -6,6 +6,7 @@ use App\Transformer\FormatTransformer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig\TwigTest;
 
 class AppExtension extends AbstractExtension
 {
@@ -14,8 +15,6 @@ class AppExtension extends AbstractExtension
 
     /**
      * AppExtension constructor.
-     *
-     * @param FormatTransformer $formatTransformer
      */
     public function __construct(FormatTransformer $formatTransformer)
     {
@@ -35,6 +34,22 @@ class AppExtension extends AbstractExtension
             new TwigFunction('remoteSize', [$this, 'remoteSize']),
             new TwigFunction('remoteFilename', [$this, 'remoteFilename']),
         ];
+    }
+
+    public function getTests()
+    {
+        return [
+            new TwigTest('instanceof', [$this, 'isInstanceof'])
+        ];
+    }
+
+    /**
+     * @param $var
+     * @param $instance
+     * @return bool
+     */
+    public function isInstanceof($var, $instance) {
+        return $var instanceof $instance;
     }
 
     public function bytesToSize($bytes, $precision = 2): string

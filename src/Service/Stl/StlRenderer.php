@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Loader\Stl;
+namespace App\Service\Stl;
 
 use App\Exception\ConvertingFailedException;
 use App\Exception\FileNotFoundException;
@@ -8,7 +8,7 @@ use App\Exception\RenderFailedException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class StlRendererService
+class StlRenderer
 {
     /**
      * @var string Full path to povray binary
@@ -59,21 +59,19 @@ class StlRendererService
     /**
      * @param $file
      * @param $destinationDir
-     * @param bool $cleanup
+     * @param string $color
      *
      * @throws \Exception
      *
      * @return string
      */
-    public function render($file, $destinationDir, $cleanup = true)
+    public function render($file, $destinationDir, $color = null)
     {
-        $povFile = $this->convertStlPov($file);
+        $povFile = $this->convertStlPov($file, $color);
 
         try {
             $image = $this->renderPov($povFile, $destinationDir);
-            if ($cleanup) {
-                unlink($povFile);
-            }
+            unlink($povFile);
 
             return $image;
         } catch (\Exception $exception) {
@@ -89,14 +87,15 @@ class StlRendererService
      *
      * stl2pov (version 3.3.0) - https://github.com/rsmith-nl/stltools/releases/tag/3.3
      *
-     * @param string $file The full path to stl file
+     * @param string $file  The full path to stl file
+     * @param string $color
      *
      * @throws ConvertingFailedException throws exception if there are problems converting stl file to pov
      * @throws FileNotFoundException     throws exception if source file not found
      *
      * @return string Return the full path to the generated pov scene
      */
-    private function convertStlPov($file)
+    private function convertStlPov($file, $color = null)
     {
         if (!file_exists($file)) {
             throw new FileNotFoundException($file);
@@ -119,7 +118,7 @@ class StlRendererService
 
         // Check if file created successfully
         if (!file_exists($filename.'.inc')) {
-            throw new ConvertingFailedException($file, 'POV');
+            throw new ConvertingFailedException($file, 'POV', new FileNotFoundException($filename.'.inc'));
         }
 
         // Load contents of .inc file to variable
@@ -137,15 +136,22 @@ class StlRendererService
         // Load contents of pov-ray layout file
         $layout = file_get_contents($this->layout);
 
+        if ($color) {
+            // Replace mesh name in loaded inc file to match declaration in scene layout
+            $layout = preg_replace('/declare m_COL = "(.*)"/', "declare m_COL = \"{$color}\"", $layout);
+        }
+
+//        dump($layout);
+
         // Try to write contents of converted inc file and concat int with scene definitions
         if (!file_put_contents($outputFile, $incFile, LOCK_EX)) {
-            throw new ConvertingFailedException($file, 'POV');
+            throw new ConvertingFailedException($file, 'POV', new FileNotFoundException($outputFile));
         }
         if (!file_put_contents($outputFile, $layout, FILE_APPEND | LOCK_EX)) {
-            throw new ConvertingFailedException($file, 'POV');
+            throw new ConvertingFailedException($file, 'POV', new FileNotFoundException($outputFile));
         }
         if (!file_exists($outputFile)) {
-            throw new ConvertingFailedException($file, 'POV');
+            throw new ConvertingFailedException($file, 'POV', new FileNotFoundException($outputFile));
         }
 
         unset($incFile);

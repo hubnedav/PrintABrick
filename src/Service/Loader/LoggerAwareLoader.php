@@ -4,55 +4,35 @@ namespace App\Service\Loader;
 
 use App\Exception\WriteErrorException;
 use App\Transformer\FormatTransformer;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\StyleInterface;
 
-abstract class BaseLoader
+abstract class LoggerAwareLoader
 {
-    /**
-     * @var EntityManager
-     */
-    protected $em;
+    protected StyleInterface $output;
+    protected ProgressBar $progressBar;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var OutputInterface
-     */
-    protected $output;
-
-    /**
-     * @var ProgressBar
-     */
-    protected $progressBar;
-
-    /**
-     * @var Logger
-     */
-    protected $logger;
-
-    /**
-     * @var FormatTransformer
-     */
-    private $formatTransformer;
+    private FormatTransformer $formatTransformer;
 
     /**
      * BaseLoader constructor.
-     *
-     * @param EntityManagerInterface $em
-     * @param LoggerInterface        $logger
      */
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
+    public function __construct()
     {
-        $this->em = $em;
-        $this->logger = $logger;
         $this->formatTransformer = new FormatTransformer();
-        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
     }
 
-    public function setOutput(OutputInterface $output)
+    /**
+     * @required
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    public function setOutput(StyleInterface $output)
     {
         $this->output = $output;
         $this->output->setDecorated(true);
@@ -66,7 +46,7 @@ abstract class BaseLoader
      */
     protected function initProgressBar($total, $format = 'loader')
     {
-        $this->progressBar = new ProgressBar($this->output, $total);
+        $this->progressBar = $this->output->createProgressBar($total);
         ProgressBar::setFormatDefinition('loader', '[%current% / %max%] [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%) (%message%)'.PHP_EOL);
         ProgressBar::setFormatDefinition('download', '[%progress% / %size%] [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%)'.PHP_EOL);
         $this->progressBar->setFormat($format);
@@ -88,8 +68,13 @@ abstract class BaseLoader
                 $this->progressBar->setRedrawFrequency(1024 * 1024);
                 break;
             case STREAM_NOTIFY_PROGRESS:
-                $this->progressBar->setProgress($bytes_transferred);
-                $this->progressBar->setMessage($this->formatTransformer->bytesToSize($bytes_transferred), 'progress');
+                if ($this->progressBar) {
+                    $this->progressBar->setProgress($bytes_transferred);
+                    $this->progressBar->setMessage(
+                        $this->formatTransformer->bytesToSize($bytes_transferred),
+                        'progress'
+                    );
+                }
                 break;
             case STREAM_NOTIFY_COMPLETED:
                 $this->progressBar->finish();
@@ -108,24 +93,38 @@ abstract class BaseLoader
      */
     protected function downloadFile($url)
     {
-        $this->writeOutput(['Loading file from: <comment>'.$url.'</comment>']);
+        $this->output->writeln(['Loading file from: <comment>'.$url.'</comment>']);
         $temp = tempnam(sys_get_temp_dir(), 'printabrick.');
 
         $ctx = stream_context_create([], [
             'notification' => [$this, 'progressCallback'],
         ]);
 
-        if (false === file_put_contents($temp, fopen($url, 'r', 0, $ctx))) {
+        if (false === file_put_contents($temp, fopen($url, 'rb', 0, $ctx))) {
             throw new WriteErrorException($temp);
         }
 
         return $temp;
     }
 
-    protected function writeOutput(array $lines)
+    /**
+     * Download file from $url, save it to system temp directory and return filepath.
+     *
+     * @param $url
+     *
+     * @throws WriteErrorException
+     *
+     * @return bool|string
+     */
+    protected function downloadGzFile($url)
     {
-        if ($this->output) {
-            $this->output->writeln($lines);
+        $this->output->writeln(['Loading file from: <comment>'.$url.'</comment>']);
+        $temp = tempnam(sys_get_temp_dir(), 'printabrick.');
+
+        if (false === file_put_contents($temp, gzopen($url, 'rb', 0))) {
+            throw new WriteErrorException($temp);
         }
+
+        return $temp;
     }
 }

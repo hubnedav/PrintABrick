@@ -16,7 +16,7 @@ class LDModelParser
      *  'author' => string
      *  'modified' => DateTime
      *  'type' => string
-     *  'subparts' => [
+     *  'sub_parts' => [
      *      'id' => [
      *         'color' => int
      *      ]
@@ -30,10 +30,8 @@ class LDModelParser
      * @param $string
      *
      * @throws ErrorParsingLineException
-     *
-     * @return array
      */
-    public function parse($string)
+    public function parse($string): array
     {
         $model = [
             'id' => null,
@@ -43,7 +41,7 @@ class LDModelParser
             'author' => null,
             'modified' => null,
             'type' => null,
-            'subparts' => [],
+            'sub_parts' => [],
             'parent' => null,
             'license' => null,
         ];
@@ -73,7 +71,7 @@ class LDModelParser
                     $keywords = explode(',', preg_replace('/^!KEYWORDS /', '', $line));
                     foreach ($keywords as $keyword) {
                         $keyword = trim($keyword);
-                        if ($keyword && !in_array($keyword, $model['keywords'])) {
+                        if ($keyword && !in_array($keyword, $model['keywords'], true)) {
                             $model['keywords'][] = $keyword;
                         }
                     }
@@ -94,7 +92,7 @@ class LDModelParser
 
                     // Last modification date in format YYYY-RR
                     $date = preg_replace('/(^!LDRAW_ORG )(.*)( UPDATE | ORIGINAL )(.*)/', '$4', $line);
-                    if (preg_match('/^[1-2][0-9]{3}-[0-9]{2}$/', $date)) {
+                    if (preg_match('/^[1-2]\d{3}-\d{2}$/', $date)) {
                         $model['modified'] = \DateTime::createFromFormat('Y-m-d H:i:s', $date.'-01 00:00:00');
                     }
                 }
@@ -107,26 +105,28 @@ class LDModelParser
                     $id = strtolower($reference['id']);
                     $color = strtolower($reference['color']);
 
-                    // group subparts by color and id
-                    if (isset($model['subparts'][$id][$color])) {
-                        $model['subparts'][$id][$color] = $model['subparts'][$id][$color] + 1;
+                    // group sub-parts by color and id
+                    if (isset($model['sub_parts'][$id][$color])) {
+                        ++$model['sub_parts'][$id][$color];
                     } else {
-                        $model['subparts'][$id][$color] = 1;
+                        $model['sub_parts'][$id][$color] = 1;
                     }
                 }
-            } elseif (!empty($line) && !in_array($line[0], ['2', '3', '4', '5'])) {
+            } elseif (!empty($line) && !in_array($line[0], ['2', '3', '4', '5'], true)) {
                 throw new ErrorParsingLineException($model['id'], $line);
             }
         }
 
-        if (!in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart']) && $this->isSticker($model['name'], $model['id'])) {
+        if ($this->isStickerPart($model['name'], $model['id']) && !in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
             $model['type'] = 'Sticker';
-        } elseif (1 === count($model['subparts']) && in_array($model['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
-            $model['parent'] = array_keys($model['subparts'])[0];
-        } elseif (($parent = $this->getPrintedModelParentNumber($model['id'])) && !in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
-            $model['type'] = 'Printed';
-            $model['parent'] = $parent;
+        } elseif (1 === count($model['sub_parts']) && in_array($model['type'], ['Part Alias', 'Shortcut Physical_Colour', 'Shortcut Alias', 'Part Physical_Colour'])) {
+            $model['type'] = 'Alias';
+            $model['parent'] = array_key_first($model['sub_parts']);
         } elseif ($parent = $this->getObsoleteModelParentNumber($model['name'])) {
+            $model['type'] = 'Alias';
+            $model['parent'] = $parent;
+        } elseif (($parent = $this->getPatternedModelParentNumber($model['id'])) && !in_array($model['type'], ['48_Primitive', '8_Primitive', 'Primitive', 'Subpart'])) {
+            $model['type'] = 'Patterned';
             $model['parent'] = $parent;
         }
 
@@ -145,14 +145,16 @@ class LDModelParser
      *
      * @return array|null Filename of referenced part
      */
-    public function getReferencedModelNumber($line)
+    public function getReferencedModelNumber($line): ?array
     {
         $line = strtolower(preg_replace('!\s+!', ' ', $line));
 
-        // Do not load inverse part as subpart of model
-        if (preg_match('/^1 ([0-9]{1,3}) (0 0 0 -1 0 0 0 1 0 0 0 1) (.*)\.dat$/', $line, $matches)) {
+        // Do not load the inverse part as a subpart
+        if (preg_match('/^1 (\d{1,3}) (0 0 0 -1 0 0 0 1 0 0 0 1) (.*)\.dat$/', $line, $matches)) {
             return null;
-        } elseif (preg_match('/^1 ([0-9]{1,3}) (.*) (.*)\.dat$/', $line, $matches)) {
+        }
+
+        if (preg_match('/^1 (\d{1,3}) (.*) (.*)\.dat$/', $line, $matches)) {
             $id = str_replace('\\', DIRECTORY_SEPARATOR, $matches[3]);
             $color = $matches[1];
 
@@ -174,7 +176,7 @@ class LDModelParser
      *
      * @return string|null LDraw number of printed part parent
      */
-    public function getPrintedModelParentNumber($id)
+    public function getPatternedModelParentNumber($id): ?string
     {
         if (preg_match('/(^.*)(p[0-9a-z]{2,3})$/', $id, $matches)) {
             return $matches[1];
@@ -184,7 +186,7 @@ class LDModelParser
     }
 
     /**
-     * Check if part is shortcut part of stricker and part.
+     * Check if part is shortcut part of a stricker and a part.
      *
      * part name in format:
      *  nnnDnn, nnnnDnn, nnnnnDnn (a = alpha, n= numeric, x = alphanumeric)
@@ -193,10 +195,8 @@ class LDModelParser
      *
      * @param $name
      * @param $number
-     *
-     * @return bool
      */
-    public function isSticker($name, $number)
+    public function isStickerPart($name, $number): bool
     {
         if (0 === strpos($name, 'Sticker')) {
             return true;
@@ -218,7 +218,7 @@ class LDModelParser
      *
      * @return string|null Filename of referenced part
      */
-    public function getObsoleteModelParentNumber($name)
+    public function getObsoleteModelParentNumber($name): ?string
     {
         if (preg_match('/^(~Moved to )(.*)$/', $name, $matches)) {
             return str_replace('\\', DIRECTORY_SEPARATOR, $matches[2]);

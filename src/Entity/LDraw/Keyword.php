@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Keyword.
  *
- * @ORM\Table(name="ldraw_keyword")
+ * @ORM\Table(name="ldraw_model_keyword")
  * @ORM\Entity(repositoryClass="App\Repository\LDraw\KeywordRepository")
  */
 class Keyword
@@ -44,8 +44,6 @@ class Keyword
     }
 
     /**
-     * @param Model $part
-     *
      * @return Keyword
      */
     public function addModel(Model $part)
@@ -56,8 +54,6 @@ class Keyword
     }
 
     /**
-     * @param Model $part
-     *
      * @return Keyword
      */
     public function removeModel(Model $part)

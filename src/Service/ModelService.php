@@ -2,59 +2,57 @@
 
 namespace App\Service;
 
+use App\Entity\LDraw\Alias;
 use App\Entity\LDraw\Model;
+use App\Entity\LDraw\Relation;
+use App\Entity\LDraw\Subpart;
 use App\Repository\LDraw\ModelRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class ModelService
 {
-    private $models = [];
-
-    /** @var ModelRepository */
-    private $modelRepository;
+    private array $models = [];
+    private ModelRepository $modelRepository;
 
     /**
      * ModelService constructor.
-     *
-     * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ModelRepository $modelRepository)
     {
-        $this->modelRepository = $em->getRepository(Model::class);
+        $this->modelRepository = $modelRepository;
     }
 
     /**
-     * Find model by id or alias number.
-     *
-     * @param $id
-     *
-     * @return Model|null
-     */
-    public function find($id)
-    {
-        return $this->modelRepository->findOneByNumber($id);
-    }
-
-    /**
-     * Get all subparts of model.
-     *
-     * @param Model $model
+     * Get all subparts of a model.
      *
      * @return array
      */
     public function getSubmodels(Model $model)
     {
-        foreach ($model->getSubparts() as $subpart) {
-            $this->resursiveLoadModels($subpart->getSubpart(), $subpart->getCount());
-        }
+        return $model->getChildren()->map(fn (Relation $relation) => $relation->getChild());
 
-        return $this->models;
+//        foreach ($model->getChildren() as $child) {
+//            if($child instanceof Subpart) {
+//                $this->resursiveLoadChildren($child->getChild(), $child->getCount());
+//            }
+//        }
+//
+//        return $this->models;
     }
 
     /**
-     * Get all siblings of model.
+     * Get all parents of a model.
      *
-     * @param Model $model
+     * @return array
+     */
+    public function getParents(Model $model)
+    {
+        return $model->getParents()->filter(fn (Relation $r) => $r instanceof Alias)->map(fn (Relation $r) => $r->getParent());
+
+//        return $this->modelRepository->findAllParents($model);
+    }
+
+    /**
+     * Get all siblings of a model.
      *
      * @return array
      */
@@ -70,21 +68,24 @@ class ModelService
      */
     public function getTotalCount()
     {
-        return $this->modelRepository->count([]);
+        return $this->modelRepository->count(['type' => 1]);
     }
 
-    private function resursiveLoadModels(Model $model, $quantity = 1)
+    private function resursiveLoadChildren(Model $model, $quantity = 1, $color = -1)
     {
-        if (0 !== $model->getSubparts()->count()) {
-            foreach ($model->getSubparts() as $subpart) {
-                $this->resursiveLoadModels($subpart->getSubpart(), $subpart->getCount());
+        if (0 !== $model->getChildren()->count()) {
+            foreach ($model->getChildren() as $child) {
+                if ($child instanceof Subpart) {
+                    $this->resursiveLoadChildren($child->getChild(), $child->getCount(), $child->getColor());
+                }
             }
         } else {
-            $q = isset($this->models[$model->getId()]['quantity']) ? $this->models[$model->getId()]['quantity'] : 0;
+            $q = $this->models[$model->getId()]['quantity'] ?? 0;
 
             $this->models[$model->getId()] = [
                 'quantity' => $q + $quantity,
                 'model' => $model,
+                'color' => $color,
             ];
         }
     }

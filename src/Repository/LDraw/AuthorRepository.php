@@ -3,10 +3,16 @@
 namespace App\Repository\LDraw;
 
 use App\Entity\LDraw\Author;
-use App\Repository\BaseRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class AuthorRepository extends BaseRepository
+class AuthorRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Author::class);
+    }
+
     public function findOneByName($name)
     {
         return $this->findOneBy(['name' => $name]);
@@ -21,10 +27,22 @@ class AuthorRepository extends BaseRepository
      */
     public function getOrCreate($name)
     {
-        if (null == ($author = $this->findOneByName($name))) {
-            $author = new Author();
-            $author->setName($name);
+        if ($author = $this->findOneByName($name)) {
+            return $author;
         }
+
+        $uow = $this->_em->getUnitOfWork()->getScheduledEntityInsertions();
+
+        foreach ($uow as $scheduled) {
+            if ($scheduled instanceof Author) {
+                if ($scheduled->getName() == $name) {
+                    return $scheduled;
+                }
+            }
+        }
+
+        $author = new Author();
+        $author->setName($name);
 
         return $author;
     }

@@ -4,29 +4,28 @@ namespace App\Service\Loader;
 
 use App\Entity\LDraw\Model;
 use App\Exception\FileException;
-use App\Service\Loader\Stl\StlRendererService;
+use App\Service\Stl\StlRenderer;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemInterface;
-use Psr\Log\LoggerInterface;
 
-class ImageLoader extends BaseLoader
+class ImageLoader extends LoggerAwareLoader
 {
-    /** @var FilesystemInterface */
-    private $mediaFilesystem;
+    private EntityManagerInterface $em;
 
-    /** @var string */
-    private $rebrickableDownloadUrl;
+    private FilesystemInterface $mediaFilesystem;
 
-    /** @var StlRendererService */
-    private $stlRendererService;
+    private string $rebrickableCDN;
 
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, FilesystemInterface $mediaFilesystem, $rebrickableDownloadUrl, StlRendererService $stlRendererService)
+    private StlRenderer $stlRendererService;
+
+    public function __construct(EntityManagerInterface $em, FilesystemInterface $mediaFilesystem, $rebrickableDownloadsCdn, StlRenderer $stlRendererService)
     {
+        parent::__construct();
+        $this->em = $em;
+        $this->em->getConnection()->getConfiguration()->setSQLLogger();
         $this->mediaFilesystem = $mediaFilesystem;
-        $this->rebrickableDownloadUrl = $rebrickableDownloadUrl;
+        $this->rebrickableCDN = $rebrickableDownloadsCdn;
         $this->stlRendererService = $stlRendererService;
-
-        parent::__construct($em, $logger);
     }
 
     /**
@@ -38,18 +37,18 @@ class ImageLoader extends BaseLoader
      */
     public function loadColorFromRebrickable($color)
     {
-        $path = $this->rebrickableDownloadUrl."ldraw/parts_{$color}.zip";
+        $path = $this->rebrickableCDN."ldraw/parts_{$color}.zip";
 
         $file = $this->downloadFile($path);
         $zip = new \ZipArchive();
 
         if (true === $zip->open($file)) {
-            $this->writeOutput([
+            $this->output->writeln([
                 "Extracting ZIP file into {$this->mediaFilesystem->getAdapter()->getPathPrefix()}images/{$color}",
             ]);
             $zip->extractTo($this->mediaFilesystem->getAdapter()->getPathPrefix().'images'.DIRECTORY_SEPARATOR.$color);
             $zip->close();
-            $this->writeOutput(['Done!']);
+            $this->output->writeln(['Done!']);
         } else {
             $this->logger->error('Extraction of file failed!');
             throw new FileException($file);
@@ -73,7 +72,7 @@ class ImageLoader extends BaseLoader
         unset($models);
 
         // Render images
-        $this->writeOutput([
+        $this->output->writeln([
             'Rendering missing images of models',
         ]);
         $this->initProgressBar(count($missing));

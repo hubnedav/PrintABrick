@@ -5,54 +5,50 @@ namespace App\Command;
 use App\Service\Loader\RebrickableLoader;
 use League\Flysystem\Exception;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LoadRebrickableDataCommand extends Command
 {
-    /** @var RebrickableLoader */
-    private $rebrickableLoader;
+    protected static $defaultName = 'app:load:rebrickable';
+
+    private RebrickableLoader $rebrickableLoader;
 
     /**
      * LoadRebrickableDataCommand constructor.
-     *
-     * @param string            $name
-     * @param RebrickableLoader $rebrickableLoader
      */
-    public function __construct($name = null, RebrickableLoader $rebrickableLoader)
+    public function __construct(RebrickableLoader $rebrickableLoader)
     {
         $this->rebrickableLoader = $rebrickableLoader;
 
-        parent::__construct($name);
+        parent::__construct();
     }
 
     protected function configure()
     {
         $this
-            ->setName('app:load:rebrickable')
             ->setDescription('Loads Rebrickable data about sets and parts into database.')
-            ->setHelp('This command allows you to load Rebrickable CSV files containing information about sets and parts into database.');
+            ->setHelp('This command allows you to load Rebrickable CSV files containing information about sets and parts into database.')
+            ->setDefinition(
+                new InputDefinition([
+                    new InputOption('rewrite', 'r', InputOption::VALUE_NONE, 'Truncate rebrickable tables before loading new data.'),
+                ])
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->rebrickableLoader->setOutput($output);
+        $io = new SymfonyStyle($input, $output);
+        $this->rebrickableLoader->setOutput($io);
 
         try {
-            $this->rebrickableLoader->loadAll();
+            $this->rebrickableLoader->loadAll($input->getOption('rewrite'));
         } catch (Exception $exception) {
-            $output->writeln("<error>{$exception->getMessage()}</error>");
+            $io->error($exception->getMessage());
 
-            return 1;
-        }
-
-        // Load relations between LDraw models and Rebrickable parts
-        $loadRelationsCommand = $this->getApplication()->find('app:load:relations');
-
-        $returnCode = $loadRelationsCommand->run(new ArrayInput(['command' => 'app:load:relations']), $output);
-
-        if ($returnCode) {
             return 1;
         }
 

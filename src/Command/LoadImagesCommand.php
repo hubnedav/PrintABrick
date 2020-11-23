@@ -8,25 +8,27 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LoadImagesCommand extends Command
 {
-    private $imageLoader;
+    protected static $defaultName = 'app:load:images';
+
+    private ImageLoader $imageLoader;
 
     /**
      * LoadImagesCommand constructor.
      */
-    public function __construct($name = null, ImageLoader $imageLoader)
+    public function __construct(ImageLoader $imageLoader)
     {
         $this->imageLoader = $imageLoader;
 
-        parent::__construct($name);
+        parent::__construct();
     }
 
     protected function configure()
     {
         $this
-            ->setName('app:load:images')
             ->setDescription('Loads images of models')
             ->setHelp('This command allows you to load rendered images of models from Rebrickable or/and generate rendered images from stl files of models.')
             ->setDefinition(
@@ -40,7 +42,8 @@ class LoadImagesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->imageLoader->setOutput($output);
+        $io = new SymfonyStyle($input, $output);
+        $this->imageLoader->setOutput($io);
 
         $color = $input->getOption('color');
 
@@ -51,5 +54,7 @@ class LoadImagesCommand extends Command
         if ($input->getOption('missing')) {
             $this->imageLoader->loadMissingModelImages();
         }
+
+        return 0;
     }
 }

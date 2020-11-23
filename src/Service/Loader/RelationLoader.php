@@ -4,37 +4,39 @@ namespace App\Service\Loader;
 
 use App\Entity\LDraw\Model;
 use App\Entity\Rebrickable\Part;
+use App\Entity\Rebrickable\Set;
 use App\Repository\LDraw\ModelRepository;
 use App\Repository\Rebrickable\PartRepository;
+use App\Repository\Rebrickable\SetRepository;
+use App\Service\SetService;
 use App\Util\RelationMapper;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 
-class RelationLoader extends BaseLoader
+class RelationLoader extends LoggerAwareLoader
 {
-    /** @var RelationMapper */
-    private $relationMapper;
+    private RelationMapper $relationMapper;
+    private SetService $setService;
 
-    /** @var ModelRepository */
-    private $modelRepository;
-
-    /** @var PartRepository */
-    private $partRepository;
+    private EntityManagerInterface $em;
+    private ModelRepository $modelRepository;
+    private PartRepository $partRepository;
+    private SetRepository $setRepository;
 
     /**
      * RelationLoader constructor.
-     *
-     * @param EntityManagerInterface $em
-     * @param LoggerInterface        $logger
-     * @param RelationMapper         $relationMapper
      */
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, RelationMapper $relationMapper)
+    public function __construct(EntityManagerInterface $em, SetService $setService, RelationMapper $relationMapper)
     {
+        parent::__construct();
+        $this->em = $em;
+        $this->em->getConnection()->getConfiguration()->setSQLLogger();
+        $this->setService = $setService;
         $this->relationMapper = $relationMapper;
-        $this->modelRepository = $em->getRepository(Model::class);
-        $this->partRepository = $em->getRepository(Part::class);
+        $this->modelRepository = $this->em->getRepository(Model::class);
+        $this->partRepository = $this->em->getRepository(Part::class);
+        $this->setRepository = $this->em->getRepository(Set::class);
 
-        parent::__construct($em, $logger);
+        ini_set('memory_limit', '1G');
     }
 
     public function loadAll()
@@ -49,46 +51,78 @@ class RelationLoader extends BaseLoader
         $this->load($parts);
     }
 
+    /**
+     * @var Part[]
+     */
     private function load($parts)
     {
-        $this->initProgressBar(count($parts));
-        /** @var Part $part */
-        foreach ($parts as $part) {
+        $this->output->progressStart(count($parts));
+
+        foreach ($parts as $index => $part) {
             $model = $this->loadPartRelation($part);
 
             if ($model) {
                 $part->setModel($model);
-                $this->partRepository->save($part, false);
+                $this->em->persist($part);
             }
 
-            $this->progressBar->setMessage($part->getId());
-            $this->progressBar->advance();
+            $this->output->progressAdvance();
+
+            // clear managed objects to avoid memory issues
+            if (0 === $index % 500) {
+                $this->em->flush();
+            }
+        }
+
+        $this->em->flush();
+
+        $this->output->progressFinish();
+
+//        $this->loadSetCompletness();
+    }
+
+    public function loadSetCompletness()
+    {
+        $sets = $this->setRepository->findAll();
+
+        $this->output->progressStart(count($sets));
+        /** @var Set $set */
+        foreach ($sets as $set) {
+            $missingCount = $this->setService->getPartCount($set, false, false);
+            $partCount = $this->setService->getPartCount($set, false);
+            $set->setCompleteness($partCount > 0 ? (1 - $missingCount / $partCount) * 100 : 0);
+
+            $this->em->persist($set);
+            $this->output->progressAdvance();
         }
         $this->em->flush();
-        $this->progressBar->finish();
+        $this->output->progressFinish();
     }
 
     /**
      * Loads relations between Rebrickable part and ldraw models for $parts.
-     *
-     * @param Part $part
-     *
-     * @return Model|null
      */
-    private function loadPartRelation(Part $part)
+    private function loadPartRelation(Part $part): ?Model
     {
         $number = $part->getId();
-        // Find model by id or alias
-        $model = $this->modelRepository->findOneByNumber($number);
-        if (!$model) {
-            // Try to find relation from part_model.yml file
-            $number = $this->relationMapper->find($this->getPrintedParentId($number), 'part_model');
-            // Find model by id or alias
-            $model = $this->modelRepository->findOneByNumber($number);
 
-            if (!$model) {
-                // If model not found, try to find by identical model name
-                $model = $this->modelRepository->findOneByName($part->getName());
+        // Find model by id or alias
+        // Try to find relation from part_model.yml file
+        $number = (string) $this->relationMapper->find($this->getPrintedParentId($number), 'part_model');
+
+        $number = $this->getPrintedParentId($number);
+
+        if ($model = $this->modelRepository->findOneByNumber($number)) {
+            if ($model->getAliasOf()->first()) {
+                return $model->getAliasOf()->first();
+            }
+
+            return $model;
+        }
+
+        foreach ($part->getParentParts('P') as $parentPart) {
+            if ($model = $this->modelRepository->findOneByNumber($parentPart->getParent()->getId())) {
+                return $model;
             }
         }
 
@@ -104,15 +138,22 @@ class RelationLoader extends BaseLoader
      */
     private function getPrintedParentId($number)
     {
-        if (preg_match('/(^970[c,x])([0-9a-z]*)$/', $number, $matches)) {
+        if (preg_match('/(^970[c,x])([\da-z]*)$/', $number, $matches)) {
             return '970c00';
-        } elseif (preg_match('/(^973)([c,p][0-9a-z]*)$/', $number, $matches)) {
+        }
+        if (preg_match('/(^973)([c,p][\da-z]*)$/', $number, $matches)) {
             return '973c00';
-        } elseif (preg_match('/(^.*)((pr[x]{0,1}[0-9]{1,7}[a-z]{0,1})|(pat[[0-9]{1,4}[a-z]{0,1}))$/', $number, $matches)) {
+        }
+        if (preg_match('/(^.*)((pr[x]{0,1}\d{1,7}[a-z]{0,1})|(pat[\d{1,4}[a-z]{0,1}))$/', $number, $matches)) {
             return $matches[1];
-        } elseif (preg_match('/(^.*)((pb[0-9]{1,4}[a-z]{0,1}))$/', $number, $matches)) {
+        }
+        if (preg_match('/(^.*)((pb\d{1,4}[a-z]{0,1}))$/', $number, $matches)) {
             return $matches[1];
-        } elseif (preg_match('/(^.*)(p[x]{0,1}[0-9a-z]{2,4})$/', $number, $matches)) {
+        }
+        if (preg_match('/(^.*)(p[x]{0,1}[\da-z]{2,4})$/', $number, $matches)) {
+            return $matches[1];
+        }
+        if (preg_match('/(^.*)(pat[\d]*)$/', $number, $matches)) {
             return $matches[1];
         }
 

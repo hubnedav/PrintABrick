@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LoadRelationCommand extends Command
 {
@@ -16,15 +17,12 @@ class LoadRelationCommand extends Command
 
     /**
      * LoadRelationCommand constructor.
-     *
-     * @param $name
-     * @param RelationLoader $relationLoader
      */
-    public function __construct($name = null, RelationLoader $relationLoader)
+    public function __construct(RelationLoader $relationLoader)
     {
         $this->relationLoader = $relationLoader;
 
-        parent::__construct($name);
+        parent::__construct();
     }
 
     protected function configure()
@@ -42,7 +40,8 @@ class LoadRelationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->relationLoader->setOutput($output);
+        $io = new SymfonyStyle($input, $output);
+        $this->relationLoader->setOutput($io);
 
         $output->writeln([
             '<fg=cyan>------------------------------------------------------------------------------</>',
@@ -57,5 +56,7 @@ class LoadRelationCommand extends Command
         }
 
         $output->writeln(['<info>Done!</info>']);
+
+        return 0;
     }
 }

@@ -40,10 +40,11 @@
 
                 <div class="right menu">
                     <div class="ui search item category right aligned">
-                        <div class="ui icon input transparent inverted">
-                            <input class="prompt" type="text" placeholder="Search..." >
+                        <form class="ui icon input transparent inverted" action="{{ path('search_results') }}">
+                            <input name="query" class="prompt" type="text" placeholder="Search...">
                             <i class="search icon"></i>
-                        </div>
+                            <input type="submit" hidden>
+                        </form>
                         <div class="results transition"></div>
                     </div>
                 </div>

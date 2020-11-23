@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'page.error.title'|trans }}{% endblock %}
+
+{% block header %}{{ 'page.error.title'|trans }}{% endblock %}
+
+{% block content %}
+    <div class="segment very padded vertical ui secondary">
+        <div class="ui container">
+            <h1 class="ui center aligned icon header">
+                <i class="circular warning icon"></i>
+                <div class="content">
+                    <h1>{{ status_code }} <small>{{ status_text }}</small></h1>
+
+                    <p class="sub header">
+                        Something is broken. Please let us know what you were doing when this error occurred.
+                        We will fix it as soon as possible. Sorry for any inconvenience caused.
+                    </p>
+                </div>
+            </h1>
+
+        </div>
+    </div>
+{% endblock %}

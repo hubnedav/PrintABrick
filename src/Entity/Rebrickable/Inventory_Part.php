@@ -123,8 +123,6 @@ class Inventory_Part
     }
 
     /**
-     * @param Part $part
-     *
      * @return Inventory_Part
      */
     public function setPart(Part $part)
@@ -143,8 +141,6 @@ class Inventory_Part
     }
 
     /**
-     * @param Inventory $inventory
-     *
      * @return Inventory_Part
      */
     public function setInventory(Inventory $inventory)

@@ -3,25 +3,17 @@
 namespace App\Imagine;
 
 use App\Api\Manager\RebrickableManager;
-use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 
 class PartImageLoader extends BaseImageLoader
 {
-    /** @var Filesystem */
-    private $mediaFilesystem;
-
-    /** @var RebrickableManager */
-    private $rebrickableManager;
-
-    private $rebrickableContext = 'https://rebrickable.com/media/parts/ldraw/';
+    private FilesystemInterface $mediaFilesystem;
+    private RebrickableManager $rebrickableManager;
+    private string $rebrickableContext = 'https://cdn.rebrickable.com/media/parts/ldraw/';
 
     /**
      * PartImageLoader constructor.
-     *
-     * @param RebrickableManager  $rebrickableManager
-     * @param FilesystemInterface $mediaFilesystem
      */
     public function __construct(RebrickableManager $rebrickableManager, FilesystemInterface $mediaFilesystem)
     {

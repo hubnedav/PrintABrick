@@ -3,30 +3,27 @@
 namespace App\Service\Loader;
 
 use App\Entity\Rebrickable\Part;
-use App\Entity\Rebrickable\Set;
 use App\Exception\Loader\LoadingRebrickableFailedException;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 
 //TODO Refactor + validate csv files
-class RebrickableLoader extends BaseLoader
+class RebrickableLoader extends LoggerAwareLoader
 {
-    private $rebrickable_url;
-
+    private EntityManagerInterface $em;
+    private $downloadsPage;
     private $csvFile;
 
     /**
      * RebrickableLoader constructor.
      *
-     * @param EntityManagerInterface $em
-     * @param LoggerInterface        $logger
-     * @param $rebrickableDownloadUrl
+     * @param $rebrickableDownloadsPage
      */
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, $rebrickableDownloadUrl)
+    public function __construct(EntityManagerInterface $em, $rebrickableDownloadsPage)
     {
-        $this->rebrickable_url = $rebrickableDownloadUrl;
-
-        parent::__construct($em, $logger);
+        parent::__construct();
+        $this->em = $em;
+        $this->em->getConnection()->getConfiguration()->setSQLLogger();
+        $this->downloadsPage = $rebrickableDownloadsPage;
     }
 
     /**
@@ -34,7 +31,7 @@ class RebrickableLoader extends BaseLoader
      *
      * @throws LoadingRebrickableFailedException
      */
-    public function loadAll()
+    public function loadAll($truncate = false)
     {
         $connection = $this->em->getConnection();
         $connection->beginTransaction();
@@ -42,30 +39,58 @@ class RebrickableLoader extends BaseLoader
         try {
             $this->loadCsvFiles();
 
-            $connection->prepare('SET foreign_key_checks = 0;')->execute();
-            $this->truncateTables();
-            $connection->prepare('SET foreign_key_checks = 1;')->execute();
+            if ($truncate) {
+                $connection->prepare('SET foreign_key_checks = 0;')->execute();
+                $this->truncateTables();
+                $connection->prepare('SET foreign_key_checks = 1;')->execute();
+            }
 
-            $this->writeOutput([
+            $this->output->writeln([
                 '<info>Truncated</info> <comment>rebrickable</comment> <info>database tables.</info>',
                 'Loading CSV files into database...',
             ]);
 
-            $this->loadCategoryTable($this->csvFile['part_categories']);
-            $this->loadPartTable($this->csvFile['parts']);
-            $this->loadThemeTable($this->csvFile['themes']);
-            $this->loadSetTable($this->csvFile['sets']);
-            $this->loadInventoryTable($this->csvFile['inventories']);
-            $this->loadInventorySetTable($this->csvFile['inventory_sets']);
-
             $connection->prepare('SET foreign_key_checks = 0;')->execute();
+            $this->output->progressStart(10);
+
+            $this->loadColorTable($this->csvFile['colors']);
+            $this->output->progressAdvance();
+
+            $this->loadCategoryTable($this->csvFile['part_categories']);
+            $this->output->progressAdvance();
+
+            $this->loadPartTable($this->csvFile['parts']);
+            $this->output->progressAdvance();
+
+            $this->loadElementTable($this->csvFile['elements']);
+            $this->output->progressAdvance();
+
+            $this->loadThemeTable($this->csvFile['themes']);
+            $this->output->progressAdvance();
+
+            $this->loadSetTable($this->csvFile['sets']);
+            $this->output->progressAdvance();
+
+            $this->loadInventoryTable($this->csvFile['inventories']);
+            $this->output->progressAdvance();
+
+            $this->loadInventorySetTable($this->csvFile['inventory_sets']);
+            $this->output->progressAdvance();
+
+            $this->loadPartRelationshipssTable($this->csvFile['part_relationships']);
+            $this->output->progressAdvance();
+
             $this->loadInventoryPartTable($this->csvFile['inventory_parts']);
+            $this->output->progressAdvance();
+
             $connection->prepare('SET foreign_key_checks = 1;')->execute();
+            $this->output->progressFinish();
+
             $this->addMissingParts();
 
             $connection->commit();
 
-            $this->writeOutput(['Rebrickable database loaded successfully!']);
+            $this->output->writeln(['Rebrickable database loaded successfully!']);
         } catch (\Exception $e) {
 //            $connection->rollBack();
 
@@ -78,19 +103,37 @@ class RebrickableLoader extends BaseLoader
      */
     private function loadCsvFiles()
     {
-        $array = ['inventories', 'inventory_parts', 'inventory_sets', 'sets', 'themes', 'parts', 'part_categories'];
+        // Load html content of Rebrickable downloads page
+        $downloadsPageContent = file_get_contents($this->downloadsPage);
+        // Find all download csv links on page
+        preg_match_all('/"((.*)\/(.*).csv.gz\?(.*))"/', $downloadsPageContent, $currentLinks);
 
-        $this->writeOutput([
+        $csvLinks = array_combine($currentLinks[3], $currentLinks[1]);
+
+        $csvToDownload = [
+            'inventories',
+            'inventory_parts',
+            'inventory_sets',
+            'sets',
+            'elements',
+            'themes',
+            'parts',
+            'colors',
+            'part_categories',
+            'part_relationships',
+        ];
+
+        $this->output->writeln([
             '<fg=cyan>------------------------------------------------------------------------------</>',
             '<fg=cyan>Loading Rebrickable CSV files</>',
             '<fg=cyan>------------------------------------------------------------------------------</>',
         ]);
 
-        foreach ($array as $item) {
-            $this->csvFile[$item] = $this->downloadFile($this->rebrickable_url.$item.'.csv');
+        foreach ($csvToDownload as $item) {
+            $this->csvFile[$item] = $this->downloadGzFile($csvLinks[$item]);
         }
 
-        $this->writeOutput(['<info>All CSV files loaded.</info>']);
+        $this->output->writeln(['<info>All CSV files loaded.</info>']);
     }
 
     /**
@@ -101,13 +144,15 @@ class RebrickableLoader extends BaseLoader
     private function truncateTables()
     {
         $query = '
-            DELETE FROM rebrickable_inventory_parts;
-            DELETE FROM rebrickable_inventory_sets;
-            DELETE FROM rebrickable_inventory;
-            DELETE FROM rebrickable_set;
-            DELETE FROM rebrickable_theme;
-            DELETE FROM rebrickable_part;
-            DELETE FROM rebrickable_category;
+            TRUNCATE rebrickable_inventory_parts;
+            TRUNCATE rebrickable_inventory_sets;
+            TRUNCATE rebrickable_inventory;
+            TRUNCATE rebrickable_element;
+            TRUNCATE rebrickable_set;
+            TRUNCATE rebrickable_theme;
+            TRUNCATE rebrickable_part;
+            TRUNCATE rebrickable_category;
+            TRUNCATE rebrickable_part_relationships;
            ';
 
         return $this->em->getConnection()->prepare($query)->execute();
@@ -138,18 +183,16 @@ class RebrickableLoader extends BaseLoader
     private function addMissingParts()
     {
         $connection = $this->em->getConnection();
-        $statement = $connection->prepare(
-            'SELECT DISTINCT rebrickable_inventory_parts.part_id FROM rebrickable_inventory_parts
-                 LEFT JOIN rebrickable_part ON rebrickable_inventory_parts.part_id = rebrickable_part.id
-                 WHERE rebrickable_part.id IS NULL');
+        $statement = $connection->prepare('SELECT DISTINCT ip.part_id FROM rebrickable_inventory_parts ip LEFT JOIN rebrickable_part p ON ip.part_id = p.id WHERE p.id IS NULL');
         $statement->execute();
         $foreignKeys = $statement->fetchAll();
 
         foreach ($foreignKeys as $foreignKey) {
             $part = new Part();
             $part->setId($foreignKey['part_id']);
-            $this->em->getRepository(Part::class)->save($part);
+            $this->em->persist($part);
         }
+        $this->em->flush();
     }
 
     private function loadInventoryTable($csv)
@@ -179,7 +222,12 @@ class RebrickableLoader extends BaseLoader
 
     private function loadPartTable($csv)
     {
-        return $this->loadCsvFile($csv, 'rebrickable_part', '(`id`,`name`,`category_id`)');
+        return $this->loadCsvFile($csv, 'rebrickable_part', '(`id`,`name`,`category_id`, `material`)');
+    }
+
+    private function loadElementTable($csv)
+    {
+        return $this->loadCsvFile($csv, 'rebrickable_element', '(`id`,`part_id`,`color_id`)');
     }
 
     private function loadCategoryTable($csv)
@@ -187,8 +235,13 @@ class RebrickableLoader extends BaseLoader
         return $this->loadCsvFile($csv, 'rebrickable_category', '(`id`,`name`)');
     }
 
-//    private function loadColorTable($csv)
-//    {
-//        return $this->loadCsvFile($csv, 'color', '(`id`,`name`,`rgb`, @var) SET transparent = IF(@var=\'t\',1,0)');
-//    }
+    private function loadPartRelationshipssTable($csv)
+    {
+        return $this->loadCsvFile($csv, 'rebrickable_part_relationships', '(`type`, `children_id`, `parent_id`)');
+    }
+
+    private function loadColorTable($csv)
+    {
+        return $this->loadCsvFile($csv, 'color', '(`id`,`name`,`rgb`, @var) SET transparent = IF(@var=\'t\',1,0)');
+    }
 }

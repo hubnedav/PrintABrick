@@ -45,8 +45,6 @@ class Category
     }
 
     /**
-     * @param Part $part
-     *
      * @return Category
      */
     public function addPart(Part $part)
@@ -57,8 +55,6 @@ class Category
     }
 
     /**
-     * @param Part $part
-     *
      * @return Category
      */
     public function removePart(Part $part)

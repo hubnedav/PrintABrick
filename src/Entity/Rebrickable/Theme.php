@@ -21,10 +21,18 @@ class Theme
     /**
      * @var Theme
      *
-     * @ORM\ManyToOne(targetEntity="Theme")
+     * @ORM\ManyToOne(targetEntity="Theme", inversedBy="children")
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     protected $parent;
+
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="Theme", mappedBy="parent")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     */
+    protected $children;
 
     /**
      * @var Collection
@@ -58,8 +66,6 @@ class Theme
     }
 
     /**
-     * @param Set $set
-     *
      * @return Theme
      */
     public function addSet(Set $set)
@@ -90,7 +96,7 @@ class Theme
             $name[] = $theme->getName();
         } while (null !== ($theme = $theme->getParent()));
 
-        return implode(' > ', array_reverse($name));
+        return implode(' / ', array_reverse($name));
     }
 
     public function getGroup()
@@ -101,5 +107,10 @@ class Theme
         }
 
         return $theme;
+    }
+
+    public function getChildren(): Collection
+    {
+        return $this->children;
     }
 }

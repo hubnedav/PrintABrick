@@ -76,8 +76,6 @@ class Inventory_Set
     }
 
     /**
-     * @param Inventory $inventory
-     *
      * @return Inventory_Set
      */
     public function setInventory(Inventory $inventory)

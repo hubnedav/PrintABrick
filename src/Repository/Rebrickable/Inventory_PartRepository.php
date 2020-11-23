@@ -4,15 +4,20 @@ namespace App\Repository\Rebrickable;
 
 use App\Entity\LDraw\Model;
 use App\Entity\Rebrickable\Inventory;
+use App\Entity\Rebrickable\Inventory_Part;
 use App\Entity\Rebrickable\Part;
 use App\Entity\Rebrickable\Set;
-use App\Repository\BaseRepository;
-use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class Inventory_PartRepository extends BaseRepository
+class Inventory_PartRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Inventory_Part::class);
+    }
+
     /**
-     * @param Set  $set
      * @param null $spare
      * @param null $model
      *
@@ -23,9 +28,11 @@ class Inventory_PartRepository extends BaseRepository
         $inventory = $this->getEntityManager()->getRepository(Inventory::class)->findNewestInventoryBySetNumber($set->getId());
 
         $queryBuilder = $this->createQueryBuilder('inventory_part')
+            ->leftJoin('inventory_part.part', 'part')
             ->where('inventory_part.inventory = :inventory')
-            ->setParameter('inventory', $inventory->getId())
-            ->join(Part::class, 'part', JOIN::WITH, 'inventory_part.part = part');
+            ->setParameter('inventory', $inventory)
+//            ->andWhere('part.category != 58')
+;
 
         if (null !== $spare) {
             $queryBuilder
@@ -35,9 +42,13 @@ class Inventory_PartRepository extends BaseRepository
 
         if (null !== $model) {
             if (true === $model) {
-                $queryBuilder->andWhere('part.model IS NOT NULL');
+                $queryBuilder
+                    ->leftjoin('part.model', 'model')
+                    ->andWhere('model IS NOT NULL');
             } else {
-                $queryBuilder->andWhere('part.model IS NULL');
+                $queryBuilder
+                    ->leftJoin('part.model', 'model')
+                    ->andWhere('model IS NULL');
             }
         }
 
@@ -47,7 +58,6 @@ class Inventory_PartRepository extends BaseRepository
     /**
      * Finds all inventoty_parts in newest inventory of set.
      *
-     * @param Set  $set
      * @param bool $spare If true - find all spare parts, false - find all regular parts, null - spare and regular parts
      * @param bool $model If true - find all parts with model relation, false - find all parts without model relation, null - all parts
      *
@@ -63,7 +73,6 @@ class Inventory_PartRepository extends BaseRepository
     /**
      * Get total part count of Set.
      *
-     * @param Set  $set
      * @param bool $spare If true - find all spare parts, false - find all regular parts, null - spare and regular parts
      * @param bool $model If true - find all parts with model relation, false - find all parts without model relation, null - all parts
      *

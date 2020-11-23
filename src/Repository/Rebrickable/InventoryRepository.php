@@ -2,10 +2,17 @@
 
 namespace App\Repository\Rebrickable;
 
-use App\Repository\BaseRepository;
+use App\Entity\Rebrickable\Inventory;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class InventoryRepository extends BaseRepository
+class InventoryRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Inventory::class);
+    }
+
     public function findNewestInventoryBySetNumber($number)
     {
         $queryBuilder = $this->createQueryBuilder('inventory')

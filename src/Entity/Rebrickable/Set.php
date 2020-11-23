@@ -55,6 +55,20 @@ class Set
     protected $inventorySets;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $completeness;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $disabled = 0;
+
+    /**
      * Set constructor.
      */
     public function __construct()
@@ -118,8 +132,6 @@ class Set
     }
 
     /**
-     * @param Inventory $inventory
-     *
      * @return Set
      */
     public function addInventory(Inventory $inventory)
@@ -130,8 +142,6 @@ class Set
     }
 
     /**
-     * @param Inventory $inventory
-     *
      * @return Set
      */
     public function removeInventory(Inventory $inventory)
@@ -171,5 +181,25 @@ class Set
     public function setTheme($theme)
     {
         $this->theme = $theme;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCompleteness(): ?int
+    {
+        return $this->completeness;
+    }
+
+    public function setCompleteness(int $completeness): Set
+    {
+        $this->completeness = $completeness;
+
+        return $this;
+    }
+
+    public function isDisabled(): bool
+    {
+        return $this->disabled;
     }
 }

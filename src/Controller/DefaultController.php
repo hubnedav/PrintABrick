@@ -17,18 +17,13 @@ class DefaultController extends AbstractController
     public function index(SetService $setService, ModelService $modelService): Response
     {
         return $this->render('default/index.html.twig', [
-            'models' => $modelService->getTotalCount(),
-            'sets' => $setService->getTotalCount(),
         ]);
     }
 
     /**
      * @Route("/set_tab/{tab}", name="set_tab", requirements={"tab"=".+"}, methods={"POST"})
      *
-     * @param Request $request
      * @param $tab
-     *
-     * @return Response
      */
     public function setDefaultTabAction(Request $request, $tab): Response
     {

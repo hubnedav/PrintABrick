@@ -71,7 +71,7 @@
                             <div class="column">
                                 <h2 class="ui icon header">
                                     <i class="cube icon"></i>
-                                    {{ models }} {{ 'homepage.bricks.title' | trans }}
+                                    {{ 'homepage.bricks.title' | trans | capitalize }}
                                 </h2>
                                 <p>{{ 'homepage.bricks.text' | trans | raw }}</p>
                                 <a class="ui button big primary" href="{{ path('brick_index') }}">{{ 'homepage.bricks.browse' | trans }}</a>
@@ -79,7 +79,7 @@
                             <div class="column">
                                 <h2 class="ui icon header">
                                     <i class="cubes icon"></i>
-                                    {{ sets }} {{ 'homepage.sets.title' | trans }}
+                                    {{ 'homepage.sets.title' | trans | capitalize }}
                                 </h2>
                                 <p>{{ 'homepage.sets.text' | trans | raw }}</p>
                                 <a class="ui button big primary" href="{{ path('set_index') }}">{{ 'homepage.sets.browse' | trans }}</a>

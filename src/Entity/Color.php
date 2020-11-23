@@ -30,14 +30,14 @@ class Color
     /**
      * @var string
      *
-     * @ORM\Column(name="rgb", type="string", length=6, unique=false)
+     * @ORM\Column(name="rgb", type="string", length=6, unique=false, nullable=true)
      */
     protected $rgb;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="transparent", type="boolean")
+     * @ORM\Column(name="transparent", type="boolean", nullable=true)
      */
     protected $transparent;
 
@@ -58,8 +58,12 @@ class Color
     /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct($id, $rgb = null, $transparent = null, $name = null)
     {
+        $this->id = $id;
+        $this->rgb = $rgb;
+        $this->transparent = $transparent;
+        $this->name = $name;
         $this->inventoryParts = new ArrayCollection();
         $this->subparts = new ArrayCollection();
     }
@@ -135,8 +139,6 @@ class Color
     }
 
     /**
-     * @param Inventory_Part $inventoryPart
-     *
      * @return Color
      */
     public function addPartInventoryPart(Inventory_Part $inventoryPart)
@@ -147,8 +149,6 @@ class Color
     }
 
     /**
-     * @param Inventory_Part $inventoryPart
-     *
      * @return Color
      */
     public function removePartInventoryPart(Inventory_Part $inventoryPart)

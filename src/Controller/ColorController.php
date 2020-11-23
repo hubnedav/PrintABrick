@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\ColorService;
+use App\Repository\ColorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -16,14 +16,12 @@ class ColorController extends AbstractController
     /**
      * @Route("/", name="color_index")
      *
-     * @param ColorService $colorService
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(ColorService $colorService)
+    public function indexAction(ColorRepository $colorRepository)
     {
         return $this->render('color/index.html.twig', [
-            'colors' => $colorService->getAll(),
+            'colors' => $colorRepository->findAll(),
         ]);
     }
 }
